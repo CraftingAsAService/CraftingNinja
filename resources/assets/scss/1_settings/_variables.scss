@@ -1,0 +1,69 @@
+// Viewports
+// $xs-viewport: 0em;
+$sm-viewport: 34em;
+$md-viewport: 48em;
+$lg-viewport: 62em;
+$xl-viewport: 75em;
+
+// Media Shortcuts, call `@media ($min-width-sm) and ($max-width-sm)`, etc
+$max-width-xs: "max-width: #{$sm-viewport - .001}";
+$min-width-sm: "min-width: #{$sm-viewport}";
+$max-width-sm: "max-width: #{$md-viewport - .001}";
+$min-width-md: "min-width: #{$md-viewport}";
+$max-width-md: "max-width: #{$lg-viewport - .001}";
+$min-width-lg: "min-width: #{$lg-viewport}";
+$max-width-lg: "max-width: #{$xl-viewport - .001}";
+$min-width-xl: "min-width: #{$xl-viewport}";
+
+// Conceptual media shortcuts
+$xs-only: $max-width-xs;
+$sm-only: "#{$min-width-sm}) and (#{$max-width-sm}";
+$md-only: "#{$min-width-md}) and (#{$max-width-md}";
+$lg-only: "#{$min-width-lg}) and (#{$max-width-lg}";
+$xl-only: $min-width-xl;
+
+// Colors
+$white: 		#FFFFFF;
+$alabaster: 	#f7f7f7; // Light Gray
+$dolphin: 		#747475; // Darker Gray
+
+// http://paletton.com/#uid=7000u0knZw0ecLwjzCzu9uwv2n6
+
+// Reds
+$lobster: 		#ff4040;	// main primary color */
+$mona-lisa: 	#ff8e8e;
+$bittersweet: 	#ff6363;
+$red: 			#f30e0e;
+$milano: 		#b80606;
+
+// Oranges
+$neon-carrot: 	#ff9740;	// main secondary color (1) */
+$chardonnay: 	#ffc18e;
+$rajah: 		#ffaa63;
+$christine: 	#f3760e;
+$tawny: 		#b85606;
+
+// Teals
+$java: 			#269999;	// main secondary color (2) */
+$downy: 		#72cece;
+$fountain: 		#45b1b1;
+$chill: 		#089292;
+$mosque: 		#036e6e;
+
+// Greens
+$lime: 			#33cc33;	// main complement color */
+$pastel-green: 	#80e680;
+$pastel-green-2:#54d854;
+$malachite: 	#0bc20b;
+$laurel: 		#049304;
+
+// Old FFXIVCrafting
+$theme_color_lobster: #FF4040;
+$theme_color_teal: #25c1c1;
+$theme_color_terra: #e8ddcb;
+$theme_color_black: #000000;
+$theme_color_white: #FFFFFF;
+$theme_color_light_gray: #f7f7f7;
+$theme_color_darker_than_light_gray: #ebeaea;	//lol
+$theme_color_medium_gray: #747475;
+$theme_color_dark_gray: #18191A;

@@ -1,0 +1,15 @@
+.picture-block {
+	> .title {
+		background-color: $dolphin;
+		color: $white;
+
+		text-align: center;
+		padding: 8px;
+
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+
+	}
+}

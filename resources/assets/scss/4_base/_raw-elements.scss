@@ -1,0 +1,23 @@
+html {
+	// Support the flyout menu
+	overflow: scroll;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+html, body {
+	// Support the flyout menu
+	height: 100%;
+}
+
+body {
+	// Support the flyout menu
+	position: relative;
+
+	background: $theme_color_black;
+}
+
+#banner h1 {
+	margin-bottom: 0;
+}
