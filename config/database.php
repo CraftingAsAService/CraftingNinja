@@ -1,5 +1,33 @@
 <?php
 
+$defaultMySQLConfig = [
+    'driver' => 'mysql',
+    'host' => env('DB_HOST', 'localhost'),
+    'port' => env('DB_PORT', '3306'),
+    'database' => env('DB_DATABASE', 'caas'),
+    'username' => env('DB_USERNAME', ''),
+    'password' => env('DB_PASSWORD', ''),
+    'charset' => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix' => '',
+    'strict' => true,
+    'engine' => null,
+];
+
+$connections = [
+    // 'testing' => [
+    //     'driver'   => 'sqlite',
+    //     'database' => ':memory:',
+    //     'prefix'   => '',
+    // ],
+    'caas' => $defaultMySQLConfig,
+];
+
+foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
+    $connections[$gameSlug] = array_merge($defaultMySQLConfig, ['database' => 'caas_' . $gameSlug]);
+
+unset($defaultMySQLConfig);
+
 return [
 
     /*
@@ -26,7 +54,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'caas'),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,42 +72,7 @@ return [
     |
     */
 
-    'connections' => [
-
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix' => '',
-        ],
-
-        'mysql' => [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
-        ],
-
-        'pgsql' => [
-            'driver' => 'pgsql',
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'schema' => 'public',
-            'sslmode' => 'prefer',
-        ],
-
-    ],
+    'connections' => $connections,
 
     /*
     |--------------------------------------------------------------------------

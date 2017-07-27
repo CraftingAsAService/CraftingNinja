@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'CoreController@home'); // Also handles "Game" centric homepage
+
+Route::middleware('is-game')->group(function() {
+	Route::resource('compendium', 'CompendiumController');
+	Route::resource('knapsack', 'KnapsackController');
 });
