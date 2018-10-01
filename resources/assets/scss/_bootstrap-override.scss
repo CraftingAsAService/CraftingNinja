@@ -1,0 +1,18 @@
+// Bootstrap Variable Overrides
+
+$font-family-sans-serif: primaryFont();
+
+$gray-025: branded($mirage, $opacity: .025);
+$gray-050: branded($mirage, $opacity: .05);
+$gray-000: branded($mirage, $opacity: .1);
+$gray-100: branded($mirage, $opacity: .2);
+$gray-200: branded($mirage, $opacity: .3);
+$gray-300: branded($mirage, $opacity: .4);
+$gray-400: branded($mirage, $opacity: .5);
+$gray-500: branded($mirage, $opacity: .6);
+$gray-600: branded($mirage, $opacity: .7);
+$gray-700: branded($mirage, $opacity: .8);
+$gray-800: branded($mirage, $opacity: .9);
+$gray-900: branded($mirage);
+
+$body-bg: $gray-100;

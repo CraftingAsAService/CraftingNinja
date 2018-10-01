@@ -16,7 +16,7 @@ class IsGame
 	public function handle($request, Closure $next)
 	{
 		// Make sure the request has a game selected
-		if ( ! config('gameSlug'))
+		if ( ! config('game.slug'))
 		{
 			flash('Please select a game!')->warning();
 			return redirect('/');

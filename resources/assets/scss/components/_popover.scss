@@ -1,0 +1,14 @@
+.popover-footer {
+	padding: $popover-header-padding-y $popover-header-padding-x;
+	margin-top: 0; // Reset the default from Reboot
+	font-size: $font-size-base;
+	color: $popover-header-color;
+	background-color: $popover-header-bg;
+	border-top: $popover-border-width solid darken($popover-header-bg, 5%);
+	$offset-border-width: calc(#{$border-radius-lg} - #{$popover-border-width});
+	@include border-bottom-radius($offset-border-width);
+
+	&:empty {
+		display: none;
+	}
+}

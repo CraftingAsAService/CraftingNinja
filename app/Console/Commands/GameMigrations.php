@@ -47,6 +47,7 @@ class GameMigrations extends Command
 		// php artisan migrate --path database/migrations/games --database [intendedSlug]
 		foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
 		{
+			echo 'Migrating caas_' . $gameSlug . PHP_EOL;
 			DB::statement('CREATE SCHEMA IF NOT EXISTS `caas_' . $gameSlug . '`');
 
 			Artisan::call('migrate', [
@@ -57,6 +58,7 @@ class GameMigrations extends Command
 		}
 
 		Artisan::call('db:seed', [
+			'--database' => 'caas',
 			'--class' => 'GameDataSeeder',
 		]);
 	}

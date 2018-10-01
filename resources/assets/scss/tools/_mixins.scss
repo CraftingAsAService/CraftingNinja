@@ -1,0 +1,31 @@
+@function branded($color, $saturation: 22%, $opacity: 1, $brand: $royal) {
+	@return hsla(hue($brand), $saturation, lightness($color), $opacity);
+}
+
+@function primaryFont() {
+	@return 'Roboto Condensed', sans-serif;
+}
+
+@function stylishFont() {
+	@return 'Inknut Antiqua', serif;
+}
+
+@mixin moveUp($top: 2) {
+	position: relative;
+	top: -#{$top}px;
+}
+
+@mixin moveDown($top: 2) {
+	position: relative;
+	top: #{$top}px;
+}
+
+@mixin moveLeft($left: 2) {
+	position: relative;
+	left: -#{$left}px;
+}
+
+@mixin moveRight($left: 2) {
+	position: relative;
+	left: #{$left}px;
+}

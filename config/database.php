@@ -1,47 +1,40 @@
 <?php
 
-$defaultMySQLConfig = [
-    'driver' => 'mysql',
-    'host' => env('DB_HOST', 'localhost'),
-    'port' => env('DB_PORT', '3306'),
-    'database' => env('DB_DATABASE', 'caas'),
-    'username' => env('DB_USERNAME', ''),
-    'password' => env('DB_PASSWORD', ''),
-    'charset' => 'utf8',
-    'collation' => 'utf8_unicode_ci',
-    'prefix' => '',
-    'strict' => true,
-    'engine' => null,
-];
-
 $connections = [
-    // 'testing' => [
-    //     'driver'   => 'sqlite',
-    //     'database' => ':memory:',
-    //     'prefix'   => '',
-    // ],
-    'caas' => $defaultMySQLConfig,
+	// 'testing' => [
+	// 	'driver'   => 'sqlite',
+	// 	'database' => ':memory:',
+	// 	'prefix'   => '',
+	// ],
+	'caas' => [
+		'driver' => 'mysql',
+		'host' => env('DB_HOST', 'localhost'),
+		// Unit Testing on Mac uses port 33060
+		'port' => env('DB_PORT', '3306'),
+		'database' => env('DB_DATABASE', 'caas'),
+		'username' => env('DB_USERNAME', ''),
+		'password' => env('DB_PASSWORD', ''),
+		'charset' => 'utf8',
+		'collation' => 'utf8_unicode_ci',
+		'prefix' => '',
+		'strict' => false,
+		'engine' => null,
+	],
 ];
 
-foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
-    $connections[$gameSlug] = array_merge($defaultMySQLConfig, ['database' => 'caas_' . $gameSlug]);
+// if (env('APP_ENV') == 'testing')
+// {
+// 	$connections['caas'] = $connections['testing'];
+// 	foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
+// 		$connections[$gameSlug] = array_merge($connections['caas'], ['prefix' => $gameSlug . '_']);
+// }
+// else
+	foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
+		$connections[$gameSlug] = array_merge($connections['caas'], ['database' => 'caas_' . $gameSlug]);
 
-unset($defaultMySQLConfig);
+// unset($defaultConfig);
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | PDO Fetch Style
-    |--------------------------------------------------------------------------
-    |
-    | By default, database results will be returned as instances of the PHP
-    | stdClass object; however, you may desire to retrieve records in an
-    | array format for simplicity. Here you can tweak the fetch style.
-    |
-    */
-
-    'fetch' => PDO::FETCH_OBJ,
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +47,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'caas'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -100,13 +93,20 @@ return [
 
     'redis' => [
 
-        'cluster' => false,
+        'client' => 'predis',
 
         'default' => [
-            'host' => env('REDIS_HOST', 'localhost'),
+            'host' => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
-            'database' => 0,
+            'database' => env('REDIS_DB', 0),
+        ],
+
+        'session' => [
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => env('SESSION_DB', 1),
         ],
 
     ],

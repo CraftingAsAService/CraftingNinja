@@ -25,7 +25,7 @@
 $factory->define(App\Models\Game::class, function(Faker\Generator $faker) {
 	return [
 		'slug' => $faker->word,
-		'version' => $faker->latitude(),
+		'version' => round(abs($faker->latitude()), 2),
 		'name' => $faker->company,
 		'abbreviation' => $faker->tld,
 	];

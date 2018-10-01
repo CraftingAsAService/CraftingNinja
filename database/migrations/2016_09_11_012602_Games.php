@@ -17,7 +17,7 @@ class Games extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->increments('id');
             $table->string('slug'); // ffxiv, wow, sos, dqh, rf4 // not a translatable thing, will be used to identify the game via subdomain or subdirectory
-            $table->string('version')->default(null)->nullable(); // 99.99.99
+            $table->string('version')->nullable(); // 99.99.99
             // $table->tinyInteger('currency_type')->unsigned(); // An identifier to distinguish how currency is.  Decimal'd?  Copper/Silver/Gold? Straight Gil/Yen system? In any event, all currency boils down to a single, non-decimal'd number. // TODO, move this into a config file
 
             $table->index('slug');
@@ -34,7 +34,6 @@ class Games extends Migration
             $table->string('description')->nullable();
 
             $table->unique(['game_id', 'locale']);
-            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
         });
     }
 

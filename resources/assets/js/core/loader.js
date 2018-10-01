@@ -1,7 +1,7 @@
 /**
  * Core Loader
- * 	Loads javascript files synchronously
- * 	Requires a global `scripts` variable to exist
+ * 	Loads javascript and css files synchronously
+ * 	Requires a global `assets` variable to exist
  * 	Automatically included into the core.js file
  */
 
@@ -11,15 +11,39 @@ caas.loader = {
 	loaded: [],
 	loading: false,
 	init:function() {
-		if (typeof scripts == 'undefined')
+		if (typeof assets === 'undefined')
 			return;
 
-		this.massQueue(scripts);
+		// CSS Files are always ASync loaded
+		assets.filter(function(asset) {
+			return asset.substr(-3) == 'css';
+		}).forEach(function(cssAsset) {
+			caas.loader.asyncUp(cssAsset);
+		});
+
+		// JS files added to `assets` are always queued to preserve order of operations
+		assets.filter(function(asset) {
+			return asset.substr(-2) == 'js';
+		}).forEach(function(jsAsset) {
+			caas.loader.queueUp(jsAsset, undefined, false);
+		});
+
+		this.run();
 	},
 	// Actions
+	cdnize:function(src) {
+		// If this is a relative URL, prepend the CDN
+		//  Protect against protocol agnostic `//` urls.
+		// if (src.charAt(0) == '/' && src.charAt(1) != '/')
+		// 	src = caas.site.cdn + src;
+
+		return src;
+	},
 	asyncUp:function(src) {
 		// asyncUp is only for quick-loading, non-callback, optional requests
 		// If you need callbacks, or any kind of order of operations loading, use queueUp instead
+
+		src = this.cdnize(src);
 
 		// Prevent double loads, skip over it
 		if (this.loaded.indexOf(src) >= 0)
@@ -29,12 +53,14 @@ caas.loader = {
 		this.loaded.push(src);
 
 		// Load the file, indicating this is an async load
-		this.appendScript(src, true);
+		this.appendFile(src, true);
 	},
 	queueUp:function(src, callback, run /* default: true */) {
 		// If callback doesn't exist, give it a default blank function
 		if (typeof callback !== 'function')
 			callback = this.intentionallyBlank;
+
+		src = this.cdnize(src);
 
 		// Add both the file and the callback to separate queues.
 		this.queue.push(src);
@@ -47,18 +73,6 @@ caas.loader = {
 		// If we didn't specifically disable running, run the queue
 		if (run != false)
 			this.run();
-	},
-	massQueue:function(srcs) {
-		// srcs is expected to be an array `[]` with at least one entry
-		if (typeof srcs !== 'object' || srcs.length == 0)
-			return;
-
-		// Add each file to the queue, but don't run just yet
-		for (var i = 0; i < srcs.length; i++)
-			this.queueUp(srcs[i], undefined, false);
-
-		// Now we can run
-		this.run();
 	},
 	run:function() {
 		if (this.queue.length == 0)
@@ -81,16 +95,28 @@ caas.loader = {
 		this.loaded.push(src);
 
 		// Load the file
-		this.appendScript(src, false);
+		this.appendFile(src, false);
+	},
+	appendFile:function(src, async) {
+		if (src.substr(-2) == 'js')
+			return this.appendScript(src, async);
+		else if (src.substr(-3) == 'css')
+			return this.appendStyle(src);
+	},
+	appendStyle:function(src) {
+		var styleEl = document.createElement('link');
+		styleEl.rel = 'stylesheet';
+		styleEl.href = src;
+		document.head.appendChild(styleEl);
 	},
 	appendScript:function(src, async) {
 		var scriptEl = document.createElement('script');
 		scriptEl.src = src;
 		if ( ! async)
-			scriptEl.setAttribute('onload', 'caas.loader.finished("' + src + '")');
+			scriptEl.setAttribute('onload', 'caas.loader.finished()');
 		document.body.appendChild(scriptEl);
 	},
-	finished:function(src) {
+	finished:function() {
 		// Get the next callback in Queue, while also removing it
 		var callback = this.callbackQueue.shift();
 

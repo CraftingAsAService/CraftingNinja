@@ -6,66 +6,65 @@ use Illuminate\Database\Migrations\Migration;
 
 class Recipes extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        // A recipes name is usually the item it produces, but that's not always the case
-        Schema::create('recipes', function (Blueprint $table) {
-            $table->increments('id');
-            // $table->integer('game_id')->unsigned(); // FK to games
-            $table->integer('item_id')->unsigned(); // FK to items
-            $table->integer('job_id')->unsigned(); // FK to jobs
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		// A recipes name is usually the item it produces, but that's not always the case
+		Schema::create('recipes', function (Blueprint $table) {
+			$table->increments('id');
 
-            $table->smallInteger('level')->unsigned()->nullable(); // The recipes level, not an ilvl or an item's natural level
+			// The item that's made
+			$table->integer('item_id')->unsigned(); // FK to items
+			$table->integer('job_id')->unsigned()->nullable(); // FK to jobs
 
-            $table->smallInteger('yield')->default(1)->unsigned(); // How many of this item the recipe produces
-            $table->tinyInteger('quality')->default(0); // Quality reward type.  Configurable per game (0 = Normal, 1 = HQ // 0  Normal, 1 = Silver Star, 2 = Gold Star)
-            $table->tinyInteger('chance')->unsigned()->nullable(); // Store 1 - 100. Assume 100 at Null. Chance that this item is produced.
+			$table->smallInteger('level')->unsigned()->nullable(); // The recipes level, not an ilvl or an item's natural level
+			$table->tinyInteger('sublevel')->unsigned()->nullable(); // The recipes sublevel (ala star level in ffxiv)
 
-            $table->index(['item_id', 'job_id', 'level']);
-            // $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
-        });
+			$table->smallInteger('yield')->unsigned()->default(1); // How many of this item the recipe produces
+			$table->tinyInteger('quality')->unsigned()->default(0); // Quality reward type.  Configurable per game (0 = Normal, 1 = HQ // 0  Normal, 1 = Silver Star, 2 = Gold Star)
+			$table->tinyInteger('chance')->unsigned()->nullable(); // Store 1 - 100. Assume 100 at Null. Chance that this item is produced.
 
-        Schema::create('recipe_translations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('recipe_id')->unsigned(); // FK to recipes
+			$table->index(['item_id', 'job_id', 'level']);
 
-            $table->string('locale')->index();
+			// Recipes can have Details (durability, quality, progress, can hq or not)
+		});
 
-            $table->string('name')->nullable();
-            $table->string('description')->nullable();
+		Schema::create('recipe_translations', function (Blueprint $table) {
+			$table->increments('id');
+			$table->integer('recipe_id')->unsigned(); // FK to recipes
 
-            $table->unique(['recipe_id', 'locale']);
-            $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
-        });
+			$table->string('locale')->index();
 
-        // Schema::create('item_recipe', function (Blueprint $table) {
-        //     $table->increments('id');
-        //     $table->integer('item_id')->unsigned(); // FK to items
-        //     $table->integer('recipe_id')->unsigned(); // FK to recipes
+			$table->string('name');
+			$table->text('description')->nullable();
 
-        //     $table->smallInteger('yield')->default(1)->unsigned(); // How many of this item the recipe produces
-        //     $table->tinyInteger('quality')->default(0); // Quality reward type.  Configurable per game (0 = Normal, 1 = HQ // 0  Normal, 1 = Silver Star, 2 = Gold Star)
-        //     $table->tinyInteger('chance')->unsigned()->nullable(); // Store 1 - 100. Assume 100 at Null. Chance that this item is produced.
+			$table->unique(['recipe_id', 'locale']);
+		});
 
-        //     $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
-        //     $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
-        // });
-    }
+		Schema::create('recipe_ingredients', function (Blueprint $table) {
+			$table->increments('id');
+			$table->integer('item_id')->unsigned(); // FK to items
+			$table->integer('recipe_id')->unsigned(); // FK to recipes
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        foreach (['recipes', 'recipe_translations'/*, 'item_recipe'*/] as $table)
-            Schema::dropIfExists($table);
-    }
+			$table->smallInteger('quantity')->default(1)->unsigned(); // How many of this item the recipe produces
+
+            $table->index('item_id');
+            $table->index('recipe_id');
+		});
+	}
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		foreach (['recipes', 'recipe_translations', 'recipe_ingredients'] as $table)
+			Schema::dropIfExists($table);
+	}
 }

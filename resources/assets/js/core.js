@@ -1,14 +1,24 @@
 /**
  * Core
+ *  The core of our javascript application/framework
+ *  Placing everything within the global `caas` variable prevents third party scripts from touching/overwriting our own
  */
 
 'use strict';
 
-var cass = {};
+// `core` is guaranteed to load first of any module;
+//   there's no need to redefine it in any other module, ala `var caas = caas || {};`
+var caas = {};
 
 caas.core = {
+	// Core Modules will never have preloads
+	// Things are loaded in this order, which covers any prerequisite code
 	modules: [
 		'loader',
+		'popover',
+		'tooltip',
+		'element',
+		'lists'
 	],
 	init:function() {
 		// Core JS Functionality
@@ -59,8 +69,19 @@ caas.core = {
 };
 
 /**
- * Extended Core
+ * Extending Core
+ * 	Gulp will grab these files from the core folder and compile them as if they were inside this file itself
+ * 	They don't need the 'use strict';, as it would double up the definition inside this file
  */
+@import 'core/plugins/_functions.js';
+@import 'core/plugins/debounce.js';
+@import 'core/cookie.js';
+@import 'core/element.js';
+@import 'core/lists.js';
 @import 'core/loader.js';
+@import 'core/popover.js';
+@import 'core/storage.js';
+@import 'core/tooltip.js';
 
+// Not using shorthand here as it screws up the `this` variable inside `init()`
 $(function() { caas.core.init(); });

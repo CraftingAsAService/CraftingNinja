@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+
+Route::namespace('Api')->domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(function() {
+
+	Route::resource('items', 'ItemsController', ['only' => ['index']]);
+
+});

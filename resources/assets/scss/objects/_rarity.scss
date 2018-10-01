@@ -1,0 +1,6 @@
+// Rarity vars set in theme folder
+@for $i from 1 through 10 {
+	.rarity-#{$i} {
+		color: var(--rarity#{$i});
+	}
+}

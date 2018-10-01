@@ -9,5 +9,18 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+	/**
+	 * Handles an error response formatting it according to our spec.
+	 *
+	 * @param array $error
+	 * @param array $headers
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	protected function respondWithError($errorStatusCode, $error, $headers = [])
+	{
+		return response()->json(['errors' => $error])->setStatusCode($errorStatusCode);
+	}
+
 }

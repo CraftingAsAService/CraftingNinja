@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 
 use App\Models\Game;
+use App\Http\Resources\Game as GameResource;
+
+use Cache;
 
 class DetectGame
 {
@@ -17,21 +20,31 @@ class DetectGame
 	 */
 	public function handle($request, Closure $next)
 	{
-		$gameSlug = array_values( // Reset Keys
-			array_diff( // Remove Dev & QA subdomains
-				array_slice( // Remove "craftingasaservice" and "com"
-					explode('.', parse_url($request->root())['host']) // e.g. returns http://dev.ffxiv.craftingasaservice.com
-					, 0, -2
-				)
-				, ['dev', 'qa']
-			)
-		);
+		// If the request has `game` set, use it, otherwise split the URL to figure it out
+		$gameSlug = preg_replace('/^(.+?)\.?' . preg_quote(config('app.base_url'), '/') . '$/', '$1', parse_url($request->root())['host']);
 
-		if (count($gameSlug))
-			config([
-				'gameSlug' => $gameSlug[0],
-				'game' => Game::whereSlug($gameSlug[0])->first()
-			]);
+		if (in_array($gameSlug, config('games.valid')))
+		{
+			\DB::setDefaultConnection($gameSlug);
+
+			config(['game' => array_merge(
+				[
+					'slug' => $gameSlug,
+					'data' => Cache::remember('game-' . $gameSlug . '-' . app()->getLocale(), 1440, function() use ($gameSlug) {
+							$game = Game::withTranslation()->whereSlug($gameSlug)->get()->first();
+
+							return [
+								'name' => $game->name,
+								'slug' => $game->slug,
+								'abbreviation' => $game->abbreviation,
+								'version' => $game->version,
+								'description' => $game->description,
+							];
+						})
+				],
+				config('games.' . $gameSlug)
+			)]);
+		}
 
 		return $next($request);
 	}
