@@ -27,6 +27,7 @@ class Attributes extends Migration
 			$table->string('name');
 
 			$table->unique(['attribute_id', 'locale']);
+			$table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
 		});
 	}
 
@@ -37,7 +38,7 @@ class Attributes extends Migration
 	 */
 	public function down()
 	{
-		foreach (['attributes', 'attribute_translations'] as $table)
-			Schema::dropIfExists($table);
+		Schema::dropIfExists('attribute_translations');
+		Schema::dropIfExists('attributes');
 	}
 }

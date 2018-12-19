@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Game\Concepts\Book;
+use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
 
 class BooksController extends Controller
@@ -15,7 +15,7 @@ class BooksController extends Controller
 	 */
 	public function index()
 	{
-		$books = Book::all();
+		$books = Listing::published()->get();
 		return view('game.books', compact('books'));
 	}
 
@@ -27,7 +27,7 @@ class BooksController extends Controller
 	 */
 	public function show($bookId)
 	{
-		$book = Book::with('items')->findOrFail($bookId);
+		$book = Listing::with('items')->published()->findOrFail($bookId);
 		return view('game.books.show', compact('book'));
 	}
 

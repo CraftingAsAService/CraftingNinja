@@ -15,8 +15,8 @@ class ItemAttributes extends Migration
 	{
 		Schema::create('item_attribute', function (Blueprint $table) {
 			$table->increments('id');
-			$table->integer('item_id')->unsigned(); // FK to items
-			$table->integer('attribute_id')->unsigned(); // FK to items
+			$table->integer('item_id')->unsigned()->index(); // FK to items
+			$table->integer('attribute_id')->unsigned()->index(); // FK to items
 
 			// Both normal items, and equipable items have stats
 			// Equipment example

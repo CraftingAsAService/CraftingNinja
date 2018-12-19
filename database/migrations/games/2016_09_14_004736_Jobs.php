@@ -18,7 +18,7 @@ class Jobs extends Migration
 
 			// 18 chosen as it's twice the length of 'gathering', to allow for expansion
 			// Expected values are 'battle', 'crafting', 'gathering', 'hero'; Hero being able to do everything (farming games, etc)
-			$table->string('type', 18)->default('hero');
+			$table->string('type', 18)->default('hero')->index();
 
 			// Gladiator is a tier 0 battle job
 			// Paladin is a tier 1 battle job
@@ -27,8 +27,6 @@ class Jobs extends Migration
 			// Machinist is a tier 2 battle job, maybe tier 1, but it's really semanitics
 			// I would have done a simple `boolean` of `advanced`, but the tier allows for odd use cases
 			$table->tinyInteger('tier')->unsigned()->default(0);
-
-			$table->index(['type']);
 		});
 
 		Schema::create('job_translations', function (Blueprint $table) {
@@ -41,6 +39,7 @@ class Jobs extends Migration
 			$table->string('abbreviation')->default('hero');	// gld
 
 			$table->unique(['job_id', 'locale']); // Each job can only have one name per locale
+			$table->foreign('job_id')->references('id')->on('jobs')->onDelete('cascade');
 		});
 	}
 
@@ -51,7 +50,7 @@ class Jobs extends Migration
 	 */
 	public function down()
 	{
-		foreach (['jobs', 'job_translations'] as $table)
-			Schema::dropIfExists($table);
+		Schema::dropIfExists('job_translations');
+		Schema::dropIfExists('jobs');
 	}
 }

@@ -58,6 +58,7 @@ class Items extends Migration
 			$table->text('description')->nullable();
 
 			$table->unique(['item_id', 'locale']);
+			$table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
 		});
 	}
 
@@ -68,7 +69,7 @@ class Items extends Migration
 	 */
 	public function down()
 	{
-		foreach (['items', 'item_translations'] as $table)
-			Schema::dropIfExists($table);
+		Schema::dropIfExists('item_translations');
+		Schema::dropIfExists('items');
 	}
 }

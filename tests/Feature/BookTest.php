@@ -3,7 +3,7 @@
 namespace Feature;
 
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Book;
+use App\Models\Game\Concepts\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,8 +26,8 @@ class BookTest extends TestCase
 	public function user_can_view_recipe_books()
 	{
 		// Arrange
-		$book = factory(Book::class)->create([
-			'title' => 'Alpha Book',
+		$book = factory(Listing::class)->states('published')->create([
+			'name:en' => 'Alpha Book',
 		]);
 
 		// Act
@@ -43,8 +43,8 @@ class BookTest extends TestCase
 	function user_can_view_recipe_book_contents()
 	{
 		// Arrange
-		$book = factory(Book::class)->create([
-			'title' => 'Alpha Book',
+		$book = factory(Listing::class)->create([
+			'name:en' => 'Alpha Book',
 		]);
 
 		$item = factory(Item::class)->create([

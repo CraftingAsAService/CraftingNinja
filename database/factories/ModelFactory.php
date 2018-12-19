@@ -2,7 +2,7 @@
 
 use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Book;
+use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 
 /*
@@ -37,13 +37,24 @@ $factory->define(Category::class, function(Faker\Generator $faker) {
 	];
 });
 
-$factory->define(Book::class, function(Faker\Generator $faker) {
+$factory->define(Listing::class, function(Faker\Generator $faker) {
 
-	$bookOwner = factory(User::class)->create();
+	$listsOwner = factory(User::class)->create();
 
 	return [
-		'title' => 'Super Awesome Book',
-		'user_id' => $bookOwner->id,
-		'locale' => app()->getLocale()
+		'user_id' => $listsOwner->id,
+		'name:en' => $faker->words(rand(2, 4)),
+	];
+});
+
+$factory->state(Listing::class, 'published', function (Faker\Generator $faker) {
+	return [
+		'published_at' => Carbon\Carbon::parse('-1 week'),
+	];
+});
+
+$factory->state(Listing::class, 'unpublished', function (Faker\Generator $faker) {
+	return [
+		'published_at' => null,
 	];
 });
