@@ -13,9 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-
 Route::namespace('Api')->domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(function() {
 
 	Route::resource('items', 'ItemsController', ['only' => ['index']]);
+	// Route::resource('lists', 'ListsController', ['only' => ['index', 'show']]);
+
+	Route::get('users/{user}/lists', 'UsersController@lists');
 
 });

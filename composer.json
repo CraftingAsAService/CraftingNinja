@@ -11,10 +11,12 @@
 		"fideloper/proxy": "^4.0",
 		"hedronium/spaceless-blade": "^2.0",
 		"itsgoingd/clockwork": "^2.2",
+		"kylekatarnls/laravel-carbon-2": "^1.0.0",
 		"laracasts/flash": "^3.0",
 		"laravel/framework": "5.7.*",
 		"laravel/socialite": "^3.1",
 		"laravel/tinker": "^1.0",
+		"nesbot/carbon": "2.3.0 as 1.34.0",
 		"predis/predis": "^1.1",
 		"socialiteproviders/patreon": "^2.0",
 		"watson/rememberable": "^2.0"

@@ -32,7 +32,13 @@ Route::domain(config('app.base_url'))->group(function() {
 Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(function() {
 
 	Route::get('/', 'GameController@index');
+
+	Route::get('books', 'BooksController@index');
+	Route::get('books/{id}', 'BooksController@show');
+
 	Route::get('compendium', 'CompendiumController@index');
+
 	Route::get('knapsack', 'KnapsackController@index');
+	Route::post('knapsack/publish', 'KnapsackController@publish');
 
 });

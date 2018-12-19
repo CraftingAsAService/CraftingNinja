@@ -1,0 +1,33 @@
+@mixin moveUp($top: 2) {
+	position: relative;
+	top: -#{$top}px;
+}
+
+@mixin moveDown($top: 2) {
+	position: relative;
+	top: #{$top}px;
+}
+
+@mixin moveLeft($left: 2) {
+	position: relative;
+	left: -#{$left}px;
+}
+
+@mixin moveRight($left: 2) {
+	position: relative;
+	left: #{$left}px;
+}
+
+@mixin absolute($top, $right, $bottom, $left, $z-index: null) {
+	position: absolute;
+	top: $top;
+	right: $right;
+	bottom: $bottom;
+	left: $left;
+	@if ($z-index) {
+		z-index: $z-index;
+	}
+}
+@mixin kelvin() {
+	@include absolute(0, 0, 0, 0);
+}

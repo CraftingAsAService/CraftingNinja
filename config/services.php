@@ -47,4 +47,11 @@ return [
 		'redirect' => env('PATREON_REDIRECT_URI'),
 	],
 
+	'reddit' => [
+		'username' => env('REDDIT_USERNAME'),
+		'password' => env('REDDIT_PASSWORD'),
+		'client_id' => env('REDDIT_APP_ID'),
+		'client_secret' => env('REDDIT_APP_SECRET'),
+	],
+
 ];

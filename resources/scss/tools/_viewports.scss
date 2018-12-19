@@ -1,0 +1,67 @@
+@mixin breakpoint($start, $finish) {
+	@if map-has-key($min-widths, $start) {
+		@if map-has-key($max-widths, $finish) {
+			@media (min-width: #{map-get($min-widths, $start)}) and (max-width: #{map-get($max-widths, $finish)}) {
+				@content;
+			}
+		} @else {
+			@media (min-width: #{map-get($min-widths, $start)}) {
+				@content;
+			}
+		}
+	} @else if map-has-key($max-widths, $finish) {
+		@media (max-width: #{map-get($max-widths, $finish)}) {
+			@content;
+		}
+	} @else {
+		@warn "`#{$start}` or `#{$finish}` doesn't exist in `min` or `max-widths` maps.";
+	}
+}
+
+@mixin min-width($breakpoint) {
+	@include breakpoint($breakpoint, 'infinity') {
+		@content;
+	}
+}
+
+@mixin max-width($breakpoint) {
+	@include breakpoint('zero', $breakpoint) {
+		@content;
+	}
+}
+
+@mixin only-width($breakpoint) {
+	@include breakpoint($breakpoint, $breakpoint) {
+		@content;
+	}
+}
+
+@mixin xs {
+	@include only-width('xs') {
+		@content;
+	}
+}
+
+@mixin sm {
+	@include only-width('sm') {
+		@content;
+	}
+}
+
+@mixin md {
+	@include only-width('md') {
+		@content;
+	}
+}
+
+@mixin lg {
+	@include only-width('lg') {
+		@content;
+	}
+}
+
+@mixin xl {
+	@include only-width('xl') {
+		@content;
+	}
+}

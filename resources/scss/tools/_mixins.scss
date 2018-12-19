@@ -1,0 +1,11 @@
+@function branded($color, $saturation: 22%, $opacity: 1, $brand: $royal) {
+	@return hsla(hue($brand), $saturation, lightness($color), $opacity);
+}
+
+@function primaryFont() {
+	@return 'Roboto Condensed', sans-serif;
+}
+
+@function stylishFont() {
+	@return 'Inknut Antiqua', serif;
+}

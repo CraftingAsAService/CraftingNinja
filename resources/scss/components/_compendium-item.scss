@@ -1,0 +1,145 @@
+.compendium-item {
+	border-radius: $border-radius;
+	padding: 8px;
+	box-shadow: 1px 1px 2px $light;
+
+	align-items: center;
+
+	min-width: 0;
+	overflow: hidden;
+
+	background-color: $gray-050;
+
+	> img {
+		margin-right: 8px;
+	}
+	.media-body {
+		min-width: 0; // Required for flex ellipsis
+	}
+	> .input {
+		input {
+			width: 48px;
+			text-align: center;
+
+			background-color: $gray-025;
+			border-color: $gray-050;
+			transition: all 100ms;
+		}
+	}
+	> .input, > .button {
+		margin-left: 8px;
+	}
+
+	.name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		margin-bottom: .25rem;
+
+		&[class*='rarity-']:not(.rarity-1) {
+			text-shadow: 1px 1px 2px $gray-700;
+		}
+		&.rarity-1 {
+			text-shadow: 1px 1px 2px $light;
+		}
+	}
+	.recipes {
+		color: var(--color-recipes);
+		.job .multiple {
+			color: #CCF8EE;
+			text-shadow: 1px 1px 2px #90AECF;
+		}
+	}
+	.equipment {
+		color: var(--color-equipment);
+		.job .multiple {
+			color: #FFFCCB;
+			text-shadow: 1px 1px 2px #CDAD85;
+		}
+	}
+	.recipes, .equipment {
+		&::before {
+			content: " · ";
+			color: $dark;
+		}
+	}
+	.job {
+		position: relative;
+		img {
+			@include moveUp(3);
+			+ img {
+				margin-left: -4px;
+			}
+		}
+		.multiple {
+			cursor: help;
+			@include moveDown(5);
+			margin-left: -8px;
+			font-size: .9rem;
+			&::after {
+				content: " · ";
+				color: $dark;
+				@include moveUp(5);
+			}
+		}
+	}
+	.sublevel-icon {
+		font-size: .8em;
+		@include moveUp(1);
+		&:first-child {
+			margin-left: 2px;
+		}
+	}
+	.secondary {
+		opacity: .75;
+	}
+	.level {
+		@include min-width('md') {
+			&::before {
+				content: "Lv ";
+			}
+		}
+	}
+	.ilvl {
+		color: var(--color-ilvl);
+		&::before {
+			content: "i";
+		}
+		@include min-width('md') {
+			&::before {
+				content: "iLv ";
+			}
+		}
+	}
+	.category {
+		color: var(--gray);
+	}
+
+	&:not(.-plain) {
+		&:hover {
+			background-color: darken($gray-050, 100);
+			.secondary {
+				opacity: 1;
+			}
+		}
+	}
+
+	&.-header {
+		background-color: $gray-200;
+		.saved-icon {
+			opacity: 0;
+			transition: all 250ms;
+			&.-active {
+				opacity: 1;
+			}
+		}
+		.name {
+			text-shadow: 1px 1px 2px $light;
+			margin-bottom: 0;
+		}
+		&:hover {
+			background-color: $gray-200;
+		}
+	}
+}

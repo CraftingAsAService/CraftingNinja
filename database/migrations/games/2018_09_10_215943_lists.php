@@ -15,15 +15,16 @@ class Lists extends Migration
 	{
 		Schema::create('lists', function (Blueprint $table) {
 			$table->increments('id');
+			$table->string('locale')->index();
 			$table->integer('user_id')->unsigned(); // FK `users` in Primary DB
 			$table->boolean('public')->default(0); // Searchable by public if true
-			$table->boolean('active')->default(1); // The user's "active" list
 			$table->string('name')->nullable(); // Required if public
 			$table->string('description')->nullable();
 			$table->json('contents');
 			$table->timestamps();
 
 			$table->index('user_id');
+			$table->index('public');
 		});
 	}
 

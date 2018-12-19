@@ -1,0 +1,35 @@
+$morocco: #3d1c00;
+$scarlet: #fa2a00;
+$lobster: #ff4040;
+$crimson: #e01f36;
+$thorns: #812336;
+$teal: #25c1c1;
+$gulf: #86b8b1;
+$terra: #e8ddcb;
+$orleans: #f2d694;
+
+$royal: #6441a4;
+$vivid: #8c379e;
+$starship: #daeb4e;
+$ronchi: #f0dc50;
+
+$white: #ffffff;
+$whitesmoke: #f7f7f7;
+$gallery: #ebeaea;
+$empress: #747475;
+$mirage: #343a40;
+$woodsmoke: #18191a;
+$black: #000000;
+
+/**
+ *
+ */
+
+$alchemy:        #00ff5b;
+$alchemy-dark: #1bd75e;
+
+$color-primary:        $lobster;
+$color-primary-darken: darken($lobster, 10%);
+$post-category-1: darken($alchemy-dark, 10%); // Alchemy Theme Dark Green, even darker
+$color-3: $alchemy;
+$color-3-darken: $alchemy-dark;

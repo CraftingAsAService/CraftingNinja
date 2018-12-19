@@ -27,14 +27,14 @@ gulp.task('watch', function() {
 	/**
 	 * CSS
 	 */
-	gulp.watch('resources/assets/scss/**/*.scss', debounce(gulp.parallel('css')));
+	gulp.watch('resources/scss/**/*.scss', debounce(gulp.parallel('css')));
 
 	/**
 	 * JavaScript
 	 */
-	gulp.watch('resources/assets/js/**/*.js', debounce(gulp.parallel('js')));
+	gulp.watch('resources/js/**/*.js', debounce(gulp.parallel('js')));
 
-	gulp.watch('resources/assets/js/core/**/*.js', debounce(gulp.parallel('jsCore')));
+	gulp.watch('resources/js/core/**/*.js', debounce(gulp.parallel('jsCore')));
 });
 
 /**
@@ -44,18 +44,18 @@ gulp.task('css', function (done) {
 	if ( ! getStatus())
 		return done();
 
-	return gulp.src('resources/assets/scss/**/*.scss')
+	return gulp.src('resources/scss/**/*.scss')
 		.pipe(plugins.plumber({ errorHandle: plugins.notify.onError("Error: <%= error.message %>") }))
 		// Filter out unchanged scss files, only works when watching
 		.pipe(plugins.if(global.isWatching, plugins.cached('css')))
 		// Find files that depend on the files that have changed
-		.pipe(plugins.sassInheritance({ dir: 'resources/assets/scss' }))
+		.pipe(plugins.sassInheritance({ dir: 'resources/scss' }))
 		// Filter out internal imports (folders and files starting with "_" )
 		.pipe(plugins.filter(function (file) {
 			return !/\/_/.test(file.path) || !/^_/.test(file.relative);
 		}))
 		// Run SASS and AutoPrefix it
-		.pipe(plugins.sass({ outputStyle: 'compressed', includePaths: 'resources/assets/scss' }).on('error', plugins.sass.logError))
+		.pipe(plugins.sass({ outputStyle: 'compressed', includePaths: 'resources/scss' }).on('error', plugins.sass.logError))
 		.pipe(plugins.autoprefixer())
 		// Save file down and notify
 		.pipe(gulp.dest('public/css'))
@@ -71,7 +71,7 @@ gulp.task('js', function (done) {
 	if ( ! getStatus())
 		return done();
 
-	return gulp.src(['resources/assets/js/**/*.js', '!./resources/assets/js/core/**/*.js'])
+	return gulp.src(['resources/js/**/*.js', '!./resources/js/core/**/*.js'])
 		.pipe(plugins.plumber({ errorHandle: plugins.notify.onError("Error: <%= error.message %>") }))
 		// filter out unchanged js files, only works when watching
 		.pipe(plugins.if(global.isWatching, plugins.cached('js')))
@@ -86,7 +86,7 @@ gulp.task('jsCore', function (done) {
 	if ( ! getStatus())
 		return done();
 
-	return gulp.src('resources/assets/js/core.js')
+	return gulp.src('resources/js/core.js')
 		.pipe(plugins.plumber({ errorHandle: plugins.notify.onError("Error: <%= error.message %>") }))
 		.pipe(plugins.jsImport({hideConsole: true}))
 		.pipe(plugins.terser())

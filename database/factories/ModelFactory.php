@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\Game\Aspects\Category;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Concepts\Book;
+use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -11,48 +16,34 @@
 |
 */
 
-// $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
-// 	static $password;
-
-// 	return [
-// 		'name' => $faker->name,
-// 		'email' => $faker->safeEmail,
-// 		'password' => $password ?: $password = bcrypt('secret'),
-// 		'remember_token' => str_random(10),
-// 	];
-// });
-
-$factory->define(App\Models\Game::class, function(Faker\Generator $faker) {
+$factory->define(User::class, function (Faker\Generator $faker) {
 	return [
-		'slug' => $faker->word,
-		'version' => round(abs($faker->latitude()), 2),
-		'name' => $faker->company,
-		'abbreviation' => $faker->tld,
+		'name' => $faker->name,
+		'email' => $faker->email,
+		'password' => bcrypt(str_random(10)),
+		'remember_token' => str_random(10),
 	];
 });
 
-$factory->define(App\Models\Game\Item::class, function(Faker\Generator $faker) {
+$factory->define(Item::class, function(Faker\Generator $faker) {
 	return [
-		// 'has_quality' => 1,
-		'level' => $faker->numberBetween(1, 999),
-		'ilvl' => $faker->numberBetween(1, 999),
-		// 'is_equipment' => 0,
-		'name' => $faker->word,
-		'description' => $faker->text,
+		'name' => $faker->name,
 	];
 });
 
-$factory->define(App\Models\Game\Recipe::class, function(Faker\Generator $faker) {
+$factory->define(Category::class, function(Faker\Generator $faker) {
 	return [
-		'job_id' => 0, // Required, overwrite if it matters for the generated model
-		'level' => $faker->numberBetween(1, 999),
+		'name' => $faker->name,
 	];
 });
 
-$factory->define(App\Models\Game\Job::class, function(Faker\Generator $faker) {
+$factory->define(Book::class, function(Faker\Generator $faker) {
+
+	$bookOwner = factory(User::class)->create();
+
 	return [
-		'type' => 'Hero',
-		'name' => $faker->word,
-		'abbreviation' => $faker->tld,
+		'title' => 'Super Awesome Book',
+		'user_id' => $bookOwner->id,
+		'locale' => app()->getLocale()
 	];
 });

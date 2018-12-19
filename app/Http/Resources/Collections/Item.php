@@ -20,7 +20,7 @@ class Item extends JsonResource
 			'icon' => $this->icon,
 			'rarity' => $this->rarity,
 			'ilvl' => $this->ilvl,
-			'category' => $this->category->name,
+			'category' => $this->category ? $this->category->name : '',
 		];
 
 		if ($this->recipes->count())

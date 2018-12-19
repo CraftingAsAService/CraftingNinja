@@ -1,0 +1,111 @@
+.card {
+	figure {
+		&.-icon {
+			height: 66%;
+			text-align: center;
+			i {
+				font-size: 10rem;
+				color: $color-gray;
+			}
+			a {
+				padding: 20px;
+				i {
+					transition: all 250ms ease-in-out;
+				}
+				&:hover {
+					i {
+						transform: scale(1.025) rotate(-5deg);
+						// color: $lobster;
+					}
+				}
+			}
+		}
+
+		&.-gradient-1,
+		&.-gradient-2,
+		&.-gradient-3,
+		&.-gradient-4 {
+			a {
+				display: block;
+				&::after {
+					@include kelvin();
+					opacity: 0;
+					content: '';
+					transition: all 250ms ease-in-out;
+				}
+				&:hover {
+					&::after {
+						opacity: 1;
+					}
+				}
+			}
+		}
+
+		$opacity: .1;
+		$start: rgba($color-gray, $opacity);
+		$colors-list: $color-primary-darken $color-2 $color-3 $color-4;
+		@each $current-color in $colors-list {
+			$i: index($colors-list, $current-color);
+			&.-gradient-#{$i} {
+				$end: rgba($current-color, $opacity);
+				a {
+					background: linear-gradient(45deg, #{$start} 0%, #{$end} 100%);
+					&::after {
+						background: linear-gradient(90deg, #{$start} 0%, #{$end} 100%);
+					}
+				}
+			}
+		}
+
+	}
+}
+
+// .card {
+// 	&.-alpha {
+// 		max-height: 200px;
+// 	}
+// }
+
+// .major-media,
+// .minor-media {
+// 	position: relative;
+
+// 	overflow: hidden;
+// 	height: 200px;
+
+// 	background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) );
+
+// 	> img {
+// 		position: absolute;
+// 		left: 0;
+// 		top: -50%;
+// 		z-index: 0;
+
+// 		min-width: 100%;
+// 		min-height: 200px;
+
+// 		opacity: .5;
+// 	}
+
+// 	> .text {
+// 		text-align: center;
+// 		margin: 0 auto;
+
+// 		position: relative;
+// 		z-index: 1;
+// 		top: 50%;
+// 		transform: translateY(-50%);
+
+// 		> h1 {
+// 			font-family: stylishFont();
+// 		}
+// 	}
+
+// }
+
+// .minor-media {
+// 	height: 100px;
+// 	> img {
+// 		min-height: 100px;
+// 	}
+// }

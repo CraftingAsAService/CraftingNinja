@@ -22,6 +22,9 @@ class IsGame
 			return redirect('/');
 		}
 
+		// If it is a game, fuhgeddaboudit
+		$request->route()->forgetParameter('game');
+
 		return $next($request);
 	}
 }

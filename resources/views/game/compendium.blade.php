@@ -15,10 +15,10 @@
 @endsection
 
 @section('content')
-	<div id='filtration' class='my-3'>
+	<div id='filtration'>
 		<span id='chapter-select' class='mr-1'>
 			<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-				<i class='fas fa-bookmark'></i> Chapter: <span id='chapter'>Items</span>
+				<i class='fas fa-bookmark'></i> <span class='d-none d-md-inline-block'>Chapter:&nbsp;</span><span id='chapter'>Items</span>
 			</button>
 			<div class='dropdown-menu'>
 				<a class='dropdown-item active' href='#' data-chapter='items'>Items</a>
@@ -243,6 +243,7 @@
 			<div class='media-body'>
 				<h6 class='name'></h6>
 				<div class='secondary'>
+					<span class='ilvl'></span>
 					<span class='recipes'>
 						<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
 						<span class='level'></span>
@@ -251,7 +252,6 @@
 						<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
 						<span class='level'></span>
 					</span>
-					<span class='ilvl'></span>
 
 					<div class='category'></div>
 				</div>

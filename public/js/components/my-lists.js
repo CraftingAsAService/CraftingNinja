@@ -1,0 +1,1 @@
+"use strict";caas.myLists=new Vue({el:".my-lists",data:function(){return{results:[],noResults:!1}},mounted:function(){axios.get("/api/users/my/lists").then(s=>{this.results=s.data,this.noResults=0==s.data.length}).catch(s=>console.log(s))},methods:{}});

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use App\Models\Game\Concepts\Lists;
+
 class User extends Authenticatable
 {
 	use Notifiable;
@@ -30,5 +32,14 @@ class User extends Authenticatable
 		'password', 'remember_token',
 		'provider', 'provider_id',
 	];
+
+	/**
+	 * Scopes
+	 */
+
+
+	/**
+	 * Relationships
+	 */
 
 }
