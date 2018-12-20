@@ -1,7 +1,7 @@
 {{-- TODO LAYOUT --}}
 
-<h1>{{ $book->title }}</h1>
+<h1>{{ $book->name }}</h1>
 
-@foreach ($book->items as $item)
-	{{ $item->name }} x {{ $item->pivot->quantity }}<br>
+@foreach ($book->jottings as $entry)
+	{{ $entry->jottable->name }} x {{ $entry->quantity }}<br>
 @endforeach

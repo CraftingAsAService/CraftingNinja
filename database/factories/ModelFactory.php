@@ -43,7 +43,6 @@ $factory->define(Listing::class, function(Faker\Generator $faker) {
 
 	return [
 		'user_id' => $listsOwner->id,
-		'name:en' => $faker->words(rand(2, 4)),
 	];
 });
 

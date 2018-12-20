@@ -2,6 +2,8 @@
 
 namespace App\Models\Game\Aspects;
 
+use App\Models\Game\Concepts\Listing\Jotting;
+
 class Item extends \App\Models\Game\Aspect
 {
 
@@ -353,6 +355,11 @@ class Item extends \App\Models\Game\Aspect
 	public function ingredients_of()
 	{
 		return $this->belongsToMany(Recipe::class, 'recipe_ingredients')->withPivot('quantity');
+	}
+
+	public function listing_jotting()
+	{
+		return $this->morphMany(Jotting::class, 'jottable');
 	}
 
 	/**

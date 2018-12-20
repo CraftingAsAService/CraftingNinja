@@ -53,6 +53,8 @@ abstract class TestCase extends BaseTestCase
 	{
 		parent::setUp();
 
+		// $this->withoutExceptionHandling();
+
 		// Only creating one test game for unit testing
 		// Normally this exists in it's own database, not just a prefix within the same database
 		// I couldn't figure out how to do unit testing with two+ distinct databases

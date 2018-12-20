@@ -34,17 +34,28 @@ class Lists extends Migration
 			$table->foreign('listing_id')->references('id')->on('listings')->onDelete('cascade');
 		});
 
-		Schema::create('listing_contents', function (Blueprint $table) {
+		Schema::create('listing_jottings', function (Blueprint $table) {
 			$table->increments('id');
 			$table->integer('listing_id')->unsigned()->index(); // FK to objectives
 
 			$table->smallInteger('quantity');
 
 			// Polymorphic table
-			$table->integer('contents_id')->unsigned();
-			$table->string('contents_type');
+			$table->integer('jottable_id')->unsigned();
+			$table->string('jottable_type');
 
 			$table->foreign('listing_id')->references('id')->on('listings')->onDelete('cascade');
+		});
+
+		Schema::create('listing_votes', function (Blueprint $table) {
+			$table->increments('id');
+			$table->integer('listing_id')->unsigned()->index(); // FK to objectives
+			$table->integer('user_id')->unsigned()->index(); // FK to users
+
+			$table->timestamps();
+
+			$table->foreign('listing_id')->references('id')->on('listings')->onDelete('cascade');
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 		});
 	}
 
@@ -55,7 +66,8 @@ class Lists extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('listing_contents');
+		Schema::dropIfExists('listing_votes');
+		Schema::dropIfExists('listing_jottings');
 		Schema::dropIfExists('listing_translations');
 		Schema::dropIfExists('listings');
 	}
