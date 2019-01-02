@@ -15,74 +15,61 @@ class Objectives extends Migration
 	{
 		// Objectives are Quests, Fates, Leves, Achievements
 		Schema::create('objectives', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
+			// If restricted to a job group...
+			$table->unsignedInteger('niche_id')->nullable(); // FK JobSets Group IDs, not the ID of the table itself
+			// NPC who gives quest
+			$table->unsignedInteger('issuer_id')->nullable(); // FK Npc
+			// "levemete"
+			$table->unsignedInteger('target_id')->nullable(); // FK Npc
 
 			// Is it a quest, fate, leve, achievement, etc?
-			$table->tinyInteger('type')->nullable()->index();
+			$table->tinyInteger('type')->nullable();
 			// Can you do this more than once?
 			$table->binary('repeatable')->nullable();
-
 			// Level requirement?
-			$table->tinyInteger('level')->unsigned()->nullable()->index();
-			// If restricted to a job group...
-			$table->integer('group_id')->unsigned()->nullable()->index(); // FK JobSets Group IDs, not the ID of the table itself
-
-			// NPC who gives quest
-			$table->integer('issuer')->unsigned()->nullable(); // FK Npc
-			// "levemete"
-			$table->integer('target')->unsigned()->nullable(); // FK Npc
+			$table->unsignedTinyInteger('level')->nullable();
 
 			// Objectives can have Coordinates
 			// Objectives can have Details - plate, frame, areaicon, icon, etc etc
+
+			// Indexes
+			$table->index('niche_id', 'n');
+			$table->index('type', 't');
+			$table->index('level', 'l');
+			$table->cascadeDeleteForeign('niches');
+			$table->foreign('issuer_id')->references('id')->on('npcs')->onDelete('cascade');
+			$table->foreign('target_id')->references('id')->on('npcs')->onDelete('cascade');
 		});
 
 		Schema::create('objective_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('objective_id')->unsigned(); // FK to objectives
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
 			$table->string('description')->nullable();
-
-			$table->unique(['objective_id', 'locale']);
-			$table->foreign('objective_id')->references('id')->on('objectives')->onDelete('cascade');
 		});
 
+		Schema::create('item_objectives', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
 
-		Schema::create('objective_item_required', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('objective_id')->unsigned()->index(); // FK objectives
-
-			// Which quality is required?
-			$table->tinyInteger('quality')->unsigned()->default(0);
-
-			// Item given/required
-			$table->integer('item_id')->unsigned()->index();
+			// Additional Pivot Fields
+			$table->boolean('reward')->nullable();
 			// Qty given/required
-			$table->integer('quantity')->unsigned()->default(1);
-
-			// treat experience points like an item
-			$table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
-			$table->foreign('objective_id')->references('id')->on('objectives')->onDelete('cascade');
-		});
-
-
-		Schema::create('objective_item_reward', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('objective_id')->unsigned()->index(); // FK objectives
-
-			// Which quality is given?
-			$table->tinyInteger('quality')->unsigned()->default(0);
-
-			// Item received
-			$table->integer('item_id')->unsigned();
-			// Amount received
-			$table->integer('quantity')->unsigned()->default(1);
+			$table->unsignedInteger('quantity')->default(1);
+			// Which quality is required?
+			$table->unsignedTinyInteger('quality')->default(0);
 			// Drop Rate.  Null == 100% // 50 == 50%
-			$table->tinyInteger('rate')->unsigned()->nullable();
+			$table->unsignedTinyInteger('rate')->nullable();
 
-			$table->foreign('objective_id')->references('id')->on('objectives')->onDelete('cascade');
+			// Indexes
+			$table->index('reward', 'r');
+
+			// Description of table
+			// Used to handle both Objective Rewards and Requirements
 		});
 	}
 
@@ -93,8 +80,7 @@ class Objectives extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('objective_item_reward');
-		Schema::dropIfExists('objective_item_required');
+		Schema::dropIfExists('item_objectives');
 		Schema::dropIfExists('objective_translations');
 		Schema::dropIfExists('objectives');
 	}

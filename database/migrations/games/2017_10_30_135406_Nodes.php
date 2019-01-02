@@ -14,34 +14,27 @@ class Nodes extends Migration
 	public function up()
 	{
 		Schema::create('nodes', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
 
-			$table->smallInteger('level')->unsigned()->nullable();
-			$table->tinyInteger('type')->unsigned()->nullable();
+			$table->unsignedSmallInteger('level')->nullable();
+			$table->unsignedTinyInteger('type')->nullable();
 
 			// Nodes can have Coordinates
 			// Nodes can have Details
 		});
 
 		Schema::create('node_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('node_id')->unsigned(); // FK to nodes
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
-
-			$table->unique(['node_id', 'locale']);
-			$table->foreign('node_id')->references('id')->on('nodes')->onDelete('cascade');
 		});
 
-		Schema::create('node_rewards', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('node_id')->unsigned()->index(); // FK to nodes
-			$table->integer('item_id')->unsigned()->index(); // FK to items
-
-			$table->foreign('node_id')->references('id')->on('nodes')->onDelete('cascade');
-			$table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+		Schema::create('item_nodes', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
 		});
 	}
 
@@ -52,6 +45,7 @@ class Nodes extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('item_nodes');
 		Schema::dropIfExists('node_translations');
 		Schema::dropIfExists('nodes');
 	}

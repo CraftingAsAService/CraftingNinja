@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class Categories extends Migration
 {
+
 	/**
 	 * Run the migrations.
 	 *
@@ -14,22 +15,22 @@ class Categories extends Migration
 	public function up()
 	{
 		Schema::create('categories', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
+			$table->unsignedInteger('category_id')->nullable();
 
-			$table->integer('category_id')->unsigned()->nullable()->index(); // Self FK - Parent Category
+			// Indexes
+			$table->index('category_id', 'cid');
+			$table->cascadeDeleteForeign($table->getTable()); // Self-referential
 		});
 
 		Schema::create('category_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('category_id')->unsigned(); // FK to items
-			$table->tinyInteger('rank')->unsigned()->default(0);
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
-
-			$table->unique(['category_id', 'locale']);
-			$table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+			$table->unsignedTinyInteger('rank')->default(0);
 		});
 	}
 

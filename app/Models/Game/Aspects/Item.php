@@ -98,9 +98,9 @@ class Item extends \App\Models\Game\Aspect
 				$query->whereIn('equipment.slot', array_keys(array_intersect(config('game.slotToEquipment'), explode(',', $filters['slot']))));
 			}
 
-			if (isset($filters['eclass']))
-				$query->join('job_groups', 'job_groups.group_id', '=', 'equipment.job_group_id')
-					->whereIn('job_groups.job_id', explode(',', $filters['eclass']));
+			// if (isset($filters['eclass']))
+			// 	$query->join('job_groups', 'job_groups.group_id', '=', 'equipment.job_group_id')
+			// 		->whereIn('job_groups.job_id', explode(',', $filters['eclass']));
 		}
 
 		return $query;

@@ -14,11 +14,12 @@ class Coordinates extends Migration
 	public function up()
 	{
 		Schema::create('coordinates', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
+			$table->unsignedInteger('zone_id')->default(0); // FK Zones
 
 			// Many to Many Polymorphic table
-			$table->integer('zone_id')->unsigned()->default(0)->index(); // FK Zones
-			$table->integer('coordinate_id')->unsigned();
+			$table->unsignedInteger('coordinate_id');
 			$table->string('coordinate_type');
 
 			// A lot of different things (NPCs, Shops, mining/gathering nodes, quests, etc, etc) can exist in a zone at a specific spot
@@ -26,9 +27,10 @@ class Coordinates extends Migration
 			$table->string('y')->nullable(); // Y Coordinate
 			$table->string('z')->nullable();
 
-			$table->index(['coordinate_type', 'coordinate_id']);
-
-			$table->foreign('zone_id')->references('id')->on('zones')->onDelete('cascade');
+			// Indexes
+			$table->index(['coordinate_type', 'coordinate_id'], 'c');
+			$table->index('zone_id', 'z');
+			$table->cascadeDeleteForeign('zones');
 		});
 	}
 

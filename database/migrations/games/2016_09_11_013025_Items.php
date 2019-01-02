@@ -15,6 +15,7 @@ class Items extends Migration
 	{
 		// Contains only language-neutral data.  item_translations available for name/etc
 		Schema::create('items', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
 
 			// Items, by themselves are so varied in usage and statistics,
@@ -28,10 +29,10 @@ class Items extends Migration
 			// Icons will be referenced as something like '/images/icons/items/$value.png'
 			// Icons, if null, will instead use the ID of the row for simplicities sake
 			// "rarity": 1, // Useful for coloring output, more than anything
-			$table->integer('category_id')->unsigned()->nullable(); // FK Categories
-			$table->smallInteger('ilvl')->unsigned()->default('1');
+			$table->unsignedInteger('category_id')->nullable(); // FK Categories
+			$table->unsignedSmallInteger('ilvl')->default('1');
 			$table->string('icon')->nullable();
-			$table->tinyInteger('rarity')->unsigned()->default('0');
+			$table->unsignedTinyInteger('rarity')->default('0');
 
 			// Ignoring these
 			// "convertable": 1, // IGNORE, converting an item into materia outside scope, and a little too advanced to accurately account for
@@ -46,19 +47,18 @@ class Items extends Migration
 			// "collectable": 1, // Not sure what this is either
 			// "patch": 3.0, // IGNORE, scope
 			// "patchCategory": 5, // IGNORE, scope
+
+			// Indexes
+			$table->cascadeDeleteForeign('categories');
 		});
 
 		Schema::create('item_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('item_id')->unsigned(); // FK to items
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
 			$table->text('description')->nullable();
-
-			$table->unique(['item_id', 'locale']);
-			$table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
 		});
 	}
 

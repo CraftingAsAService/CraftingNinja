@@ -11,10 +11,10 @@ class Objective extends \App\Models\Game\Aspect
 	 * Relationships
 	 */
 
-	public function jobs()
-	{
-		return $this->hasManyThrough(Job::class, \App\Models\Game\Concept\JobGroup::class, 'job_id', 'job_group_id', 'group_id');
-	}
+	// public function jobs()
+	// {
+	// 	return $this->hasManyThrough(Job::class, \App\Models\Game\Concept\JobGroup::class, 'job_id', 'job_group_id', 'group_id');
+	// }
 
 	public function issuer()
 	{

@@ -16,21 +16,21 @@ class Zones extends Migration
 		// A zone is a place you can go
 		// Generally zones have coordinates
 		Schema::create('zones', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
+			$table->unsignedInteger('zone_id')->nullable(); // Self FK - Parent Zone
 
-			$table->integer('zone_id')->unsigned()->nullable()->index(); // Self FK - Parent Zone
+			// Indexes
+			$table->index('zone_id', 'z');
+			$table->cascadeDeleteForeign('zones');
 		});
 
 		Schema::create('zone_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('zone_id')->unsigned(); // FK to items
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
-
-			$table->unique(['zone_id', 'locale']);
-			$table->foreign('zone_id')->references('id')->on('zones')->onDelete('cascade');
 		});
 	}
 

@@ -14,6 +14,7 @@ class Jobs extends Migration
 	public function up()
 	{
 		Schema::create('jobs', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
 
 			// 18 chosen as it's twice the length of 'gathering', to allow for expansion
@@ -27,19 +28,33 @@ class Jobs extends Migration
 			// Machinist is a tier 2 battle job, maybe tier 1, but it's really semanitics
 			// I would have done a simple `boolean` of `advanced`, but the tier allows for odd use cases
 			$table->tinyInteger('tier')->unsigned()->default(0);
+
+			// Indexes
+			$table->index('type', 't');
 		});
 
 		Schema::create('job_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('job_id')->unsigned(); // FK to jobs
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name')->default('Hero');			// Gladiator
 			$table->string('abbreviation')->default('hero');	// gld
+		});
 
-			$table->unique(['job_id', 'locale']); // Each job can only have one name per locale
-			$table->foreign('job_id')->references('id')->on('jobs')->onDelete('cascade');
+		Schema::create('niches', function(Blueprint $table) {
+			// Fields
+			$table->increments('id');
+
+			// Description of table
+			// Contains no real data, exists to support ManyToMany relationship
+			// A niche is a collection of jobs; a piece of equipment may be equipable by 12 different jobs
+			//  Those 12 are filling a niche
+		});
+
+		Schema::create('job_niches', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
 		});
 	}
 
@@ -50,6 +65,8 @@ class Jobs extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('job_niches');
+		Schema::dropIfExists('niches');
 		Schema::dropIfExists('job_translations');
 		Schema::dropIfExists('jobs');
 	}

@@ -14,25 +14,22 @@ class NPCs extends Migration
 	public function up()
 	{
 		Schema::create('npcs', function (Blueprint $table) {
+			// Fields
 			$table->increments('id');
 
 			// NPCs table also encompases "mobs"
 			$table->boolean('enemy')->default(0);
-			$table->tinyInteger('level')->unsigned()->nullable();
+			$table->unsignedSmallInteger('level')->nullable();
 
 			// NPCs can have Coordinates
 		});
 
 		Schema::create('npc_translations', function (Blueprint $table) {
-			$table->increments('id');
-			$table->integer('npc_id')->unsigned(); // FK to items
+			// Build the basics of the table
+			$table->translatable();
 
-			$table->string('locale')->index();
-
+			// Fields
 			$table->string('name');
-
-			$table->unique(['npc_id', 'locale']);
-			$table->foreign('npc_id')->references('id')->on('npcs')->onDelete('cascade');
 		});
 	}
 

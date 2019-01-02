@@ -54,11 +54,11 @@ class Equipment extends \App\Models\Game\Concept
 		return $query;
 	}
 
-	public function scopeFilterByJobs($query, array $jobIds)
-	{
-		return $query->join('job_groups as jg', 'jg.group_id', '=', 'equipment.job_group_id')
-					->whereIn('jg.job_id', $jobIds);
-	}
+	// public function scopeFilterByJobs($query, array $jobIds)
+	// {
+	// 	return $query->join('job_groups as jg', 'jg.group_id', '=', 'equipment.job_group_id')
+	// 				->whereIn('jg.job_id', $jobIds);
+	// }
 
 	/**
 	 * Relationships
@@ -69,9 +69,9 @@ class Equipment extends \App\Models\Game\Concept
 		return $this->belongsTo(\App\Models\Game\Aspects\Item::class)->withTranslation();
 	}
 
-	public function jobGroups()
-	{
-		return $this->hasMany(JobGroup::class, 'group_id', 'job_group_id');
-	}
+	// public function jobGroups()
+	// {
+	// 	return $this->hasMany(JobGroup::class, 'group_id', 'job_group_id');
+	// }
 
 }
