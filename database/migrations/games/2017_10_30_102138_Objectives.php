@@ -52,7 +52,7 @@ class Objectives extends Migration
 			$table->string('description')->nullable();
 		});
 
-		Schema::create('item_objectives', function (Blueprint $table) {
+		Schema::create('item_objective', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
 

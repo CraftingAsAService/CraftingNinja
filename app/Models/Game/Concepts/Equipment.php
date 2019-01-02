@@ -2,7 +2,11 @@
 
 namespace App\Models\Game\Concepts;
 
-class Equipment extends \App\Models\Game\Concept
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Concept;
+use App\Models\Game\Concepts\Niche;
+
+class Equipment extends Concept
 {
 
 	protected $table = 'equipment'; // Otherwise laravel will assume `equipments`
@@ -66,12 +70,18 @@ class Equipment extends \App\Models\Game\Concept
 
 	public function item()
 	{
-		return $this->belongsTo(\App\Models\Game\Aspects\Item::class)->withTranslation();
+		return $this->belongsTo(Item::class)->withTranslation();
 	}
 
-	// public function jobGroups()
-	// {
-	// 	return $this->hasMany(JobGroup::class, 'group_id', 'job_group_id');
-	// }
+	public function niche()
+	{
+		return $this->belongsTo(Niche::class);
+	}
+
+	public function jobs()
+	{
+		// TODO
+		// Some kind of has many through the niche connection
+	}
 
 }

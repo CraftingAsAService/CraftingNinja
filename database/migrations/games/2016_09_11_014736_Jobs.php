@@ -52,7 +52,7 @@ class Jobs extends Migration
 			//  Those 12 are filling a niche
 		});
 
-		Schema::create('job_niches', function (Blueprint $table) {
+		Schema::create('job_niche', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
 		});

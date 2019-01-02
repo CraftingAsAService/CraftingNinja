@@ -2,12 +2,25 @@
 
 namespace App\Models\Game\Aspects;
 
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Attribute;
+use App\Models\Game\Aspects\Category;
+use App\Models\Game\Aspects\Node;
+use App\Models\Game\Aspects\Npc;
+use App\Models\Game\Aspects\Objective;
+use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Concepts\Detail;
+use App\Models\Game\Concepts\Equipment;
 use App\Models\Game\Concepts\Listing\Jotting;
+use App\Models\Game\Concepts\Price;
+use App\Models\Game\Translations\ItemTranslation;
 
-class Item extends \App\Models\Game\Aspect
+class Item extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\ItemTranslation::class;
+	public $translationModel = ItemTranslation::class;
+	public $translatedAttributes = [ 'name', 'description' ];
 
 	/**
 	 * Scopes
@@ -263,103 +276,83 @@ class Item extends \App\Models\Game\Aspect
 	 * Relationships
 	 */
 
-	/**
-	 * Get all of the attributes of this item
-	 */
 	public function attributes()
 	{
-		return $this->belongsToMany(Attribute::class, 'item_attribute')->withPivot('quality', 'value');
+		return $this->belongsToMany(Attribute::class)->withTranslation()->withPivot('quality', 'value');
 	}
 
-	/**
-	 * Get the category that this item belongs to
-	 */
 	public function category()
 	{
 		return $this->belongsTo(Category::class)->withTranslation();
 	}
 
-	/**
-	 * Items can drop in zones
-	 */
-	public function coordinates()
-	{
-		return $this->morphToMany(\App\Models\Game\Aspects\Zone::class, 'coordinate')->withPivot('x', 'y', 'z');
-	}
-
-	/**
-	 * Get equipment description of this item
-	 */
 	public function equipment()
 	{
-		return $this->hasOne(\App\Models\Game\Concepts\Equipment::class);
+		return $this->hasOne(Equipment::class);
 	}
 
-	/**
-	 * Item Pricing
-	 */
-	public function pricing()
-	{
-		return $this->belongsToMany(\App\Models\Game\Concepts\ItemPrice::class)->using(Npc::class);
-	}
-
-	/**
-	 * Get the npcs
-	 * 	Use the ->vendor() or ->enemy() scopes like so $item->npcs()->vendor() || $item->npcs()->enemy()
-	 */
-	public function npcs()
-	{
-		return $this->belongsToMany(Npc::class);
-	}
-
-	/**
-	 * Get the shops that sell this item
-	 */
-	public function shops()
-	{
-		return $this->belongsToMany(Shop::class);
-	}
-
-	/**
-	 * Get any nodes that can produce this item
-	 *  gathering, fishing, etc
-	 */
-	public function nodes()
-	{
-		return $this->belongsToMany(Node::class, 'node_rewards');
-	}
-
-	/**
-	 * Get the objectives that this item is a requirement of
-	 * 	Or that it's a reward of
-	 */
-	public function objective_requirements()
-	{
-		return $this->belongsToMany(Objective::class, 'objective_item_required')->withPivot('quality', 'qty');
-	}
-
-	public function objective_rewards()
-	{
-		return $this->belongsToMany(Objective::class, 'objective_item_reward')->withPivot('quality', 'qty', 'rate');
-	}
-
-	/**
-	 * Get all of the recipes that create this item
-	 * 	or that uses this item
-	 */
 	public function recipes()
 	{
-		return $this->hasMany(Recipe::class);
+		return $this->hasMany(Recipe::class)->withTranslation();
 	}
 
-	public function ingredients_of()
+	public function ingredientsOf()
 	{
-		return $this->belongsToMany(Recipe::class, 'recipe_ingredients')->withPivot('quantity');
+		return $this->belongsToMany(Recipe::class)->withTranslation()->withPivot('quantity');
 	}
 
-	public function listing_jotting()
+	public function prices()
 	{
-		return $this->morphMany(Jotting::class, 'jottable');
+		return $this->belongsToMany(Price::class);
+	}
+
+	public function usedAsCurrency()
+	{
+		return $this->hasMany(Price::class);
+	}
+
+	public function npcs()
+	{
+		return $this->belongsToMany(Npc::class)->withTranslation()->withPivot('rate');
+	}
+
+	public function shops()
+	{
+		// Wait for a real use case
+		// TODO
+		// This will need to be a custom query
+		// ->npcs() (->merchants(), really) will have a ->shops() scope,
+		// 	and we'll want to DISTINCT those results
+	}
+
+	public function nodes()
+	{
+		return $this->belongsToMany(Node::class);
+	}
+
+	public function rewardedFrom()
+	{
+		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', true);
+	}
+
+	public function requirementOf()
+	{
+		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', false);
+	}
+
+	public function zones()
+	{
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+	}
+
+	public function details()
+	{
+		return $this->morphMany(Detail::class, 'detail');
+	}
+
+	public function jottings()
+	{
+		return $this->morphMany(Jotting::class, 'jotting');
 	}
 
 	/**

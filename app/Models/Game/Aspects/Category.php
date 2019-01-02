@@ -2,12 +2,14 @@
 
 namespace App\Models\Game\Aspects;
 
-use Dimsav\Translatable\Translatable;
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Translations\CategoryTranslation;
 
-class Category extends \App\Models\Game\Aspect
+class Category extends Aspect
 {
-	public $translationModel = \App\Models\Game\Translations\CategoryTranslation::class;
-	public $translatedAttributes = ['name'];
+	public $translationModel = CategoryTranslation::class;
+	public $translatedAttributes = [ 'name' ];
 
 	/**
 	 * Relationships
@@ -15,7 +17,12 @@ class Category extends \App\Models\Game\Aspect
 
 	public function parent()
 	{
-		return $this->belongsTo(Category::class, 'category_id')->withTranslation();
+		return $this->belongsTo(Category::class)->withTranslation();
+	}
+
+	public function items()
+	{
+		return $this->hasMany(Item::class)->withTranslation();
 	}
 
 	/**

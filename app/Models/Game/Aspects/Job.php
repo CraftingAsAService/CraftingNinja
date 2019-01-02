@@ -2,13 +2,28 @@
 
 namespace App\Models\Game\Aspects;
 
-class Job extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Niche;
+use App\Models\Game\Translations\JobTranslation;
+
+class Job extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\JobTranslation::class;
-	public $translatedAttributes = ['name', 'abbreviation'];
+	public $translationModel = JobTranslation::class;
+	public $translatedAttributes = [ 'name', 'abbreviation' ];
 
-	protected $appends = ['icon'];
+	protected $appends = [ 'icon' ];
+
+	/**
+	 * Accessors & Mutators
+	 */
+
+	public function getIconAttribute()
+	{
+		return $this->translate('en')->abbreviation;
+	}
 
 	/**
 	 * Scopes
@@ -25,9 +40,19 @@ class Job extends \App\Models\Game\Aspect
 	 * Relationships
 	 */
 
-	public function getIconAttribute()
+	public function listings()
 	{
-		return $this->translate('en')->abbreviation;
+		return $this->hasMany(Listing::class)->withTranslation();
+	}
+
+	public function niches()
+	{
+		return $this->belongsToMany(Niche::class);
+	}
+
+	public function recipes()
+	{
+		return $this->hasMany(Recipe::class)->withTranslation();
 	}
 
 }

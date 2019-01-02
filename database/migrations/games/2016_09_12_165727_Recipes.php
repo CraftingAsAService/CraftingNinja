@@ -46,7 +46,7 @@ class Recipes extends Migration
 			$table->text('description')->nullable();
 		});
 
-		Schema::create('item_recipes', function (Blueprint $table) {
+		Schema::create('item_recipe', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
 

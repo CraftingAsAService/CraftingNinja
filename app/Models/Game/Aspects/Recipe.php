@@ -2,11 +2,16 @@
 
 namespace App\Models\Game\Aspects;
 
-class Recipe extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
+use App\Models\Game\Translations\RecipeTranslation;
+
+class Recipe extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\RecipeTranslation::class;
-	// public $translatedAttributes = ['name'];
+	public $translationModel = RecipeTranslation::class;
+	public $translatedAttributes = [ 'name', 'description' ];
 
 	/**
 	 * Scopes
@@ -61,21 +66,17 @@ class Recipe extends \App\Models\Game\Aspect
 	}
 
 	/**
-	 * Accessors & Mutators
-	 */
-
-	/**
 	 * Relationships
 	 */
 
-	public function item()
+	public function produced()
 	{
 		return $this->belongsTo(Item::class)->withTranslation();
 	}
 
 	public function ingredients()
 	{
-		return $this->hasMany(Item::class, 'recipe_ingredients')->withPivot('quantity');
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity');
 	}
 
 	public function job()

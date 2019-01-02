@@ -32,7 +32,7 @@ class Nodes extends Migration
 			$table->string('name');
 		});
 
-		Schema::create('item_nodes', function (Blueprint $table) {
+		Schema::create('item_node', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
 		});

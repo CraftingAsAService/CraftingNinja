@@ -2,24 +2,29 @@
 
 namespace App\Models\Game\Aspects;
 
-class Node extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Concepts\Detail;
+use App\Models\Game\Translations\NodeTranslation;
+
+class Node extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\NodeTranslation::class;
-	public $translatedAttributes = ['name'];
+	public $translationModel = NodeTranslation::class;
+	public $translatedAttributes = [ 'name' ];
 
 	/**
 	 * Relationships
 	 */
 
-	public function coordinates()
+	public function zones()
 	{
-		return $this->morphedByMany(\App\Models\Game\Concepts\Coordinate::class, 'coordinates');
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
 	}
 
 	public function details()
 	{
-		return $this->morphMany(\App\Models\Game\Concepts\Detail::class, 'details');
+		return $this->morphMany(Detail::class, 'details');
 	}
 
 }

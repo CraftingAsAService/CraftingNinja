@@ -2,11 +2,15 @@
 
 namespace App\Models\Game\Aspects;
 
-class Shop extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Npc;
+use App\Models\Game\Translations\ShopTranslation;
+
+class Shop extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\ShopTranslation::class;
-	public $translatedAttributes = ['name'];
+	public $translationModel = ShopTranslation::class;
+	public $translatedAttributes = [ 'name' ];
 
 	/**
 	 * Scopes
@@ -17,9 +21,20 @@ class Shop extends \App\Models\Game\Aspect
 	 * Relationships
 	 */
 
+	public function zones()
+	{
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+	}
+
+	public function npcs()
+	{
+		return $this->belongsToMany(Npc::class)->withTranslation();
+	}
+
 	public function items()
 	{
-		return $this->belongsToMany(Item::class);
+		// TODO
+		// Some kind of has many through Npc::class
 	}
 
 	/**

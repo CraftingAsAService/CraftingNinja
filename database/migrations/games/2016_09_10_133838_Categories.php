@@ -30,7 +30,6 @@ class Categories extends Migration
 
 			// Fields
 			$table->string('name');
-			$table->unsignedTinyInteger('rank')->default(0);
 		});
 	}
 

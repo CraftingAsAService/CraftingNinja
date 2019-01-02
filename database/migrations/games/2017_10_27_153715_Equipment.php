@@ -16,7 +16,7 @@ class Equipment extends Migration
 		Schema::create('equipment', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			$table->unsignedInteger('item_id')->unique(); // FK Items, hasOne
+			$table->unsignedInteger('item_id'); // FK Items, hasOne
 			$table->unsignedInteger('niche_id')->default(0); // FK Niche ID, for a job set
 
 			// Equipment Related
@@ -36,6 +36,7 @@ class Equipment extends Migration
 			$table->unsignedSmallInteger('level')->default(1);
 			$table->unsignedTinyInteger('sockets')->default(0);
 
+			// Indexes
 			$table->unique('item_id', 'i'); // Equipment is an extension of the items table, so there can only be one item_id reference per table
 			$table->index('niche_id', 'n');
 			$table->index('slot', 's');

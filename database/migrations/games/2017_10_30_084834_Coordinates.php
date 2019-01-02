@@ -15,7 +15,7 @@ class Coordinates extends Migration
 	{
 		Schema::create('coordinates', function (Blueprint $table) {
 			// Fields
-			$table->increments('id');
+			$table->increments('id'); // Even though it's a glorified pivot table, the polymorphic nature makes an ID easier to manage here; a combination primary key would be every single other value here
 			$table->unsignedInteger('zone_id')->default(0); // FK Zones
 
 			// Many to Many Polymorphic table
@@ -26,6 +26,7 @@ class Coordinates extends Migration
 			$table->string('x')->nullable(); // X Coordinate
 			$table->string('y')->nullable(); // Y Coordinate
 			$table->string('z')->nullable();
+			$table->unsignedSmallInteger('radius')->nullable(); // If this dot embodies the idea of many coordinates surrounding this one
 
 			// Indexes
 			$table->index(['coordinate_type', 'coordinate_id'], 'c');

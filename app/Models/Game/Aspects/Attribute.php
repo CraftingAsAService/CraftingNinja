@@ -2,11 +2,15 @@
 
 namespace App\Models\Game\Aspects;
 
-class Attribute extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Translations\AttributeTranslation;
+
+class Attribute extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\AttributeTranslation::class;
-	public $translatedAttributes = ['name'];
+	public $translationModel = AttributeTranslation::class;
+	public $translatedAttributes = [ 'name' ];
 
 	/**
 	 * Scopes
@@ -28,7 +32,7 @@ class Attribute extends \App\Models\Game\Aspect
 
 	public function items()
 	{
-		$this->belongToMany(Item::class, 'item_attribute')->withPivot('quality', 'value');
+		$this->belongToMany(Item::class)->withTranslation()->withPivot('quality', 'value');
 	}
 
 }

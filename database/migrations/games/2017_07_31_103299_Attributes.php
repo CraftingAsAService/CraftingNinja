@@ -27,7 +27,7 @@ class Attributes extends Migration
 			$table->string('name');
 		});
 
-		Schema::create('attribute_items', function (Blueprint $table) {
+		Schema::create('attribute_item', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
 

@@ -2,19 +2,39 @@
 
 namespace App\Models\Game\Aspects;
 
-class Objective extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Translations\ObjectiveTranslation;
+
+class Objective extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\ObjectiveTranslation::class;
+	public $translationModel = ObjectiveTranslation::class;
+	public $translatedAttributes = [ 'name', 'description' ];
 
 	/**
 	 * Relationships
 	 */
 
+	public function zones()
+	{
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+	}
+
 	// public function jobs()
 	// {
 	// 	return $this->hasManyThrough(Job::class, \App\Models\Game\Concept\JobGroup::class, 'job_id', 'job_group_id', 'group_id');
 	// }
+
+	public function rewards()
+	{
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', true);
+	}
+
+	public function requirements()
+	{
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', false);
+	}
 
 	public function issuer()
 	{
@@ -24,11 +44,6 @@ class Objective extends \App\Models\Game\Aspect
 	public function target()
 	{
 		return $this->belongsTo(Npc::class, 'target');
-	}
-
-	public function coordinates()
-	{
-		return $this->morphedByMany(\App\Models\Game\Concept\Coordinate::class, 'coordinates');
 	}
 
 	public function details()

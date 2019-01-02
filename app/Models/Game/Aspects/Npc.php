@@ -2,20 +2,30 @@
 
 namespace App\Models\Game\Aspects;
 
-class Npc extends \App\Models\Game\Aspect
+use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Shop;
+use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Concepts\Detail;
+use App\Models\Game\Translations\NpcTranslation;
+
+class Npc extends Aspect
 {
 
-	public $translationModel = \App\Models\Game\Translations\NpcTranslation::class;
+	public $translationModel = NpcTranslation::class;
+	public $translatedAttributes = [ 'name' ];
 
 	/**
 	 * Scopes
 	 */
-	public function scopeVendor($query)
+	public function scopeMerchants($query)
 	{
-		return $query->whereNotNull('item_price_id');
+		// TODO
+		// We only want npcs with a price_id in the pivot table
+		// return $query->whereNotNull('price_id');
 	}
 
-	public function scopeEnemy($query)
+	public function scopeEnemies($query)
 	{
 		return $query->whereEnemy(true);
 	}
@@ -24,14 +34,30 @@ class Npc extends \App\Models\Game\Aspect
 	 * Relationships
 	 */
 
-	public function coordinates()
+	public function zones()
 	{
-		return $this->morphToMany(\App\Models\Game\Aspects\Zone::class, 'coordinate')->withPivot('x', 'y', 'z');
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
 	}
 
 	public function details()
 	{
-		return $this->morphMany(\App\Models\Game\Concepts\Detail::class, 'details');
+		return $this->morphMany(Detail::class, 'detail');
+	}
+
+	public function shops()
+	{
+		return $this->belongsToMany(Shop::class)->withTranslation();
+	}
+
+	public function items()
+	{
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('rate');
+	}
+
+	public function prices()
+	{
+		// TODO
+		// Utilize the price_id in the pivot table to pull this data
 	}
 
 }

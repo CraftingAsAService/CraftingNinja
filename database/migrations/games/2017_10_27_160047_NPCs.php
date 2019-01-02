@@ -22,6 +22,7 @@ class NPCs extends Migration
 			$table->unsignedSmallInteger('level')->nullable();
 
 			// NPCs can have Coordinates
+			// NPCs can have Details
 		});
 
 		Schema::create('npc_translations', function (Blueprint $table) {
@@ -30,6 +31,16 @@ class NPCs extends Migration
 
 			// Fields
 			$table->string('name');
+		});
+
+		// Merchants can sell items, or Mobs can drop items
+		Schema::create('item_npc', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
+
+			// Additional Pivot Fields
+			// If dropped, it might have a rate, 0-100%, assume 100% at `null`
+			$table->unsignedTinyInteger('rate')->nullable();
 		});
 	}
 
@@ -40,6 +51,7 @@ class NPCs extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('item_npcs');
 		Schema::dropIfExists('npc_translations');
 		Schema::dropIfExists('npcs');
 	}

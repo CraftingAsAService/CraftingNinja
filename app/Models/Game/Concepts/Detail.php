@@ -2,7 +2,9 @@
 
 namespace App\Models\Game\Concepts;
 
-class Detail extends \App\Models\Game\Concept
+use App\Models\Game\Concept;
+
+class Detail extends Concept
 {
 
 }

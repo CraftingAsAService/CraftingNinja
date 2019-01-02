@@ -19,7 +19,7 @@ class Items extends Migration
 			$table->increments('id');
 
 			// Items, by themselves are so varied in usage and statistics,
-			// 	that we rely on Aspects and Attributes for their values.
+			// 	that we rely on Details and Attributes for their values.
 			// 	Name and Description however are handled via the translations
 
 			// General Item Attributes
@@ -60,6 +60,33 @@ class Items extends Migration
 			$table->string('name');
 			$table->text('description')->nullable();
 		});
+		// A simpler take on prices
+		// While each NPC _could_ have differing prices for items, let's not and say we did.
+		Schema::create('prices', function (Blueprint $table) {
+			// Fields
+			$table->increments('id');
+
+			// This pricing entry is for which quality?
+			$table->unsignedTinyInteger('quality')->default(0);
+
+			// Mark if there's an "alternate" currency at work, identify it
+			// Treat null as "normal" currency, though it may be an item proper as well
+			$table->unsignedInteger('item_id')->nullable();
+
+			// Purchase Price (Player purchasing from Vendor) == true, or Sell Price (Player selling to vendor) == false
+			$table->boolean('market')->default(false);
+
+			// The amount you're purchasing or selling for, in the lowest denominator ($20.56 stored as 2056)
+			$table->unsignedInteger('amount')->default(0);
+
+			// Indexes
+			$table->cascadeDeleteForeign('items');
+		});
+
+		Schema::create('item_price', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
+		});
 	}
 
 	/**
@@ -69,6 +96,8 @@ class Items extends Migration
 	 */
 	public function down()
 	{
+		Schema::dropIfExists('item_price');
+		Schema::dropIfExists('prices');
 		Schema::dropIfExists('item_translations');
 		Schema::dropIfExists('items');
 	}
