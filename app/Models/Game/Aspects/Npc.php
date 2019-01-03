@@ -4,6 +4,7 @@ namespace App\Models\Game\Aspects;
 
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Shop;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
@@ -34,14 +35,14 @@ class Npc extends Aspect
 	 * Relationships
 	 */
 
-	public function zones()
+	public function detail()
 	{
-		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+		return $this->morphOne(Detail::class, 'detailable');
 	}
 
-	public function details()
+	public function zones()
 	{
-		return $this->morphMany(Detail::class, 'detail');
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 	public function shops()
@@ -54,10 +55,14 @@ class Npc extends Aspect
 		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('rate');
 	}
 
-	public function prices()
+	public function issuers()
 	{
-		// TODO
-		// Utilize the price_id in the pivot table to pull this data
+		$this->hasMany(Objective::class, 'issuer_id')->withTranslation();
+	}
+
+	public function targets()
+	{
+		$this->hasMany(Objective::class, 'target_id')->withTranslation();
 	}
 
 }

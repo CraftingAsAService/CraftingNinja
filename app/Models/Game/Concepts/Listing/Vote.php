@@ -2,13 +2,12 @@
 
 namespace App\Models\Game\Concepts\Listing;
 
+use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 
-class Vote extends \App\Models\Game\Concept
+class Vote extends Concept
 {
-
-	protected $table = 'listing_votes';
 
 	public $timestamps = true;
 
@@ -22,7 +21,7 @@ class Vote extends \App\Models\Game\Concept
 
 	public function listing()
 	{
-		return $this->belongsTo(Listing::class);
+		return $this->belongsTo(Listing::class)->withTranslation();
 	}
 
 	public function user()

@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Listing\Vote;
 use App\Models\Game\Concepts\Lists;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -41,5 +42,15 @@ class User extends Authenticatable
 	/**
 	 * Relationships
 	 */
+
+	public function listings()
+	{
+		return $this->hasMany(Listing::class)->withTranslation();
+	}
+
+	public function votes()
+	{
+		return $this->hasMany(Vote::class);
+	}
 
 }

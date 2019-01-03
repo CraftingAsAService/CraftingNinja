@@ -3,7 +3,13 @@
 namespace App\Models\Game\Aspects;
 
 use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
+use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Concepts\Detail;
+use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Niche;
 use App\Models\Game\Translations\ObjectiveTranslation;
 
 class Objective extends Aspect
@@ -16,39 +22,44 @@ class Objective extends Aspect
 	 * Relationships
 	 */
 
-	public function zones()
+	public function detail()
 	{
-		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+		return $this->morphOne(Detail::class, 'detailable');
 	}
 
-	// public function jobs()
-	// {
-	// 	return $this->hasManyThrough(Job::class, \App\Models\Game\Concept\JobGroup::class, 'job_id', 'job_group_id', 'group_id');
-	// }
+	public function zones()
+	{
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
+	}
+
+	public function listings()
+	{
+		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
 
 	public function rewards()
 	{
-		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', true);
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', true);
 	}
 
 	public function requirements()
 	{
-		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', false);
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', false);
 	}
 
 	public function issuer()
 	{
-		return $this->belongsTo(Npc::class, 'issuer');
+		return $this->belongsTo(Npc::class, 'issuer_id')->withTranslation();
 	}
 
 	public function target()
 	{
-		return $this->belongsTo(Npc::class, 'target');
+		return $this->belongsTo(Npc::class, 'target_id')->withTranslation();
 	}
 
-	public function details()
+	public function niche()
 	{
-		return $this->morphMany(\App\Models\Game\Concept\Detail::class, 'details');
+		return $this->belongsTo(Niche::class);
 	}
 
 }

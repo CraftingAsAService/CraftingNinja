@@ -5,6 +5,8 @@ namespace App\Models\Game\Aspects;
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
+use App\Models\Game\Concepts\Detail;
+use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Translations\RecipeTranslation;
 
 class Recipe extends Aspect
@@ -69,7 +71,7 @@ class Recipe extends Aspect
 	 * Relationships
 	 */
 
-	public function produced()
+	public function produces()
 	{
 		return $this->belongsTo(Item::class)->withTranslation();
 	}
@@ -82,6 +84,16 @@ class Recipe extends Aspect
 	public function job()
 	{
 		return $this->belongsTo(Job::class)->withTranslation();
+	}
+
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
+	}
+
+	public function listings()
+	{
+		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 }

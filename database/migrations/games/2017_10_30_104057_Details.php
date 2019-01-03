@@ -18,8 +18,8 @@ class Details extends Migration
 			$table->increments('id');
 
 			// Polymorphic table
-			$table->unsignedInteger('detail_id');
-			$table->string('detail_type');
+			$table->unsignedInteger('detailable_id');
+			$table->string('detailable_type');
 
 			$table->json('data');
 		});

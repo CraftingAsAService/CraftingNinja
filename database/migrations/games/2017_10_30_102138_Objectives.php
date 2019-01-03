@@ -57,7 +57,7 @@ class Objectives extends Migration
 			$table->pivot();
 
 			// Additional Pivot Fields
-			$table->boolean('reward')->nullable();
+			$table->boolean('reward')->default(true); // True == Reward, False == Required
 			// Qty given/required
 			$table->unsignedInteger('quantity')->default(1);
 			// Which quality is required?

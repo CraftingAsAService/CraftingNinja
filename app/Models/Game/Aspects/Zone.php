@@ -23,32 +23,32 @@ class Zone extends Aspect
 
 	public function parent()
 	{
-		return $this->belongsTo(Zone::class);
+		return $this->belongsTo(Zone::class)->withTranslation();
 	}
 
 	public function items()
 	{
-		return $this->morphedByMany(Item::class, 'coordinate')->withTranslation();
+		return $this->morphedByMany(Item::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 	public function nodes()
 	{
-		return $this->morphedByMany(Node::class, 'coordinate')->withTranslation();
+		return $this->morphedByMany(Node::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 	public function npcs()
 	{
-		return $this->morphedByMany(Npc::class, 'coordinate')->withTranslation();
+		return $this->morphedByMany(Npc::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 	public function shops()
 	{
-		return $this->morphedByMany(Shop::class, 'coordinate')->withTranslation();
+		return $this->morphedByMany(Shop::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 	public function objectives()
 	{
-		return $this->morphedByMany(Objective::class, 'coordinate')->withTranslation();
+		return $this->morphedByMany(Objective::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
 }

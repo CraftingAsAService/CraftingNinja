@@ -4,6 +4,7 @@ namespace App\Models\Game\Aspects;
 
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Translations\CategoryTranslation;
 
 class Category extends Aspect
@@ -23,6 +24,11 @@ class Category extends Aspect
 	public function items()
 	{
 		return $this->hasMany(Item::class)->withTranslation();
+	}
+
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
 	}
 
 	/**

@@ -14,12 +14,12 @@ class Price extends Concept
 
 	public function alternateCurrency()
 	{
-		$this->belongsTo(Item::class);
+		$this->belongsTo(Item::class)->withTranslation();
 	}
 
 	public function items()
 	{
-		$this->belongsToMany(Item::class);
+		$this->belongsToMany(Item::class)->withTranslation();
 	}
 
 }

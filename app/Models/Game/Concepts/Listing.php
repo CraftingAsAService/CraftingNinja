@@ -3,18 +3,23 @@
 namespace App\Models\Game\Concepts;
 
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Listing\Jotting;
+use App\Models\Game\Aspects\Job;
+use App\Models\Game\Aspects\Node;
+use App\Models\Game\Aspects\Objective;
+use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Listing\Vote;
+use App\Models\Game\Translations\ListingTranslation;
 use App\Models\User;
 use Carbon\Carbon;
 use Dimsav\Translatable\Translatable;
 
-class Listing extends \App\Models\Game\Concept
+class Listing extends Concept
 {
 
 	use Translatable;
 
-	public $translationModel = \App\Models\Game\Translations\ListingTranslation::class;
+	public $translationModel = ListingTranslation::class;
 	public $translatedAttributes = [ 'name', 'description' ];
 
 	public $timestamps = true;
@@ -44,9 +49,9 @@ class Listing extends \App\Models\Game\Concept
 	 * Relationships
 	 */
 
-	public function jottings()
+	public function job()
 	{
-		return $this->hasMany(Jotting::class);
+		return $this->belongsTo(Job::class)->withTranslation();
 	}
 
 	public function votes()
@@ -57,6 +62,26 @@ class Listing extends \App\Models\Game\Concept
 	public function user()
 	{
 		return $this->belongsTo(User::class);
+	}
+
+	public function items()
+	{
+		return $this->morphedByMany(Item::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
+
+	public function objectives()
+	{
+		return $this->morphedByMany(Objective::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
+
+	public function recipes()
+	{
+		return $this->morphedByMany(Recipe::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
+
+	public function nodes()
+	{
+		return $this->morphedByMany(Node::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 	/**

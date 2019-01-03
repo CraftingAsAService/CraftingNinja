@@ -34,4 +34,9 @@ class Niche extends Concept
 		return $this->hasMany(Equipment::class);
 	}
 
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
+	}
+
 }

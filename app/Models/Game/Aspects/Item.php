@@ -12,7 +12,7 @@ use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Equipment;
-use App\Models\Game\Concepts\Listing\Jotting;
+use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Price;
 use App\Models\Game\Translations\ItemTranslation;
 
@@ -316,43 +316,34 @@ class Item extends Aspect
 		return $this->belongsToMany(Npc::class)->withTranslation()->withPivot('rate');
 	}
 
-	public function shops()
-	{
-		// Wait for a real use case
-		// TODO
-		// This will need to be a custom query
-		// ->npcs() (->merchants(), really) will have a ->shops() scope,
-		// 	and we'll want to DISTINCT those results
-	}
-
 	public function nodes()
 	{
-		return $this->belongsToMany(Node::class);
+		return $this->belongsToMany(Node::class)->withTranslation();
 	}
 
 	public function rewardedFrom()
 	{
-		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', true);
+		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', true);
 	}
 
 	public function requirementOf()
 	{
-		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('quantity', 'quality', 'rate')->wherePivot('reward', false);
+		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', false);
+	}
+
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
 	}
 
 	public function zones()
 	{
-		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z');
+		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
-	public function details()
+	public function listings()
 	{
-		return $this->morphMany(Detail::class, 'detail');
-	}
-
-	public function jottings()
-	{
-		return $this->morphMany(Jotting::class, 'jotting');
+		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 	/**

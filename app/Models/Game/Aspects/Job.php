@@ -4,6 +4,7 @@ namespace App\Models\Game\Aspects;
 
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Niche;
 use App\Models\Game\Translations\JobTranslation;
@@ -53,6 +54,11 @@ class Job extends Aspect
 	public function recipes()
 	{
 		return $this->hasMany(Recipe::class)->withTranslation();
+	}
+
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
 	}
 
 }

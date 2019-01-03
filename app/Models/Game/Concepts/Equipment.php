@@ -78,10 +78,4 @@ class Equipment extends Concept
 		return $this->belongsTo(Niche::class);
 	}
 
-	public function jobs()
-	{
-		// TODO
-		// Some kind of has many through the niche connection
-	}
-
 }
