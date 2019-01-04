@@ -29,10 +29,10 @@ class Recipes extends Migration
 			// Recipes can have Details (durability, quality, progress, can hq or not)
 
 			// Indexes
-			$table->index('item_id', 'i');
-			$table->index('job_id', 'j');
-			$table->index('level', 'l');
-			$table->index('sublevel', 'sl');
+			$table->index('item_id');
+			$table->index('job_id');
+			$table->index('level');
+			$table->index('sublevel');
 			$table->cascadeDeleteForeign('items');
 			$table->cascadeDeleteForeign('jobs');
 		});

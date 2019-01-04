@@ -23,9 +23,9 @@ class Lists extends Migration
 			$table->timestamps();
 
 			// Indexes
-			$table->index('user_id', 'u');
-			$table->index('job_id', 'j');
-			$table->index('published_at', 'p');
+			$table->index('user_id');
+			$table->index('job_id');
+			$table->index('published_at');
 			// $table->cascadeDeleteForeign('users'); // Cannot include; Users exists on different schema
 			$table->cascadeDeleteForeign('jobs');
 		});
@@ -42,7 +42,7 @@ class Lists extends Migration
 		Schema::create('jottings', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			$table->unsignedInteger('listing_id')->index(); // FK to objectives
+			$table->unsignedInteger('listing_id'); // FK to objectives
 
 			// Polymorphic table
 			$table->unsignedInteger('jotting_id');
@@ -51,22 +51,22 @@ class Lists extends Migration
 			$table->smallInteger('quantity');
 
 			// Indexes
-			$table->index(['jotting_id', 'jotting_type'], 'j');
-			$table->index('listing_id', 'l');
+			$table->index(['jotting_id', 'jotting_type']);
+			$table->index('listing_id');
 			$table->cascadeDeleteForeign('listings');
 		});
 
 		Schema::create('votes', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			$table->unsignedInteger('listing_id')->index(); // FK to objectives
-			$table->unsignedInteger('user_id')->index(); // FK to users
+			$table->unsignedInteger('listing_id'); // FK to objectives
+			$table->unsignedInteger('user_id'); // FK to users
 
 			$table->timestamps();
 
 			// Indexes
-			$table->index('user_id', 'u');
-			$table->index('listing_id', 'l');
+			$table->index('user_id');
+			$table->index('listing_id');
 			// $table->cascadeDeleteForeign('users'); // Cannot include; Users exist on different schema
 			$table->cascadeDeleteForeign('listings');
 		});

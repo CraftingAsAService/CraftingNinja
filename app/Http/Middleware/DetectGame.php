@@ -42,7 +42,7 @@ class DetectGame
 							];
 						})
 				],
-				config('games.' . $gameSlug)
+				config('games.' . $gameSlug, [])
 			)]);
 		}
 

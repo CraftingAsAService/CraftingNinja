@@ -35,12 +35,12 @@ class Objectives extends Migration
 			// Objectives can have Details - plate, frame, areaicon, icon, etc etc
 
 			// Indexes
-			$table->index('niche_id', 'n');
-			$table->index('type', 't');
-			$table->index('level', 'l');
+			$table->index('niche_id');
+			$table->index('type');
+			$table->index('level');
 			$table->cascadeDeleteForeign('niches');
-			$table->foreign('issuer_id')->references('id')->on('npcs')->onDelete('cascade');
-			$table->foreign('target_id')->references('id')->on('npcs')->onDelete('cascade');
+			$table->cascadeDeleteForeign('npcs', 'issuer_id');
+			$table->cascadeDeleteForeign('npcs', 'target_id');
 		});
 
 		Schema::create('objective_translations', function (Blueprint $table) {
@@ -66,7 +66,7 @@ class Objectives extends Migration
 			$table->unsignedTinyInteger('rate')->nullable();
 
 			// Indexes
-			$table->index('reward', 'r');
+			$table->index('reward');
 
 			// Description of table
 			// Used to handle both Objective Rewards and Requirements

@@ -7,7 +7,7 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
 use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Listing;
-use App\Models\Game\Translations\RecipeTranslation;
+use App\Models\Translations\RecipeTranslation;
 
 class Recipe extends Aspect
 {

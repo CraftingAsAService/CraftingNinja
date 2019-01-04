@@ -2,22 +2,50 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use App\Models\Game;
 use App\Models\User;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
 	use CreatesApplication;
 
-	protected $gameSlug = 'test',
+	protected $gameSlug = 'savg', // Super Awesome Video Game
 			  $gamePath = null;
+
+	/**
+	 * Initialise classes to test against.
+	 *
+	 * @return	void
+	 */
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->artisan('migrate');
+
+		// $this->withoutExceptionHandling();
+	}
 
 	/**
 	 * By calling this function, we're setting the selected game to our test slug
 	 */
 	public function setGame()
 	{
+		$this->artisan('migrate', [
+			'--path' => 'database/migrations/games',
+			'--database' => $this->gameSlug, // aka Connection
+		]);
+
 		\DB::setDefaultConnection($this->gameSlug);
+
+		factory(Game::class)->create([
+			'slug' => $this->gameSlug,
+			'version' => '1.1.1',
+			'name:en' => 'Super Awesome Video Game',
+			'abbreviation:en' => 'test',
+			'description:en' => 'A Test Game',
+		]);
 
 		config([
 			'game' => [
@@ -38,35 +66,10 @@ abstract class TestCase extends BaseTestCase
 	public function setUser()
 	{
 		$user = new User([
-			'name' => 'Yish McGee'
+			'name' => 'Yeet McGee'
 		]);
 
 		$this->be($user);
-	}
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		// $this->withoutExceptionHandling();
-
-		// Only creating one test game for unit testing
-		// Normally this exists in it's own database, not just a prefix within the same database
-		// I couldn't figure out how to do unit testing with two+ distinct databases
-		config(['database.connections.' . $this->gameSlug => array_merge(config('database.connections.testing'), [
-			'prefix' => $this->gameSlug,
-		])]);
-
-		$this->artisan('migrate', [
-			'--path' => 'database/migrations/games',
-			'--database' => $this->gameSlug,
-			'--force' => true,
-		]);
 	}
 
 }

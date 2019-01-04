@@ -16,8 +16,8 @@ class MigrationServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		// A quicker way to make a cascading delete foreign key
-		Blueprint::macro('cascadeDeleteForeign', function($tableName) {
-			$this->foreign(str_singular($tableName) . '_id')->references('id')->on($tableName)->onDelete('cascade');
+		Blueprint::macro('cascadeDeleteForeign', function($tableName, $columnName = null) {
+			$this->foreign($columnName ?? str_singular($tableName) . '_id')->references('id')->on($tableName)->onDelete('cascade');
 		});
 
 		// A quick way to create the basic necessities of dimsav/laravel-translatable fields
@@ -33,8 +33,8 @@ class MigrationServiceProvider extends ServiceProvider
 			// Additional fields will need manually added after calling ->translatable()
 
 			// Indexes
-			$this->index('locale', 'l'); // l, Locale
-			$this->unique([$fieldName . '_id', 'locale'], 'pl'); // pl, Parent Locale
+			$this->index('locale');
+			$this->unique([$fieldName . '_id', 'locale']);
 			$this->cascadeDeleteForeign(str_plural($fieldName));
 		});
 
@@ -63,9 +63,9 @@ class MigrationServiceProvider extends ServiceProvider
 			// Indexes
 			// If we don't have an ID field, we want the primary to be both, otherwise the primary is the ID
 			if ( ! $includeId)
-				$this->primary([ $field1Id, $field2Id ], 'pivot');
-			$this->index($field1Id, 'f1');
-			$this->index($field2Id, 'f2');
+				$this->primary([ $field1Id, $field2Id ]);
+			$this->index($field1Id);
+			$this->index($field2Id);
 			$this->cascadeDeleteForeign($table1);
 			$this->cascadeDeleteForeign($table2);
 		});

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Game;
 use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
@@ -19,9 +20,16 @@ use App\Models\User;
 $factory->define(User::class, function (Faker\Generator $faker) {
 	return [
 		'name' => $faker->name,
-		'email' => $faker->email,
-		'password' => bcrypt(str_random(10)),
+		'email' => $faker->unique()->safeEmail,
+		'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
 		'remember_token' => str_random(10),
+	];
+});
+
+$factory->define(Game::class, function(Faker\Generator $faker) {
+	return [
+		'slug' => $faker->userName,
+		'version' => $faker->randomNumber(),
 	];
 });
 

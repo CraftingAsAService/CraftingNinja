@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Watson\Rememberable\Rememberable;
+use App\Models\Translations\GameTranslation;
 use Dimsav\Translatable\Translatable;
-
 use Illuminate\Database\Eloquent\Model;
+use Watson\Rememberable\Rememberable;
 
 class Game extends Model
 {
@@ -15,7 +15,9 @@ class Game extends Model
 	public $timestamps = false;
 
 	use Translatable;
-	public $translatedAttributes = ['name', 'abbreviation', 'description'];
+
+	public $translationModel = GameTranslation::class;
+	public $translatedAttributes = [ 'name', 'description', 'abbreviation' ];
 	// Always load the translations in when loading a entity
 	// protected $with = ['translations'];
 

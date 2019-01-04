@@ -37,11 +37,11 @@ class Equipment extends Migration
 			$table->unsignedTinyInteger('sockets')->default(0);
 
 			// Indexes
-			$table->unique('item_id', 'i'); // Equipment is an extension of the items table, so there can only be one item_id reference per table
-			$table->index('niche_id', 'n');
-			$table->index('slot', 's');
-			$table->index('level', 'l');
-			$table->index('sockets', 'so');
+			$table->unique('item_id'); // Equipment is an extension of the items table, so there can only be one item_id reference per table
+			$table->index('niche_id');
+			$table->index('slot');
+			$table->index('level');
+			$table->index('sockets');
 			$table->cascadeDeleteForeign('items');
 			$table->cascadeDeleteForeign('niches');
 		});

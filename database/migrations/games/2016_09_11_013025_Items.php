@@ -60,6 +60,7 @@ class Items extends Migration
 			$table->string('name');
 			$table->text('description')->nullable();
 		});
+
 		// A simpler take on prices
 		// While each NPC _could_ have differing prices for items, let's not and say we did.
 		Schema::create('prices', function (Blueprint $table) {

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Json\Books as BooksCollection;
+use App\Http\Resources\BookResource;
 use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,11 +19,11 @@ class BooksController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$books = Listing::withTranslation()->with('jottings', 'voteTally')
+		$books = Listing::withTranslation()->with('votes')
 			->filter($request->all())
 			->simplePaginate();
 
-		return new BooksCollection($items);
+		return BookResource::collection($books);
 	}
 
 	private function validator($data)

@@ -29,8 +29,8 @@ class Coordinates extends Migration
 			$table->unsignedSmallInteger('radius')->nullable(); // If this dot embodies the idea of many coordinates surrounding this one
 
 			// Indexes
-			$table->index(['coordinate_type', 'coordinate_id'], 'c');
-			$table->index('zone_id', 'z');
+			$table->index(['coordinate_type', 'coordinate_id']);
+			$table->index('zone_id');
 			$table->cascadeDeleteForeign('zones');
 		});
 	}

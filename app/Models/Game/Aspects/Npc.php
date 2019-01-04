@@ -8,7 +8,7 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Shop;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Translations\NpcTranslation;
+use App\Models\Translations\NpcTranslation;
 
 class Npc extends Aspect
 {

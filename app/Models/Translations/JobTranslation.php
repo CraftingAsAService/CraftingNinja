@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Game\Translations;
+namespace App\Models\Translations;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +9,6 @@ class JobTranslation extends Model
 
 	public $timestamps = false;
 
-	protected $fillable = ['name', 'abbreviation'];
+	protected $fillable = [ 'name', 'abbreviation' ];
 
 }

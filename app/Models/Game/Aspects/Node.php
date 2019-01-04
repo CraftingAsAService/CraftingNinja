@@ -7,7 +7,7 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Listing;
-use App\Models\Game\Translations\NodeTranslation;
+use App\Models\Translations\NodeTranslation;
 
 class Node extends Aspect
 {

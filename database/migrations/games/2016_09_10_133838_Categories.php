@@ -20,7 +20,7 @@ class Categories extends Migration
 			$table->unsignedInteger('category_id')->nullable();
 
 			// Indexes
-			$table->index('category_id', 'cid');
+			$table->index('category_id');
 			$table->cascadeDeleteForeign($table->getTable()); // Self-referential
 		});
 

@@ -20,6 +20,8 @@ class BookTest extends TestCase
 	{
 		parent::setUp();
 
+		$this->withoutExceptionHandling(); // FIXME - Comment out when done
+
 		$this->setGame();
 	}
 
@@ -43,8 +45,6 @@ class BookTest extends TestCase
 	/** @test */
 	function users_can_make_ajax_call_for_books()
 	{
-		$this->withoutExceptionHandling();
-
 		// Arrange
 		factory(Listing::class)->states('published')->create([
 			'name:en' => 'Alpha Book',

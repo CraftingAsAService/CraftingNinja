@@ -6,7 +6,7 @@ use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Translations\ShopTranslation;
+use App\Models\Translations\ShopTranslation;
 
 class Shop extends Aspect
 {

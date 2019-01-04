@@ -4,7 +4,7 @@ namespace App\Models\Game\Aspects;
 
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Translations\AttributeTranslation;
+use App\Models\Translations\AttributeTranslation;
 
 class Attribute extends Aspect
 {

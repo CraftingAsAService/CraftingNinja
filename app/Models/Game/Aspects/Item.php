@@ -14,7 +14,7 @@ use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Equipment;
 use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Price;
-use App\Models\Game\Translations\ItemTranslation;
+use App\Models\Translations\ItemTranslation;
 
 class Item extends Aspect
 {
@@ -130,7 +130,7 @@ class Item extends Aspect
 	// public function scopeOrderByName($query, $direction = 'asc')
 	// {
 	// 	return $query->orderBySub(
-	// 		\App\Models\Game\Translations\ItemTranslation::select('name')
+	// 		\App\Models\Translations\ItemTranslation::select('name')
 	// 			// Use both the current and fallback locales for sorting
 	// 			->whereRaw('item_translations.locale in ("' . config('app.locale') . '", "' . config('app.fallback_locale') . '")')
 	// 			->whereRaw('item_translations.item_id = items.id')

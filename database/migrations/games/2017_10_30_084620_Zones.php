@@ -21,7 +21,7 @@ class Zones extends Migration
 			$table->unsignedInteger('zone_id')->nullable(); // Self FK - Parent Zone
 
 			// Indexes
-			$table->index('zone_id', 'z');
+			$table->index('zone_id');
 			$table->cascadeDeleteForeign('zones');
 		});
 

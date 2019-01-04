@@ -19,7 +19,7 @@ class Jobs extends Migration
 
 			// 18 chosen as it's twice the length of 'gathering', to allow for expansion
 			// Expected values are 'battle', 'crafting', 'gathering', 'hero'; Hero being able to do everything (farming games, etc)
-			$table->string('type', 18)->default('hero')->index();
+			$table->string('type', 18)->default('hero');
 
 			// Gladiator is a tier 0 battle job
 			// Paladin is a tier 1 battle job
@@ -30,7 +30,7 @@ class Jobs extends Migration
 			$table->tinyInteger('tier')->unsigned()->default(0);
 
 			// Indexes
-			$table->index('type', 't');
+			$table->index('type');
 		});
 
 		Schema::create('job_translations', function (Blueprint $table) {

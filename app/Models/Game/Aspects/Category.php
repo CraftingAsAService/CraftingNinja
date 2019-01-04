@@ -5,7 +5,7 @@ namespace App\Models\Game\Aspects;
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Translations\CategoryTranslation;
+use App\Models\Translations\CategoryTranslation;
 
 class Category extends Aspect
 {

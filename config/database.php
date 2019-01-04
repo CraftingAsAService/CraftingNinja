@@ -1,15 +1,9 @@
 <?php
 
 $connections = [
-	'testing' => [
-		'driver'   => 'sqlite',
-		'database' => ':memory:',
-		'prefix'   => '',
-	],
 	'caas' => [
 		'driver' => 'mysql',
 		'host' => env('DB_HOST', 'localhost'),
-		// Unit Testing on Mac uses port 33060
 		'port' => env('DB_PORT', '3306'),
 		'database' => env('DB_DATABASE', 'caas'),
 		'username' => env('DB_USERNAME', ''),
@@ -22,17 +16,25 @@ $connections = [
 	],
 ];
 
-// if (env('APP_ENV') == 'testing')
-// {
-// 	$connections['caas'] = $connections['testing'];
-// 	foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
-// 		$connections[$gameSlug] = array_merge($connections['caas'], ['prefix' => $gameSlug . '_']);
-// }
-// else
-	foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
-		$connections[$gameSlug] = array_merge($connections['caas'], ['database' => 'caas_' . $gameSlug]);
+$default = env('DB_CONNECTION', 'caas');
 
-// unset($defaultConfig);
+// When testing, use sqlite and :memory:
+//  This is atypical, normally you would just set up a separate connection
+//  However because each game resides in it's own schema, and that schema is the default connection
+//   I have to hard code the $connection on the basic models (Game, User, etc) to 'caas'
+if (env('APP_ENV') == 'testing')
+	$connections['caas'] = [
+		'driver'   => 'sqlite',
+		'database' => ':memory:',
+		'prefix'   => '',
+	];
+
+foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
+	$connections[$gameSlug] =
+		env('APP_ENV') == 'testing'
+			? $connections[$default]
+			: array_merge($connections[$default], ['database' => $default . '_' . $gameSlug])
+	;
 
 return [
 
@@ -47,7 +49,7 @@ return [
 	|
 	*/
 
-	'default' => env('DB_CONNECTION', 'mysql'),
+	'default' => $default,
 
 	/*
 	|--------------------------------------------------------------------------

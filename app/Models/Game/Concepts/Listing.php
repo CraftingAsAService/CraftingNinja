@@ -9,7 +9,7 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Listing\Vote;
-use App\Models\Game\Translations\ListingTranslation;
+use App\Models\Translations\ListingTranslation;
 use App\Models\User;
 use Carbon\Carbon;
 use Dimsav\Translatable\Translatable;
@@ -31,6 +31,13 @@ class Listing extends Concept
 	/**
 	 * Scopes
 	 */
+
+	public function scopeFilter($query, $filters)
+	{
+		// TODO
+
+		return $query;
+	}
 
 	public function scopeFromUser($query, $userId = null)
 	{

@@ -10,7 +10,7 @@ use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Niche;
-use App\Models\Game\Translations\ObjectiveTranslation;
+use App\Models\Translations\ObjectiveTranslation;
 
 class Objective extends Aspect
 {
