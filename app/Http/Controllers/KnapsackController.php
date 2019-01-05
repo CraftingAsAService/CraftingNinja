@@ -2,36 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
-
-use App\Http\Resources\Json\Items as ItemsCollection;
-
-use App\Models\Game\Aspects\Item;
-
-use App\Models\Game\Concepts\Lists;
-
-use Carbon\Carbon;
 
 class KnapsackController extends Controller
 {
 
-	public function index(Request $request)
+	public function index()
 	{
-		$contents = $this->getCookieContents();
+		$listingPolymorphicRelationships = Listing::$polymorphicRelationships;
+		$listings = Listing::with(array_merge(['job', 'votes'], $listingPolymorphicRelationships))->fromUser()->get();
 
-		if (isset($contents['item']))
-		{
-			$data = new ItemsCollection(Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.jobGroups.job', 'recipes.job')->whereIn('id', array_keys($contents['item']))->get());
-
-			$contents['item'] = [
-				'qtys' => $contents['item'],
-				'data' => json_decode($data->toJson(), true),
-			];
-		}
-
-		$lists = Lists::fromUser()->get();
-
-		return view('game.knapsack', compact('contents', 'lists'));
+		return view('game.knapsack', compact('listings', 'listingPolymorphicRelationships'));
 	}
 
 	public function publish(Request $request)

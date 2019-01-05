@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ListTest extends TestCase
+class ListingTest extends TestCase
 {
 
 	/**
@@ -19,6 +19,31 @@ class ListTest extends TestCase
 
 		$this->setGame();
 	}
+
+	/** @test */
+	function listing_json_response_is_valid()
+	{
+
+	}
+
+	/** @test */
+	function listings_can_be_tied_to_a_job()
+	{
+
+	}
+
+	/** @test */
+	function listings_can_be_deleted_by_author()
+	{
+
+	}
+
+	/** @test */
+	function listings_cannot_be_deleted_unless_its_the_author()
+	{
+
+	}
+
 
 	/** @test */
 	function lists_can_expire()

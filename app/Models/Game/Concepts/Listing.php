@@ -28,6 +28,8 @@ class Listing extends Concept
 		'published_at',
 	];
 
+	public static $polymorphicRelationships = [ 'items', 'objectives', 'recipes', 'nodes' ];
+
 	/**
 	 * Scopes
 	 */
@@ -44,12 +46,14 @@ class Listing extends Concept
 		return $query->where('user_id', $userId ?? auth()->user()->id);
 	}
 
-	/**
-	 * Public Only scope
-	 */
 	public function scopePublished($query)
 	{
 		return $query->whereNotNull('published_at');
+	}
+
+	public function scopeUnpublished($query)
+	{
+		return $query->whereNull('published_at');
 	}
 
 	/**
@@ -69,6 +73,11 @@ class Listing extends Concept
 	public function user()
 	{
 		return $this->belongsTo(User::class);
+	}
+
+	public function jottings()
+	{
+		return $this->morphTo();
 	}
 
 	public function items()
@@ -94,6 +103,11 @@ class Listing extends Concept
 	/**
 	 * Functions
 	 */
+
+	public function isPublished()
+	{
+		return $this->published_at !== null;
+	}
 
 	public function publish($publish = true)
 	{

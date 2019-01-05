@@ -1,7 +1,9 @@
 {{-- TODO LAYOUT --}}
 
-<h1>{{ $book->name }}</h1>
+<h1>{{ $listing->name }}</h1>
 
-@foreach ($book->jottings as $entry)
-	{{ $entry->jottable->name }} x {{ $entry->quantity }}<br>
+@foreach ($listingPolymorphicRelationships as $relationship)
+	@foreach ($listing->$relationship as $entity)
+		{{ $entity->name }} x {{ $entity->pivot->quantity }}<br>
+	@endforeach
 @endforeach

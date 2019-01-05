@@ -48,7 +48,7 @@ class Lists extends Migration
 			$table->unsignedInteger('jotting_id');
 			$table->string('jotting_type');
 
-			$table->smallInteger('quantity');
+			$table->smallInteger('quantity')->default(1);
 
 			// Indexes
 			$table->index(['jotting_id', 'jotting_type']);

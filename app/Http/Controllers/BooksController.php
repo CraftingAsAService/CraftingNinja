@@ -16,8 +16,9 @@ class BooksController extends Controller
 	 */
 	public function index()
 	{
-		$books = Listing::published()->get();
-		return view('game.books', compact('books'));
+		$listings = Listing::published()->get();
+
+		return view('game.books', compact('listings'));
 	}
 
 	/**
@@ -26,10 +27,12 @@ class BooksController extends Controller
 	 * @param	type	$bookId
 	 * @return	view
 	 */
-	public function show($bookId)
+	public function show($listingId)
 	{
-		$book = Listing::with('jottings', 'jottings.jottable')->published()->findOrFail($bookId);
-		return view('game.books.show', compact('book'));
+		$listingPolymorphicRelationships = Listing::$polymorphicRelationships;
+		$listing = Listing::with('items')->findOrFail($listingId);
+
+		return view('game.books.show', compact('listing', 'listingPolymorphicRelationships'));
 	}
 
 	/**

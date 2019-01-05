@@ -1,5 +1,5 @@
 {{-- TODO LAYOUT --}}
 
-@foreach ($books as $book)
-	{{ $book->name }}
+@foreach ($listings as $listing)
+	{{ $listing->name }}
 @endforeach

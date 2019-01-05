@@ -5,7 +5,6 @@ namespace Feature\Books;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BookTest extends TestCase
@@ -16,17 +15,17 @@ class BookTest extends TestCase
 	 *
 	 * @return	void
 	 */
-	public function setUp()
+	function setUp()
 	{
 		parent::setUp();
 
-		$this->withoutExceptionHandling(); // FIXME - Comment out when done
+		// $this->withoutExceptionHandling();
 
 		$this->setGame();
 	}
 
 	/** @test */
-	public function user_can_view_recipe_books()
+	function user_can_view_recipe_books()
 	{
 		// Arrange
 		factory(Listing::class)->states('published')->create([
@@ -60,18 +59,10 @@ class BookTest extends TestCase
 	}
 
 	/** @test */
-	function users_can_add_book_contents_to_their_current_list()
-	{
-
-	}
-
-	/** @test */
 	function users_can_publish_their_own_listings()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('unpublished')->create([
-			'name:en' => 'Alpha Book',
-		]);
+		$listing = factory(Listing::class)->states('unpublished')->create();
 
 		// Act
 		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/publish', [
@@ -104,12 +95,10 @@ class BookTest extends TestCase
 	}
 
 	/** @test */
-	function users_cannot_publish_anothers_book()
+	function users_cannot_publish_anothers_listing()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('unpublished')->create([
-			'name:en' => 'Alpha Book',
-		]);
+		$listing = factory(Listing::class)->states('unpublished')->create();
 		$user = factory(User::class)->create();
 
 		// Act
@@ -141,6 +130,31 @@ class BookTest extends TestCase
 		$response->assertJson([
 			'published' => true,
 		]);
+	}
+
+	/** @test */
+	function user_can_view_book_contents()
+	{
+		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		// Create the listing and attach the item with a quantity of 999
+		$listing = factory(Listing::class)->state('published')->create([
+			'name:en' => 'Alpha Book',
+		]);
+		$listing->items()->save($item, [ 'quantity' => 999 ]);
+
+		// Act
+		$response = $this->call('GET', $this->gamePath . '/books/' . $listing->id);
+
+		// Assert
+		$response->assertStatus(200);
+
+		$response->assertSee('Alpha Book');
+		$response->assertSee('Beta Item');
+		$response->assertSee('999');
 	}
 
 }
