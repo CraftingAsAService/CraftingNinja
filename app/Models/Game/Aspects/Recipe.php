@@ -71,7 +71,7 @@ class Recipe extends Aspect
 	 * Relationships
 	 */
 
-	public function produces()
+	public function product()
 	{
 		return $this->belongsTo(Item::class)->withTranslation();
 	}

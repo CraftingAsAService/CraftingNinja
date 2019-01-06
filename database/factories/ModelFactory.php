@@ -3,6 +3,10 @@
 use App\Models\Game;
 use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Node;
+use App\Models\Game\Aspects\Npc;
+use App\Models\Game\Aspects\Objective;
+use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 
@@ -63,5 +67,29 @@ $factory->state(Listing::class, 'published', function (Faker\Generator $faker) {
 $factory->state(Listing::class, 'unpublished', function (Faker\Generator $faker) {
 	return [
 		'published_at' => null,
+	];
+});
+
+$factory->define(Recipe::class, function(Faker\Generator $faker) {
+	return [
+
+	];
+});
+
+$factory->define(Npc::class, function(Faker\Generator $faker) {
+	return [
+
+	];
+});
+
+$factory->define(Node::class, function(Faker\Generator $faker) {
+	return [
+
+	];
+});
+
+$factory->define(Objective::class, function(Faker\Generator $faker) {
+	return [
+
 	];
 });

@@ -11,7 +11,7 @@ class KnapsackController extends Controller
 	public function index()
 	{
 		$listingPolymorphicRelationships = Listing::$polymorphicRelationships;
-		$listings = Listing::with(array_merge(['job', 'votes'], $listingPolymorphicRelationships))->fromUser()->get();
+		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product')->fromUser()->get();
 
 		return view('game.knapsack', compact('listings', 'listingPolymorphicRelationships'));
 	}
