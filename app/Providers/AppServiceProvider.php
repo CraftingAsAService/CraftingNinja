@@ -2,10 +2,19 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\Game\Aspects\Category;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
+use App\Models\Game\Aspects\Node;
+use App\Models\Game\Aspects\Npc;
+use App\Models\Game\Aspects\Objective;
+use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Aspects\Shop;
+use App\Models\Game\Concepts\Niche;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -71,7 +71,7 @@ class KnapsackTest extends TestCase
 		]);
 
 		$recipe = factory(Recipe::class)->create([
-			// 'item_id' => $item->id,
+			'item_id' => $item->id,
 		]);
 
 		$listing = factory(Listing::class)->state('unpublished')->create();
@@ -133,7 +133,47 @@ class KnapsackTest extends TestCase
 	}
 
 	/** @test */
-	function users_can_remove_things_from_their_knapsack()
+	function users_can_add_items_to_their_knapsack()
+	{
+		// Arrange
+		$user = factory(User::class)->create();
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		// Act
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+			'quantity' => 999,
+		]);
+
+		// Pull back the active listing
+		$listing = Listing::with('items')->active($user->id)->firstOrFail();
+
+		// Assert
+		$response->assertStatus(200);
+		$response->assertJson([
+			'success' => true
+		]);
+
+		$this->assertEquals(1, $listing->items()->count());
+	}
+
+	/** @test */
+	function users_can_add_recipes_to_their_knapsack()
+	{
+
+	}
+
+	/** @test */
+	function users_can_add_nodes_to_their_knapsack()
+	{
+
+	}
+
+	/** @test */
+	function users_can_add_objectives_to_their_knapsack()
 	{
 
 	}
@@ -141,7 +181,81 @@ class KnapsackTest extends TestCase
 	/** @test */
 	function user_can_update_quantities_on_their_knapsack()
 	{
+		// PUT
+	}
 
+	/** @test */
+	function adding_the_same_item_twice_updates_it()
+	{
+		// POST
+	}
+
+	/** @test */
+	function users_can_remove_things_from_their_knapsack()
+	{
+		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		$listing = factory(Listing::class)->state('unpublished')->create();
+		$listing->items()->save($item, [ 'quantity' => 999 ]);
+
+		// Act
+		$response = $this->actingAs($listing->user)->call('DELETE', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => $listing->items->first()->pivot->jotting_type,
+		]);
+
+		// Pull back the active listing
+		$listing = Listing::with('items')->active($listing->user->id)->firstOrFail();
+
+		// Assert
+		$response->assertStatus(200);
+		$response->assertJson([
+			'success' => true
+		]);
+
+		$this->assertEquals(0, $listing->items()->count());
+	}
+
+	/** @test */
+	function users_removing_things_not_in_their_knapsack_fail_gracefully()
+	{
+		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		$listing = factory(Listing::class)->state('unpublished')->create();
+
+		// Act
+		$response = $this->actingAs($listing->user)->call('DELETE', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+		]);
+
+		// Assert
+		$response->assertStatus(200);
+		$response->assertJson([
+			'success' => true
+		]);
+	}
+
+	/** @test */
+	function users_removing_things_without_a_knapsack_fails()
+	{
+		// Arrange
+		$user = factory(User::class)->create();
+
+		// Act
+		$response = $this->actingAs($user)->call('DELETE', $this->gamePath . '/knapsack', [
+			'id' => 1,
+			'type' => 'item',
+		]);
+
+		// Assert
+		$response->assertStatus(404);
 	}
 
 	/** @test */

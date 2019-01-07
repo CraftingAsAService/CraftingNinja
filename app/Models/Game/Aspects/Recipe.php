@@ -73,7 +73,7 @@ class Recipe extends Aspect
 
 	public function product()
 	{
-		return $this->belongsTo(Item::class)->withTranslation();
+		return $this->belongsTo(Item::class, 'item_id')->withTranslation();
 	}
 
 	public function ingredients()

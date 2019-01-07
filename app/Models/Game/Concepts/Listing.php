@@ -56,6 +56,11 @@ class Listing extends Concept
 		return $query->whereNull('published_at');
 	}
 
+	public function scopeActive($query, $userId = null)
+	{
+		return $query->fromUser($userId)->unpublished();
+	}
+
 	/**
 	 * Relationships
 	 */

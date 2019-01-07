@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Node;
+use App\Models\Game\Aspects\Objective;
+use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
 
@@ -10,10 +14,72 @@ class KnapsackController extends Controller
 
 	public function index()
 	{
-		$listingPolymorphicRelationships = Listing::$polymorphicRelationships;
-		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product')->fromUser()->get();
+		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->fromUser()->get();
 
-		return view('game.knapsack', compact('listings', 'listingPolymorphicRelationships'));
+		return view('game.knapsack', compact('listings'));
+	}
+
+	public function addActiveEntry(Request $request)
+	{
+		if ( ! auth()->check())
+			abort(404);
+
+		$request->validate([
+			'id' => 'required|numeric',
+			'type' => 'required|string',
+			'quantity' => 'numeric',
+		]);
+
+		$id = $request->get('id');
+		$type = $request->get('type');
+		$relation = str_plural($type);
+		$quantity = $request->get('quantity', 1);
+
+		// Find the entity we're trying to add or update
+		$allowableClasses = [
+			'item' => new Item,
+			'recipe' => new Recipe,
+			'node' => new Node,
+			'objective' => new Objective,
+		];
+
+		// Find the entity, or fail
+		$entity = $allowableClasses[$type]::findOrFail($id);
+
+		// Get the active list, create one if it does not exist
+		$listing = Listing::with($relation)->active()->firstOrCreate([
+			'user_id' => auth()->user()->id,
+		]);
+
+		// Attach the entity
+		$listing->$relation()->attach($entity, [ 'quantity' => $quantity ]);
+
+		return response()->json([ 'success' => true ]);
+	}
+
+	public function removeActiveEntry(Request $request)
+	{
+		if ( ! auth()->check())
+			abort(404);
+
+		$request->validate([
+			'id' => 'required|numeric',
+			'type' => 'required|string',
+		]);
+
+		$id = $request->get('id');
+		$relation = str_plural($request->get('type'));
+
+		// Get the active list, fail if one does not exist
+		$listing = Listing::with($relation)->active()->firstOrFail();
+
+		// Find the entry we're trying to remove
+		$entry = $listing->$relation->where('id', $id)->first();
+
+		// Detach that entry
+		$listing->$relation()->detach($entry);
+
+		return response()->json([ 'success' => true ]);
 	}
 
 	public function publish(Request $request)

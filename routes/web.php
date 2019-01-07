@@ -41,6 +41,8 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	Route::get('compendium', 'CompendiumController@index');
 
 	Route::get('knapsack', 'KnapsackController@index');
-	Route::post('knapsack/publish', 'KnapsackController@publish');
+	Route::post('knapsack', 'KnapsackController@addActiveEntry');
+	Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
+	// Route::post('knapsack/publish', 'KnapsackController@publish');
 
 });
