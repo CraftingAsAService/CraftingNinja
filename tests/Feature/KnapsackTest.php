@@ -41,7 +41,7 @@ class KnapsackTest extends TestCase
 	}
 
 	/** @test */
-	function users_can_see_items_in_their_knapsack()
+	function user_can_update_quantities_on_their_knapsack()
 	{
 		// Arrange
 		$item = factory(Item::class)->create([
@@ -49,103 +49,20 @@ class KnapsackTest extends TestCase
 		]);
 
 		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->items()->save($item, [ 'quantity' => 999 ]);
+		$listing->items()->attach($item, [ 'quantity' => 4 ]);
+
+		$user = $listing->user;
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
-
-		// Assert
-		$response->assertStatus(200);
-
-		$response->assertSee('Beta Item');
-		$response->assertSee('Unpublished');
-		$response->assertSee('999');
-	}
-
-	/** @test */
-	function users_can_see_recipes_in_their_knapsack()
-	{
-		// Arrange
-		$item = factory(Item::class)->create([
-			'name:en' => 'Beta Item',
-		]);
-
-		$recipe = factory(Recipe::class)->create([
-			'item_id' => $item->id,
-		]);
-
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->recipes()->save($recipe, [ 'quantity' => 888 ]);
-
-		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
-
-		// Assert
-		$response->assertStatus(200);
-
-		$response->assertSee('Beta Item');
-		$response->assertSee('Unpublished');
-		$response->assertSee('888');
-	}
-
-	/** @test */
-	function users_can_see_nodes_in_their_knapsack()
-	{
-		// Arrange
-		$node = factory(Node::class)->create([
-			'name:en' => 'Rock Formation',
-		]);
-
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->nodes()->save($node, [ 'quantity' => 777 ]);
-
-		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
-
-		// Assert
-		$response->assertStatus(200);
-
-		$response->assertSee('Rock Formation');
-		$response->assertSee('Unpublished');
-		$response->assertSee('777');
-	}
-
-	/** @test */
-	function users_can_see_objectives_in_their_knapsack()
-	{
-		// Arrange
-		$objective = factory(Objective::class)->create([
-			'name:en' => 'Battle Royale',
-		]);
-
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->objectives()->save($objective, [ 'quantity' => 666 ]);
-
-		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
-
-		// Assert
-		$response->assertStatus(200);
-
-		$response->assertSee('Battle Royale');
-		$response->assertSee('Unpublished');
-		$response->assertSee('666');
-	}
-
-	/** @test */
-	function users_can_add_items_to_their_knapsack()
-	{
-		// Arrange
-		$user = factory(User::class)->create();
-		$item = factory(Item::class)->create([
-			'name:en' => 'Beta Item',
-		]);
-
-		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+		$response = $this->actingAs($user)->call('PUT', $this->gamePath . '/knapsack', [
 			'id' => $item->id,
 			'type' => 'item',
-			'quantity' => 999,
+			'quantity' => -2
+		]);
+		$response = $this->actingAs($user)->call('PUT', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+			'quantity' => 3
 		]);
 
 		// Pull back the active listing
@@ -157,37 +74,55 @@ class KnapsackTest extends TestCase
 			'success' => true
 		]);
 
-		$this->assertEquals(1, $listing->items()->count());
+		// 4 - 2 + 3 = 5
+		$this->assertEquals(5, $listing->items->find($item->id)->pivot->quantity);
 	}
 
 	/** @test */
-	function users_can_add_recipes_to_their_knapsack()
+	function adding_the_same_entity_twice_updates_it()
 	{
+		// Arrange
+		$user = factory(User::class)->create();
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+		$item2 = factory(Item::class)->create([
+			'name:en' => 'Roma Tomatoes',
+		]);
 
+		// Act
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+			'id' => $item2->id,
+			'type' => 'item',
+			'quantity' => 7
+		]);
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+			'quantity' => 3
+		]);
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+			'quantity' => 5
+		]);
+
+		// Pull back the active listing
+		$listing = Listing::with('items')->active($user->id)->firstOrFail();
+
+		// Assert
+		$response->assertStatus(200);
+		$response->assertJson([
+			'success' => true
+		]);
+
+		$this->assertEquals(8, $listing->items->find($item->id)->pivot->quantity);
 	}
 
 	/** @test */
-	function users_can_add_nodes_to_their_knapsack()
+	function negative_quantity_updates_delete_the_entry()
 	{
 
-	}
-
-	/** @test */
-	function users_can_add_objectives_to_their_knapsack()
-	{
-
-	}
-
-	/** @test */
-	function user_can_update_quantities_on_their_knapsack()
-	{
-		// PUT
-	}
-
-	/** @test */
-	function adding_the_same_item_twice_updates_it()
-	{
-		// POST
 	}
 
 	/** @test */

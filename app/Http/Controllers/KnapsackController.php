@@ -51,10 +51,20 @@ class KnapsackController extends Controller
 			'user_id' => auth()->user()->id,
 		]);
 
-		// Attach the entity
-		$listing->$relation()->attach($entity, [ 'quantity' => $quantity ]);
+		// Attach or update the entity
+		if ($listing->$relation->contains($entity))
+			$listing->$relation()->updateExistingPivot($entity, [
+				'quantity' => $listing->$relation->find($entity->id)->pivot->quantity + $quantity
+			]);
+		else
+			$listing->$relation()->attach($entity, [ 'quantity' => $quantity ]);
 
 		return response()->json([ 'success' => true ]);
+	}
+
+	public function updateActiveEntry(Request $request)
+	{
+		return $this->addActiveEntry($request);
 	}
 
 	public function removeActiveEntry(Request $request)
