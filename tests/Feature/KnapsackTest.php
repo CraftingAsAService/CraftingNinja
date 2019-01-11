@@ -22,7 +22,7 @@ class KnapsackTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->withoutExceptionHandling();
+		// $this->withoutExceptionHandling();
 
 		$this->setGame();
 	}
@@ -122,7 +122,25 @@ class KnapsackTest extends TestCase
 	/** @test */
 	function negative_quantity_updates_delete_the_entry()
 	{
+		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
 
+		$listing = factory(Listing::class)->state('unpublished')->create();
+		$listing->items()->attach($item, [ 'quantity' => 4 ]);
+
+		$user = $listing->user;
+
+		// Act
+		$response = $this->actingAs($user)->call('PUT', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+			'quantity' => -4
+		]);
+
+		// Assert
+		$response->assertStatus(200);
 	}
 
 	/** @test */
@@ -178,29 +196,29 @@ class KnapsackTest extends TestCase
 	}
 
 	/** @test */
-	function users_removing_things_without_a_knapsack_fails()
+	function users_can_add_book_contents_to_their_current_list()
 	{
 		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		// Create the listing and attach the item with a quantity of 999
+		$listing = factory(Listing::class)->state('published')->create([
+			'name:en' => 'Alpha Book',
+		]);
+		$listing->items()->save($item, [ 'quantity' => 999 ]);
+
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('DELETE', $this->gamePath . '/knapsack', [
-			'id' => 1,
-			'type' => 'item',
-		]);
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/add');
+
+		$listing = Listing::with('items')->active($user->id)->firstOrFail();
 
 		// Assert
-		$response->assertStatus(404);
+		$response->assertStatus(200);
+		$this->assertEquals(999, $listing->items()->first()->pivot->quantity);
 	}
-
-	/** @test */
-	function users_can_add_book_contents_to_their_current_list()
-	{
-
-
-		// Act
-		// $response = $this->call('POST', $this->gamePath . '/')
-	}
-
 
 }

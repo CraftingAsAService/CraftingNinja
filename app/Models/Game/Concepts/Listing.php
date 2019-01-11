@@ -30,6 +30,17 @@ class Listing extends Concept
 
 	public static $polymorphicRelationships = [ 'items', 'objectives', 'recipes', 'nodes' ];
 
+	// public static function boot()
+	// {
+	// 	parent::boot();
+
+	// 	// Auto assign the user_id to the auth user
+	// 	static::creating(function ($model) {
+	// 		dd($model);
+	// 		$model->user_id = auth()->user()->id;
+	// 	});
+	// }
+
 	/**
 	 * Scopes
 	 */

@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Game\Aspects\Item;
-use App\Models\Game\Aspects\Node;
-use App\Models\Game\Aspects\Objective;
-use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Knapsack;
 use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
 
@@ -32,32 +29,10 @@ class KnapsackController extends Controller
 
 		$id = $request->get('id');
 		$type = $request->get('type');
-		$relation = str_plural($type);
 		$quantity = $request->get('quantity', 1);
 
-		// Find the entity we're trying to add or update
-		$allowableClasses = [
-			'item' => new Item,
-			'recipe' => new Recipe,
-			'node' => new Node,
-			'objective' => new Objective,
-		];
-
-		// Find the entity, or fail
-		$entity = $allowableClasses[$type]::findOrFail($id);
-
-		// Get the active list, create one if it does not exist
-		$listing = Listing::with($relation)->active()->firstOrCreate([
-			'user_id' => auth()->user()->id,
-		]);
-
-		// Attach or update the entity
-		if ($listing->$relation->contains($entity))
-			$listing->$relation()->updateExistingPivot($entity, [
-				'quantity' => $listing->$relation->find($entity->id)->pivot->quantity + $quantity
-			]);
-		else
-			$listing->$relation()->attach($entity, [ 'quantity' => $quantity ]);
+		$knapsack = new Knapsack;
+		$knapsack->change($id, $type, $quantity);
 
 		return response()->json([ 'success' => true ]);
 	}
@@ -78,16 +53,10 @@ class KnapsackController extends Controller
 		]);
 
 		$id = $request->get('id');
-		$relation = str_plural($request->get('type'));
+		$type = $request->get('type');
 
-		// Get the active list, fail if one does not exist
-		$listing = Listing::with($relation)->active()->firstOrFail();
-
-		// Find the entry we're trying to remove
-		$entry = $listing->$relation->where('id', $id)->first();
-
-		// Detach that entry
-		$listing->$relation()->detach($entry);
+		$knapsack = new Knapsack;
+		$knapsack->remove($id, $type);
 
 		return response()->json([ 'success' => true ]);
 	}

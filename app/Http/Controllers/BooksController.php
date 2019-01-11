@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game\Concepts\Knapsack;
 use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Listing\Vote;
 use Illuminate\Http\Request;
@@ -94,6 +95,22 @@ class BooksController extends Controller
 			$book->publish(false);
 
 		return response()->json([ 'published' => (boolean) $book->published_at ]);
+	}
+
+	/**
+	 * All all of this book's entries to the user's active knapsack
+	 */
+	public function addAllEntriesToKnapsack(Request $request, $bookId)
+	{
+		if ( ! \Auth::check())
+			return $this->respondWithError(401, 'Unauthenticated');
+
+		$book = Listing::with(Listing::$polymorphicRelationships)->findOrFail($bookId);
+		$knapsack = new Knapsack;
+
+		foreach (Listing::$polymorphicRelationships as $relation)
+			foreach ($book->$relation as $entity)
+				$knapsack->change($entity->id, $entity->pivot->jotting_type, $entity->pivot->quantity);
 	}
 
 }
