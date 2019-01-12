@@ -221,4 +221,33 @@ class KnapsackTest extends TestCase
 		$this->assertEquals(999, $listing->items()->first()->pivot->quantity);
 	}
 
+	/** @test */
+	function users_can_clear_their_list()
+	{
+		// Arrange
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+
+		$user = factory(User::class)->create();
+
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+			'id' => $item->id,
+			'type' => 'item',
+		]);
+		$listing = Listing::with('items')->active($user->id)->firstOrFail();
+		$preItemCount = $listing->items()->count();
+
+		// Act
+		$response2 = $this->actingAs($user)->call('DELETE', $this->gamePath . '/knapsack/clear');
+
+		$listing2 = Listing::with('items')->active($user->id)->firstOrFail();
+
+		// Assert
+		$response->assertStatus(200);
+		$response2->assertStatus(200);
+		$this->assertEquals(1, $preItemCount);
+		$this->assertEquals(0, $listing2->items()->count());
+	}
+
 }

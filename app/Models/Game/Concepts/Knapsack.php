@@ -69,4 +69,11 @@ class Knapsack {
 		return $this->change($id, $type, false);
 	}
 
+	public function truncate()
+	{
+		foreach (Listing::$polymorphicRelationships as $relation)
+			foreach ($this->listing->$relation as $entity)
+				$this->remove($entity->id, $entity->pivot->jotting_type);
+	}
+
 }

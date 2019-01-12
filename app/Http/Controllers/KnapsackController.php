@@ -61,6 +61,17 @@ class KnapsackController extends Controller
 		return response()->json([ 'success' => true ]);
 	}
 
+	public function removeAllActiveEntries(Request $request)
+	{
+		if ( ! auth()->check())
+			abort(404);
+
+		$knapsack = new Knapsack;
+		$knapsack->truncate();
+
+		return response()->json([ 'success' => true ]);
+	}
+
 	public function publish(Request $request)
 	{
 		if ( ! auth()->check())
