@@ -7,6 +7,7 @@ use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Equipment;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 
@@ -77,6 +78,12 @@ $factory->define(Recipe::class, function(Faker\Generator $faker) {
 });
 
 $factory->define(Npc::class, function(Faker\Generator $faker) {
+	return [
+
+	];
+});
+
+$factory->define(Equipment::class, function(Faker\Generator $faker) {
 	return [
 
 	];

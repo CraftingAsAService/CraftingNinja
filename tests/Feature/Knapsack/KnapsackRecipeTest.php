@@ -6,24 +6,10 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class KnapsackRecipeTest extends TestCase
+class KnapsackRecipeTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		// $this->withoutExceptionHandling();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function users_can_see_recipes_in_their_knapsack()

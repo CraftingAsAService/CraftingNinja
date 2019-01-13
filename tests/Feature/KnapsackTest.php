@@ -8,24 +8,10 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class KnapsackTest extends TestCase
+class KnapsackTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		// $this->withoutExceptionHandling();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function users_with_an_empty_knapsack_are_given_a_200()

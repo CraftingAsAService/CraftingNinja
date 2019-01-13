@@ -3,6 +3,7 @@
 namespace App\Models\Game\Concepts;
 
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
 use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Niche;
 

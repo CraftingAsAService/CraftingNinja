@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Collections;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Item extends JsonResource
+class ItemResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -25,30 +25,36 @@ class Item extends JsonResource
 
 		if ($this->recipes->count())
 			$item['recipes'] = $this->recipes->map(function($recipe) {
+				$job = $recipe->job ? [
+					'id' => $recipe->job->id,
+					'icon' => $recipe->job->icon
+				] : null;
+
 				return [
 					'id' => $recipe->id,
 					'level' => $recipe->level,
 					'sublevel' => $recipe->sublevel,
-					'job' => [
-						'id' => $recipe->job->id,
-						'icon' => $recipe->job->icon
-					],
+					'job' => $job,
 				];
 			});
 
 		if ($this->equipment)
+		{
+			$jobs = $this->equipment->niche && $this->equipment->niche->jobs ? $this->equipment->niche->jobs->map(function($job) {
+					return [
+						'id' => $job->id,
+						'icon' => $job->icon
+					];
+				}) : null;
+
 			$item['equipment'] = [
 				'id' => $this->equipment->id,
 				'level' => $this->equipment->level,
 				'slot' => $this->equipment->slot,
 				'sockets' => $this->equipment->sockets,
-				'jobs' => $this->equipment->jobGroups->map(function($jobGroup) {
-					return [
-						'id' => $jobGroup->job->id,
-						'icon' => $jobGroup->job->icon
-					];
-				}),
+				'jobs' => $jobs,
 			];
+		}
 
 		return $item;
 	}

@@ -4,23 +4,10 @@ namespace Feature\Books;
 
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class VotingTest extends TestCase
+class VotingTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function users_can_upvote_published_book()

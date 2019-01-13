@@ -5,24 +5,10 @@ namespace Feature\Books;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class BookTest extends TestCase
+class BookTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	function setUp()
-	{
-		parent::setUp();
-
-		// $this->withoutExceptionHandling();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function user_can_view_recipe_books()

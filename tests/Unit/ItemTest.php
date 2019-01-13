@@ -2,26 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Http\Resources\ItemResource;
 use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
-use App\Http\Resources\Json\Items as ItemsCollection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class ItemTest extends TestCase
+class ItemTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function item_json_response_is_valid()
@@ -45,7 +32,7 @@ class ItemTest extends TestCase
 		$items = Item::with('category')->get();
 
 		// Act
-		$ic = new ItemsCollection($items);
+		$ic = ItemResource::collection($items);
 
 		// Assert
 		$this->assertEquals('Gamma Category', $ic->first()->category->name);

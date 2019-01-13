@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ItemResource;
+use App\Models\Game\Aspects\Item;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Validator;
-
-use App\Http\Resources\Json\Items as ItemsCollection;
-
-use App\Models\Game\Aspects\Item;
 
 class ItemsController extends Controller
 {
@@ -20,11 +18,11 @@ class ItemsController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$items = Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.jobGroups.job', 'recipes.job')
+		$items = Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.niche.jobs', 'recipes.job')
 			->filter($request->all())
 			->simplePaginate();
 
-		return new ItemsCollection($items);
+		return ItemResource::collection($items);
 	}
 
 	private function validator($data)

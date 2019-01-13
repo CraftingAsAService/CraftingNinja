@@ -2,23 +2,10 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class ReportTest extends TestCase
+class ReportTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function oudated_reports_will_email_book_author_once()

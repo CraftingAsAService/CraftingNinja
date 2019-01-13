@@ -2,23 +2,10 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\GameTestCase;
 
-class ListingTest extends TestCase
+class ListingTest extends GameTestCase
 {
-
-	/**
-	 * Initialise classes to test against.
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->setGame();
-	}
 
 	/** @test */
 	function listing_json_response_is_valid()
