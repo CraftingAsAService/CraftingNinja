@@ -78,7 +78,7 @@ class Item extends Aspect
 				$query->where('recipes.sublevel', $filters['sublevel']);
 
 			if (isset($filters['rclass']))
-				$query->whereIn('recipes.job_id', explode(',', $filters['rclass']));
+				$query->whereIn('recipes.job_id', is_array($filters['rclass']) ? $filters['rclass'] : explode(',', $filters['rclass']));
 		}
 
 		return $query;
@@ -108,12 +108,13 @@ class Item extends Aspect
 
 			if (isset($filters['slot'])) {
 				// "slot" values will be "hands"/etc. Convert them to IDs
-				$query->whereIn('equipment.slot', array_keys(array_intersect(config('game.slotToEquipment'), explode(',', $filters['slot']))));
+				$query->whereIn('equipment.slot', is_array($filters['slot']) ? $filters['slot'] : explode(',', $filters['slot']));
 			}
 
-			// if (isset($filters['eclass']))
-			// 	$query->join('job_groups', 'job_groups.group_id', '=', 'equipment.job_group_id')
-			// 		->whereIn('job_groups.job_id', explode(',', $filters['eclass']));
+			if (isset($filters['eclass']))
+				$query->whereHas('equipment.niche.jobs', function ($query) use ($filters) {
+					$query->whereIn('job_id', is_array($filters['eclass']) ? $filters['eclass'] : explode(',', $filters['eclass']));
+				});
 		}
 
 		return $query;

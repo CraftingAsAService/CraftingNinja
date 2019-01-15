@@ -2,10 +2,10 @@
 
 namespace App\Models\Game\Concepts;
 
+use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Equipment;
-use Models\Game\Aspects\Job;
 
 class Niche extends Concept
 {

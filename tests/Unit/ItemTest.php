@@ -5,7 +5,10 @@ namespace Tests\Unit;
 use App\Http\Resources\ItemResource;
 use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Equipment;
+use App\Models\Game\Concepts\Niche;
 use Tests\GameTestCase;
 
 class ItemTest extends GameTestCase
@@ -180,37 +183,154 @@ class ItemTest extends GameTestCase
 	/** @test */
 	function items_can_be_filtered_by_recipe_class()
 	{
+		$bitem = factory(Item::class)->create([
+			'name' => 'Bad Item',
+		]);
 
-	}
+		$bjob = factory(Job::class)->create();
 
-	/** @test */
-	function items_can_be_filtered_by_recipe_difficulty()
-	{
+		factory(Recipe::class)->create([
+			'item_id' => $bitem->id,
+			'job_id' => $bjob->id,
+		]);
 
+		$item = factory(Item::class)->create([
+			'name' => 'Good Item',
+		]);
+
+		$job = factory(Job::class)->create();
+
+		factory(Recipe::class)->create([
+			'item_id' => $item->id,
+			'job_id' => $job->id,
+		]);
+
+		$items = Item::withTranslation()->filter([
+			'recipes' => 1,
+			'rclass' => [ $job->id, ],
+		]);
+
+		$this->assertEquals(1, $items->count());
+		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_level()
 	{
+		$bniche = factory(Niche::class)->create();
+		$bjob = factory(Job::class)->create();
+		$bniche->jobs()->attach($bjob);
 
+		$bitem = factory(Item::class)->create([
+			'name' => 'Bad Item',
+		]);
+
+		$bequipment = factory(Equipment::class)->create([
+			'item_id' => $bitem->id,
+			'niche_id' => $bniche->id,
+			'level' => 9,
+		]);
+
+		$niche = factory(Niche::class)->create();
+		$job = factory(Job::class)->create();
+		$niche->jobs()->attach($job);
+
+		$item = factory(Item::class)->create([
+			'name' => 'Good Item',
+		]);
+
+		$equipment = factory(Equipment::class)->create([
+			'item_id' => $item->id,
+			'niche_id' => $niche->id,
+			'level' => 7,
+		]);
+
+		$items = Item::withTranslation()->filter([
+			'equipment' => 1,
+			'elvlMin' => 6,
+			'elvlMax' => 8,
+		]);
+
+		$this->assertEquals(1, $items->count());
+		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_class()
 	{
+		$bniche = factory(Niche::class)->create();
+		$bjob = factory(Job::class)->create();
+		$bniche->jobs()->attach($bjob);
 
+		$bitem = factory(Item::class)->create([
+			'name' => 'Bad Item',
+		]);
+
+		$bequipment = factory(Equipment::class)->create([
+			'item_id' => $bitem->id,
+			'niche_id' => $bniche->id,
+		]);
+
+		$niche = factory(Niche::class)->create();
+		$job = factory(Job::class)->create();
+		$niche->jobs()->attach($job);
+
+		$item = factory(Item::class)->create([
+			'name' => 'Good Item',
+		]);
+
+		$equipment = factory(Equipment::class)->create([
+			'item_id' => $item->id,
+			'niche_id' => $niche->id,
+		]);
+
+		$items = Item::withTranslation()->filter([
+			'equipment' => 1,
+			'eclass' => [ $job->id, ],
+		]);
+
+		$this->assertEquals(1, $items->count());
+		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_slot()
 	{
+		$bniche = factory(Niche::class)->create();
+		$bjob = factory(Job::class)->create();
+		$bniche->jobs()->attach($bjob);
 
-	}
+		$bitem = factory(Item::class)->create([
+			'name' => 'Bad Item',
+		]);
 
-	/** @test */
-	function items_can_be_filtered_by_equipment_slots()
-	{
+		$bequipment = factory(Equipment::class)->create([
+			'item_id' => $bitem->id,
+			'niche_id' => $bniche->id,
+			'slot' => 1,
+		]);
 
+		$niche = factory(Niche::class)->create();
+		$job = factory(Job::class)->create();
+		$niche->jobs()->attach($job);
+
+		$item = factory(Item::class)->create([
+			'name' => 'Good Item',
+		]);
+
+		$equipment = factory(Equipment::class)->create([
+			'item_id' => $item->id,
+			'niche_id' => $niche->id,
+			'slot' => 2,
+		]);
+
+		$items = Item::withTranslation()->filter([
+			'equipment' => 1,
+			'slot' => 2,
+		]);
+
+		$this->assertEquals(1, $items->count());
+		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
