@@ -14,373 +14,247 @@ use Tests\GameTestCase;
 class ItemTest extends GameTestCase
 {
 
-	/** @test */
-	function item_json_response_contains_valid_category_name()
+	private $badItem = null,
+			$goodItem = null,
+			$goodJob = null;
+
+	private function commonItems()
 	{
-		// Arrange
-		$item = factory(Item::class)->create([
+		$this->badItem = factory(Item::class)->create([
+			'name' => 'Bad Item',
+			'ilvl' => 30,
+			'rarity' => 1,
+		]);
+
+		$badItem2 = factory(Item::class)->create([
+			'name' => 'Bad Item Z',
+			'ilvl' => 22,
+			'rarity' => 3,
+		]);
+
+		$this->goodItem = factory(Item::class)->create([
 			'name' => 'Good Item',
+			'ilvl' => 18,
+			'rarity' => 2,
 		]);
-		$category = factory(Category::class)->create([
-			'name' => 'Awesome Category',
+
+		return $this; // For chaining
+	}
+
+	private function withRecipes($onlyGoodItem = false)
+	{
+		$this->goodJob = $this->goodJob ?? factory(Job::class)->create();
+
+		factory(Recipe::class)->create([
+			'item_id' => $this->goodItem->id,
+			'sublevel' => 27,
+			'job_id' => $this->goodJob->id,
 		]);
-		$item->category()->associate($category);
-		$item->save();
 
-		$items = Item::with('category')->get();
+		if ( ! $onlyGoodItem)
+		{
+			$job = factory(Job::class)->create();
 
+			factory(Recipe::class)->create([
+				'item_id' => $this->badItem->id,
+				'sublevel' => 100,
+				'job_id' => $job->id,
+			]);
+		}
+	}
+
+	private function withEquipment($onlyGoodItem = false)
+	{
+		$this->goodJob = $this->goodJob ?? factory(Job::class)->create();
+		$niche = factory(Niche::class)->create();
+		$niche->jobs()->attach($this->goodJob);
+
+		factory(Equipment::class)->create([
+			'item_id' => $this->goodItem->id,
+			'niche_id' => $niche->id,
+			'level' => 7,
+			'slot' => 2,
+		]);
+
+		if ( ! $onlyGoodItem)
+		{
+			$job = factory(Job::class)->create();
+			$niche = factory(Niche::class)->create();
+			$niche->jobs()->attach($job);
+
+			factory(Equipment::class)->create([
+				'item_id' => $this->badItem->id,
+				'niche_id' => $niche->id,
+				'level' => 9,
+				'slot' => 1,
+			]);
+		}
+	}
+
+	private function assertOnlyGoodItemFilter($filter)
+	{
 		// Act
-		$itemCollection = ItemResource::collection($items);
+		$items = Item::filter($filter);
 
 		// Assert
-		$this->assertEquals('Awesome Category', $itemCollection->first()->category->name);
+		$this->assertEquals(1, $items->count());
+		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_name()
 	{
-		factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
+		$this->commonItems();
 
-		factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
-
-		$items = Item::withTranslation()->filter([
+		$this->assertOnlyGoodItemFilter([
 			'name' => 'goo tem',
 		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_ilvl()
 	{
-		factory(Item::class)->create([
-			'name' => 'BadX Item',
-			'ilvl' => 18,
-		]);
-		factory(Item::class)->create([
-			'name' => 'Good Item',
-			'ilvl' => 22,
-		]);
-		factory(Item::class)->create([
-			'name' => 'BadY Item',
-			'ilvl' => 30,
-		]);
+		$this->commonItems();
 
-		$items = Item::withTranslation()->filter([
-			'ilvlMin' => 19,
-			'ilvlMax' => 29,
+		$this->assertOnlyGoodItemFilter([
+			'ilvlMin' => 15,
+			'ilvlMax' => 19,
 		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_rarity()
 	{
-		factory(Item::class)->create([
-			'name' => 'BadX Item',
-			'rarity' => 1,
-		]);
-		factory(Item::class)->create([
-			'name' => 'Good Item',
+		$this->commonItems();
+
+		$this->assertOnlyGoodItemFilter([
 			'rarity' => 2,
 		]);
-		factory(Item::class)->create([
-			'name' => 'BadY Item',
-			'rarity' => 3,
+	}
+
+	/** @test */
+	function items_can_be_filtered_by_category()
+	{
+		$this->commonItems();
+
+		$category = factory(Category::class)->create([
+			'name' => 'Good Category',
 		]);
 
-		$items = Item::withTranslation()->filter([
-			'rarity' => 2,
-		]);
+		$this->goodItem->category()->associate($category)->save();
 
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
+		$this->assertOnlyGoodItemFilter([
+			'category_id' => $category->id,
+		]);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_recipes_only()
 	{
-		factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
+		$this->commonItems()->withRecipes(true);
 
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$recipe = factory(Recipe::class)->create([
-			'item_id' => $item->id,
-		]);
-
-		$items = Item::withTranslation()->filter([
+		$this->assertOnlyGoodItemFilter([
 			'recipes' => 1,
 		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
-	}
-
-	/** @test */
-	function user_can_filter_by_equipment_only()
-	{
-		factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$equipment = factory(Equipment::class)->create([
-			'item_id' => $item->id,
-		]);
-
-		$items = Item::withTranslation()->filter([
-			'equipment' => 1,
-		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_recipe_sublevel()
 	{
-		$bitem = factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
+		$this->commonItems()->withRecipes();
 
-		factory(Recipe::class)->create([
-			'item_id' => $bitem->id,
-			'sublevel' => 100,
-		]);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		factory(Recipe::class)->create([
-			'item_id' => $item->id,
+		$this->assertOnlyGoodItemFilter([
 			'sublevel' => 27,
 		]);
-
-		$items = Item::withTranslation()->filter([
-			'recipes' => 1,
-			'sublevel' => 27,
-		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_recipe_class()
 	{
-		$bitem = factory(Item::class)->create([
-			'name' => 'Bad Item',
+		$this->commonItems()->withRecipes();
+
+		$this->assertOnlyGoodItemFilter([
+			'rclass' => [ $this->goodJob->id, ],
 		]);
+	}
 
-		$bjob = factory(Job::class)->create();
+	/** @test */
+	function user_can_filter_by_equipment_only()
+	{
+		$this->commonItems()->withEquipment(true);
 
-		factory(Recipe::class)->create([
-			'item_id' => $bitem->id,
-			'job_id' => $bjob->id,
+		$this->assertOnlyGoodItemFilter([
+			'equipment' => 1,
 		]);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$job = factory(Job::class)->create();
-
-		factory(Recipe::class)->create([
-			'item_id' => $item->id,
-			'job_id' => $job->id,
-		]);
-
-		$items = Item::withTranslation()->filter([
-			'recipes' => 1,
-			'rclass' => [ $job->id, ],
-		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_level()
 	{
-		$bniche = factory(Niche::class)->create();
-		$bjob = factory(Job::class)->create();
-		$bniche->jobs()->attach($bjob);
+		$this->commonItems()->withEquipment();
 
-		$bitem = factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
-
-		$bequipment = factory(Equipment::class)->create([
-			'item_id' => $bitem->id,
-			'niche_id' => $bniche->id,
-			'level' => 9,
-		]);
-
-		$niche = factory(Niche::class)->create();
-		$job = factory(Job::class)->create();
-		$niche->jobs()->attach($job);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$equipment = factory(Equipment::class)->create([
-			'item_id' => $item->id,
-			'niche_id' => $niche->id,
-			'level' => 7,
-		]);
-
-		$items = Item::withTranslation()->filter([
-			'equipment' => 1,
+		$this->assertOnlyGoodItemFilter([
 			'elvlMin' => 6,
 			'elvlMax' => 8,
 		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_class()
 	{
-		$bniche = factory(Niche::class)->create();
-		$bjob = factory(Job::class)->create();
-		$bniche->jobs()->attach($bjob);
+		$this->commonItems()->withEquipment();
 
-		$bitem = factory(Item::class)->create([
-			'name' => 'Bad Item',
+		$this->assertOnlyGoodItemFilter([
+			'eclass' => [ $this->goodJob->id, ],
 		]);
-
-		$bequipment = factory(Equipment::class)->create([
-			'item_id' => $bitem->id,
-			'niche_id' => $bniche->id,
-		]);
-
-		$niche = factory(Niche::class)->create();
-		$job = factory(Job::class)->create();
-		$niche->jobs()->attach($job);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$equipment = factory(Equipment::class)->create([
-			'item_id' => $item->id,
-			'niche_id' => $niche->id,
-		]);
-
-		$items = Item::withTranslation()->filter([
-			'equipment' => 1,
-			'eclass' => [ $job->id, ],
-		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_filtered_by_equipment_slot()
 	{
-		$bniche = factory(Niche::class)->create();
-		$bjob = factory(Job::class)->create();
-		$bniche->jobs()->attach($bjob);
+		$this->commonItems()->withEquipment();
 
-		$bitem = factory(Item::class)->create([
-			'name' => 'Bad Item',
-		]);
-
-		$bequipment = factory(Equipment::class)->create([
-			'item_id' => $bitem->id,
-			'niche_id' => $bniche->id,
-			'slot' => 1,
-		]);
-
-		$niche = factory(Niche::class)->create();
-		$job = factory(Job::class)->create();
-		$niche->jobs()->attach($job);
-
-		$item = factory(Item::class)->create([
-			'name' => 'Good Item',
-		]);
-
-		$equipment = factory(Equipment::class)->create([
-			'item_id' => $item->id,
-			'niche_id' => $niche->id,
+		$this->assertOnlyGoodItemFilter([
 			'slot' => 2,
 		]);
-
-		$items = Item::withTranslation()->filter([
-			'equipment' => 1,
-			'slot' => 2,
-		]);
-
-		$this->assertEquals(1, $items->count());
-		$this->assertEquals('Good Item', $items->first()->name);
 	}
 
 	/** @test */
 	function items_can_be_sorted_by_name()
 	{
-		factory(Item::class)->create([
-			'name' => 'Beta Item',
-		]);
-		factory(Item::class)->create([
-			'name' => 'Gamma Item',
-		]);
+		$this->commonItems();
 
-		$firstAscItem = Item::withTranslation()->filter([
+		$firstAscItem = Item::filter([
 			'sorting' => 'name',
 			'ordering' => 'asc',
 		])->first();
 
-		$firstDescItem = Item::withTranslation()->filter([
+		$firstDescItem = Item::filter([
 			'sorting' => 'name',
 			'ordering' => 'desc',
 		])->first();
 
-		$this->assertEquals('Beta Item', $firstAscItem->name);
-		$this->assertEquals('Gamma Item', $firstDescItem->name);
+		$this->assertEquals('Bad Item', $firstAscItem->name);
+		$this->assertEquals('Good Item', $firstDescItem->name);
 	}
 
 	/** @test */
 	function items_can_be_sorted_by_ilvl()
 	{
-		factory(Item::class)->create([
-			'name' => 'Beta Item',
-			'ilvl' => 22,
-		]);
-		factory(Item::class)->create([
-			'name' => 'Gamma Item',
-			'ilvl' => 21,
-		]);
+		$this->commonItems();
 
-		$firstAscItem = Item::withTranslation()->filter([
+		$firstAscItem = Item::filter([
 			'sorting' => 'ilvl',
 			'ordering' => 'asc',
 		])->first();
 
-		$firstDescItem = Item::withTranslation()->filter([
+		$firstDescItem = Item::filter([
 			'sorting' => 'ilvl',
 			'ordering' => 'desc',
 		])->first();
 
-		$this->assertEquals('Gamma Item', $firstAscItem->name);
-		$this->assertEquals('Beta Item', $firstDescItem->name);
+		$this->assertEquals('Good Item', $firstAscItem->name);
+		$this->assertEquals('Bad Item', $firstDescItem->name);
 	}
 
 }
