@@ -46,6 +46,7 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	Route::put('knapsack', 'KnapsackController@updateActiveEntry');
 	Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
 	Route::delete('knapsack/clear', 'KnapsackController@removeAllActiveEntries');
-	// Route::post('knapsack/publish', 'KnapsackController@publish');
+
+	Route::post('report', 'ReportController@create');
 
 });

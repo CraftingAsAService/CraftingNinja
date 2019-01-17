@@ -10,6 +10,7 @@ use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Shop;
+use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Niche;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -52,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
 			'objective' => Objective::class,
 			'item' => Item::class,
 			'node' => Node::class,
+			'listing' => Listing::class,
 		]);
 	}
 

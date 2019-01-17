@@ -9,6 +9,7 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Listing\Vote;
+use App\Models\Game\Concepts\Report;
 use App\Models\Translations\ListingTranslation;
 use App\Models\User;
 use Carbon\Carbon;
@@ -114,6 +115,11 @@ class Listing extends Concept
 	public function nodes()
 	{
 		return $this->morphedByMany(Node::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
+
+	public function reports()
+	{
+		return $this->morphMany(Report::class, 'reportable');
 	}
 
 	/**
