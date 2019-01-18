@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class DataParse extends Command
+class Parse extends Command
 {
 	/**
 	 * The name and signature of the console command.
@@ -18,7 +18,7 @@ class DataParse extends Command
 	 *
 	 * @var string
 	 */
-	protected $description = 'Parse game data';
+	protected $description = 'Parse externally provided game data into relevant chunks';
 
 	/**
 	 * Create a new command instance.
@@ -40,7 +40,6 @@ class DataParse extends Command
 		echo 'Parsing data for ' . strtoupper($this->argument('game')) . PHP_EOL;
 
 		$gameClass = '\App\Models\Game\Data\\' . ucfirst($this->argument('game'));
-		$gameData = new $gameClass();
-		$gameData->parse();
+		new $gameClass();
 	}
 }

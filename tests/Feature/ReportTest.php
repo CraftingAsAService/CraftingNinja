@@ -32,6 +32,24 @@ class ReportTest extends GameTestCase
 		$this->assertEquals(1, $listing->reports->count());
 	}
 
+	/** @test */
+	function users_cannot_report_unpublished_lists()
+	{
+		// Arrange
+		$listing = factory(Listing::class)->state('unpublished')->create();
+		$user = factory(User::class)->create();
+
+		// Act
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/report', [
+			'id' => $listing->id,
+			'type' => 'listing',
+			'reason' => 'Inaccurate',
+		]);
+
+		$response->assertStatus(404);
+		$this->assertEquals(0, $listing->reports->count());
+	}
+
 	// $this->withoutExceptionHandling();
 
 }

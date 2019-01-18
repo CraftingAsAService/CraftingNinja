@@ -13,9 +13,6 @@ class Kernel extends ConsoleKernel
 	 * @var array
 	 */
 	protected $commands = [
-		Commands\GameMigrations::class,
-		Commands\DataParse::class,
-		Commands\Reseed::class,
 	];
 
 	/**
@@ -26,8 +23,6 @@ class Kernel extends ConsoleKernel
 	 */
 	protected function schedule(Schedule $schedule)
 	{
-		// $schedule->command('inspire')
-		//          ->hourly();
 	}
 
 	/**

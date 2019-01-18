@@ -30,6 +30,10 @@ class Report extends Concept
 		if ( ! isset(Relation::morphMap()[$type]))
 			throw new NotMorphableException;
 
+		// Additional protections based on type
+		if ($type == 'listing')
+			Listing::published()->findOrFail($id);
+
 		// Users can only report once
 		return Report::updateOrCreate([
 			'user_id' => auth()->user()->id,

@@ -1,26 +1,35 @@
 <?php
 
 /**
+ * Data provided manually by /u/Clorifex of garlandtools.org, thanks dude!
+ *
  * php artisan osmose:parse ffxiv
  */
 
 namespace App\Models\Game\Data;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Game\Data\GameDataTemplate;
 
-class Ffxiv extends Model
+class Ffxiv extends GameDataTemplate
 {
-	public $dataLocation = null,
-			$core = null,
-			$map = [];
+
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->languages = [
+			'en' => '/en',
+			'de' => '/de',
+			'fr' => '/fr',
+			'ja' => '/ja',
+		];
+
+		$this->parse();
+	}
 
 	public function parse()
 	{
-		$this->dataLocation = env('DATA_REPOSITORY') . '/ffxiv/';
-
-		$this->loadMaps();
-
-		// GarlandTools core data
+		// Core data has some excellent guidance data in it
 		$this->run('core');
 
 		// categories
@@ -82,70 +91,11 @@ class Ffxiv extends Model
 		echo PHP_EOL . "Finished" . PHP_EOL;
 	}
 
-	private function run($action)
-	{
-		if (\Cache::has($action))
-		{
-			echo 'Skipping ' . $action . PHP_EOL;
-			return;
-		}
-
-		echo 'Starting ' . $action . PHP_EOL;
-
-		clock()->startEvent($action, $action);
-
-		$this->$action();
-
-		$timeline = clock()->endEvent($action);
-
-		$duration = round(clock()->getTimeline()->toArray()[$action]['duration'] / 1000, 2);
-		$memoryUsage = $this->humanReadable(memory_get_usage());
-		echo PHP_EOL . $action . ' ⧖ ' . $duration . 's, ' . $memoryUsage . PHP_EOL . PHP_EOL;
-
-		\Cache::put($action, true, 10080); // Store for 1 week
-	}
-
-	private function humanReadable($size)
-	{
-		$fileSizeNames = [" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"];
-		return $size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) .$fileSizeNames[$i] : '0 Bytes';
-	}
-
-	private function write($filename, $array, $isMap = false)
-	{
-		$writeDir = $this->dataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
-		echo 'Writing ' . $filename . '.json' . PHP_EOL;
-		file_put_contents($writeDir . $filename . '.json', json_encode($this->deduplicate($array)));
-	}
-
-	private function loadMaps()
-	{
-		foreach (array_diff(scandir($this->dataLocation . 'parsed/mappings'), ['.', '..']) as $filename)
-		{
-			$action = str_replace('.json', '', $filename);
-			$this->readMap($action);
-		}
-	}
-
-	private function readMap($filename)
-	{
-		$readDir = $this->dataLocation . 'parsed/mappings/';
-		$file = $readDir . $filename . '.json';
-		if (is_file($file))
-			$this->map[$filename] = json_decode(file_get_contents($file), true);
-	}
-
-	private function saveMap($action, $data)
-	{
-		$this->write($action, $data, true);
-		$this->map[$action] = $data;
-	}
-
 	/**
 	 * Table Functions
 	 */
 
-	private function core()
+	protected function core()
 	{
 		// Get the core, fix it up, split it into an array
 		$coreFile = file_get_contents($this->dataLocation . 'core.js');
@@ -178,7 +128,7 @@ class Ffxiv extends Model
 		$this->saveMap('core', $core);
 	}
 
-	private function attributes()
+	protected function attributes()
 	{
 		$attributesMap = [];
 		// Set up the columns as the first row of data
@@ -192,7 +142,8 @@ class Ffxiv extends Model
 
 		$attributeId = 0;
 
-		$itemsDir = $this->dataLocation . 'data/item';
+		// Only English translations are available
+		$itemsDir = $this->dataLocation . 'data/en/item';
 
 		// Only find item files with attributes
 		$filesList = $this->grepDir($itemsDir, '"attr');
@@ -260,7 +211,7 @@ class Ffxiv extends Model
 		$this->saveMap('attributes', $attributesMap);
 	}
 
-	private function categories()
+	protected function categories()
 	{
 		// $categoriesMap unnecessary, reliable id
 		// Set up the columns as the first row of data
@@ -319,7 +270,7 @@ class Ffxiv extends Model
 		$this->write('categoryTranslations', $categoryTranslationsData);
 	}
 
-	private function jobs()
+	protected function jobs()
 	{
 		// $jobsMap unnecessary, reliable id
 		// Set up the columns as the first row of data
@@ -368,7 +319,7 @@ class Ffxiv extends Model
 		$this->write('jobTranslations', $jobTranslationsData);
 	}
 
-	private function jobGroups()
+	protected function jobGroups()
 	{
 		// $jobGroupsMap unnecessary, reliable id
 		// Set up the columns as the first row of data
@@ -396,7 +347,7 @@ class Ffxiv extends Model
 		$this->write('jobGroups', $jobGroupsData);
 	}
 
-	private function zones()
+	protected function zones()
 	{
 		// $zonesMap unnecessary, reliable id
 		// Set up the columns as the first row of data
@@ -467,7 +418,7 @@ class Ffxiv extends Model
 		$this->write('zoneTranslations', $zoneTranslationsData);
 	}
 
-	private function npcs()
+	protected function npcs()
 	{
 		// NPC Ids are unreliable, convert them
 		$npcsMap = [];
@@ -653,7 +604,7 @@ class Ffxiv extends Model
 		$this->saveMap('npcs', $npcsMap);
 	}
 
-	private function objectives()
+	protected function objectives()
 	{
 		// Set up the columns as the first row of data
 		$objectivesData = [
@@ -809,7 +760,7 @@ class Ffxiv extends Model
 		$this->write('objectiveItemReward', $objectiveItemRewardData);
 	}
 
-	private function nodes()
+	protected function nodes()
 	{
 		// Set up the columns as the first row of data
 		$nodesData = [
@@ -916,7 +867,7 @@ class Ffxiv extends Model
 		$this->write('nodeReward', $nodeRewardData);
 	}
 
-	private function items()
+	protected function items()
 	{
 		// Set up the columns as the first row of data
 		$itemsData = [
@@ -1128,7 +1079,7 @@ class Ffxiv extends Model
 	 * Helper Functions
 	 */
 
-	private function fixInstanceId($id)
+	protected function fixInstanceId($id)
 	{
 		// Zones have IDs ranging from 1 to ~3000 (as of today)
 		// Instances have mostly ids of 20000+, however there are a handful that are less than 10000.
@@ -1136,106 +1087,10 @@ class Ffxiv extends Model
 		return $id + 100000;
 	}
 
-	private function fixJobId($id)
+	protected function fixJobId($id)
 	{
 		// The Adventurer has an ID of 0, but change it to 255
 		return $id == 0 ? 255 : $id;
-	}
-
-	private function deduplicate($array)
-	{
-		return array_map('unserialize', array_unique(array_map('serialize', $array)));
-	}
-
-	private function scanDir($dir)
-	{
-		$filesList = array_diff(scandir($dir), ['.', '..']);
-		natsort($filesList);
-		return array_values($filesList);
-	}
-
-	private function grepDir($dir, $pattern)
-	{
-		echo 'Grepping ' . $dir . PHP_EOL;
-		exec('grep -rl \'' . $dir . '\' -e \'' . $pattern . '\'', $filesList);
-		natsort($filesList);
-		return array_values($filesList);
-	}
-
-	private function clean($string)
-	{
-		// Further deconvert some characters
-		$string = str_replace('–', '-', $string);
-		$string = str_replace("\r\n", ' ', $string);
-		$string = preg_replace('/\<\/?Emphasis\>/', '', $string);
-		$string = str_replace('<SoftHyphen/>', '-', $string);
-
-		return $string;
-	}
-
-	private function getJSON($path)
-	{
-		$content = file_get_contents($path);
-
-		// http://stackoverflow.com/questions/17219916/json-decode-returns-json-error-syntax-but-online-formatter-says-the-json-is-ok
-		for ($i = 0; $i <= 31; ++$i)
-			$content = str_replace(chr($i), "", $content);
-		$content = str_replace(chr(127), "", $content);
-
-		// This is the most common part
-		$content = $this->binaryFix($content);
-
-		$content = json_decode($content, true);
-
-		return $content;
-	}
-
-	private function binaryFix($string)
-	{
-		// Some file begins with 'efbbbf' to mark the beginning of the file. (binary level)
-		// here we detect it and we remove it, basically it's the first 3 characters
-		if (0 === strpos(bin2hex($string), 'efbbbf'))
-			$string = substr($string, 3);
-
-		return $string;
-	}
-
-	protected $_spinners = ['|', '/', '-', '\\', '|', '/', '-', '\\'];
-
-	/**
-	 * This is used to echo the progress of a task on the command line.
-	 * Pass in the current row that you are on and the number of rows that need to be processed and this will echo out
-	 * a progress bar like this
-	 *
-	 * Progress: [-----------------\                                           ]
-	 *
-	 * It is possible to change the width of the bar by passing in an int as the $steps param, otherwise this default
-	 * to 60
-	 *
-	 * Once the process is complete pass in the $last param as true to finish the the process bar
-	 *
-	 * @param      $totalDone - The number of rows that have been processed so far
-	 * @param      $total     - The total number of rows to be processed
-	 * @param bool $last      - If the process has been completed
-	 * @param bool $steps     - How wide the process bar should be
-	 */
-	public function progress($totalDone, $total, $last = false, $steps = false)
-	{
-		if (PHP_SAPI != 'cli')
-			return;
-
-		$steps = $steps == false ? 40 : $steps;
-		if ($last === true)
-			$display = "Progress: [" . str_repeat('-', $steps + 1) . "]\r" . PHP_EOL;
-		else {
-			$toGo        = floor((1 - ($totalDone / $total)) * $steps);
-			$progressBar = str_repeat('-', $steps - $toGo);
-			$emptySpace  = str_repeat(' ', $toGo);
-			$index       = $totalDone % 8;
-			$display     = "Progress: [" . $progressBar . $this->_spinners[$index] . $emptySpace . "]\r";
-		}
-
-		echo $display;
 	}
 
 }

@@ -21,7 +21,7 @@ class Reseed extends Command
 	 *
 	 * @var string
 	 */
-	protected $description = 'Run the game seeds';
+	protected $description = 'Insert game data based on parsed files';
 
 	/**
 	 * Create a new command instance.
