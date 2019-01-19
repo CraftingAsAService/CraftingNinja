@@ -6,6 +6,7 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Knapsack;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 use Tests\GameTestCase;
@@ -234,6 +235,39 @@ class KnapsackTest extends GameTestCase
 		$response2->assertStatus(200);
 		$this->assertEquals(1, $preItemCount);
 		$this->assertEquals(0, $listing2->items()->count());
+	}
+
+	/** @test */
+	function users_can_share_their_current_knapsack_contents()
+	{
+		$listing = factory(Listing::class)->state('unpublished')->create();
+		$this->be($listing->user);
+
+		$item = factory(Item::class)->create();
+		$item2 = factory(Item::class)->create();
+		$listing->items()->attach($item2);
+		$listing->items()->attach($item);
+		$recipe = factory(Recipe::class)->create([
+			'item_id' => factory(Item::class)->create()->id,
+		]);
+		$listing->recipes()->attach($recipe);
+		$objective = factory(Objective::class)->create();
+		$listing->objectives()->attach($objective);
+		$node = factory(Node::class)->create();
+		$listing->nodes()->attach($node);
+
+		// Take the contents of the list, and compress it
+		$knapsack = new Knapsack;
+
+		$string = $knapsack->compressToString();
+
+		$this->assertEquals('i:1,2|n:1|o:1|r:1', base64_decode($string));
+	}
+
+	/** @test */
+	function users_can_use_a_knapsack_links()
+	{
+
 	}
 
 }

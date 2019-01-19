@@ -74,10 +74,4 @@ class ListingTest extends GameTestCase
 		$this->lists_can_contain_entity('nodes', $node);
 	}
 
-	/** @test */
-	function lists_can_be_shared()
-	{
-
-	}
-
 }

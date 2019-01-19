@@ -76,4 +76,34 @@ class Knapsack {
 				$this->remove($entity->id, $entity->pivot->jotting_type);
 	}
 
+	public function compressToString()
+	{
+		$this->listing->fresh();
+
+		$shorthand = [];
+
+		sort(Listing::$polymorphicRelationships);
+
+		foreach (Listing::$polymorphicRelationships as $rel)
+		{
+			if ($this->listing->$rel->count() == 0)
+				continue;
+
+			$letter = substr($rel, 0, 1);
+			$ids = implode(',', $this->listing->$rel->pluck('id')->sort()->toArray());
+			$shorthand[] = $letter . ':' . $ids;
+		}
+
+		return base64_encode(implode('|', $shorthand));
+	}
+
+	public function importFromString($string)
+	{
+		$string = base64_decode($string);
+
+
+
+
+	}
+
 }
