@@ -29,7 +29,12 @@ class Listing extends Concept
 		'published_at',
 	];
 
-	public static $polymorphicRelationships = [ 'items', 'objectives', 'recipes', 'nodes' ];
+	public static $polymorphicRelationships = [
+		'i' => 'items',
+		'o' => 'objectives',
+		'r' => 'recipes',
+		'n' => 'nodes',
+	];
 
 	// public static function boot()
 	// {

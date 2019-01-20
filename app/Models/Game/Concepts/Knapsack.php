@@ -82,16 +82,16 @@ class Knapsack {
 
 		$shorthand = [];
 
-		sort(Listing::$polymorphicRelationships);
-
-		foreach (Listing::$polymorphicRelationships as $rel)
+		foreach (Listing::$polymorphicRelationships as $letter => $rel)
 		{
 			if ($this->listing->$rel->count() == 0)
 				continue;
 
-			$letter = substr($rel, 0, 1);
-			$ids = implode(',', $this->listing->$rel->pluck('id')->sort()->toArray());
-			$shorthand[] = $letter . ':' . $ids;
+			$entries = [];
+			foreach ($this->listing->$rel as $entry)
+				$entries[] = $entry->id . ($entry->pivot->quantity > 1 ? 'x' . $entry->pivot->quantity : '');
+
+			$shorthand[] = $letter . ':' . implode(',', $entries);
 		}
 
 		return base64_encode(implode('|', $shorthand));
@@ -101,9 +101,21 @@ class Knapsack {
 	{
 		$string = base64_decode($string);
 
+		foreach (explode('|', $string) as $r)
+		{
+			list($letter, $entries) = explode(':', $r);
+			$entries = explode(',', $entries);
 
+			// $entries are "$id" or a spaceless "$id x $qty"
+			foreach ($entries as $id)
+			{
+				$qty = 1;
+				if (preg_match('/x/', $id))
+					list($id, $qty) = explode('x', $id);
 
-
+				self::change($id, str_singular(Listing::$polymorphicRelationships[$letter]), $qty);
+			}
+		}
 	}
 
 }

@@ -240,34 +240,55 @@ class KnapsackTest extends GameTestCase
 	/** @test */
 	function users_can_share_their_current_knapsack_contents()
 	{
+		$item = factory(Item::class)->create();
+		$item2 = factory(Item::class)->create();
+		$recipe = factory(Recipe::class)->create([
+			'item_id' => $item,
+		]);
+		$objective = factory(Objective::class)->create();
+		$node = factory(Node::class)->create();
+
 		$listing = factory(Listing::class)->state('unpublished')->create();
 		$this->be($listing->user);
 
-		$item = factory(Item::class)->create();
-		$item2 = factory(Item::class)->create();
 		$listing->items()->attach($item2);
-		$listing->items()->attach($item);
-		$recipe = factory(Recipe::class)->create([
-			'item_id' => factory(Item::class)->create()->id,
-		]);
+		$listing->items()->attach($item, [ 'quantity' => 7 ]);
 		$listing->recipes()->attach($recipe);
-		$objective = factory(Objective::class)->create();
 		$listing->objectives()->attach($objective);
-		$node = factory(Node::class)->create();
 		$listing->nodes()->attach($node);
 
 		// Take the contents of the list, and compress it
 		$knapsack = new Knapsack;
-
 		$string = $knapsack->compressToString();
 
-		$this->assertEquals('i:1,2|n:1|o:1|r:1', base64_decode($string));
+		// IDs are in order of when they were added
+		// Letters are in order of polymorphicrelation variable in Listing::class
+		$this->assertEquals('i:2,1x7|o:1|r:1|n:1', base64_decode($string));
 	}
 
 	/** @test */
-	function users_can_use_a_knapsack_links()
+	function users_can_use_a_knapsack_link()
 	{
+		$item = factory(Item::class)->create(); // id: 1
+		$item2 = factory(Item::class)->create(); // id: 2
+		$recipe = factory(Recipe::class)->create([ // id: 1
+			'item_id' => $item,
+		]);
+		$objective = factory(Objective::class)->create(); // id: 1
+		$node = factory(Node::class)->create(); // id: 1
 
+		$listing = factory(Listing::class)->state('unpublished')->create();
+		$this->be($listing->user);
+
+		$knapsack = new Knapsack;
+		$knapsack = $knapsack->importFromString(base64_encode('i:2,1x7|o:1|r:1|n:1'));
+
+		$listing->fresh();
+
+		$this->assertEquals(2, $listing->items->count());
+		$this->assertEquals(1, $listing->objectives->count());
+		$this->assertEquals(1, $listing->recipes->count());
+		$this->assertEquals(1, $listing->nodes->count());
 	}
 
 }
