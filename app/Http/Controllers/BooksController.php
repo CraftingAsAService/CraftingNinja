@@ -102,15 +102,15 @@ class BooksController extends Controller
 	 */
 	public function addAllEntriesToKnapsack(Request $request, $bookId)
 	{
-		if ( ! \Auth::check())
+		if ( ! auth()->check())
 			return $this->respondWithError(401, 'Unauthenticated');
 
-		$book = Listing::with(Listing::$polymorphicRelationships)->findOrFail($bookId);
+		$book = Listing::with(array_values(Listing::$polymorphicRelationships))->findOrFail($bookId);
 		$knapsack = new Knapsack;
 
 		foreach (Listing::$polymorphicRelationships as $relation)
 			foreach ($book->$relation as $entity)
-				$knapsack->change($entity->id, $entity->pivot->jotting_type, $entity->pivot->quantity);
+				$knapsack->change($entity->id, str_singular($relation), $entity->pivot->quantity);
 	}
 
 }

@@ -53,7 +53,12 @@ class Listing extends Concept
 
 	public function scopeFilter($query, $filters)
 	{
-		// TODO
+		if (isset($filters['class']))
+			$query->whereIn('job_id', is_array($filters['class']) ? $filters['class'] : explode(',', $filters['class']));
+
+		if (isset($filters['level']))
+			$query->where('min_level', '<=', $filters['level'])
+					->where('max_level', '>=', $filters['level']);
 
 		return $query;
 	}

@@ -8,13 +8,7 @@ class ReportTest extends GameTestCase
 {
 
 	/** @test */
-	function oudated_reports_will_email_book_author_once()
-	{
-
-	}
-
-	/** @test */
-	function incomplete_reports_will_email_book_author_once()
+	function reports_will_email_book_author_at_the_end_of_the_day()
 	{
 
 	}

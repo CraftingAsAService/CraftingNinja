@@ -194,7 +194,7 @@ class KnapsackTest extends GameTestCase
 		$listing = factory(Listing::class)->state('published')->create([
 			'name:en' => 'Alpha Book',
 		]);
-		$listing->items()->save($item, [ 'quantity' => 999 ]);
+		$listing->items()->attach($item, [ 'quantity' => 999 ]);
 
 		$user = factory(User::class)->create();
 
