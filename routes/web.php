@@ -33,11 +33,11 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 
 	Route::get('/', 'GameController@index');
 
-	Route::get('books', 'BooksController@index');
-	Route::get('books/{id}', 'BooksController@show');
-	Route::post('books/{id}/add', 'BooksController@addAllEntriesToKnapsack');
-	Route::post('books/{id}/vote', 'BooksController@vote');
-	Route::post('books/{id}/publish', 'BooksController@publish');
+	Route::get('books', 'BookController@index');
+	Route::get('books/{id}', 'BookController@show');
+	Route::post('books/{id}/add', 'BookController@addAllEntriesToKnapsack');
+	Route::post('books/{id}/vote', 'BookController@vote');
+	Route::post('books/{id}/publish', 'BookController@publish');
 
 	Route::get('compendium', 'CompendiumController@index');
 
@@ -45,7 +45,10 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	Route::post('knapsack', 'KnapsackController@addActiveEntry');
 	Route::put('knapsack', 'KnapsackController@updateActiveEntry');
 	Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
-	Route::delete('knapsack/clear', 'KnapsackController@removeAllActiveEntries');
+	Route::delete('knapsack/all', 'KnapsackController@removeAllActiveEntries');
+
+	Route::post('listing/{id}/publish', 'ListingController@publish');
+	Route::delete('listing/{id}', 'ListingController@delete');
 
 	Route::post('report', 'ReportController@create');
 

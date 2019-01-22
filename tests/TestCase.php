@@ -19,8 +19,6 @@ abstract class TestCase extends BaseTestCase
 	{
 		parent::setUp();
 
-		// $this->withoutExceptionHandling();
-
 		$this->artisan('migrate');
 	}
 
@@ -31,6 +29,11 @@ abstract class TestCase extends BaseTestCase
 		]);
 
 		$this->be($user);
+	}
+
+	public function showErrors()
+	{
+		$this->withoutExceptionHandling();
 	}
 
 }

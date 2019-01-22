@@ -6,10 +6,9 @@
  * php artisan db:seed --class FFXIVSeeder --database ffxiv
  */
 
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class FfxivSeeder extends Seeder
+class FfxivSeeder extends GenericDataSeeder
 {
 
 	protected $dataLocation = null;
@@ -21,75 +20,15 @@ class FfxivSeeder extends Seeder
 	 */
 	public function run()
 	{
-		$this->prepareDatabase();
-
-		$this->setDataLocation();
-
-		$seedData = [
-			// file.json => table
-			'attributes' => 'attributes',
-			'attributeTranslations' => 'attribute_translations',
-			'categories' => 'categories',
-			'categoryTranslations' => 'category_translations',
-			'equipment' => 'equipment',
-			'itemCoordinates' => 'coordinates',
-			// 'itemDetails' => 'details',
-			'itemPrice' => 'item_price',
-			'itemAttribute' => 'item_attribute',
-			'items' => 'items',
-			'itemTranslations' => 'item_translations',
-			'jobGroups' => 'job_groups',
-			'jobs' => 'jobs',
-			'jobTranslations' => 'job_translations',
-			'mobItem' => 'item_npc',
-			'nodeCoordinates' => 'coordinates',
-			'nodeDetails' => 'details',
-			'nodeReward' => 'node_rewards',
-			'nodes' => 'nodes',
-			'nodeTranslations' => 'node_translations',
-			'npcCoordinates' => 'coordinates',
-			'npcDetails' => 'details',
-			'npcs' => 'npcs',
-			'npcShop' => 'npc_shop',
-			'npcTranslations' => 'npc_translations',
-			'objectiveCoordinates' => 'coordinates',
-			'objectiveDetails' => 'details',
-			'objectiveItemRequired' => 'objective_item_required',
-			'objectiveItemReward' => 'objective_item_reward',
-			'objectives' => 'objectives',
-			'objectiveTranslations' => 'objective_translations',
-			'recipeIngredient' => 'recipe_ingredients',
-			'recipes' => 'recipes',
-			'itemNpc' => 'item_npc',
-			'shop' => 'shops',
-			'shopItem' => 'item_shop',
-			'shopTranslations' => 'shop_translations',
-			'zones' => 'zones',
-			'zoneTranslations' => 'zone_translations',
-		];
-
-		foreach ($seedData as $file => $table)
-			$this->seed($file, $table);
+		foreach ($this->seedData as $table)
+			$this->seed($table);
 
 		echo PHP_EOL . "Finished" . PHP_EOL;
 	}
 
-	private function prepareDatabase()
+	private function seed($table)
 	{
-		Model::unguard();
-
-		// Don't bother logging queries
-		\DB::connection()->disableQueryLog();
-	}
-
-	private function setDataLocation()
-	{
-		$this->dataLocation = env('DATA_REPOSITORY') . '/ffxiv/parsed/';
-	}
-
-	private function seed($file, $table)
-	{
-		$data = json_decode(file_get_contents($this->dataLocation . $file . '.json'), true);
+		$data = json_decode(file_get_contents($this->dataLocation . camel_case($table) . '.json'), true);
 		$columns = array_shift($data);
 
 		echo 'Inserting data into ' . $table . PHP_EOL;

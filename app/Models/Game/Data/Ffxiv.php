@@ -13,83 +13,59 @@ use App\Models\Game\Data\GameDataTemplate;
 class Ffxiv extends GameDataTemplate
 {
 
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->languages = [
+	public
+		$core = null,
+		$languages = [
 			'en' => '/en',
 			'de' => '/de',
 			'fr' => '/fr',
 			'ja' => '/ja',
+		],
+		$runList = [
+			// 'category_translations',
+			// 'categories',
+			// 'item_price',
+			// 'prices',
+			// 'item_translations',
+			// 'items',
+			// 'job_niches',
+			// 'niches',
+			// 'job_translations',
+			// 'jobs',
+			// 'item_recipes',
+			// 'recipe_translations',
+			// 'recipes',
+			// 'attribute_items',
+			// 'attribute_translations',
+			// 'attributes',
+			// 'equipment',
+			// 'item_npcs',
+			// 'npc_translations',
+			// 'npcs',
+			// 'npc_shops',
+			// 'shop_translations',
+			// 'shops',
+			// 'zone_translations',
+			// 'zones',
+			// 'coordinates',
+			// 'item_objectives',
+			// 'objective_translations',
+			// 'objectives',
+			// 'details',
+			// 'item_nodes',
+			// 'node_translations',
+			// 'nodes',
+			'core',
+			'categories',
+			'attributes',
+			'jobs',
+			'niches',
+			'zones',
+			'npcs',
+			'objectives',
+			'nodes',
+			'items',
 		];
-
-		$this->parse();
-	}
-
-	public function parse()
-	{
-		// Core data has some excellent guidance data in it
-		$this->run('core');
-
-		// categories
-		// category_translations
-		$this->run('categories');
-
-		// attributes
-		// attribute_translations
-		$this->run('attributes');
-
-		// jobs
-		// job_translations
-		$this->run('jobs');
-		// job_groups
-		$this->run('jobGroups');
-
-		// zones
-		// zone_translations
-		$this->run('zones');
-
-		// npcs
-		// has: coordinates
-		// has: details
-		// npc_translations
-		// npc_shop
-		// shops
-		// shop_translations
-		// item_shop
-		$this->run('npcs');
-
-		// objective
-		// has: coordinates
-		// has: details
-		// objective_translations
-		// objective_item_required
-		// objective_item_reward
-		$this->run('objectives');
-
-		// nodes
-		// has: coordinates
-		// has: details
-		// node_rewards
-		// node_translations
-		$this->run('nodes');
-
-		// items
-		// has: coordinates
-		// has: details
-		// item_translations
-		// equipment
-		// item_attribute
-		// item_npc
-		// item_price
-		// recipe_ingredients
-		// recipe_translations
-		// recipes
-		$this->run('items');
-
-		echo PHP_EOL . "Finished" . PHP_EOL;
-	}
 
 	/**
 	 * Table Functions
@@ -98,7 +74,7 @@ class Ffxiv extends GameDataTemplate
 	protected function core()
 	{
 		// Get the core, fix it up, split it into an array
-		$coreFile = file_get_contents($this->dataLocation . 'core.js');
+		$coreFile = file_get_contents($this->originDataLocation . 'core.js');
 		$coreArray = array_diff(explode(PHP_EOL, $this->binaryFix($coreFile)), ['']);
 
 		// Clean the core
@@ -143,7 +119,7 @@ class Ffxiv extends GameDataTemplate
 		$attributeId = 0;
 
 		// Only English translations are available
-		$itemsDir = $this->dataLocation . 'data/en/item';
+		$itemsDir = $this->originDataLocation . 'data/en/item';
 
 		// Only find item files with attributes
 		$filesList = $this->grepDir($itemsDir, '"attr');
@@ -223,7 +199,7 @@ class Ffxiv extends GameDataTemplate
 		];
 		// "Fixed" Data - Any ID less than one was ignored
 
-		$parentCategories = $this->getJSON($this->dataLocation . 'custom/categoryParents.json');
+		$parentCategories = $this->getJSON($this->originDataLocation . 'custom/categoryParents.json');
 		// Parent categories is a custom/manually maintained file
 		foreach ($parentCategories as $data)
 		{
@@ -319,8 +295,9 @@ class Ffxiv extends GameDataTemplate
 		$this->write('jobTranslations', $jobTranslationsData);
 	}
 
-	protected function jobGroups()
+	protected function niches()
 	{
+		// TODO TOTAL REWRITE
 		// $jobGroupsMap unnecessary, reliable id
 		// Set up the columns as the first row of data
 		$jobGroupsData = [
@@ -379,7 +356,7 @@ class Ffxiv extends GameDataTemplate
 		// Also handle instances, which are basically zones
 		echo 'Starting instances' . PHP_EOL;
 
-		$instancesDir = $this->dataLocation . 'data/instance';
+		$instancesDir = $this->originDataLocation . 'data/instance';
 		$filesList = $this->scanDir($instancesDir);
 		$lastKey = count($filesList) - 1; // $filesList had array_values ran against it, count()ing for $lastKey is a safe bet
 
@@ -465,7 +442,7 @@ class Ffxiv extends GameDataTemplate
 			if ($npcType == 'mob')
 				echo 'Starting mobs' . PHP_EOL;
 
-			$npcsDir = $this->dataLocation . 'data/' . $npcType;
+			$npcsDir = $this->originDataLocation . 'data/' . $npcType;
 			$filesList = $this->scanDir($npcsDir);
 			$lastKey = count($filesList) - 1;
 
@@ -634,7 +611,7 @@ class Ffxiv extends GameDataTemplate
 		{
 			echo 'Starting ' . $objectiveType . PHP_EOL;
 
-			$objectiveDir = $this->dataLocation . 'data/' . $objectiveType;
+			$objectiveDir = $this->originDataLocation . 'data/' . $objectiveType;
 			$filesList = $this->scanDir($objectiveDir);
 			$lastKey = count($filesList) - 1;
 
@@ -788,7 +765,7 @@ class Ffxiv extends GameDataTemplate
 			if ($nodeType == 'fishing')
 				echo 'Starting fishing' . PHP_EOL;
 
-			$nodeDir = $this->dataLocation . 'data/' . $nodeType;
+			$nodeDir = $this->originDataLocation . 'data/' . $nodeType;
 			$filesList = $this->scanDir($nodeDir);
 			$lastKey = count($filesList) - 1;
 
@@ -906,7 +883,7 @@ class Ffxiv extends GameDataTemplate
 		$itemPriceIds = [];
 		$itemPriceId = 0;
 
-		$itemDir = $this->dataLocation . 'data/item';
+		$itemDir = $this->originDataLocation . 'data/item';
 		$filesList = $this->scanDir($itemDir);
 		$lastKey = count($filesList) - 1;
 

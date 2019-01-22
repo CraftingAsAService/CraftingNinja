@@ -41,5 +41,7 @@ class Parse extends Command
 
 		$gameClass = '\App\Models\Game\Data\\' . ucfirst($this->argument('game'));
 		new $gameClass();
+
+		echo PHP_EOL . "Finished" . PHP_EOL;
 	}
 }

@@ -103,9 +103,7 @@ class VotingTest extends GameTestCase
 	function guests_cannot_upvote_books()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->state('published')->create([
-			'name:en' => 'Alpha Book',
-		]);
+		$listing = factory(Listing::class)->state('published')->create();
 
 		// Act
 		$response = $this->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [

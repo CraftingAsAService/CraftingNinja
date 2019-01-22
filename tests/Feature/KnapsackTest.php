@@ -226,7 +226,7 @@ class KnapsackTest extends GameTestCase
 		$preItemCount = $listing->items()->count();
 
 		// Act
-		$response2 = $this->actingAs($user)->call('DELETE', $this->gamePath . '/knapsack/clear');
+		$response2 = $this->actingAs($user)->call('DELETE', $this->gamePath . '/knapsack/all');
 
 		$listing2 = Listing::with('items')->active($user->id)->firstOrFail();
 
@@ -289,6 +289,29 @@ class KnapsackTest extends GameTestCase
 		$this->assertEquals(1, $listing->objectives->count());
 		$this->assertEquals(1, $listing->recipes->count());
 		$this->assertEquals(1, $listing->nodes->count());
+	}
+
+	/** @test */
+	function user_can_delete_unpublished_listing()
+	{
+		$this->showErrors();
+
+		$listing = factory(Listing::class)->state('unpublished')->create();
+
+		$response = $this->actingAs($listing->user)->call('DELETE', $this->gamePath . '/listing/' . $listing->id);
+
+		$this->assertNull($listing->fresh());
+	}
+
+	/** @test */
+	function user_cannot_delete_published_book()
+	{
+		$listing = factory(Listing::class)->state('published')->create();
+
+		$response = $this->actingAs($listing->user)->call('DELETE', $this->gamePath . '/listing/' . $listing->id);
+
+		// Expecting a 404, Forbidden
+		$response->assertStatus(404);
 	}
 
 }

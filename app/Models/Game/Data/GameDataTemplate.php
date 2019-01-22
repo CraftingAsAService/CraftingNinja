@@ -5,45 +5,49 @@ namespace App\Models\Game\Data;
 abstract class GameDataTemplate
 {
 	public  $slug = '',
-			$dataLocation = null,
-			$languages = [],
-			$core = null,
-			$map = [];
+			$originDataLocation = null,
+			$map = [],
+			$runList = [];
 
 	public function __construct()
 	{
 		$this->slug = strtolower((new \ReflectionClass($this))->getShortName());
 
-		$this->dataLocation = env('DATA_REPOSITORY') . '/' . $this->slug . '/';
+		$this->originDataLocation = env('DATA_REPOSITORY') . '/' . $this->slug . '/';
 
 		$this->loadMaps();
+
+		$this->run();
 	}
 
 	/**
 	 * Common Functions to all Game Data Parsing
 	 */
 
-	protected function run($action)
+	protected function run()
 	{
-		if (\Cache::has($this->slug . '-' . $action))
+		foreach ($this->runList as $run)
 		{
-			echo 'Skipping ' . $action . PHP_EOL;
-			return;
+			if (\Cache::has($this->slug . '-' . $run))
+			{
+				echo 'Skipping ' . $run . PHP_EOL;
+				continue;
+			}
+
+			echo 'Starting ' . $run . PHP_EOL;
+
+			clock()->startEvent($run, $run);
+
+			$this->$run();
+
+			$timeline = clock()->endEvent($run);
+
+			$duration = round(clock()->getTimeline()->toArray()[$run]['duration'] / 1000, 2);
+			$memoryUsage = $this->humanReadable(memory_get_usage());
+			echo PHP_EOL . $run . ' ⧖ ' . $duration . 's, ' . $memoryUsage . PHP_EOL . PHP_EOL;
+
+			\Cache::put($this->slug . '-' . $run, true, 10080); // Store for 1 week
 		}
-
-		echo 'Starting ' . $action . PHP_EOL;
-
-		clock()->startEvent($action, $action);
-
-		$this->$action();
-
-		$timeline = clock()->endEvent($action);
-
-		$duration = round(clock()->getTimeline()->toArray()[$action]['duration'] / 1000, 2);
-		$memoryUsage = $this->humanReadable(memory_get_usage());
-		echo PHP_EOL . $action . ' ⧖ ' . $duration . 's, ' . $memoryUsage . PHP_EOL . PHP_EOL;
-
-		\Cache::put($this->slug . '-' . $action, true, 10080); // Store for 1 week
 	}
 
 	protected function humanReadable($size)
@@ -54,14 +58,14 @@ abstract class GameDataTemplate
 
 	protected function write($filename, $array, $isMap = false)
 	{
-		$writeDir = $this->dataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
+		$writeDir = $this->originDataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
 		echo 'Writing ' . $filename . '.json' . PHP_EOL;
 		file_put_contents($writeDir . $filename . '.json', json_encode($this->deduplicate($array)));
 	}
 
 	protected function loadMaps()
 	{
-		foreach (array_diff(scandir($this->dataLocation . 'parsed/mappings'), ['.', '..']) as $filename)
+		foreach (array_diff(scandir($this->originDataLocation . 'parsed/mappings'), ['.', '..']) as $filename)
 		{
 			$action = str_replace('.json', '', $filename);
 			$this->readMap($action);
@@ -70,7 +74,7 @@ abstract class GameDataTemplate
 
 	protected function readMap($filename)
 	{
-		$readDir = $this->dataLocation . 'parsed/mappings/';
+		$readDir = $this->originDataLocation . 'parsed/mappings/';
 		$file = $readDir . $filename . '.json';
 		if (is_file($file))
 			$this->map[$filename] = json_decode(file_get_contents($file), true);

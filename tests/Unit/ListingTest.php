@@ -54,12 +54,6 @@ class ListingTest extends GameTestCase
 		$this->assertEquals(15, $listing->first()->min_level);
 	}
 
-	/** @test */
-	function lists_can_be_deleted()
-	{
-
-	}
-
 	private function lists_can_contain_entity($entityName, $entity)
 	{
 		$listing = factory(Listing::class)->create();

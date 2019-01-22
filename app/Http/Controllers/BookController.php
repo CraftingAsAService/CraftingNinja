@@ -70,34 +70,6 @@ class BooksController extends Controller
 	}
 
 	/**
-	 * Publish Books.
-	 *
-	 * @param	type	$bookId
-	 * @return	JSON
-	 */
-	public function publish(Request $request, $bookId)
-	{
-		if ( ! \Auth::check())
-			return $this->respondWithError(401, 'Unauthenticated');
-
-		$validator = \Validator::make($request->all(), [
-			'dir' => 'required|in:1,-1',
-		]);
-
-		if ($validator->fails())
-			return $this->respondWithError(422, $validator->errors());
-
-		$book = Listing::with('votes')->findOrFail($bookId);
-
-		if ( ! $book->published_at && $request->input('dir') == 1)
-			$book->publish(true);
-		else if ($book->published_at && $request->input('dir') == -1)
-			$book->publish(false);
-
-		return response()->json([ 'published' => (boolean) $book->published_at ]);
-	}
-
-	/**
 	 * All all of this book's entries to the user's active knapsack
 	 */
 	public function addAllEntriesToKnapsack(Request $request, $bookId)
