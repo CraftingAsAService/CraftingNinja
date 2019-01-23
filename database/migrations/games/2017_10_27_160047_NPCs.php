@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class NPCs extends Migration
 {
+
 	/**
 	 * Run the migrations.
 	 *
@@ -55,4 +56,5 @@ class NPCs extends Migration
 		Schema::dropIfExists('npc_translations');
 		Schema::dropIfExists('npcs');
 	}
+
 }

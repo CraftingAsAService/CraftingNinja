@@ -59,8 +59,9 @@ abstract class GameDataTemplate
 	protected function write($filename, $array, $isMap = false)
 	{
 		$writeDir = $this->originDataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
-		echo 'Writing ' . $filename . '.json' . PHP_EOL;
-		file_put_contents($writeDir . $filename . '.json', json_encode($this->deduplicate($array)));
+		$array = $this->deduplicate($array);
+		echo 'Writing ' . $filename . '.json - ' . (count($array) - 1)  . ' records' . PHP_EOL;
+		file_put_contents($writeDir . $filename . '.json', json_encode($array));
 	}
 
 	protected function loadMaps()

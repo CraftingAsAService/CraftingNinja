@@ -56,10 +56,10 @@ class Ffxiv extends GameDataTemplate
 			// 'node_translations',
 			// 'nodes',
 			'core',
-			'categories',
-			'attributes',
 			'jobs',
 			'niches',
+			'categories',
+			'attributes',
 			'zones',
 			'npcs',
 			'objectives',
@@ -73,34 +73,7 @@ class Ffxiv extends GameDataTemplate
 
 	protected function core()
 	{
-		// Get the core, fix it up, split it into an array
-		$coreFile = file_get_contents($this->originDataLocation . 'core.js');
-		$coreArray = array_diff(explode(PHP_EOL, $this->binaryFix($coreFile)), ['']);
-
-		// Clean the core
-		$core = [];
-		foreach ($coreArray as $row)
-		{
-			// Key winds up as `gt.something.something`
-			list($key, $value) = explode(' = ', $row);
-
-			// Key Cleanup
-			// Drop the `gt.`
-			$key = preg_replace('/^gt\./', '', $key);
-			// And any JS var declaration
-			$key = preg_replace('/^var\s/', '', $key);
-			// Make the [id] part of the key into a dot notation
-			$key = preg_replace('/\[(.*)\]/', '.$1', $key);
-
-			// Value Cleanup
-			// Drop the semicolon
-			$value = substr($value, 0, -1);
-			if (in_array(substr($value, 0, 1), ['{', '[']))
-				$value = json_decode($value, true);
-
-			$core[$key] = $value;
-		}
-
+		$core = $this->getJSON($this->originDataLocation . 'core.js', true);
 		$this->saveMap('core', $core);
 	}
 
@@ -215,7 +188,7 @@ class Ffxiv extends GameDataTemplate
 			];
 		}
 
-		$categories = array_values($this->map['core']['item.categoryIndex']);
+		$categories = array_values($this->map['core']['item']['categoryIndex']);
 		foreach ($categories as $key => $data)
 		{
 			if ($data['id'] < 1)
@@ -248,7 +221,6 @@ class Ffxiv extends GameDataTemplate
 
 	protected function jobs()
 	{
-		// $jobsMap unnecessary, reliable id
 		// Set up the columns as the first row of data
 		$jobsData = [
 			[ 'id', 'type', 'tier', ],
@@ -256,7 +228,6 @@ class Ffxiv extends GameDataTemplate
 		$jobTranslationsData = [
 			[ 'job_id', 'locale', 'name', 'abbreviation', ],
 		];
-		// "Fixed" Data - Any ID less than one was ignored
 
 		$jobs = array_values($this->map['core']['jobs']);
 
@@ -297,31 +268,29 @@ class Ffxiv extends GameDataTemplate
 
 	protected function niches()
 	{
-		// TODO TOTAL REWRITE
-		// $jobGroupsMap unnecessary, reliable id
 		// Set up the columns as the first row of data
-		$jobGroupsData = [
-			[ /*'id', */'group_id', 'job_id', ],
+		$nicheData = [
+			[ 'id', ],
 		];
-		// Fixed Data - Any referenced job with an ID less than 1 is ignored
+		$jobNicheData = [
+			[ 'job_id', 'niche_id', ],
+		];
 
-		$jobGroups = array_values($this->map['core']['jobCategories']);
-
-		foreach ($jobGroups as $group)
+		foreach ($this->map['core']['jobCategories'] as $data)
 		{
-			foreach ($group['jobs'] as $key => $jobId)
-			{
-				if ($jobId < 1)
-					continue;
+			$nicheData[] =[
+				/* niche_id */	$data['id'],
+			];
 
-				$jobGroupsData[] = [
-					/* group_id */	$group['id'],
+			foreach ($data['jobs'] as $jobId)
+				$jobNicheData[] = [
 					/* job_id */	$this->fixJobId($jobId),
+					/* niche_id */	$data['id'],
 				];
-			}
 		}
 
-		$this->write('jobGroups', $jobGroupsData);
+		$this->write('niches', $nicheData);
+		$this->write('jobNiches', $jobNicheData);
 	}
 
 	protected function zones()
@@ -336,7 +305,7 @@ class Ffxiv extends GameDataTemplate
 		];
 		// "Fixed" Data - Instance IDs are altered
 
-		$zones = array_values($this->map['core']['location.index']);
+		$zones = array_values($this->map['core']['locationIndex']);
 
 		foreach ($zones as $data)
 		{
@@ -356,7 +325,7 @@ class Ffxiv extends GameDataTemplate
 		// Also handle instances, which are basically zones
 		echo 'Starting instances' . PHP_EOL;
 
-		$instancesDir = $this->originDataLocation . 'data/instance';
+		$instancesDir = $this->originDataLocation . 'data/en/instance';
 		$filesList = $this->scanDir($instancesDir);
 		$lastKey = count($filesList) - 1; // $filesList had array_values ran against it, count()ing for $lastKey is a safe bet
 
@@ -442,7 +411,7 @@ class Ffxiv extends GameDataTemplate
 			if ($npcType == 'mob')
 				echo 'Starting mobs' . PHP_EOL;
 
-			$npcsDir = $this->originDataLocation . 'data/' . $npcType;
+			$npcsDir = $this->originDataLocation . 'data/en/' . $npcType;
 			$filesList = $this->scanDir($npcsDir);
 			$lastKey = count($filesList) - 1;
 

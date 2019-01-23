@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class Items extends Migration
 {
+
 	/**
 	 * Run the migrations.
 	 *
@@ -102,4 +103,5 @@ class Items extends Migration
 		Schema::dropIfExists('item_translations');
 		Schema::dropIfExists('items');
 	}
+
 }
