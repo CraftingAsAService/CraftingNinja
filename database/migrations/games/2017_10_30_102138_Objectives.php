@@ -25,9 +25,9 @@ class Objectives extends Migration
 			$table->unsignedInteger('target_id')->nullable(); // FK Npc
 
 			// Is it a quest, fate, leve, achievement, etc?
-			$table->tinyInteger('type')->nullable();
+			$table->unsignedTinyInteger('type')->nullable();
 			// Can you do this more than once?
-			$table->binary('repeatable')->nullable();
+			$table->boolean('repeatable')->nullable();
 			// Level requirement?
 			$table->unsignedTinyInteger('level')->nullable();
 

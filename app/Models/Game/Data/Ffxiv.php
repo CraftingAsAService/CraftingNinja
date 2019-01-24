@@ -22,39 +22,32 @@ class Ffxiv extends GameDataTemplate
 			'ja' => '/ja',
 		],
 		$runList = [
-			// 'category_translations',
-			// 'categories',
 			// 'item_price',
 			// 'prices',
 			// 'item_translations',
 			// 'items',
-			// 'job_niches',
-			// 'niches',
-			// 'job_translations',
-			// 'jobs',
 			// 'item_recipes',
 			// 'recipe_translations',
 			// 'recipes',
 			// 'attribute_items',
-			// 'attribute_translations',
-			// 'attributes',
 			// 'equipment',
 			// 'item_npcs',
-			// 'npc_translations',
-			// 'npcs',
-			// 'npc_shops',
-			// 'shop_translations',
-			// 'shops',
-			// 'zone_translations',
-			// 'zones',
-			// 'coordinates',
 			// 'item_objectives',
 			// 'objective_translations',
 			// 'objectives',
-			// 'details',
 			// 'item_nodes',
 			// 'node_translations',
 			// 'nodes',
+
+
+			// 'coordinates',
+			// X	npcCoordinates
+			// X	shopCoordinates
+			// 	objectiveCoordinates
+			// 	nodeCoordinates
+			// 	itemCoordinates
+			// 'details',
+			//	npcDetails
 			'core',
 			'jobs',
 			'niches',
@@ -79,7 +72,9 @@ class Ffxiv extends GameDataTemplate
 
 	protected function attributes()
 	{
-		$attributesMap = [];
+		// Attribute Ids are non-existent
+		$attributesMap = $this->map['attributes'] ?? [];
+
 		// Set up the columns as the first row of data
 		$attributesData = [
 			[ 'id', ],
@@ -89,7 +84,7 @@ class Ffxiv extends GameDataTemplate
 		];
 		// "Fixed" Data - Attribute names had ucwords() ran against them
 
-		$attributeId = 0;
+		$newAttributeId = empty($attributesMap) ? 0 : (max($attributesMap) + 1);
 
 		// Only English translations are available
 		$itemsDir = $this->originDataLocation . 'data/en/item';
@@ -126,12 +121,10 @@ class Ffxiv extends GameDataTemplate
 					foreach (array_keys($attributes) as $attributeName)
 					{
 						$attributeName = ucwords($attributeName);
-						if (isset($attributesMap[$attributeName]))
-							continue;
 
 						// Attributes don't have an ID we can already use
 						// Save the attribute down for later referential usage
-						$attributesMap[$attributeName] = ++$attributeId;
+						$attributeId = $attributesMap[$attributeName] ?? $newAttributeId++;
 
 						$attributesData[] = [
 							/* id */	$attributeId,
@@ -367,7 +360,8 @@ class Ffxiv extends GameDataTemplate
 	protected function npcs()
 	{
 		// NPC Ids are unreliable, convert them
-		$npcsMap = [];
+		$npcsMap = $this->map['npcs'] ?? [];
+
 		// Set up the columns as the first row of data
 		$npcsData = [
 			[ 'id', 'enemy', 'level', ],
@@ -376,34 +370,29 @@ class Ffxiv extends GameDataTemplate
 			[ 'npc_id', 'locale', 'name', ],
 		];
 		$npcCoordinatesData = [
-			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ]
+			[ 'zone_id', 'coordinate_id', 'coordinate_type', 'x', 'y', 'z', 'radius', ],
 		];
 		$npcDetailsData = [
-			[ 'details_id', 'details_type', 'details', ]
+			[ 'detailable_id', 'detailable_type', 'data', ],
 		];
 		$npcShopData = [
-			[ 'npc_id', 'shop_id', ]
+			[ 'npc_id', 'shop_id', ],
 		];
 		$shopData = [
-			[ 'id', ]
+			[ 'id', ],
 		];
 		$shopTranslationsData = [
-			[ 'shop_id', 'locale', 'name', ]
+			[ 'shop_id', 'locale', 'name', ],
 		];
-		$shopItemData = [
-			[ 'shop_id', 'item_id', ]
+		$shopCoordinatesData = [
+			[ 'zone_id', 'coordinate_id', 'coordinate_type', 'x', 'y', 'z', 'radius', ],
 		];
-		$mobItemData = [
-			[ 'npc_id', 'item_id', ]
-		];
-		// $itemPriceData = [
-		// 	[ 'quality', 'alt_currency', 'purchase_price', 'sale_price', ]
-		// ];
 
 		// The type of npc features I want to save down
 		$npcFeatures = [ 'race', 'tribe', 'gender', 'skinColorCode', 'hairColorCode', ];
+		$mobFeatures = [ 'lvl', ];
 
-		$npcId = 0;
+		$newNpcId = empty($npcsMap) ? 0 : (max($npcsMap) + 1);
 
 		// Also handle mobs, which are basically npcs
 		foreach (['npc', 'mob'] as $npcType)
@@ -419,10 +408,7 @@ class Ffxiv extends GameDataTemplate
 			{
 				$data = $this->getJSON($npcsDir . '/' . $file)[$npcType];
 
-				$npcsMap[$data['id']] = ++$npcId;
-
-				if ( ! isset($data['en']) && isset($data['name']))
-					$data['en']['name'] = $data['name'];
+				$npcId = $npcsMap[$data['id']] ?? $newNpcId++;
 
 				$level = $data['lvl'] ?? null;
 				if (is_string($level))
@@ -436,24 +422,28 @@ class Ffxiv extends GameDataTemplate
 					/* level */ $level,
 				];
 
-				foreach (config('translatable.locales') as $locale)
-					if (isset($data[$locale]))
-						$npcTranslationsData[] = [
-							/* npc_id */	$npcId,
-							/* locale */	$locale,
-							// Super rare that name isn't set for JA.  Just use EN name instead
-							/* name */		$this->clean($data[$locale]['name'] ?? $data['en']['name']),
-						];
+				$npcTranslationsData[] = [
+					/* npc_id */	$npcId,
+					/* locale */	'en',
+					/* name */		$this->clean($data['name']),
+				];
+
+				$coordinateEntry = false;
 
 				// Add a coordinate, only interested in one
 				if (isset($data['areaid']) || isset($data['zoneid']) || isset($data['instance']))
-					$npcCoordinatesData[] = [
-						/* coordinate_id */		$npcId,
-						/* coordinate_type */	'App\Models\Game\Aspects\Npc',
+					$coordinateEntry[] = [
 						/* zone_id */			isset($data['instance']) ? $this->fixInstanceId($data['instance']) : ($data['areaid'] ?? $data['zoneid']),
+						/* coordinate_id */		$npcId,
+						/* coordinate_type */	'npc', // See AppServiceProvider's MorphMap
 						/* x */					$data['coords'][0] ?? null,
 						/* y */					$data['coords'][1] ?? null,
+						/* z */					null,
+						/* radius */			null,
 					];
+
+				if ($coordinateEntry)
+					$npcCoordinatesData[] = $coordinateEntry;
 
 				// Only NPCs have "details" and "shops"
 				if ($npcType == 'npc')
@@ -470,9 +460,9 @@ class Ffxiv extends GameDataTemplate
 
 					if ($details)
 						$npcDetailsData[] = [
-							/* details_id */	$npcId,
-							/* details_type */	'App\Models\Game\Aspects\Npc',
-							/* details */		json_encode($details),
+							/* detailable_id */		$npcId,
+							/* detailable_type */	'npc', // See AppServiceProvider's MorphMap
+							/* details */			json_encode($details),
 						];
 
 					// NPC Shops
@@ -496,36 +486,28 @@ class Ffxiv extends GameDataTemplate
 								/* name */		$this->clean($shop['name']),
 							];
 
-							// Sometimes entries is a flat array of numbers, but when additional currency is involved it's an array
-							if ( ! is_numeric($shop['entries'][0]))
-							{
-								$entries = [];
-								foreach ($shop['entries'] as $ware)
-									// Not concerned about alternate currency here, it'll be handled in items()
-									foreach ($ware['item'] as $info)
-										$entries[] = $info['id'];
-
-								$shop['entries'] = $entries;
-							}
-
-							foreach ($shop['entries'] as $itemId)
-								$shopItemData[] = [
-									/* shop_id */	$shop['id'],
-									/* item_id */	$itemId,
-								];
+							if ($coordinateEntry)
+								$shopCoordinatesData[] = array_merge($coordinateEntry, [
+									/* coordinate_id */		$shop['id'],
+									/* coordinate_type */	'shop', // See AppServiceProvider's MorphMap
+								]);
 						}
 					}
 				}
 				elseif ($npcType == 'mob')
 				{
-					if (isset($data['drops']) && count($data['drops']))
-					{
-						foreach ($data['drops'] as $itemId)
-							$mobItemData[] = [
-								/* npc_id */		$npcId,
-								/* item_id */		$itemId,
-							];
-					}
+					// Mob Details
+					$details = [];
+
+					if (isset($data['level']))
+						$details['level'] = $data['level'];
+
+					if ($details)
+						$npcDetailsData[] = [
+							/* detailable_id */		$npcId,
+							/* detailable_type */	'npc', // See AppServiceProvider's MorphMap
+							/* details */			json_encode($details),
+						];
 				}
 
 				// Only update progress every 5 steps
@@ -538,49 +520,49 @@ class Ffxiv extends GameDataTemplate
 
 		$this->write('npcs', $npcsData);
 		$this->write('npcTranslations', $npcTranslationsData);
+
 		$this->write('npcCoordinates', $npcCoordinatesData);
 		$this->write('npcDetails', $npcDetailsData);
 
-		$this->write('mobItem', $mobItemData);
-		$this->write('npcShop', $npcShopData);
 		$this->write('shop', $shopData);
 		$this->write('shopTranslations', $shopTranslationsData);
-		$this->write('shopItem', $shopItemData);
+		$this->write('npcShop', $npcShopData);
+
+		$this->write('shopCoordinates', $shopCoordinatesData);
 
 		$this->saveMap('npcs', $npcsMap);
 	}
 
 	protected function objectives()
 	{
+		// Objective Ids vary wildly, convert them
+		$objectivesMap = $this->map['objectives'] ?? [];
+
 		// Set up the columns as the first row of data
 		$objectivesData = [
-			[ 'id', 'type', 'repeatable', 'level', 'job_group_id', 'issuer', 'target', ],
+			[ 'id', 'niche_id', 'issuer_id', 'target_id', 'type', 'repeatable', 'level', ],
 		];
 		$objectiveTranslationsData = [
 			[ 'objective_id', 'locale', 'name', 'description', ],
 		];
 		$objectiveCoordinatesData = [
-			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ]
+			[ 'zone_id', 'coordinate_id', 'coordinate_type', 'x', 'y', 'z', 'radius', ],
 		];
 		$objectiveDetailsData = [
-			[ 'details_id', 'details_type', 'details', ]
+			[ 'detailable_id', 'detailable_type', 'data', ],
 		];
-		$objectiveItemRequiredData = [
-			[ 'objective_id', 'quality', 'item_id', 'quantity', ]
-		];
-		$objectiveItemRewardData = [
-			[ 'objective_id', 'quality', 'item_id', 'quantity', 'rate', ]
+		$itemObjectiveData = [
+			[ 'item_id', 'objective_id', 'reward', 'quantity', 'quality', 'rate', ],
 		];
 
-		// Objective Ids are varied, convert them
-		$objectiveId = 0;
+		$newObjectiveId = empty($objectivesMap) ? 0 : (max($objectivesMap) + 1);
 
 		// The order of these are specific, not just alphabetical; see ffxiv game config file if you want to change this
 		foreach (['achievement', 'fate', 'leve', 'quest'] as $objectiveTypeId => $objectiveType)
 		{
 			echo 'Starting ' . $objectiveType . PHP_EOL;
 
-			$objectiveDir = $this->originDataLocation . 'data/' . $objectiveType;
+			$objectiveDir = $this->originDataLocation . 'data/en/' . $objectiveType;
 			$filesList = $this->scanDir($objectiveDir);
 			$lastKey = count($filesList) - 1;
 
@@ -589,16 +571,21 @@ class Ffxiv extends GameDataTemplate
 				$jsonData = $this->getJSON($objectiveDir . '/' . $file);
 				$data = $jsonData[$objectiveType];
 
-				++$objectiveId;
+				$objectiveId = $objectivesMap[$objectiveType . $data['id']] ?? $newObjectiveId++;
+
+				$issuerId = isset($data['issuer']) ? $this->map['npcs'][$data['issuer']] : null;
+
+				$levemeteId = isset($data['levemete']) ? $this->map['npcs'][$data['levemete']] : false; // false to trickle into targetId
+				$targetId = isset($data['target']) ? $this->map['npcs'][$data['target']] : null;
 
 				$objectivesData[] = [
 					/* id */			$objectiveId,
+					/* niche_id */		$data['jobCategory'] ?? null,
+					/* issuer_id */		$issuerId,
+					/* target_id */		$levemeteId ?? $targetId,
 					/* type */			$objectiveTypeId,
 					/* repeatable */	in_array($objectiveType, ['fate', 'leve']),
 					/* level */			$data['lvl'] ?? null,
-					/* job_group_id */	$data['jobCategory'] ?? null,
-					/* issuer */		$data['issuer'] ?? null,
-					/* target */		$data['levemete'] ?? ($data['target'] ?? null),
 				];
 
 				foreach (config('translatable.locales') as $locale)
@@ -637,8 +624,8 @@ class Ffxiv extends GameDataTemplate
 
 				if ($details)
 					$objectiveDetailsData[] = [
-						/* details_id */	$objectiveId,
-						/* details_type */	'App\Models\Game\Aspects\Objective',
+						/* detailable_id */	$objectiveId,
+						/* detailable_type */	'App\Models\Game\Aspects\Objective',
 						/* details */		json_encode($details),
 					];
 
@@ -704,6 +691,8 @@ class Ffxiv extends GameDataTemplate
 		$this->write('objectiveDetails', $objectiveDetailsData);
 		$this->write('objectiveItemRequired', $objectiveItemRequiredData);
 		$this->write('objectiveItemReward', $objectiveItemRewardData);
+
+		$this->saveMap('objectives', $objectivesMap);
 	}
 
 	protected function nodes()
@@ -716,13 +705,13 @@ class Ffxiv extends GameDataTemplate
 			[ 'node_id', 'locale', 'name', ],
 		];
 		$nodeCoordinatesData = [
-			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ]
+			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ],
 		];
 		$nodeDetailsData = [
-			[ 'details_id', 'details_type', 'details', ]
+			[ 'detailable_id', 'detailable_type', 'data', ],
 		];
 		$nodeRewardData = [
-			[ 'node_id', 'item_id', ]
+			[ 'node_id', 'item_id', ],
 		];
 
 		// Nodes cover both physical nodes and fishing nodes
@@ -793,9 +782,9 @@ class Ffxiv extends GameDataTemplate
 
 				if ($details)
 					$nodeDetailsData[] = [
-						/* details_id */	$nodeId,
-						/* details_type */	'App\Models\Game\Aspects\Node',
-						/* details */		json_encode($details),
+						/* detailable_id */		$nodeId,
+						/* detailable_type */	'App\Models\Game\Aspects\Node',
+						/* details */			json_encode($details),
 					];
 
 				// Only update progress every 5 steps
@@ -826,7 +815,7 @@ class Ffxiv extends GameDataTemplate
 			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ],
 		];
 		// $itemDetailsData = [
-		// 	[ 'details_id', 'details_type', 'details', ],
+		// 	[ 'detailable_id', 'detailable_type', 'data', ],
 		// ];
 		$equipmentData = [
 			[ 'item_id', 'job_group_id', 'slot', 'level', 'sockets', ],
