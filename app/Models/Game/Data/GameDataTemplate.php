@@ -60,7 +60,7 @@ abstract class GameDataTemplate
 	{
 		$writeDir = $this->originDataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
 		$array = $this->deduplicate($array);
-		echo 'Writing ' . $filename . '.json - ' . (count($array) - 1)  . ' records' . PHP_EOL;
+		echo 'Writing ' . ($isMap ? 'Map ' : '') . $filename . '.json - ' . (count($array) - 1)  . ' records' . PHP_EOL;
 		file_put_contents($writeDir . $filename . '.json', json_encode($array));
 	}
 
@@ -89,7 +89,7 @@ abstract class GameDataTemplate
 
 	protected function deduplicate($array)
 	{
-		return array_map('unserialize', array_unique(array_map('serialize', $array)));
+		return array_values(array_map('unserialize', array_unique(array_map('serialize', $array))));
 	}
 
 	protected function scanDir($dir)
@@ -118,7 +118,7 @@ abstract class GameDataTemplate
 		return $string;
 	}
 
-	protected function getJSON($path)
+	protected function getJSON($path, $locales = false)
 	{
 		$content = file_get_contents($path);
 

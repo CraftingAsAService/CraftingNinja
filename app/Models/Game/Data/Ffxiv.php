@@ -149,7 +149,7 @@ class Ffxiv extends GameDataTemplate
 		$this->progress($key, $lastKey, true);
 
 		$this->write('attributes', $attributesData);
-		$this->write('attributeTranslations', $attributeTranslationsData);
+		$this->write('attribute_translations', $attributeTranslationsData);
 
 		$this->saveMap('attributes', $attributesMap);
 	}
@@ -210,7 +210,7 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('categories', $categoriesData);
-		$this->write('categoryTranslations', $categoryTranslationsData);
+		$this->write('category_translations', $categoryTranslationsData);
 	}
 
 	protected function jobs()
@@ -257,7 +257,7 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('jobs', $jobsData);
-		$this->write('jobTranslations', $jobTranslationsData);
+		$this->write('job_translations', $jobTranslationsData);
 	}
 
 	protected function niches()
@@ -284,7 +284,7 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('niches', $nicheData);
-		$this->write('jobNiches', $jobNicheData);
+		$this->write('job_niche', $jobNicheData);
 	}
 
 	protected function zones()
@@ -355,7 +355,7 @@ class Ffxiv extends GameDataTemplate
 		$this->progress($key, $lastKey, true);
 
 		$this->write('zones', $zonesData);
-		$this->write('zoneTranslations', $zoneTranslationsData);
+		$this->write('zone_translations', $zoneTranslationsData);
 	}
 
 	protected function npcs()
@@ -529,16 +529,16 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('npcs', $npcsData);
-		$this->write('npcTranslations', $npcTranslationsData);
+		$this->write('npc_translations', $npcTranslationsData);
 
-		$this->write('npcCoordinates', $npcCoordinatesData);
-		$this->write('npcDetails', $npcDetailsData);
+		$this->write('npc_coordinates', $npcCoordinatesData);
+		$this->write('npc_details', $npcDetailsData);
 
 		$this->write('shop', $shopData);
-		$this->write('shopTranslations', $shopTranslationsData);
-		$this->write('npcShop', $npcShopData);
+		$this->write('shop_translations', $shopTranslationsData);
+		$this->write('npc_shop', $npcShopData);
 
-		$this->write('shopCoordinates', $shopCoordinatesData);
+		$this->write('shop_coordinates', $shopCoordinatesData);
 
 		$this->saveMap('npcs', $npcsMap);
 		$this->saveMap('shops', $shopsMap);
@@ -583,6 +583,7 @@ class Ffxiv extends GameDataTemplate
 				$data = $jsonData[$objectiveType];
 
 				$objectiveId = $objectivesMap[$objectiveType . $data['id']] ?? $newObjectiveId++;
+				$objectivesMap[$objectiveType . $data['id']] = $objectiveId;
 
 				$issuerId = isset($data['issuer']) ? $this->map['npcs'][$data['issuer']] : null;
 
@@ -692,16 +693,19 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('objectives', $objectivesData);
-		$this->write('objectiveTranslations', $objectiveTranslationsData);
-		$this->write('objectiveCoordinates', $objectiveCoordinatesData);
-		$this->write('objectiveDetails', $objectiveDetailsData);
-		$this->write('itemObjectiveData', $itemObjectiveData);
+		$this->write('objective_translations', $objectiveTranslationsData);
+		$this->write('objective_coordinates', $objectiveCoordinatesData);
+		$this->write('objective_details', $objectiveDetailsData);
+		$this->write('item_objective', $itemObjectiveData);
 
 		$this->saveMap('objectives', $objectivesMap);
 	}
 
 	protected function nodes()
 	{
+		// Node Ids are shared, convert them to one
+		$nodesMap = $this->map['nodes'] ?? [];
+
 		// Set up the columns as the first row of data
 		$nodesData = [
 			[ 'id', 'level', 'type', ],
@@ -715,12 +719,12 @@ class Ffxiv extends GameDataTemplate
 		$nodeDetailsData = [
 			[ 'detailable_id', 'detailable_type', 'data', ],
 		];
-		$nodeRewardData = [
+		$itemNodeData = [
 			[ 'node_id', 'item_id', ],
 		];
 
 		// Nodes cover both physical nodes and fishing nodes
-		$nodeId = 0;
+		$newNodeId = empty($nodesMap) ? 1 : (max($nodesMap) + 1);
 
 		// Also handle mobs, which are basically npcs
 		foreach (['node', 'fishing'] as $nodeType)
@@ -736,7 +740,8 @@ class Ffxiv extends GameDataTemplate
 			{
 				$data = $this->getJSON($nodeDir . '/' . $file)[$nodeType];
 
-				++$nodeId;
+				$nodeId = $nodesMap[$nodeType . $data['id']] ?? $newNodeId++;
+				$nodesMap[$nodeType . $data['id']] = $nodeId;
 
 				if (isset($data['category']))
 					$data['type'] = 10 + $data['category'];
@@ -755,7 +760,7 @@ class Ffxiv extends GameDataTemplate
 				];
 
 				foreach ($data['items'] as $item)
-					$nodeRewardData[] = [
+					$itemNodeData[] = [
 						/* node_id */	$nodeId,
 						/* item_id' */	$item['id'],
 					];
@@ -768,14 +773,17 @@ class Ffxiv extends GameDataTemplate
 						/* x */					$data['x'] ?? ($data['coords'][0] ?? null),
 						/* y */					$data['y'] ?? ($data['coords'][1] ?? null),
 						/* z */					null,
-						/* radius */			null,
+						/* radius */			$data['radius'] ?? null,
 					];
 
 				$details = [];
 
-				foreach ([ 'limited', 'limitType', 'uptime', 'stars', 'radius', ] as $feature)
+				foreach ([ 'limited', 'limitType', 'uptime', 'stars', ] as $feature)
 					if (isset($data[$feature]))
 						$details[$feature] = $data[$feature];
+
+				if (isset($data['time']))
+					$details['appears'] = $data['time'];
 
 				if ($details)
 					$nodeDetailsData[] = [
@@ -793,10 +801,12 @@ class Ffxiv extends GameDataTemplate
 		}
 
 		$this->write('nodes', $nodesData);
-		$this->write('nodeTranslations', $nodeTranslationsData);
-		$this->write('nodeCoordinates', $nodeCoordinatesData);
-		$this->write('nodeDetails', $nodeDetailsData);
-		$this->write('nodeReward', $nodeRewardData);
+		$this->write('node_translations', $nodeTranslationsData);
+		$this->write('node_coordinates', $nodeCoordinatesData);
+		$this->write('node_details', $nodeDetailsData);
+		$this->write('item_node', $itemNodeData);
+
+		$this->saveMap('nodes', $nodesMap);
 	}
 
 	protected function items()
@@ -809,27 +819,30 @@ class Ffxiv extends GameDataTemplate
 			[ 'item_id', 'locale', 'name', 'description', ],
 		];
 		$itemCoordinatesData = [
-			[ 'coordinate_id', 'coordinate_type', 'zone_id', 'x', 'y', ],
+			[ 'zone_id', 'coordinate_id', 'coordinate_type', 'x', 'y', 'z', 'radius', ],
 		];
 		// $itemDetailsData = [
 		// 	[ 'detailable_id', 'detailable_type', 'data', ],
 		// ];
 		$equipmentData = [
-			[ 'item_id', 'job_group_id', 'slot', 'level', 'sockets', ],
+			[ 'item_id', 'niche_id', 'slot', 'level', 'sockets', ],
 		];
-		$itemAttributeData = [
-			[ 'item_id', 'attribute_id', 'quality', 'value', ],
+		$attributeItemData = [
+			[ 'attribute_id', 'item_id', 'quality', 'value', ],
 		];
 		$itemNpcData = [
-			[ 'item_id', 'npc_id', 'item_price_id', 'rate', ],
+			[ 'item_id', 'npc_id', 'rate', ],
+		];
+		$priceData = [
+
 		];
 		$itemPriceData = [
-			[ 'quality', 'alt_currency', 'purchase_price', 'sale_price', ],
+			[ 'quality', 'item_id', 'market', 'amount', ],
 		];
 		$recipeData = [
 			[ 'id', 'item_id', 'job_id', 'level', 'sublevel', 'yield', 'quality', 'chance', ],
 		];
-		$recipeIngredientData = [
+		$itemRecipeData = [
 			[ 'item_id', 'recipe_id', 'quantity', ],
 		];
 		// "Fixed" Data - Non numeric IDs skipped
@@ -838,13 +851,14 @@ class Ffxiv extends GameDataTemplate
 		$itemPriceIds = [];
 		$itemPriceId = 0;
 
-		$itemDir = $this->originDataLocation . 'data/item';
-		$filesList = $this->scanDir($itemDir);
+		$itemDir = $this->originDataLocation . 'data/%s/item';
+		$filesList = $this->scanDir(sprintf($itemDir, 'en'));
 		$lastKey = count($filesList) - 1;
 
 		foreach ($filesList as $key => $file)
 		{
-			$data = $this->getJSON($itemDir . '/' . $file)['item'];
+			$json = $this->getJSON($itemDir . '/' . $file, config('translatable.locales'));
+			$data = $json['item'];
 
 			if ( ! is_numeric($data['id']))
 				continue;
@@ -904,7 +918,7 @@ class Ffxiv extends GameDataTemplate
 
 					foreach ($attributes as $attributeName => $value)
 						if ( ! is_null($value))
-							$itemAttributeData[] = [
+							$attributeItemData[] = [
 								/* item_id */		$itemId,
 								/* attribute_id */	$this->map['attributes'][ucwords($attributeName)],
 								/* quality */		null,
@@ -983,7 +997,7 @@ class Ffxiv extends GameDataTemplate
 					];
 
 					foreach ($craft['ingredients'] as $ingredient)
-						$recipeIngredientData[] = [
+						$itemRecipeData[] = [
 							/* item_id */	$itemId,
 							/* recipe_id */	$craft['id'],
 							/* quantity */	$ingredient['amount'],
@@ -998,15 +1012,15 @@ class Ffxiv extends GameDataTemplate
 		$this->progress($key, $lastKey, true);
 
 		$this->write('items', $itemsData);
-		$this->write('itemTranslations', $itemTranslationsData);
-		$this->write('itemCoordinates', $itemCoordinatesData);
-		// $this->write('itemDetails', $itemDetailsData);
+		$this->write('item_translations', $itemTranslationsData);
+		$this->write('item_coordinates', $itemCoordinatesData);
+		// $this->write('item_details', $itemDetailsData);
 		$this->write('equipment', $equipmentData);
-		$this->write('itemAttribute', $itemAttributeData);
-		$this->write('itemNpc', $itemNpcData);
-		$this->write('itemPrice', $itemPriceData);
+		$this->write('attribute_item', $attributeItemData);
+		$this->write('item_npc', $itemNpcData);
+		$this->write('item_price', $itemPriceData);
 		$this->write('recipes', $recipeData);
-		$this->write('recipeIngredient', $recipeIngredientData);
+		$this->write('item_recipe', $itemRecipeData);
 	}
 
 	/**
