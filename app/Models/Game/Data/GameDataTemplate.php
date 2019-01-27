@@ -59,7 +59,7 @@ abstract class GameDataTemplate
 	protected function write($filename, $array, $isMap = false)
 	{
 		$writeDir = $this->originDataLocation . 'parsed/' . ($isMap ? 'mappings/' : '');
-		$array = $this->deduplicate($array);
+		$array = $this->deduplicate($array, ! $isMap);
 		echo 'Writing ' . ($isMap ? 'Map ' : '') . $filename . '.json - ' . (count($array) - 1)  . ' records' . PHP_EOL;
 		file_put_contents($writeDir . $filename . '.json', json_encode($array));
 	}
@@ -87,9 +87,12 @@ abstract class GameDataTemplate
 		$this->map[$action] = $data;
 	}
 
-	protected function deduplicate($array)
+	protected function deduplicate($array, $destroyKeys = false)
 	{
-		return array_values(array_map('unserialize', array_unique(array_map('serialize', $array))));
+		$array = array_map('unserialize', array_unique(array_map('serialize', $array)));
+		if ($destroyKeys)
+			return array_values($array);
+		return $array;
 	}
 
 	protected function scanDir($dir)
@@ -118,21 +121,92 @@ abstract class GameDataTemplate
 		return $string;
 	}
 
-	protected function getJSON($path, $locales = false)
+	protected function getJSON($path, $compareNode = false, $locales = false)
 	{
-		$content = file_get_contents($path);
+		// TODO, LOOP THROUGH LOCALES OR JUST WHAT'S GIVEN
+		// GET A DIFF, ONLY STORE THE DIFF
+		// USE THE FIRST LOCALE AS THE MASTER LOCALE
+		//
 
-		// http://stackoverflow.com/questions/17219916/json-decode-returns-json-error-syntax-but-online-formatter-says-the-json-is-ok
-		for ($i = 0; $i <= 31; ++$i)
-			$content = str_replace(chr($i), "", $content);
-		$content = str_replace(chr(127), "", $content);
 
-		// This is the most common part
-		$content = $this->binaryFix($content);
+		$paths = [];
 
-		$content = json_decode($content, true);
+		if ( ! $locales)
+			// If $locales isn't set, take path as-is
+			$paths[] = $path;
+		else
+			// Else, loop through locales, doing a sprintf; $path should contain an %s
+			foreach ($locales as $locale)
+				$paths[$locale] = sprintf($path, $locale);
 
-		return $content;
+		$originalContent = $additionalContent = [];
+		$loop = 0;
+
+		foreach ($paths as $locale => $path)
+		{
+			if ( ! is_file($path))
+				continue;
+
+			$content = file_get_contents($path);
+
+			// http://stackoverflow.com/questions/17219916/json-decode-returns-json-error-syntax-but-online-formatter-says-the-json-is-ok
+			for ($i = 0; $i <= 31; ++$i)
+				$content = str_replace(chr($i), "", $content);
+			$content = str_replace(chr(127), "", $content);
+
+			// This is the most common part
+			$content = $this->binaryFix($content);
+
+			$content = json_decode($content, true);
+
+			if ($loop++ == 0)
+				$originalContent = $content;
+			else
+			{
+				$o = $compareNode ? $originalContent[$compareNode] : $originalContent;
+				$n = $compareNode ? $content[$compareNode] : $content;
+
+				$additionalContent[$locale] = $this->multidimensional_array_diff($n, $o);
+			}
+		}
+
+		$data = $originalContent;
+		if ($additionalContent)
+		{
+			// We still have last run $content, reverse compare
+			$o = $compareNode ? $originalContent[$compareNode] : $originalContent;
+			$n = $compareNode ? $content[$compareNode] : $content;
+
+			// Add this in up top, and this becomes our locale array
+			$data['locales'] = array_merge(
+				[ reset($locales) => $this->multidimensional_array_diff($o, $n) ],
+				$additionalContent
+			);
+		}
+
+		return $data;
+	}
+
+	protected function multidimensional_array_diff($array1, $array2)
+	{
+		$result = [];
+		foreach ($array1 as $key => $value) {
+			if ( ! is_array($array2) ||  ! array_key_exists($key, $array2)) {
+				$result[$key] = $value;
+				continue;
+			}
+			if (is_array($value)) {
+				$recursiveArrayDiff = $this->multidimensional_array_diff($value, $array2[$key]);
+				if (count($recursiveArrayDiff)) {
+					$result[$key] = $recursiveArrayDiff;
+				}
+				continue;
+			}
+			if ($value != $array2[$key]) {
+				$result[$key] = $value;
+			}
+		}
+		return $result;
 	}
 
 	protected function binaryFix($string)

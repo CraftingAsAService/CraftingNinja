@@ -811,6 +811,9 @@ class Ffxiv extends GameDataTemplate
 
 	protected function items()
 	{
+		// Node Ids are shared, convert them to one
+		$pricesMap = $this->map['prices'] ?? [];
+
 		// Set up the columns as the first row of data
 		$itemsData = [
 			[ 'id', 'category_id', 'ilvl', 'icon', 'rarity', ],
@@ -821,9 +824,6 @@ class Ffxiv extends GameDataTemplate
 		$itemCoordinatesData = [
 			[ 'zone_id', 'coordinate_id', 'coordinate_type', 'x', 'y', 'z', 'radius', ],
 		];
-		// $itemDetailsData = [
-		// 	[ 'detailable_id', 'detailable_type', 'data', ],
-		// ];
 		$equipmentData = [
 			[ 'item_id', 'niche_id', 'slot', 'level', 'sockets', ],
 		];
@@ -834,10 +834,10 @@ class Ffxiv extends GameDataTemplate
 			[ 'item_id', 'npc_id', 'rate', ],
 		];
 		$priceData = [
-
+			[ 'quality', 'item_id', 'market', 'amount' ],
 		];
 		$itemPriceData = [
-			[ 'quality', 'item_id', 'market', 'amount', ],
+			[ 'item_id', 'price_id', ],
 		];
 		$recipeData = [
 			[ 'id', 'item_id', 'job_id', 'level', 'sublevel', 'yield', 'quality', 'chance', ],
@@ -847,9 +847,8 @@ class Ffxiv extends GameDataTemplate
 		];
 		// "Fixed" Data - Non numeric IDs skipped
 
-		// Keep things unique
-		$itemPriceIds = [];
-		$itemPriceId = 0;
+		// Keep pricing unique
+		$newPriceId = empty($pricesMap) ? 1 : (max($pricesMap) + 1);
 
 		$itemDir = $this->originDataLocation . 'data/%s/item';
 		$filesList = $this->scanDir(sprintf($itemDir, 'en'));
@@ -857,7 +856,7 @@ class Ffxiv extends GameDataTemplate
 
 		foreach ($filesList as $key => $file)
 		{
-			$json = $this->getJSON($itemDir . '/' . $file, config('translatable.locales'));
+			$json = $this->getJSON($itemDir . '/' . $file, 'item', config('translatable.locales'));
 			$data = $json['item'];
 
 			if ( ! is_numeric($data['id']))
@@ -874,24 +873,23 @@ class Ffxiv extends GameDataTemplate
 			];
 
 			// Translatable Data
-			foreach (config('translatable.locales') as $locale)
-				if (isset($data[$locale]))
+			if (isset($json['locales']))
+				foreach ($json['locales'] as $locale => $localeData)
 					$itemTranslationsData[] = [
 						/* item_id */		$itemId,
 						/* locale */		$locale,
-						// Super rare that name isn't set for JA.  Just use EN name instead
-						/* name */			$this->clean($data[$locale]['name'] ?? $data['en']['name']),
-						/* description */	$this->clean($data['en']['description'] ?? null),
+						/* name */			$this->clean($localeData['name'] ?? $data['name'] ?? null),
+						/* description */	$this->clean($localeData['description'] ?? $data['description'] ?? null),
 					];
 
 			// Equipment - If a slot is defined, it's equipment
 			if (isset($data['slot']))
 				$equipmentData[] = [
-					/* item_id */		$itemId,
-					/* job_group_id */	$data['jobs'],
-					/* slot */			$data['slot'],
-					/* level */			$data['elvl'],
-					/* sockets */		$data['sockets'] ?? null,
+					/* item_id */	$itemId,
+					/* niche_id */	$data['jobs'],
+					/* slot */		$data['slot'],
+					/* level */		$data['elvl'],
+					/* sockets */	$data['sockets'] ?? null,
 				];
 
 			// Item Attributes
@@ -920,7 +918,7 @@ class Ffxiv extends GameDataTemplate
 						if ( ! is_null($value))
 							$attributeItemData[] = [
 								/* item_id */		$itemId,
-								/* attribute_id */	$this->map['attributes'][ucwords($attributeName)],
+								/* attribute_id */	$this->map['attributes'][$attributeName],
 								/* quality */		null,
 								/* value */			$value,
 							];
@@ -942,42 +940,49 @@ class Ffxiv extends GameDataTemplate
 
 			// Populate: item_npc
 			// Populate: item_price
-			foreach (['vendors', 'tradeSources'] as $npcType)
-				if (isset($data[$npcType]))
-					foreach ($data[$npcType] as $npcId => $npcData)
+			foreach (['vendors', 'tradeShops'] as $vendorType)
+				if (isset($data[$vendorType]))
+					foreach ($data[$vendorType] as $vendorData)
 					{
-						if ($npcType == 'vendors')
-							$npcId = $npcData;
-						elseif ($npcType == 'tradeSources')
-							$data['price'] = $npcData[0]['currency'][0]['amount'];
+						$vendorItemId = null;
 
-						$newItemPriceData = [
-							/* quality */			null,
-							/* alt_currency */		$npcType == 'tradeSources',
-							/* purchase_price */	$data['price'],
-							/* sale_price */		$data['sell_price'] ?? null,
-						];
-						$useItemPriceId = null;
-
-						$itemPriceLookup = base64_encode(serialize($newItemPriceData));
-
-						if (isset($itemPriceIds[$itemPriceLookup]))
-							$useItemPriceId = $itemPriceIds[$itemPriceLookup];
-						else
+						if ($vendorType == 'tradeShops')
 						{
-							// Keep things unique
-							$useItemPriceId = ++$itemPriceId;
-							$itemPriceIds[$itemPriceLookup] = $useItemPriceId;
-
-							$itemPriceData[] = $newItemPriceData;
+							$vendorItemId = $vendorData['listings'][0]['currency'][0]['id'];
+							$data['price'] = $vendorData['listings'][0]['currency'][0]['amount'];
 						}
 
-						$itemNpcData[] = [
-							/* item_id */		$itemId,
-							/* npc_id */		$this->map['npcs'][$npcId],
-							/* item_price_id */	$useItemPriceId,
-							/* rate */			null,
-						];
+						// Key order is important: 0/false is for selling, 1/true is for buying
+						foreach (['sell_price', 'price'] as $market => $value)
+						{
+							if ( ! isset($data[$value]))
+								continue;
+
+							$pricing = [
+								/* quality */		null,
+								//					// You can only buy with alternate currency, not sell
+								/* item_id */		$market ? $vendorItemId : null,
+								/* market */		$market,
+								/* amount */		$data[$value],
+							];
+
+							$pricingIdentifier = md5(serialize($pricing));
+
+							if ( ! isset($pricesMap[$pricingIdentifier]))
+							{
+								$priceData[] = $pricing;
+
+								$priceId = $newPriceId++;
+								$pricesMap[$pricingIdentifier] = $priceId;
+							}
+							else
+								$priceId = $pricesMap[$pricingIdentifier];
+
+							$itemPriceData = [
+								/* item_id */	$itemId,
+								/* price_id */	$priceId,
+							];
+						}
 					}
 
 			// Populate: recipes
@@ -1004,6 +1009,9 @@ class Ffxiv extends GameDataTemplate
 						];
 				}
 
+			// TODO Monster Drops
+			// $itemNpcData
+
 			// Only update progress every 5 steps
 			if ($key % 5 == 0)
 				$this->progress($key, $lastKey);
@@ -1021,6 +1029,8 @@ class Ffxiv extends GameDataTemplate
 		$this->write('item_price', $itemPriceData);
 		$this->write('recipes', $recipeData);
 		$this->write('item_recipe', $itemRecipeData);
+
+		$this->saveMap('prices', $pricesMap);
 	}
 
 	/**
