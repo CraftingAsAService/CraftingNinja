@@ -66,11 +66,14 @@ abstract class GameDataTemplate
 
 	protected function loadMaps()
 	{
-		foreach (array_diff(scandir($this->originDataLocation . 'parsed/mappings'), ['.', '..']) as $filename)
-		{
-			$action = str_replace('.json', '', $filename);
-			$this->readMap($action);
-		}
+		if ( ! is_dir($this->originDataLocation . 'parsed/mappings'))
+			mkdir($this->originDataLocation . 'parsed/mappings');
+		else
+			foreach (array_diff(scandir($this->originDataLocation . 'parsed/mappings'), ['.', '..']) as $filename)
+			{
+				$action = str_replace('.json', '', $filename);
+				$this->readMap($action);
+			}
 	}
 
 	protected function readMap($filename)

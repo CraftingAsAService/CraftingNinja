@@ -1,44 +1,33 @@
 <?php
 
-/**
- * Run `composer dump-autoload` when adding new seeders in this folder
- *
- * php artisan db:seed --class FFXIVSeeder --database ffxiv
- */
+use Illuminate\Database\Seeder;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FfxivSeeder extends GenericDataSeeder
+abstract class GenericDataSeeder extends Seeder
 {
 
-	protected $dataLocation = null;
+	protected $seedData = [];
 
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run()
+	public function __construct()
 	{
-		foreach ($this->seedData as $table)
-			$this->seed($table);
+		Model::unguard();
+		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-		echo PHP_EOL . "Finished" . PHP_EOL;
+		// Don't bother logging queries
+		DB::connection()->disableQueryLog();
+
+		$slug = preg_replace('/gameseeder$/i', '', strtolower((new ReflectionClass($this))->getShortName()));
+
+		$this->dataLocation = env('DATA_REPOSITORY') . '/' . $slug . '/parsed/';
 	}
 
-	private function seed($table)
+	public function __destruct()
 	{
-		$data = json_decode(file_get_contents($this->dataLocation . camel_case($table) . '.json'), true);
-		$columns = array_shift($data);
-
-		echo 'Inserting data into ' . $table . PHP_EOL;
-
-		DB::statement('TRUNCATE `' . $table . '`');
-
-		$this->batchInsert($table, $columns, $data);
+		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
-	private function batchInsert($table, $columns, $data)
+	protected function batchInsert($table, $columns, $data)
 	{
 		$data = array_chunk($data, 300);
 		$lastKey = count($data);
@@ -85,7 +74,7 @@ class FfxivSeeder extends GenericDataSeeder
 	 * @param bool $last      - If the process has been completed
 	 * @param bool $steps     - How wide the process bar should be
 	 */
-	public function progress($totalDone, $total, $last = false, $steps = false)
+	protected function progress($totalDone, $total, $last = false, $steps = false)
 	{
 		if (PHP_SAPI != 'cli')
 			return;

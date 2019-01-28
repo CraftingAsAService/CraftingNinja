@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\Game;
 
-class GameDataSeeder extends Seeder
+class GameTableSeeder extends Seeder
 {
 	/**
 	 * Run the database seeds.

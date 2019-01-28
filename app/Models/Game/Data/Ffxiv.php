@@ -22,32 +22,6 @@ class Ffxiv extends GameDataTemplate
 			'ja' => '/ja',
 		],
 		$runList = [
-			// 'item_price',
-			// 'prices',
-			// 'item_translations',
-			// 'items',
-			// 'item_recipes',
-			// 'recipe_translations',
-			// 'recipes',
-			// 'attribute_items',
-			// 'equipment',
-			// 'item_npcs',
-			// 'item_objectives',
-			// 'objective_translations',
-			// 'objectives',
-			// 'item_nodes',
-			// 'node_translations',
-			// 'nodes',
-
-
-			// 'coordinates',
-			// X	npcCoordinates
-			// X	shopCoordinates
-			// 	objectiveCoordinates
-			// 	nodeCoordinates
-			// 	itemCoordinates
-			// 'details',
-			//  	npcDetails
 			'core',
 			'jobs',
 			'niches',
@@ -380,7 +354,7 @@ class Ffxiv extends GameDataTemplate
 		$npcShopData = [
 			[ 'npc_id', 'shop_id', ],
 		];
-		$shopData = [
+		$shopsData = [
 			[ 'id', ],
 		];
 		$shopTranslationsData = [
@@ -436,7 +410,7 @@ class Ffxiv extends GameDataTemplate
 
 				// Add a coordinate, only interested in one
 				if (isset($data['areaid']) || isset($data['zoneid']) || isset($data['instance']))
-					$coordinateEntry[] = [
+					$coordinateEntry = [
 						/* zone_id */			isset($data['instance']) ? $this->fixInstanceId($data['instance']) : ($data['areaid'] ?? $data['zoneid']),
 						/* coordinate_id */		$npcId,
 						/* coordinate_type */	'npc', // See AppServiceProvider's MorphMap
@@ -480,7 +454,7 @@ class Ffxiv extends GameDataTemplate
 							$shopId = $shopsMap[$shopIdentifier] ?? $newShopId++;
 							$shopsMap[$shopIdentifier] = $shopId;
 
-							$shopData[] = [
+							$shopsData[] = [
 								/* id */	$shopId,
 							];
 
@@ -497,10 +471,15 @@ class Ffxiv extends GameDataTemplate
 							];
 
 							if ($coordinateEntry)
-								$shopCoordinatesData[] = array_merge($coordinateEntry, [
+								$shopCoordinatesData[] = [
+									/* zone_id */			$coordinateEntry[0],
 									/* coordinate_id */		$shopId,
 									/* coordinate_type */	'shop', // See AppServiceProvider's MorphMap
-								]);
+									/* x */					$coordinateEntry[3],
+									/* y */					$coordinateEntry[4],
+									/* z */					$coordinateEntry[5],
+									/* radius */			$coordinateEntry[6],
+								];
 						}
 					}
 				}
@@ -534,7 +513,7 @@ class Ffxiv extends GameDataTemplate
 		$this->write('npc_coordinates', $npcCoordinatesData);
 		$this->write('npc_details', $npcDetailsData);
 
-		$this->write('shop', $shopData);
+		$this->write('shops', $shopsData);
 		$this->write('shop_translations', $shopTranslationsData);
 		$this->write('npc_shop', $npcShopData);
 
@@ -978,7 +957,7 @@ class Ffxiv extends GameDataTemplate
 							else
 								$priceId = $pricesMap[$pricingIdentifier];
 
-							$itemPriceData = [
+							$itemPriceData[] = [
 								/* item_id */	$itemId,
 								/* price_id */	$priceId,
 							];
@@ -1009,8 +988,15 @@ class Ffxiv extends GameDataTemplate
 						];
 				}
 
-			// TODO Monster Drops
-			// $itemNpcData
+			// Item Drops
+			if (isset($data['drops']))
+				foreach ($data['drops'] as $npcId)
+					if (isset($this->map['npcs'][$npcId]))
+						$itemNpcData[] = [
+							/* item_id */	$itemId,
+							/* npc_id */	$npcId,
+							/* rate */		null,
+						];
 
 			// Only update progress every 5 steps
 			if ($key % 5 == 0)
@@ -1022,7 +1008,6 @@ class Ffxiv extends GameDataTemplate
 		$this->write('items', $itemsData);
 		$this->write('item_translations', $itemTranslationsData);
 		$this->write('item_coordinates', $itemCoordinatesData);
-		// $this->write('item_details', $itemDetailsData);
 		$this->write('equipment', $equipmentData);
 		$this->write('attribute_item', $attributeItemData);
 		$this->write('item_npc', $itemNpcData);

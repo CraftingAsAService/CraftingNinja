@@ -40,13 +40,13 @@ class Reseed extends Command
 	 */
 	public function handle()
 	{
-		// php artisan db:seed --class FfxivSeeder --database ffxiv
+		// php artisan db:seed --class FfxivGameSeeder --database ffxiv
 		foreach (explode(',', env('VALID_GAMES')) as $gameSlug)
 		{
 			echo 'Seeding ' . $gameSlug . PHP_EOL;
 
 			Artisan::call('db:seed', [
-				'--class' => ucwords($gameSlug) . 'Seeder',
+				'--class' => ucwords($gameSlug) . 'GameSeeder',
 				'--database' => $gameSlug,
 			]);
 		}
