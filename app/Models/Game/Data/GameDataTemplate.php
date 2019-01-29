@@ -126,12 +126,6 @@ abstract class GameDataTemplate
 
 	protected function getJSON($path, $compareNode = false, $locales = false)
 	{
-		// TODO, LOOP THROUGH LOCALES OR JUST WHAT'S GIVEN
-		// GET A DIFF, ONLY STORE THE DIFF
-		// USE THE FIRST LOCALE AS THE MASTER LOCALE
-		//
-
-
 		$paths = [];
 
 		if ( ! $locales)
@@ -186,6 +180,11 @@ abstract class GameDataTemplate
 				$additionalContent
 			);
 		}
+		elseif ($locales)
+			// In the least, set up the default
+			//  This leads to a lot of $localeData['name'] ?? $data['name'] ?? null
+			//  But this helps with loops
+			$data['locales'][reset($locales)] = [];
 
 		return $data;
 	}

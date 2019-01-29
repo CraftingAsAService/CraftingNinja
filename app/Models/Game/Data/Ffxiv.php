@@ -3,7 +3,7 @@
 /**
  * Data provided manually by /u/Clorifex of garlandtools.org, thanks dude!
  *
- * php artisan osmose:parse ffxiv
+ * php artisan cache:clear && php artisan osmose:parse ffxiv
  */
 
 namespace App\Models\Game\Data;
@@ -15,18 +15,11 @@ class Ffxiv extends GameDataTemplate
 
 	public
 		$core = null,
-		$languages = [
-			'en' => '/en',
-			'de' => '/de',
-			'fr' => '/fr',
-			'ja' => '/ja',
-		],
 		$runList = [
 			'core',
 			'jobs',
 			'niches',
 			'categories',
-			'attributes',
 			'zones',
 			'npcs',
 			'objectives',
@@ -40,92 +33,8 @@ class Ffxiv extends GameDataTemplate
 
 	protected function core()
 	{
-		$core = $this->getJSON($this->originDataLocation . 'core.js', true);
+		$core = $this->getJSON($this->originDataLocation . 'data/en/core/data.json', true);
 		$this->saveMap('core', $core);
-	}
-
-	protected function attributes()
-	{
-		// Attribute Ids are non-existent
-		$attributesMap = $this->map['attributes'] ?? [];
-
-		// Set up the columns as the first row of data
-		$attributesData = [
-			[ 'id', ],
-		];
-		$attributeTranslationsData = [
-			[ 'attribute_id', 'locale', 'name', ],
-		];
-		// "Fixed" Data - Attribute names had ucwords() ran against them
-
-		$newAttributeId = empty($attributesMap) ? 1 : (max($attributesMap) + 1);
-
-		// Only English translations are available
-		$itemsDir = $this->originDataLocation . 'data/en/item';
-
-		// Only find item files with attributes
-		$filesList = $this->grepDir($itemsDir, '"attr');
-
-		$lastKey = count($filesList) - 1; // $filesList had array_values ran against it, count()ing for $lastKey is a safe bet
-
-		foreach ($filesList as $key => $fullFilePath)
-		{
-			$data = $this->getJSON($fullFilePath)['item'];
-
-			if (isset($data['attr']))
-			{
-				// Normalize food/potion buffs
-				// Looking for attr and attr_hq
-				foreach (['', '_hq'] as $quality)
-				{
-					if ( ! isset($data['attr' . $quality]))
-						continue;
-
-					// attr or attr_hq
-					$attributes = $data['attr' . $quality];
-
-					if (isset($attributes['action']))
-					{
-						$normalizedAttributes = [];
-						foreach ($attributes['action'] as $attribute => $definition)
-							$normalizedAttributes[$attribute] = $definition['rate'];
-						$attributes = $normalizedAttributes;
-					}
-
-					foreach (array_keys($attributes) as $attributeName)
-					{
-						$attributeName = ucwords($attributeName);
-
-						// Attributes don't have an ID we can already use
-						// Save the attribute down for later referential usage
-						$attributeId = $attributesMap[$attributeName] ?? $newAttributeId++;
-						$attributesMap[$attributeName] = $attributeId;
-
-						$attributesData[] = [
-							/* id */	$attributeId,
-						];
-
-						// Only EN translation available
-						$attributeTranslationsData[] = [
-							/* attribute_id */	$attributeId,
-							/* locale */		'en',
-							/* name */			$this->clean($attributeName),
-						];
-					}
-				}
-			}
-
-			// Only update progress every 5 steps
-			if ($key % 5 == 0)
-				$this->progress($key, $lastKey);
-		}
-
-		$this->progress($key, $lastKey, true);
-
-		$this->write('attributes', $attributesData);
-		$this->write('attribute_translations', $attributeTranslationsData);
-
-		$this->saveMap('attributes', $attributesMap);
 	}
 
 	protected function categories()
@@ -141,6 +50,7 @@ class Ffxiv extends GameDataTemplate
 		// "Fixed" Data - Any ID less than one was ignored
 
 		$parentCategories = $this->getJSON($this->originDataLocation . 'custom/categoryParents.json');
+
 		// Parent categories is a custom/manually maintained file
 		foreach ($parentCategories as $data)
 		{
@@ -293,34 +203,28 @@ class Ffxiv extends GameDataTemplate
 		// Also handle instances, which are basically zones
 		echo 'Starting instances' . PHP_EOL;
 
-		$instancesDir = $this->originDataLocation . 'data/en/instance';
-		$filesList = $this->scanDir($instancesDir);
+		$instancesDir = $this->originDataLocation . 'data/%s/instance';
+		$filesList = $this->scanDir(sprintf($instancesDir, 'en'));
 		$lastKey = count($filesList) - 1; // $filesList had array_values ran against it, count()ing for $lastKey is a safe bet
 
 		foreach ($filesList as $key => $file)
 		{
-			$data = $this->getJSON($instancesDir . '/' . $file)['instance'];
+			$json = $this->getJSON($instancesDir . '/' . $file, 'instance', config('translatable.locales'));
+			$data = $json['instance'];
 
 			$data['id'] = $this->fixInstanceId($data['id']);
-
-			// Sometimes `en` doesn't exist, but `name` does
-			if ( ! isset($data['en']) && isset($data['name']))
-				$data['en']['name'] = $data['name'];
 
 			$zonesData[] = [
 				/* id */		$data['id'],
 				/* zone_id */	$data['zoneid'] ?? null,
 			];
 
-			// Only EN translation available
-			foreach (config('translatable.locales') as $locale)
-				if (isset($data[$locale]))
-					$zoneTranslationsData[] = [
-						/* zone_id */		$data['id'],
-						/* locale */		$locale,
-						// Super rare that name isn't set for JA.  Just use EN name instead
-						/* name */			$this->clean($data[$locale]['name'] ?? $data['en']['name']),
-					];
+			foreach ($json['locales'] as $locale => $localeData)
+				$zoneTranslationsData[] = [
+					/* zone_id */	$data['id'],
+					/* locale */	$locale,
+					/* name */		$this->clean($localeData['name'] ?? $data['name'] ?? null),
+				];
 
 			// Only update progress every 5 steps
 			if ($key % 5 == 0)
@@ -377,13 +281,14 @@ class Ffxiv extends GameDataTemplate
 			if ($npcType == 'mob')
 				echo 'Starting mobs' . PHP_EOL;
 
-			$npcsDir = $this->originDataLocation . 'data/en/' . $npcType;
-			$filesList = $this->scanDir($npcsDir);
+			$npcsDir = $this->originDataLocation . 'data/%s/' . $npcType;
+			$filesList = $this->scanDir(sprintf($npcsDir, 'en'));
 			$lastKey = count($filesList) - 1;
 
 			foreach ($filesList as $key => $file)
 			{
-				$data = $this->getJSON($npcsDir . '/' . $file)[$npcType];
+				$json = $this->getJSON($npcsDir . '/' . $file, $npcType, config('translatable.locales'));
+				$data = $json[$npcType];
 
 				$npcId = $npcsMap[$data['id']] ?? $newNpcId++;
 				$npcsMap[$data['id']] = $npcId;
@@ -400,11 +305,12 @@ class Ffxiv extends GameDataTemplate
 					/* level */ $level,
 				];
 
-				$npcTranslationsData[] = [
-					/* npc_id */	$npcId,
-					/* locale */	'en',
-					/* name */		$this->clean($data['name']),
-				];
+				foreach ($json['locales'] as $locale => $localeData)
+					$npcTranslationsData[] = [
+						/* npc_id */	$npcId,
+						/* locale */	$locale,
+						/* name */		$this->clean($localeData['name'] ?? $data['name'] ?? null),
+					];
 
 				$coordinateEntry = false;
 
@@ -552,14 +458,14 @@ class Ffxiv extends GameDataTemplate
 		{
 			echo 'Starting ' . $objectiveType . PHP_EOL;
 
-			$objectiveDir = $this->originDataLocation . 'data/en/' . $objectiveType;
-			$filesList = $this->scanDir($objectiveDir);
+			$objectiveDir = $this->originDataLocation . 'data/%s/' . $objectiveType;
+			$filesList = $this->scanDir(sprintf($objectiveDir, 'en'));
 			$lastKey = count($filesList) - 1;
 
 			foreach ($filesList as $key => $file)
 			{
-				$jsonData = $this->getJSON($objectiveDir . '/' . $file);
-				$data = $jsonData[$objectiveType];
+				$json = $this->getJSON($objectiveDir . '/' . $file, $objectiveType, config('translatable.locales'));
+				$data = $json[$objectiveType];
 
 				$objectiveId = $objectivesMap[$objectiveType . $data['id']] ?? $newObjectiveId++;
 				$objectivesMap[$objectiveType . $data['id']] = $objectiveId;
@@ -579,13 +485,13 @@ class Ffxiv extends GameDataTemplate
 					/* level */			$data['lvl'] ?? null,
 				];
 
-				// Only EN available
-				$objectiveTranslationsData[] = [
-					/* objective_id */	$objectiveId,
-					/* locale */		'en',
-					/* name */			$this->clean($data['name'] ?? null),
-					/* description */	$this->clean($data['description'] ?? null),
-				];
+				foreach ($json['locales'] as $locale => $localeData)
+					$objectiveTranslationsData[] = [
+						/* objective_id */	$objectiveId,
+						/* locale */		$locale,
+						/* name */			$this->clean($localeData['name'] ?? $data['name'] ?? null),
+						/* description */	$this->clean($localeData['description'] ?? $data['description'] ?? null),
+					];
 
 				$details = null;
 
@@ -642,7 +548,7 @@ class Ffxiv extends GameDataTemplate
 
 				if ($objectiveType == 'leve' && isset($data['rewards']))
 					// Rewards data is actually stored next to the $type data, so call back to the JSON
-					foreach ($jsonData['rewards']['entries'] as $entry)
+					foreach ($json['rewards']['entries'] as $entry)
 						$objectiveItemRewardData[] = [
 							/* item_id */		$entry['item'],
 							/* objective_id */	$objectiveId,
@@ -711,13 +617,14 @@ class Ffxiv extends GameDataTemplate
 			if ($nodeType == 'fishing')
 				echo 'Starting fishing' . PHP_EOL;
 
-			$nodeDir = $this->originDataLocation . 'data/en/' . $nodeType;
-			$filesList = $this->scanDir($nodeDir);
+			$nodeDir = $this->originDataLocation . 'data/%s/' . $nodeType;
+			$filesList = $this->scanDir(sprintf($nodeDir, 'en'));
 			$lastKey = count($filesList) - 1;
 
 			foreach ($filesList as $key => $file)
 			{
-				$data = $this->getJSON($nodeDir . '/' . $file)[$nodeType];
+				$json = $this->getJSON($nodeDir . '/' . $file, $nodeType, config('translatable.locales'));
+				$data = $json[$nodeType];
 
 				$nodeId = $nodesMap[$nodeType . $data['id']] ?? $newNodeId++;
 				$nodesMap[$nodeType . $data['id']] = $nodeId;
@@ -731,12 +638,12 @@ class Ffxiv extends GameDataTemplate
 					/* type */	$data['type'],
 				];
 
-				// Only EN translation available
-				$nodeTranslationsData[] = [
-					/* node_id */	$nodeId,
-					/* locale */	'en',
-					/* name */		$this->clean($data['name'] ?? null),
-				];
+				foreach ($json['locales'] as $locale => $localeData)
+					$nodeTranslationsData[] = [
+						/* node_id */	$nodeId,
+						/* locale */	$locale,
+						/* name */		$this->clean($localeData['name'] ?? $data['name'] ?? null),
+					];
 
 				foreach ($data['items'] as $item)
 					$itemNodeData[] = [
@@ -792,6 +699,8 @@ class Ffxiv extends GameDataTemplate
 	{
 		// Node Ids are shared, convert them to one
 		$pricesMap = $this->map['prices'] ?? [];
+		// Attribute Ids are non-existent
+		$attributesMap = $this->map['attributes'] ?? [];
 
 		// Set up the columns as the first row of data
 		$itemsData = [
@@ -805,6 +714,12 @@ class Ffxiv extends GameDataTemplate
 		];
 		$equipmentData = [
 			[ 'item_id', 'niche_id', 'slot', 'level', 'sockets', ],
+		];
+		$attributesData = [
+			[ 'id', ],
+		];
+		$attributeTranslationsData = [
+			[ 'attribute_id', 'locale', 'name', ],
 		];
 		$attributeItemData = [
 			[ 'attribute_id', 'item_id', 'quality', 'value', ],
@@ -829,6 +744,8 @@ class Ffxiv extends GameDataTemplate
 		// Keep pricing unique
 		$newPriceId = empty($pricesMap) ? 1 : (max($pricesMap) + 1);
 
+		$newAttributeId = empty($attributesMap) ? 1 : (max($attributesMap) + 1);
+
 		$itemDir = $this->originDataLocation . 'data/%s/item';
 		$filesList = $this->scanDir(sprintf($itemDir, 'en'));
 		$lastKey = count($filesList) - 1;
@@ -852,14 +769,13 @@ class Ffxiv extends GameDataTemplate
 			];
 
 			// Translatable Data
-			if (isset($json['locales']))
-				foreach ($json['locales'] as $locale => $localeData)
-					$itemTranslationsData[] = [
-						/* item_id */		$itemId,
-						/* locale */		$locale,
-						/* name */			$this->clean($localeData['name'] ?? $data['name'] ?? null),
-						/* description */	$this->clean($localeData['description'] ?? $data['description'] ?? null),
-					];
+			foreach ($json['locales'] as $locale => $localeData)
+				$itemTranslationsData[] = [
+					/* item_id */		$itemId,
+					/* locale */		$locale,
+					/* name */			$this->clean($localeData['name'] ?? $data['name'] ?? null),
+					/* description */	$this->clean($localeData['description'] ?? $data['description'] ?? null),
+				];
 
 			// Equipment - If a slot is defined, it's equipment
 			if (isset($data['slot']))
@@ -894,13 +810,33 @@ class Ffxiv extends GameDataTemplate
 					}
 
 					foreach ($attributes as $attributeName => $value)
+					{
+						$attributeName = ucwords($attributeName);
+
+						// Attributes don't have an ID we can already use
+						// Save the attribute down for later referential usage
+						$attributeId = $attributesMap[$attributeName] ?? $newAttributeId++;
+						$attributesMap[$attributeName] = $attributeId;
+
+						$attributesData[] = [
+							/* id */	$attributeId,
+						];
+
+						// Only EN translation available
+						$attributeTranslationsData[] = [
+							/* attribute_id */	$attributeId,
+							/* locale */		'en',
+							/* name */			$this->clean($attributeName),
+						];
+
 						if ( ! is_null($value))
 							$attributeItemData[] = [
 								/* item_id */		$itemId,
-								/* attribute_id */	$this->map['attributes'][$attributeName],
+								/* attribute_id */	$attributeId,
 								/* quality */		null,
 								/* value */			$value,
 							];
+					}
 				}
 			}
 
@@ -1009,6 +945,8 @@ class Ffxiv extends GameDataTemplate
 		$this->write('item_translations', $itemTranslationsData);
 		$this->write('item_coordinates', $itemCoordinatesData);
 		$this->write('equipment', $equipmentData);
+		$this->write('attributes', $attributesData);
+		$this->write('attribute_translations', $attributeTranslationsData);
 		$this->write('attribute_item', $attributeItemData);
 		$this->write('item_npc', $itemNpcData);
 		$this->write('item_price', $itemPriceData);
@@ -1016,6 +954,7 @@ class Ffxiv extends GameDataTemplate
 		$this->write('item_recipe', $itemRecipeData);
 
 		$this->saveMap('prices', $pricesMap);
+		$this->saveMap('attributes', $attributesMap);
 	}
 
 	/**

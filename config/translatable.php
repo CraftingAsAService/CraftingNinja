@@ -17,7 +17,7 @@ return [
 		'Français' => 'fr',
 		'Deutsche' => 'de',
 		'Italiano' => 'it',
-		'日本語' => 'jp',
+		'日本語' => 'ja',
 	],
 
 	/*
