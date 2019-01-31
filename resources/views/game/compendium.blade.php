@@ -27,7 +27,7 @@
 						<header class='card__header card__header--shop-filter'>
 
 							<div class='shop-filter'>
-								<h5 class='shop-filter__result'>Showing 12 of 98 products</h5>
+								<h5 class='shop-filter__result'>Showing 12 of 98 <span>Items</span></h5>
 								<ul class='shop-filter__params'>
 									<li class='shop-filter__control'>
 										<select class='form-control input-xs'>
@@ -50,8 +50,18 @@
 						</header>
 						<div class='card__content'>
 
+							<div id='pre-results' class='jumbotron'>
+								<h1 class='display-4'>What are you looking for?</h1>
+								<p class='lead mt-4 mb-0'>Select a <i class='fas fa-bookmark'></i> chapter and start <i class='fas fa-filter'></i> filtering!</p>
+							</div>
+
+							<div id='no-results' class='jumbotron' hidden>
+								<h1 class='display-4'>No results!</h1>
+								<p class='lead mt-4 mb-0'>Tweak those <i class='fas fa-filter'></i> filters!</p>
+							</div>
+
 							<!-- Products -->
-							<ul class='products products--grid products--grid-3 products--grid-simple'>
+							<ul class='products products--grid products--grid-3 products--grid-simple' hidden>
 
 								<!-- Product #0 -->
 								<li class='product__item'>
@@ -95,7 +105,7 @@
 					<!-- Shop Grid / End -->
 
 					<!-- Shop Pagination -->
-					<nav class='shop-pagination' aria-label='Shop navigation'>
+					<nav class='shop-pagination' aria-label='Shop navigation' hidden>
 						<ul class='pagination pagination--circle justify-content-center'>
 							<li class='page-item'><a class='page-link' href='#'><i class='fa fa-angle-left'></i></a></li>
 							<li class='page-item active'><a class='page-link' href='#'>1</a></li>
@@ -107,278 +117,7 @@
 				</div>
 				<!-- Products / End -->
 
-				<!-- Sidebar -->
-				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
-
-			<div class='dropdown-menu'>
-				<a class='dropdown-item' href='#' data-filter='ilvl' data-type='range' data-keys='ilvlMin,ilvlMax' data-text='iLv' data-min='1' data-max='{{ $ilvlMax }}'>
-					<i class='fas fa-info'></i>
-					Item Level
-				</a>
-				<a class='dropdown-item' href='#' data-filter='rarity' data-type='rarity'>
-					<i class='fas fa-registered'></i>
-					Rarity
-				</a>
-				<a class='dropdown-item' href='#' data-filter='recipes' data-type='enabled'>
-					<i class='fas fa-utensil-spoon'></i>
-					Only Recipes
-				</a>
-				<a class='dropdown-item' href='#' data-filter='rlevel' data-type='range' data-keys='rlvlMin,rlvlMax' data-text='Level' data-min='1' data-max='{{ $rlvlMax }}'>
-					<i class='fas fa-award'></i>
-					Recipe Level
-				</a>
-				<a class='dropdown-item' href='#' data-filter='rclass' data-type='rclass'>
-					<i class='fas fa-chess-bishop'></i>
-					Recipe Class
-				</a>
-				<a class='dropdown-item' href='#' data-filter='sublevel' data-type='single' data-text='Difficulty' data-min='1' data-max='{{ config('game.maxDifficulty') }}' data-list='{{ implode(',', range(1, config('game.maxDifficulty'))) }}'>
-					<i class='fas fa-star'></i>
-					Recipe Difficulty
-				</a>
-				<a class='dropdown-item' href='#' data-filter='equipment' data-type='enabled'>
-					<i class='fas fa-tshirt'></i>
-					Only Equipment
-				</a>
-				<a class='dropdown-item' href='#' data-filter='elevel' data-type='range' data-keys='elvlMin,elvlMax' data-text='Level' data-min='1' data-max='{{ $elvlMax }}'>
-					<i class='fas fa-medal'></i>
-					Equip Level
-				</a>
-				<a class='dropdown-item' href='#' data-filter='eclass' data-type='eclass'>
-					<i class='fas fa-chess-rook'></i>
-					Equipment Class
-				</a>
-				<a class='dropdown-item' href='#' data-filter='slot' data-type='slot' data-text='Slot'>
-					<i class='fas fa-hand-paper'></i>
-					Equipment Slot
-				</a>
-				<a class='dropdown-item' href='#' data-filter='materia' data-type='single' data-text='# of Sockets' data-min='1' data-max='{{ config('game.maxSockets') }}' data-list='{{ implode(',', range(1, config('game.maxSockets'))) }}'>
-					<i class='fas fa-gem'></i>
-					Materia Sockets
-				</a>
-				<div class='dropdown-divider'></div>
-				<a class='dropdown-item' href='#' data-filter='clear'>
-					<i class='fas fa-trash-alt'></i>
-					Clear Filters
-				</a>
-			</div>
-
-					<aside class='widget card widget--sidebar widget_filter-chapter'>
-						<form action='#' class='filter-chapter-form'>
-							<div class='widget__title card__header card__header--has-btn'>
-								<h4>
-									<i class='fas fa-book'></i>
-									Chapter
-								</h4>
-							</div>
-							<div class='widget__content card__content'>
-								<div class='row'>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs my-2'>
-											<label class='radio radio-inline'>
-												<input type='radio' id='chapter-items' value='items' checked> Items
-												<span class='radio-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs my-2'>
-											<label class='radio radio-inline'>
-												<input type='radio' id='chapter-recipes' value='recipes'> Recipes
-												<span class='radio-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs my-2'>
-											<label class='radio radio-inline'>
-												<input type='radio' id='chapter-equipment' value='equipment'> Equipment
-												<span class='radio-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs my-2'>
-											<label class='radio radio-inline'>
-												<input type='radio' id='chapter-quests' value='quests'> Quests
-												<span class='radio-indicator'></span>
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-						</form>
-					</aside>
-
-					<aside class='widget card widget--sidebar widget-filter-ilvl' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $ilvlMax }}'>
-						<form action='#' class='filter-ilvl-form'>
-							<div class='widget__title card__header card__header--has-btn'>
-								<h4>Item Level</h4>
-								<button class='btn btn-default btn-xs card-header__button'>Filter</button>
-							</div>
-							<div class='widget__content card__content'>
-								<div class='slider-range-wrapper'>
-									<div id='slider-range' class='slider-range'></div>
-									<div class='slider-range-label'>
-										iLv: <span id='slider-range-value-min'></span> - <span id='slider-range-value-max'></span>
-									</div>
-								</div>
-							</div>
-						</form>
-					</aside>
-
-					<!-- Widget: Color Filter -->
-					<aside class='widget card widget--sidebar widget_color-picker'>
-						<form action='#' class='color-picker-form'>
-							<div class='widget__title card__header card__header--has-btn'>
-								<h4>Filter by Color</h4>
-								<button class='btn btn-default btn-xs card-header__button'>Filter</button>
-							</div>
-							<div class='widget__content card__content'>
-
-								<ul class='filter-color'>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_1' value='1' class='color-violet'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_2' value='2' class='color-blue' checked>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_3' value='3' class='color-light-blue'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_4' value='4' class='color-cyan'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_5' value='5' class='color-aqua'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_6' value='6' class='color-green'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_7' value='7' class='color-yellow'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_8' value='8' class='color-orange'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_9' value='9' class='color-red' checked>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_10' value='10' class='color-black' checked>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-									<li class='filter-color__item'>
-										<label class='checkbox'>
-											<input type='checkbox' id='product_color_11' value='11' class='color-white'>
-											<span class='checkbox-indicator'></span>
-										</label>
-									</li>
-								</ul>
-							</div>
-						</form>
-					</aside>
-					<!-- Widget: Color Filter / End -->
-
-					<!-- Widget: Filter Size -->
-					<aside class='widget card widget--sidebar widget_filter-size'>
-						<form action='#' class='filter-size-form'>
-							<div class='widget__title card__header card__header--has-btn'>
-								<h4>Filter by Size</h4>
-								<button class='btn btn-default btn-xs card-header__button'>Filter</button>
-							</div>
-							<div class='widget__content card__content'>
-								<div class='row'>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs'>
-											<label class='checkbox checkbox-inline'>
-												<input type='checkbox' id='size-sm' value='1'> Small
-												<span class='checkbox-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs'>
-											<label class='checkbox checkbox-inline'>
-												<input type='checkbox' id='size-l' value='3'> Large
-												<span class='checkbox-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs'>
-											<label class='checkbox checkbox-inline'>
-												<input type='checkbox' id='size-m' value='2' checked> Medium
-												<span class='checkbox-indicator'></span>
-											</label>
-										</div>
-									</div>
-									<div class='col-md-6'>
-										<div class='form-group form-group--xs'>
-											<label class='checkbox checkbox-inline'>
-												<input type='checkbox' id='size-xl' value='3'> Extra Large
-												<span class='checkbox-indicator'></span>
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-						</form>
-					</aside>
-					<!-- Widget: Filter Size / End -->
-
-					<!-- Widget: Filter Price -->
-					<aside class='widget card widget--sidebar widget-filter-price'>
-						<form action='#' class='filter-price-form'>
-							<div class='widget__title card__header card__header--has-btn'>
-								<h4>Filter by Price</h4>
-								<button class='btn btn-default btn-xs card-header__button'>Filter</button>
-							</div>
-							<div class='widget__content card__content'>
-
-								<div class='slider-range-wrapper'>
-									<div id='slider-range' class='slider-range'></div>
-									<div class='slider-range-label'>
-										Price: $<span id='slider-range-value-min'></span> - $<span id='slider-range-value-max'></span>
-									</div>
-								</div>
-
-							</div>
-						</form>
-					</aside>
-					<!-- Widget: Filter Price / End -->
-
-				</div>
-				<!-- Sidebar / End -->
-
+				@include('game.compendium.sidebar')
 			</div>
 
 
@@ -594,15 +333,7 @@
 		</span>
 	</div>
 
-	<div id='pre-results' class='jumbotron'>
-		<h1 class='display-4'>What are you looking for?</h1>
-		<p class='lead mt-4 mb-0'>Select a <i class='fas fa-bookmark'></i> chapter and start <i class='fas fa-filter'></i> filtering!</p>
-	</div>
 
-	<div id='no-results' class='jumbotron' hidden>
-		<h1 class='display-4'>No results!</h1>
-		<p class='lead mt-4 mb-0'>Tweak those <i class='fas fa-filter'></i> filters!</p>
-	</div>
 
 	<div id='results'>
 		<div class='compendium-item -template media' hidden>
@@ -632,32 +363,5 @@
 		</div>
 	</div>
 
-	<nav id='resultsPagination' aria-label='Pagination' class='mt-4'>
-
-		{{-- <button type='button' class='btn btn-secondary large-view float-left'>
-			<i class='fas fa-th-large -enable'></i>
-			<i class='fas fa-th -disable' hidden></i>
-		</button> --}}
-
-		<ul class='pagination justify-content-end'>
-			<li class='page-item disabled'>
-				<a class='page-link -prev' href='#' tabindex='-1' aria-label='Previous'>
-					<span aria-hidden='true'><i class='fas fa-angle-left'></i></span>
-					<span class='sr-only'>Previous</span>
-				</a>
-			</li>
-			<li class='page-item'>
-				<span class='page-link text-muted'>
-					Page <span id='pageNumber'>1</span>
-				</span>
-			</li>
-			<li class='page-item disabled'>
-				<a class='page-link -next' href='#' tabindex='-1' aria-label='Next'>
-					<span aria-hidden='true'><i class='fas fa-angle-right'></i></span>
-					<span class='sr-only'>Next</span>
-				</a>
-			</li>
-		</ul>
-	</nav>
 
 @endsection
