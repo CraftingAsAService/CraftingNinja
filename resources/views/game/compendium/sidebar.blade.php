@@ -75,23 +75,23 @@
 						Recipe Level
 					</a>
 				</li>
-				<li data-for='recipes' hidden>
-					<a href='#' data-filter='rclass' data-type='rclass'>
+				<li data-for='recipes' data-filter='rclass' hidden>
+					<a href='#'>
 						<i class='fas fa-chess-bishop mr-1'></i>
 						Recipe Class
 					</a>
 				</li>
-				<li data-for='recipes' hidden>
-					<a href='#' data-filter='sublevel' data-type='single' data-text='Difficulty' data-min='1' data-max='{{ config('game.maxDifficulty') }}' data-list='{{ implode(',', range(1, config('game.maxDifficulty'))) }}'>
+				<li data-for='recipes' data-filter='sublevel' hidden>
+					<a href='#'>
 						<i class='fas fa-star mr-1'></i>
 						Recipe Difficulty
 					</a>
 				</li>
 
-				<li data-for='equipment' hidden>
-					<a href='#' data-filter='elevel' data-type='range' data-keys='elvlMin,elvlMax' data-text='Level' data-min='1' data-max='{{ $elvlMax }}'>
+				<li data-for='equipment' data-filter='elevel' hidden>
+					<a href='#'>
 						<i class='fas fa-medal mr-1'></i>
-						Equip Level
+						Equipment Level
 					</a>
 				</li>
 				<li data-for='equipment' hidden>
@@ -123,21 +123,25 @@
 		</div>
 	</aside>
 
-	@include('games.compendium.widgets.ilvl')
+	@include('game.compendium.widgets.ilvl')
 
-	@include('games.compendium.widgets.rarity')
+	@include('game.compendium.widgets.rarity')
 
-	@include('games.compendium.widgets.rlevel')
+	@include('game.compendium.widgets.rlevel')
 
+	@include('game.compendium.widgets.rclass')
 
-
-
-
-
+	@include('game.compendium.widgets.rdifficulty')
 
 
 
 
+
+
+
+	<hr>
+	Examples
+	<hr>
 
 	<!-- Widget: Color Filter -->
 	<aside class='widget card widget--sidebar widget_color-picker'>
@@ -267,26 +271,5 @@
 		</form>
 	</aside>
 	<!-- Widget: Filter Size / End -->
-
-	<!-- Widget: Filter Price -->
-	<aside class='widget card widget--sidebar widget-filter-price'>
-		<form action='#' class='filter-price-form'>
-			<div class='widget__title card__header card__header--has-btn'>
-				<h4>Filter by Price</h4>
-				<button class='btn btn-default btn-xs card-header__button'>Apply</button>
-			</div>
-			<div class='widget__content card__content'>
-
-				<div class='slider-range-wrapper'>
-					<div id='slider-range' class='slider-range'></div>
-					<div class='slider-range-label'>
-						Price: $<span id='slider-range-value-min'></span> - $<span id='slider-range-value-max'></span>
-					</div>
-				</div>
-
-			</div>
-		</form>
-	</aside>
-	<!-- Widget: Filter Price / End -->
 
 </div>

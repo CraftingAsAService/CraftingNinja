@@ -1,6 +1,6 @@
 body {
 	// SCSS and CSS Variables don't mix.  Workaround: --color: #{ $color };
-	--rarity1: #{ $dark };
+	--rarity1: #{ $woodsmoke };
 	--rarity2: #{ darken(#c4f58b, 30%) };
 	--rarity3: #78d4ff;
 	--rarity4: #e55ffc;
@@ -11,7 +11,7 @@ body {
 	--color-equipment: #cb8a21;
 
 	.sublevel-icon {
-		&:before {
+		&::before {
 			content: "★";
 		}
 	}

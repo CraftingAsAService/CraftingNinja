@@ -263,30 +263,6 @@
 				@endforeach
 			</div>
 		</span>
-		<span class='filter -special -rclass'>
-			<button type='button' class='delete'><i class='fas fa-trash-alt'></i></button>
-			<button type='button' class='btn btn-default'>
-				<i class='filter-icon'></i>
-				<label class='filter-label'></label>
-				<span class='values'>
-					<img src='/assets/{{ config('game.slug') }}/jobs/CRP.png' alt='' width='20' height='20' hidden><span class='multiple' hidden>✚</span><i class='fa fa-edit text-muted waiting-icon'></i>
-				</span>
-			</button>
-			<div class='extra'>
-				@foreach ($jobs['crafting'] as $jobTier => $jobSet)
-				<div data-type='crafting'>
-					@foreach ($jobSet->sortBy('id') as $job)
-					<span>
-						<input type='checkbox' name='rclass[]' value='{{ $job->id }}' id='rclassId{{ $job->id }}' hidden>
-						<label class='badge' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-							<img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}' width='24' height='24'>
-						</label>
-					</span>
-					@endforeach
-				</div>
-				@endforeach
-			</div>
-		</span>
 		<span class='filter -special -slot'>
 			<button type='button' class='delete'><i class='fas fa-trash-alt'></i></button>
 			<button type='button' class='btn btn-default'>
@@ -303,28 +279,6 @@
 						<input type='checkbox' name='slot[]' value='{{ $key }}' id='slotKey{{ $key }}' hidden>
 						<label class='badge' data-toggle='tooltip' title='{{ $name }}' for='slotKey{{ $key }}'>
 							<img src='/assets/{{ config('game.slug') }}/slots/{{ $key }}.png' alt='{{ $name }}' width='24' height='24'>
-						</label>
-					</span>
-					@endforeach
-				</div>
-			</div>
-		</span>
-		<span class='filter -special -rarity'>
-			<button type='button' class='delete'><i class='fas fa-trash-alt'></i></button>
-			<button type='button' class='btn btn-default'>
-				<i class='filter-icon'></i>
-				<label class='filter-label'></label>
-				<span class='values'>
-					<i class='fas fa-dice-one' hidden></i><span class='multiple' hidden>✚</span><i class='fa fa-edit text-muted waiting-icon'></i>
-				</span>
-			</button>
-			<div class='extra'>
-				<div>
-					@foreach (config('game.rarity') as $key => $name)
-					<span>
-						<input type='checkbox' name='rarity[]' value='{{ $key }}' id='rarityKey{{ $key }}' hidden>
-						<label data-toggle='tooltip' title='{{ $name }}' for='rarityKey{{ $key }}'>
-							<i class='fas fa-dice-{{ [ 1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five', 6 => 'six' ][$loop->iteration] }} rarity-{{ $key }}'></i>
 						</label>
 					</span>
 					@endforeach
