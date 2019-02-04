@@ -5,8 +5,8 @@
 				<i class='fas {{ $icon }} mr-1'></i>
 				{{ $title }}
 			</h4>
-			<button class='btn btn-primary btn-xs card-header__button' data-toggle='tooltip' title='Apply Changes'><i class='fas fa-check'></i></button>
-			<button class='btn btn-link btn-xs card-header__button mr-2' data-toggle='tooltip' title='Clear &amp; Remove Filter'><i class='fas fa-trash'></i></button>
+			<button class='btn btn-primary btn-xs card-header__button' data-toggle='tooltip' title='Apply Changes'><i class='fa fa-check-circle'></i></button>
+			<button class='btn btn-link btn-xs card-header__button mr-2' data-toggle='tooltip' title='Sweep away filter'><i class='fas fa-broom'></i></button>
 		</div>
 		<div class='widget__content card__content'>
 			{{ $slot }}

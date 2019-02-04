@@ -4,6 +4,38 @@
 
 'use strict';
 
+var compendium = new Vue({
+	el: '#compendium',
+	data: {
+		chapter: 'items',
+	},
+	methods: {
+
+
+	}
+});
+
+
+	// el: '.my-lists',
+	// data: function() {
+	// 	return {
+	// 		results: [],
+	// 		noResults: false
+	// 	}
+	// },
+	// mounted: function() {
+	// 	axios
+	// 		.get('/api/users/my/lists')
+	// 		.then(response => {
+	// 			this.results = response.data;
+	// 			this.noResults = response.data.length == 0;
+	// 		})
+	// 		.catch(error => console.log(error));
+	// },
+	// methods: {
+
+	// }
+
 let defaultFilters = {
 	chapter: 'items',
 	sorting: 'name',
@@ -11,7 +43,7 @@ let defaultFilters = {
 	active: [],
 };
 
-caas.compendium = {
+var OLDcompendium = {
 	filters: Object.assign({}, defaultFilters),
 	results: null,
 	pause: false,
@@ -571,4 +603,4 @@ caas.compendium = {
 	}
 };
 
-$(function() { caas.core.initializePage('compendium'); });
+// $(function() { caas.core.initializePage('compendium'); });

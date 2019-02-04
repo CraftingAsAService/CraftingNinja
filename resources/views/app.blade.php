@@ -52,7 +52,7 @@
 	<link href='/alchemists/vendor/slick/slick.css' rel='stylesheet'>
 
 	{{-- Template CSS --}}
-	<link href='/alchemists/css/style-esports.css' rel='stylesheet'>
+	{{-- <link href='/alchemists/css/style-esports.css' rel='stylesheet'> --}}
 	<link href='/css/alchemists/theme.css' rel='stylesheet'>
 
 	{{-- Custom CSS --}}
@@ -110,16 +110,25 @@
 	<script src='/alchemists/js/core.js'></script>
 
 	{{-- Vendor JS --}}
-	<script src='/alchemists/vendor/twitter/jquery.twitter.js'></script>
+	{{-- <script src='/alchemists/vendor/twitter/jquery.twitter.js'></script> --}}
 	<script src='/alchemists/vendor/jquery-duotone/jquery.duotone.min.js'></script>
-	<script src='/alchemists/vendor/marquee/jquery.marquee.min.js'></script>
+	{{-- <script src='/alchemists/vendor/marquee/jquery.marquee.min.js'></script> --}}
+
+	{{-- Vue JS --}}
+	<script src='https://cdn.jsdelivr.net/npm/vue{{ app()->environment('production') ? '' : '/dist/vue.js' }}'></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 	{{-- Template JS --}}
 	<script src='/alchemists/js/init.js'></script>
 
 	{{-- Duotone Filters --}}
 	@include('wrapper/duotone')
-	{{-- Duotone Filters / End --}}
+
+	@isset($js)
+	@foreach($js as $file)
+	<script src='/js/{!! $file !!}.js'></script>
+	@endforeach
+	@endisset
 
 </body>
 </html>
