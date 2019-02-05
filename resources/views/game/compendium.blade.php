@@ -225,24 +225,29 @@
 				@endphp
 
 				{{-- Filters List/Anchors --}}
-				<aside class="widget card widget--sidebar widget_categories">
+				<aside class="widget card widget--sidebar -filters">
 					<div class="widget__title card__header card__header--has-btn">
 						<h4>
 							<i class='fas fa-filter'></i>
 							Filter By&hellip;
 						</h4>
-						<button class='btn btn-link btn-xs card-header__button mr-2' data-toggle='tooltip' title='Sweep away all filters'><i class='fas fa-broom'></i></button>
 					</div>
 					<div class="widget__content card__content">
 						<ul class="widget__list">
 							@foreach ($filters as $filter)
-							<li data-filter='{{ $filter['filter'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter)'>
-								<a href='#'>
+							<li data-filter='{{ $filter['filter'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['filter'] }}")'>
+								<a href='#' @click.prevent='activeFilters.push("{{ $filter['filter'] }}")'>
 									<i class='fas {{ $filter['icon'] }} mr-1'></i>
 									{{ $filter['title'] }}
 								</a>
 							</li>
 							@endforeach
+							<li class='clear-filters'>
+								<a href='#' @click.prevent='activeFilters = []'>
+									<i class='fas fa-broom mr-1'></i>
+									Clear Filters
+								</a>
+							</li>
 						</ul>
 					</div>
 				</aside>
@@ -250,9 +255,9 @@
 				{{-- Filter Widgets --}}
 				@component('game.compendium.widget', $filters['ilvl'])
 					<div class='slider-range-wrapper'>
-						<div id='slider-range' class='slider-range'></div>
+						<div class='slider-range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $ilvlMax }}'></div>
 						<div class='slider-range-label'>
-							iLv: <span id='slider-range-value-min'></span> - <span id='slider-range-value-max'></span>
+							iLv: <span class='min'></span> - <span class='max'></span>
 						</div>
 					</div>
 				@endcomponent
@@ -273,10 +278,10 @@
 				@endcomponent
 
 				@component('game.compendium.widget', $filters['rlevel'])
-					<div class='slider-range-wrapper' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $rlvlMax }}'>
-						<div class='slider-range'></div>
+					<div class='slider-range-wrapper'>
+						<div class='slider-range' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $rlvlMax }}'></div>
 						<div class='slider-range-label'>
-							rLv: <span class='min-value'></span> - <span class='max-value'></span>
+							rLv: <span class='min'></span> - <span class='max'></span>
 						</div>
 					</div>
 				@endcomponent
@@ -319,10 +324,10 @@
 				@endcomponent
 
 				@component('game.compendium.widget', $filters['elevel'])
-					<div class='slider-range-wrapper' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $elvlMax }}'>
-						<div class='slider-range'></div>
+					<div class='slider-range-wrapper'>
+						<div class='slider-range' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $elvlMax }}'></div>
 						<div class='slider-range-label'>
-							eLv: <span class='min-value'></span> - <span class='max-value'></span>
+							eLv: <span class='min'></span> - <span class='max'></span>
 						</div>
 					</div>
 				@endcomponent

@@ -1,0 +1,7 @@
+.clear-filters {
+	&:first-child:last-child {
+		a {
+			color: var(--warning);
+		}
+	}
+}

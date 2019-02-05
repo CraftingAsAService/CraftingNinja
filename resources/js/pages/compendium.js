@@ -8,10 +8,41 @@ var compendium = new Vue({
 	el: '#compendium',
 	data: {
 		chapter: 'items',
+		activeFilters: [],
+	},
+	mounted: function() {
+		this.buildRanges();
 	},
 	methods: {
+		buildRanges:function() {
+			console.log($('.slider-range'));
+			$('.slider-range').each(function() {
+				var el = $(this),
+					domEl = el[0],
+					min = parseInt(el.data('min')),
+					max = parseInt(el.data('max')),
+					snapEls = [
+						el.parent().find('.min'),
+						el.parent().find('.max'),
+					];
 
+				console.log(snapEls);
 
+				noUiSlider.create(domEl, {
+					start: [ min, max ],
+					connect: true,
+					step: 1,
+					range: {
+						'min': [ min ],
+						'max': [ max ]
+					}
+				});
+
+				domEl.noUiSlider.on('update', function(values, key) {
+					snapEls[key].html(values[key].replace('.00', ''));
+				});
+			});
+		}
 	}
 });
 
