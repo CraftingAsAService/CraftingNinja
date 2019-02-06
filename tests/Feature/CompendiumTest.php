@@ -20,7 +20,7 @@ class BookTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->call('GET', $this->gamePath . '/api/items');
+		$response = $this->call('POST', $this->gamePath . '/api/items');
 
 		// Assert
 		$response->assertStatus(200);

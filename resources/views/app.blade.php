@@ -15,6 +15,7 @@
 	</title>
 	<meta charset='utf-8'>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<meta name='description' content='Crafting Information and Planning for your Favorite Game'>
 	<meta name='author' content='Nick Wright'>
 	<meta name='keywords' content='crafting video game planning efficient'>
@@ -64,19 +65,19 @@
 
 	<script>
 		var
-			cookieDomain = '{{ config('app.base_url') }}',
 			@if (config('game.slug'))
 			game = {
 				slug: '{{ config('game.slug') }}'
 			},
 			@endif
-			assets = [
+			cookieDomain = '{{ config('app.base_url') }}';
+			{{--assets = [
 				@if (isset($js))
 				@foreach ($js as $script)
 					'/js/{!! $script !!}.js'{{ $loop->last ? '' : ',' }}
 				@endforeach
 				@endif
-			];
+			];--}}
 	</script>
 
 	@yield('head')

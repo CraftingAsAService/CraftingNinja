@@ -13,15 +13,19 @@ use App\Models\Game\Concepts\Equipment;
 class CompendiumController extends Controller
 {
 
-	public function index()
+	public function index(Request $request)
 	{
 		// TODO Cache this
 		$jobs = Job::byTypeAndTier();
-		$ilvlMax = Item::max('ilvl');
-		$elvlMax = Equipment::max('level');
-		$rlvlMax = Recipe::max('level');
+		$max = [
+			'ilvl' => Item::max('ilvl'),
+			'elvl' => Equipment::max('level'),
+			'rlvl' => Recipe::max('level'),
+		];
 
-		return view('game.compendium', compact('jobs', 'ilvlMax', 'elvlMax', 'rlvlMax'));
+		$searchTerm = $request->input('search');
+
+		return view('game.compendium', compact('jobs', 'max', 'searchTerm'));
 	}
 
 }

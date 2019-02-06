@@ -1,4 +1,4 @@
-<aside class='widget card widget--sidebar widget_filter-{{ $filter }}' data-type='{{ $type }}' v-show='["{!! $for !!}"].includes(chapter) && activeFilters.includes("{{ $filter }}")'>
+<aside class='widget card widget--sidebar -filter' data-key='{{ $filter }}' data-type='{{ $type }}' v-show='["{!! $for !!}"].includes(chapter) && activeFilters.includes("{{ $filter }}")'>
 	<form action='#'>
 		<div class='widget__title card__header card__header--has-btn'>
 			<h4>

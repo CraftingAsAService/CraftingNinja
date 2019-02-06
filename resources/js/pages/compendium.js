@@ -7,15 +7,57 @@
 var compendium = new Vue({
 	el: '#compendium',
 	data: {
+		searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
+		filters: {},
 		chapter: 'items',
 		activeFilters: [],
+		noResults: true,
+		results: [],
 	},
 	mounted: function() {
 		this.buildRanges();
+		if (this.searchTerm)
+			this.search();
 	},
 	methods: {
+		search:function() {
+			var call = 'items';
+
+			if (chapters == 'quests')
+				call = 'quests';
+
+			var data = {
+				// 'sorting': '',
+				// 'ordering': '',
+				'name': this.searchTerm,
+			};
+
+			// TODO, this should happen when they click the Checkbox
+			// Search should just rely on what's in this.filters
+			$('.widget_filter:visible').each(function() {
+				var el = $(this),
+					key = el.data('key'),
+					type = el.data('type');
+
+				if (type == 'range') {
+					var sliderEl = el.find('.slider-range'),
+						keys = sliderEl.data('keys').split(','),
+						min = parseInt(sliderEl.find('.min').html()),
+						max = parseInt(sliderEl.find('.max').html());
+					data[keys[0]] = min;
+					data[keys[1]] = max;
+				}
+			})
+
+			axios
+				.post('/api/' + call, data)
+				.then(response => {
+					this.results = response.data;
+					this.noResults = response.data.length == 0;
+				})
+				.catch(error => console.log(error));
+		},
 		buildRanges:function() {
-			console.log($('.slider-range'));
 			$('.slider-range').each(function() {
 				var el = $(this),
 					domEl = el[0],
@@ -25,8 +67,6 @@ var compendium = new Vue({
 						el.parent().find('.min'),
 						el.parent().find('.max'),
 					];
-
-				console.log(snapEls);
 
 				noUiSlider.create(domEl, {
 					start: [ min, max ],

@@ -5,6 +5,14 @@
 	]
 ])
 
+@section('head')
+	<script>
+		@if ($searchTerm)
+		var searchTerm = '{{ $searchTerm }}';
+		@endif
+	</script>
+@endsection
+
 @section('topContent')
 	<div class='minor-media mb-3' hidden>
 		<img src='/assets/{{ config('game.slug') }}/cover.jpg' alt='{{ config('game.data.name') }}'>
@@ -255,7 +263,7 @@
 				{{-- Filter Widgets --}}
 				@component('game.compendium.widget', $filters['ilvl'])
 					<div class='slider-range-wrapper'>
-						<div class='slider-range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $ilvlMax }}'></div>
+						<div class='slider-range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $max['ilvl'] }}'></div>
 						<div class='slider-range-label'>
 							iLv: <span class='min'></span> - <span class='max'></span>
 						</div>
@@ -279,7 +287,7 @@
 
 				@component('game.compendium.widget', $filters['rlevel'])
 					<div class='slider-range-wrapper'>
-						<div class='slider-range' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $rlvlMax }}'></div>
+						<div class='slider-range' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $max['rlvl'] }}'></div>
 						<div class='slider-range-label'>
 							rLv: <span class='min'></span> - <span class='max'></span>
 						</div>
@@ -325,7 +333,7 @@
 
 				@component('game.compendium.widget', $filters['elevel'])
 					<div class='slider-range-wrapper'>
-						<div class='slider-range' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $elvlMax }}'></div>
+						<div class='slider-range' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $max['elvl'] }}'></div>
 						<div class='slider-range-label'>
 							eLv: <span class='min'></span> - <span class='max'></span>
 						</div>

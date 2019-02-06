@@ -70,10 +70,9 @@
 								@else
 									@php
 										$navigation = [
-											'Equipment'	 => '/equipment',
 											'Crafting'	 => '/crafting',
 											'Compendium' => '/compendium',
-											'Quests' => '/quests',
+											'Equipment'	 => '/equipment',
 										];
 									@endphp
 									@foreach ($navigation as $section => $url)
@@ -90,8 +89,9 @@
 						<!-- Header Search Form -->
 						@if (config('game'))
 						<div class='header-search-form'>
-							<form action='/compendium' id='mobile-search-form' class='search-form'>
-								<input type='text' class='form-control header-mobile__search-control' name='name' value='' placeholder='Enter your search here...'>
+							<form action='/compendium' method='post' id='mobile-search-form' class='search-form'>
+								@csrf
+								<input type='text' class='form-control header-mobile__search-control' name='search' value='{{ request('search') }}' placeholder='Enter your search here...'>
 								<button type='submit' class='header-mobile__search-submit'><i class='fa fa-search'></i></button>
 							</form>
 						</div>
