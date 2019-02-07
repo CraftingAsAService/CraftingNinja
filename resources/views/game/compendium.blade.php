@@ -174,7 +174,7 @@
 						'rarity' => [
 							'for'    => 'items","recipes","equipment',
 							'filter' => 'rarity',
-							'type'   => '',
+							'type'   => 'multiple',
 							'icon'   => 'fa-registered',
 							'title'  => 'Rarity',
 						],
@@ -188,7 +188,6 @@
 						'rclass' => [
 							'for'    => 'recipes',
 							'filter' => 'rclass',
-							'type'   => 'multiple',
 							'type'   => 'multiple',
 							'icon'   => 'fa-chess-bishop',
 							'title'  => 'Recipe Class',

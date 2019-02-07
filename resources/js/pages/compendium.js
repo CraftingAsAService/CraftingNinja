@@ -23,7 +23,7 @@ var compendium = new Vue({
 		search:function() {
 			var call = 'items';
 
-			if (chapters == 'quests')
+			if (this.chapters == 'quests')
 				call = 'quests';
 
 			var data = {
@@ -31,23 +31,6 @@ var compendium = new Vue({
 				// 'ordering': '',
 				'name': this.searchTerm,
 			};
-
-			// TODO, this should happen when they click the Checkbox
-			// Search should just rely on what's in this.filters
-			$('.widget_filter:visible').each(function() {
-				var el = $(this),
-					key = el.data('key'),
-					type = el.data('type');
-
-				if (type == 'range') {
-					var sliderEl = el.find('.slider-range'),
-						keys = sliderEl.data('keys').split(','),
-						min = parseInt(sliderEl.find('.min').html()),
-						max = parseInt(sliderEl.find('.max').html());
-					data[keys[0]] = min;
-					data[keys[1]] = max;
-				}
-			})
 
 			axios
 				.post('/api/' + call, data)
@@ -82,6 +65,49 @@ var compendium = new Vue({
 					snapEls[key].html(values[key].replace('.00', ''));
 				});
 			});
+		},
+		removeFilter:function(filterName) {
+			this.activeFilters = this.activeFilters.filter(function(value) {
+				return value != filterName;
+			});
+
+			this.applyFilter(filterName);
+		},
+		applyFilter:function(filterName) {
+			var widgetEl = $('.widget.-filter.-' + filterName),
+				type = widgetEl.data('type');
+
+			if ( ! widgetEl.is(':visible'))
+			{
+				if (type == 'range') {
+					var sliderEl = widgetEl.find('.slider-range'),
+						keys = sliderEl.data('keys').split(',');
+					this.filters.delete(keys[0]);
+					this.filters.delete(keys[1]);
+				} else {
+					this.filters.delete(filterName);
+				}
+			}
+			else
+			{
+				if (type == 'range') {
+					var sliderEl = widgetEl.find('.slider-range'),
+						keys = sliderEl.data('keys').split(','),
+						min = parseInt(sliderEl.parent().find('.min').html()),
+						max = parseInt(sliderEl.parent().find('.max').html());
+					this.filters[keys[0]] = min;
+					this.filters[keys[1]] = max;
+				} else if (type == 'multiple') {
+					var values = widgetEl.find('input:checkbox:checked').map(function() {
+						return this.value;
+					}).get();
+					this.filters[filterName] = values;
+				}
+			}
+
+			console.log(this.filters);
+
+			this.search();
 		}
 	}
 });
