@@ -4,15 +4,25 @@
 
 'use strict';
 
+axios.defaults.headers.common = {
+	'X-Requested-With': 'XMLHttpRequest',
+	'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
+
 var compendium = new Vue({
 	el: '#compendium',
 	data: {
+		firstLoad: true,
 		searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
 		filters: {},
 		chapter: 'items',
 		activeFilters: [],
 		noResults: true,
-		results: [],
+		results: {
+			data: [],
+			links: {},
+			meta: {},
+		},
 	},
 	mounted: function() {
 		this.buildRanges();
@@ -26,17 +36,17 @@ var compendium = new Vue({
 			if (this.chapters == 'quests')
 				call = 'quests';
 
-			var data = {
-				// 'sorting': '',
-				// 'ordering': '',
-				'name': this.searchTerm,
-			};
+			var data = Object.assign({}, this.filters);
+
+			data.name = this.searchTerm;
+			// data.sorting = null;
+			// data.ordering = null;
 
 			axios
 				.post('/api/' + call, data)
 				.then(response => {
 					this.results = response.data;
-					this.noResults = response.data.length == 0;
+					this.firstLoad = false;
 				})
 				.catch(error => console.log(error));
 		},
@@ -105,9 +115,17 @@ var compendium = new Vue({
 				}
 			}
 
-			console.log(this.filters);
+			// Clear the page
+			if (typeof this.filters.page !== 'undefined')
+				this.filters.delete('page');
 
 			this.search();
+		},
+		previousPage:function() {
+
+		},
+		nextPage:function() {
+
 		}
 	}
 });

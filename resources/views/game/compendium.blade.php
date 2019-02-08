@@ -29,7 +29,9 @@
 					{{-- Results Header --}}
 					<header class='card__header card__header--shop-filter'>
 						<div class='shop-filter'>
-							<h5 class='shop-filter__result'>Showing X of Y <span>Items</span></h5>
+							<h5 class='shop-filter__result'>
+								{{-- Showing X of Y <span>Items</span> --}}
+							</h5>
 							<ul class='shop-filter__params'>
 								<li class='shop-filter__control'>
 									<select name='sort' class='form-control input-xs'>
@@ -51,12 +53,12 @@
 					</header>
 					{{-- Results --}}
 					<div class='card__content'>
-						<div id='pre-results' class='jumbotron'>
+						<div id='pre-results' class='jumbotron' v-if='results.data.length == 0 && firstLoad'>
 							<h1 class='display-4'>What are you looking for?</h1>
 							<p class='lead mt-4 mb-0'>Select a <i class='fas fa-bookmark'></i> chapter and start <i class='fas fa-filter'></i> filtering!</p>
 						</div>
 
-						<div id='no-results' class='jumbotron' hidden>
+						<div id='no-results' class='jumbotron' v-if='results.data.length == 0 && ! firstLoad'>
 							<h1 class='display-4'>No results!</h1>
 							<p class='lead mt-4 mb-0'>Tweak those <i class='fas fa-filter'></i> filters!</p>
 						</div>
@@ -101,11 +103,21 @@
 				</div>
 
 				{{-- Results Pagination --}}
-				<nav class='shop-pagination' aria-label='Shop navigation' hidden>
+				<nav class='shop-pagination' aria-label='Shop navigation' v-if='results.data.length > 0'>
 					<ul class='pagination pagination--circle justify-content-center'>
-						<li class='page-item'><a class='page-link' href='#'><i class='fa fa-angle-left'></i></a></li>
-						<li class='page-item active'><a class='page-link' href='#'>1</a></li>
-						<li class='page-item'><a class='page-link' href='#'><i class='fa fa-angle-right'></i></a></li>
+						<li class='page-item' v-if='results.links.prev'>
+							<a class='page-link' href='#' @click.prevent='previousPage()'>
+								<i class='fa fa-angle-left'></i>
+							</a>
+						</li>
+						<li class='page-item active'>
+							<a class='page-link' href='#' @click.prevent v-html='results.meta.current_page'></a>
+						</li>
+						<li class='page-item' v-if='results.links.next'>
+							<a class='page-link' href='#' @click.prevent='nextPage()'>
+								<i class='fa fa-angle-right'></i>
+							</a>
+						</li>
 					</ul>
 				</nav>
 			</div>
