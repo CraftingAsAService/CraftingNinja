@@ -30,7 +30,7 @@
 					<header class='card__header card__header--shop-filter'>
 						<div class='shop-filter'>
 							<h5 class='shop-filter__result'>
-								{{-- Showing X of Y <span>Items</span> --}}
+								<span v-if='searchTerm'>Showing results for <span class='text-primary'>@{{ searchTerm }}</span></span>
 							</h5>
 							<ul class='shop-filter__params'>
 								<li class='shop-filter__control'>
@@ -64,37 +64,59 @@
 						</div>
 
 						{{-- Results --}}
-						<ul class='products products--grid products--grid-3 products--grid-simple' hiddenx>
-							{{-- Product #0 --}}
-							<li class='product__item'>
+						<ul class='products products--grid products--grid-5 products--grid-simple'>
 
+							<li class='product__item' v-for='(data, index) in results.data'>
 								<div class='product__img'>
 									<div class='product__thumb'>
-										{{-- <img src='assets/images/esports/samples/product-1.jpg' alt=''> --}}
+										<img v-bind:src='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"' v-bind:alt='"Image of " + data.id'>
 									</div>
 									<div class='product__overlay'>
 										<div class='product__btns'>
-											<a href='_esports_shop-cart.html' class='btn btn-primary-inverse btn-block btn-icon'><i class='icon-bag'></i> Add to your bag</a>
-											<a href='_esports_shop-wishlist.html' class='btn btn-primary btn-block btn-icon'><i class='icon-heart'></i> Add to wishlist</a>
+											<a href='#' class='btn btn-primary-inverse btn-block btn-icon'><i class='icon-bag'></i> Add to bag</a>
 										</div>
 									</div>
 								</div>
-
 								<div class='product__content card__content'>
 									<div class='product__header'>
 										<div class='product__header-inner'>
-											<h2 class='product__title'><a href='_esports_shop-product.html'>Jaxxy Framed Art Print</a></h2>
-											<div class='product__ratings'>
-												<i class='fa fa-star'></i>
-												<i class='fa fa-star'></i>
-												<i class='fa fa-star'></i>
-												<i class='fa fa-star'></i>
-												<i class='fa fa-star'></i>
-											</div>
+											<h2 v-bind:class='"product__title rarity-" + data.rarity' v-html='data.name'></h2>
 											<div class='product__price'>
-													$48.00
+												<span class='ilvl' v-html='data.ilvl'></span>
+												<span class='level' v-html='data.level'></span>
+												<span class='category' v-html='data.category'></span>
+												<div class='recipe-data' v-for='(recipe, rindex) in data.recipes'>
+													<span class='job'>
+														<img width='24' height='24'  v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
+													</span>
+												</div>
 											</div>
 										</div>
+									</div>
+								</div>
+								<div class='media' hidden>
+									<img src='' alt='' width='48' height='48'>
+									<div class='media-body'>
+										<h6 class='name'></h6>
+										<div class='secondary'>
+											<span class='ilvl'></span>
+											<span class='recipes'>
+												<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
+												<span class='level'></span>
+											</span>
+											<span class='equipment'>
+												<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
+												<span class='level'></span>
+											</span>
+
+											<div class='category'></div>
+										</div>
+									</div>
+									<div class='button'>
+										<button type='button' class='btn btn-light add-to-list' data-id='' data-type='item'>
+											<img src='/images/icons/swap-bag.svg' class='svg-icon' alt=''>
+											<span class='badge badge-light' hidden></span>
+										</button>
 									</div>
 								</div>
 							</li>

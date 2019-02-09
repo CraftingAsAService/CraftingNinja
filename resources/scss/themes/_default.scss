@@ -1,6 +1,6 @@
 body {
 	// SCSS and CSS Variables don't mix.  Workaround: --color: #{ $color };
-	--rarity1: #{ $woodsmoke };
+	--rarity1: #{ $white };
 	--rarity2: #{ darken(#c4f58b, 30%) };
 	--rarity3: #78d4ff;
 	--rarity4: #e55ffc;

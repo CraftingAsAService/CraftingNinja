@@ -20,7 +20,7 @@ class ItemsController extends Controller
 
 		$items = Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.niche.jobs', 'recipes.job')
 			->filter($request->all())
-			->simplePaginate();
+			->simplePaginate(16);
 
 		return ItemResource::collection($items);
 	}
