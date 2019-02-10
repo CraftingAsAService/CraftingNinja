@@ -33,6 +33,9 @@ var compendium = new Vue({
 		search:function() {
 			var call = 'items';
 
+			// TODO search "Blue Dye"
+			// TODO search "Moogle"
+
 			if (this.chapters == 'quests')
 				call = 'quests';
 
@@ -126,6 +129,9 @@ var compendium = new Vue({
 		},
 		nextPage:function() {
 
+		},
+		searchFocus:function() {
+			$('.search-form :input').focus().select();
 		}
 	}
 });

@@ -30,7 +30,7 @@
 					<header class='card__header card__header--shop-filter'>
 						<div class='shop-filter'>
 							<h5 class='shop-filter__result'>
-								<span v-if='searchTerm'>Showing results for <span class='text-primary'>@{{ searchTerm }}</span></span>
+								<span v-if='searchTerm'>Showing results for <span class='text-success' @click='searchFocus()'>@{{ searchTerm }}</span></span>
 							</h5>
 							<ul class='shop-filter__params'>
 								<li class='shop-filter__control'>
@@ -70,6 +70,12 @@
 								<div class='product__img'>
 									<div class='product__thumb'>
 										<img v-bind:src='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"' v-bind:alt='"Image of " + data.id'>
+										<span class='levels badge badge-pill badge-light'>
+											<span class='ilvl' v-html='data.ilvl'></span>
+											<span class='rlvl' v-if='data.recipes && data.ilvl != data.recipes[0].level' v-html='data.recipes[0].level'></span>
+											<span class='elvl' v-if='data.equipment && data.ilvl != data.equipment.level' v-html='data.equipment.level'></span>
+										</span>
+										<span class='category badge badge-pill badge-secondary' v-if='data.category' v-html='data.category'></span>
 									</div>
 									<div class='product__overlay'>
 										<div class='product__btns'>
@@ -77,20 +83,18 @@
 										</div>
 									</div>
 								</div>
+								<div class='jobs'>
+									<span class='rjobs'>
+										<img width='24' height='24' v-for='(recipe, rindex) in data.recipes' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
+									</span>
+									<span class='ejobs' v-if='data.equipment'>
+										<img width='24' height='24' v-for='(job, jindex) in data.equipment.jobs' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/" + job.icon + ".png"'>
+									</span>
+								</div>
 								<div class='product__content card__content'>
 									<div class='product__header'>
 										<div class='product__header-inner'>
 											<h2 v-bind:class='"product__title rarity-" + data.rarity' v-html='data.name'></h2>
-											<div class='product__price'>
-												<span class='ilvl' v-html='data.ilvl'></span>
-												<span class='level' v-html='data.level'></span>
-												<span class='category' v-html='data.category'></span>
-												<div class='recipe-data' v-for='(recipe, rindex) in data.recipes'>
-													<span class='job'>
-														<img width='24' height='24'  v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
-													</span>
-												</div>
-											</div>
 										</div>
 									</div>
 								</div>

@@ -16,6 +16,22 @@
 			@media (min-width: 992px) {
 				padding: 35px 36px 30px 36px;
 			}
+
+			.level {
+				line-height: .7rem;
+			}
+			.recipe-data {
+				.level {
+					color: $white;
+					color: var(--color-recipes);
+				}
+			}
+			.equipment-data {
+				.level {
+					color: $white;
+					color: var(--color-equipment);
+				}
+			}
 		}
 		.product__header {
 
@@ -1083,7 +1099,7 @@
 				color: #fff;
 			}
 			.product__title {
-				color: #fff;
+				// color: #fff;
 				font-size: 14px;
 
 				> a {
@@ -1342,13 +1358,81 @@
 		}
 	}
 		.product__thumb {
-			text-align: center;
+			// text-align: center;
+			position: relative;
+
+			max-width: 128px;
+			margin: 0 auto;
 
 			img {
-				border: 1px solid $card-border-color;
-				border-radius: $card-border-radius;
+				// border: 1px solid $card-border-color;
+				// border-radius: $card-border-radius;
+			}
+
+
+			.levels {
+				position: absolute;
+				top: .25rem;
+				right: .25rem;
+
+				// .divider {
+				// 	&::before {
+				// 			content: "/ ";
+				// 			font-size: .5rem;
+				// 			position: relative;
+				// 			top: -.05rem;
+				// 	}
+				// }
+				.ilvl {
+					color: var(--color-ilvl);
+					&::before {
+						content: "Lvl ";
+					}
+				}
+				.rlvl {
+					color: var(--color-recipes);
+				}
+				.elvl {
+					color: var(--color-equipment);
+				}
+				.ilvl, .rlvl {
+					+ .rlvl, + .elvl {
+						&::before {
+							content: "/ ";
+							font-size: .5rem;
+							position: relative;
+							top: -.06rem;
+							color: $woodsmoke;
+						}
+					}
+				}
+			}
+			.category {
+				position: absolute;
+				bottom: .25rem;
+				right: .25rem;
+				max-width: calc(100% - .5rem);
+
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
 			}
 		}
+
+		.jobs {
+			max-width: 128px;
+			margin: 0 auto;
+
+			text-align: center;
+
+			white-space: nowrap;
+			overflow: hidden;
+
+			min-height: 28px;
+			line-height: 28px;
+		}
+
+
 		.product__price {
 			display: inline-block;
 			position: static;
@@ -1386,7 +1470,7 @@
 			}
 
 	.product__content {
-		padding: 30px 15px 22px 15px;
+		padding: 10px 15px 22px 15px;
 	}
 		.product__header {
 			margin-bottom: 0;
