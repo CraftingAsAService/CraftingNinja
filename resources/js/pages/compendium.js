@@ -14,7 +14,10 @@ var compendium = new Vue({
 	data: {
 		firstLoad: true,
 		searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
+		sorting: 'name:asc',
+		perPage: 15,
 		filters: {},
+		addFilter: '',
 		chapter: 'items',
 		activeFilters: [],
 		noResults: true,
@@ -42,8 +45,9 @@ var compendium = new Vue({
 			var data = Object.assign({}, this.filters);
 
 			data.name = this.searchTerm;
-			// data.sorting = null;
-			// data.ordering = null;
+			data.sorting = this.sorting.split(':')[0];
+			data.ordering = this.sorting.split(':')[1];
+			data.perPage = this.perPage;
 
 			axios
 				.post('/api/' + call, data)
@@ -132,6 +136,13 @@ var compendium = new Vue({
 		},
 		searchFocus:function() {
 			$('.search-form :input').focus().select();
+		},
+		filterAdded:function() {
+			var filter = this.addFilter;
+			console.log(filter);
+			activeFilters.push(filter);
+
+			this.addFilter = '';
 		}
 	}
 });

@@ -140,14 +140,14 @@ div.cs-skin-border {
 		font-style: $filter-placeholder-font-style;
 	}
 
-	.cs-selected span::after {
-		content: '\e00e';
-		color: #ddd9c9;
-		font-size: 1.5em;
-		opacity: 1;
-		-webkit-transition: opacity 0.2s;
-		transition: opacity 0.2s;
-	}
+	// .cs-selected span::after {
+	// 	content: '\e00e';
+	// 	color: #ddd9c9;
+	// 	font-size: 1.5em;
+	// 	opacity: 1;
+	// 	-webkit-transition: opacity 0.2s;
+	// 	transition: opacity 0.2s;
+	// }
 
 	&.cs-active > span {
 		color: $filter-color;
