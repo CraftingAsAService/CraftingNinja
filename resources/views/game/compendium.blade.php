@@ -95,14 +95,14 @@
 
 @section('content')
 		<div id='compendium'>
-			<div class='post-filter mb-3'>
+			<div class='post-filter post-filter--boxed mb-3'>
 				<form action='#' class='post-filter__form'>
 					<div class='post-filter__select'>
 						<label class='post-filter__label'>
 							<i class='fas fa-bookmark mr-1'></i>
 							Chapter
 						</label>
-						<select class='cs-select cs-skin-border' v-model='chapter'>
+						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
 							<option value='items'>Items</option>
 							<option value='recipes'>Recipes</option>
 							<option value='equipment'>Equipment</option>
@@ -114,7 +114,7 @@
 							<i class='fas fa-filter mr-1'></i>
 							Filter By
 						</label>
-						<select class='cs-select cs-skin-border' @change='filterAdded()'>
+						<select class='cs-select cs-skin-border' data-compendium-var='filter'>
 							<option value='' disabled selected>Add Filter</option>
 
 							@foreach ($filters as $filter)
@@ -136,7 +136,7 @@
 							<i class='fas fa-sort mr-1'></i>
 							Sorting
 						</label>
-						<select class='cs-select cs-skin-border' v-model='sorting'>
+						<select class='cs-select cs-skin-border' data-compendium-var='sorting'>
 							<option value='name:asc'>Name: A-Z</option>
 							<option value='name:desc'>Name: Z-A</option>
 							<option value='ilvl:asc'>iLv: Low to High</option>
@@ -148,7 +148,7 @@
 							<i class='fas fa-grip-vertical mr-1'></i>
 							Per Page
 						</label>
-						<select class='cs-select cs-skin-border' v-model='perPage'>
+						<select class='cs-select cs-skin-border' data-compendium-var='perPage'>
 							<option value='15'>Show 15 per page</option>
 							<option value='30'>Show 30 per page</option>
 							<option value='45'>Show 45 per page</option>

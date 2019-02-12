@@ -2215,9 +2215,14 @@
 			// Tooltips
 			$('[data-toggle="tooltip"]').tooltip();
 
-			[].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {
-				new SelectFx(el);
-			} );
+			// [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {
+			// 	var compendiumVar = $(el).data('compendium');
+			// 	new SelectFx(el, {
+			// 		onChange:function(val) {
+			// 			compendium[compendiumVar] = val;
+			// 		}
+			// 	});
+			// } );
 
 			// Duotone Images
 			if ( $template_var == 'template-football' ) {

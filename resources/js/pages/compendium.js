@@ -27,12 +27,23 @@ var compendium = new Vue({
 			meta: {},
 		},
 	},
-	mounted: function() {
+	mounted:function() {
+		this.initializeDropdowns();
 		this.buildRanges();
 		if (this.searchTerm)
 			this.search();
 	},
 	methods: {
+		initializeDropdowns:function() {
+			$('#compendium').find('select.cs-select').each(function() {
+				var compendiumVar = $(this).data('compendium-var');
+				new SelectFx(this, {
+					onChange:function(val) {
+						compendium[compendiumVar] = val;
+					}
+				});
+			});
+		},
 		search:function() {
 			var call = 'items';
 
