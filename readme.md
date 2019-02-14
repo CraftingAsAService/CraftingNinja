@@ -1,4 +1,4 @@
-# Crafting as a Service
+# Crafting Ninja
 
 - https://craftingasaservice.com
 - https://reddit.com/r/craftingasaservice

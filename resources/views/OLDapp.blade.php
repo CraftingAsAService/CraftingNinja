@@ -12,9 +12,9 @@
 
 		<title>
 			@if (config('game.data.name'))
-			{{ config('game.data.name') }} | Crafting as a Service
+			{{ config('game.data.name') }} | Crafting Ninja
 			@else
-			Crafting as a Service
+			Crafting Ninja
 			@endif
 		</title>
 

@@ -13,7 +13,7 @@ return [
 	|
 	*/
 
-	'name' => env('APP_NAME', 'Crafting as a Service'),
+	'name' => env('APP_NAME', 'Crafting Ninja'),
 
 	/*
 	|--------------------------------------------------------------------------
