@@ -109,12 +109,38 @@
 							<option value='quests'>Quests</option>
 						</select>
 					</div>
+
+					<div class="post-filter__select ninja-dropdown">
+						<label class="post-filter__label">
+							<i class="fas fa-filter mr-1"></i>
+							Filter By
+						</label>
+						<div class="cs-select cs-skin-border add-filter">
+							<span class="cs-placeholder">Add Filter</span>
+							<div class="cs-options">
+								<ul>
+									<li data-option="" data-value="ilvl" class="cs-selected">
+										<span>
+											Item Level
+										</span>
+									</li>
+									<li data-option="" data-value="rarity" class="">
+										<span>
+											Rarity
+										</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+
 					<div class='post-filter__select'>
 						<label class='post-filter__label'>
 							<i class='fas fa-filter mr-1'></i>
 							Filter By
 						</label>
-						<select class='cs-select cs-skin-border' data-compendium-var='filter'>
+						<select class='cs-select cs-skin-border add-filter' data-compendium-var='addFilter'>
 							<option value='' disabled selected>Add Filter</option>
 
 							@foreach ($filters as $filter)
@@ -268,7 +294,7 @@
 
 
 					{{-- Filters List/Anchors --}}
-					<aside class='widget card widget--sidebar -filters'>
+					{{-- <aside class='widget card widget--sidebar -filters'>
 						<div class='widget__title card__header card__header--has-btn'>
 							<h4>
 								<i class='fas fa-filter'></i>
@@ -293,7 +319,7 @@
 								</li>
 							</ul>
 						</div>
-					</aside>
+					</aside> --}}
 
 					{{-- Filter Widgets --}}
 					@component('game.compendium.widget', $filters['ilvl'])

@@ -14,11 +14,11 @@ var compendium = new Vue({
 	data: {
 		firstLoad: true,
 		searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
+		chapter: 'items',
 		sorting: 'name:asc',
 		perPage: 15,
 		filters: {},
 		addFilter: '',
-		chapter: 'items',
 		activeFilters: [],
 		noResults: true,
 		results: {
@@ -32,6 +32,12 @@ var compendium = new Vue({
 		this.buildRanges();
 		if (this.searchTerm)
 			this.search();
+	},
+	watch: {
+		addFilter:function(val) {
+			// console.log(val);
+			this.activeFilters.push(val);
+		}
 	},
 	methods: {
 		initializeDropdowns:function() {

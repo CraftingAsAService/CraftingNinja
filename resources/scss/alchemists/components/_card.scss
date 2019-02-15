@@ -24,7 +24,8 @@
 	}
 
 	> .card__content {
-		padding: 15px 0 0 0; // leave only top padding
+		// padding: 15px 0 0 0; // leave only top padding
+		padding: 0;
 	}
 }
 .card--has-table {

@@ -97,10 +97,10 @@
 .post-filter--boxed {
 	background-color: transparent;
 	border-bottom: 0;
-	padding-top: $content-padding-vertical-sm;
+	padding-top: 0;//$content-padding-vertical-sm;
 
 	@media (min-width: 992px) {
-		padding-top: $content-padding-vertical;
+		padding-top: 0;//$content-padding-vertical;
 		margin-bottom: -20px;
 	}
 
