@@ -1,6 +1,7 @@
 @extends('app', [
 	'active' => '/compendium',
 	'js' => [
+		'components/ninja-dropdown',
 		'pages/compendium'
 	]
 ])
@@ -110,7 +111,9 @@
 						</select>
 					</div>
 
-					<div class="post-filter__select ninja-dropdown">
+					<ninja-dropdown title='Filter By' icon='fas fa-filter' placeholder='Add Filter'></ninja-dropdown>
+
+					{{-- <div class="post-filter__select ninja-dropdown">
 						<label class="post-filter__label">
 							<i class="fas fa-filter mr-1"></i>
 							Filter By
@@ -132,7 +135,7 @@
 								</ul>
 							</div>
 						</div>
-					</div>
+					</div> --}}
 
 
 					<div class='post-filter__select'>
