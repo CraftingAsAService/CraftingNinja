@@ -17,25 +17,21 @@ Vue.directive('click-outside', {
 });
 
 Vue.component('ninja-dropdown', {
-	props: [ 'title', 'icon', 'placeholder' ],
+	props: [ 'title', 'icon', 'placeholder', 'option', 'options' ],
 	template: `
 		<div class='post-filter__select ninja-dropdown' v-click-outside='close'>
 			<label class='post-filter__label'>
 				<i :class='icon + " mr-1"'></i>
 				{{ title }}
 			</label>
-			<div :class='"cs-select cs-skin-border add-filter" + (open ? " cs-active" : "")'>
+			<div :class='"cs-select cs-skin-border " + (open ? " cs-active" : "")'>
 				<span class='cs-placeholder' v-on:click='open = ! open'>{{ placeholder }}</span>
 				<div class='cs-options'>
 					<ul>
-						<li data-option='' data-value='ilvl' class='cs-selected'>
+						<li v-for='optionData in options' v-on:click='optionClick(option, optionData["key"])'>
 							<span>
-								Item Level
-							</span>
-						</li>
-						<li data-option='' data-value='rarity' class=''>
-							<span>
-								Rarity
+								<i :class='"fas " + optionData["icon"] + " mr-1"'></i>
+								{{ optionData["title"] }}
 							</span>
 						</li>
 					</ul>
@@ -51,6 +47,10 @@ Vue.component('ninja-dropdown', {
 	methods: {
 		close:function() {
 			this.open = false;
+		},
+		optionClick:function(key, value) {
+			this.$emit('clicked', key, value)
+			this.close();
 		}
 	}
 });

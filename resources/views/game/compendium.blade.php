@@ -6,11 +6,83 @@
 	]
 ])
 
+{{-- Filters Defined --}}
+@php
+	// Filters array used to generate both filtration anchors and filtration widgets
+	$filters = [
+		'ilvl' => [
+			'key'	 => 'ilvl',
+			'for'    => 'items","recipes","equipment',
+			'type'   => 'range',
+			'icon'   => 'fa-info',
+			'title'  => 'Item Level',
+		],
+		'rarity' => [
+			'key'	 => 'rarity',
+			'for'    => 'items","recipes","equipment',
+			'type'   => 'multiple',
+			'icon'   => 'fa-registered',
+			'title'  => 'Rarity',
+		],
+		'rlevel' => [
+			'key'	 => 'rlevel',
+			'for'    => 'recipes',
+			'type'   => 'range',
+			'icon'   => 'fa-award',
+			'title'  => 'Recipe Level',
+		],
+		'rclass' => [
+			'key'	 => 'rclass',
+			'for'    => 'recipes',
+			'type'   => 'multiple',
+			'icon'   => 'fa-chess-bishop',
+			'title'  => 'Recipe Class',
+			'hidden' => true
+		],
+		'rdifficulty' => [
+			'key'	 => 'sublevel',
+			'for'    => 'recipes',
+			'type'   => 'multiple',
+			'icon'   => 'fa-star',
+			'title'  => 'Recipe Difficulty',
+		],
+		'elevel' => [
+			'key'	 => 'elevel',
+			'for'    => 'equipment',
+			'type'   => 'range',
+			'icon'   => 'fa-medal',
+			'title'  => 'Equipment Level',
+		],
+		'eclass' => [
+			'key'	 => 'eclass',
+			'for'    => 'equipment',
+			'type'   => 'multiple',
+			'icon'   => 'fa-chess-rook',
+			'title'  => 'Equipment Class',
+		],
+		'slot' => [
+			'key'	 => 'slot',
+			'for'    => 'equipment',
+			'type'   => 'multiple',
+			'icon'   => 'fa-hand-paper',
+			'title'  => 'Equipment Slot',
+		],
+		'sockets' => [
+			'key'	 => 'sockets',
+			'for'    => 'equipment',
+			'type'   => 'multiple',
+			'icon'   => 'fa-gem',
+			'title'  => 'Materia Sockets',
+		],
+	];
+@endphp
+
 @section('head')
 	<script>
 		@if ($searchTerm)
 		var searchTerm = '{{ $searchTerm }}';
 		@endif
+		var filterDefinitions = @json(array_values($filters));
 	</script>
 @endsection
 
@@ -22,77 +94,6 @@
 		</div>
 	</div>
 @endsection
-
-{{-- Filters Defined --}}
-@php
-	// Filters array used to generate both filtration anchors and filtration widgets
-	$filters = [
-		'ilvl' => [
-			'for'    => 'items","recipes","equipment',
-			'filter' => 'ilvl',
-			'type'   => 'range',
-			'icon'   => 'fa-info',
-			'title'  => 'Item Level',
-		],
-		'rarity' => [
-			'for'    => 'items","recipes","equipment',
-			'filter' => 'rarity',
-			'type'   => 'multiple',
-			'icon'   => 'fa-registered',
-			'title'  => 'Rarity',
-		],
-		'rlevel' => [
-			'for'    => 'recipes',
-			'filter' => 'rlevel',
-			'type'   => 'range',
-			'icon'   => 'fa-award',
-			'title'  => 'Recipe Level',
-		],
-		'rclass' => [
-			'for'    => 'recipes',
-			'filter' => 'rclass',
-			'type'   => 'multiple',
-			'icon'   => 'fa-chess-bishop',
-			'title'  => 'Recipe Class',
-			'hidden' => true
-		],
-		'rdifficulty' => [
-			'for'    => 'recipes',
-			'filter' => 'sublevel',
-			'type'   => 'multiple',
-			'icon'   => 'fa-star',
-			'title'  => 'Recipe Difficulty',
-		],
-		'elevel' => [
-			'for'    => 'equipment',
-			'filter' => 'elevel',
-			'type'   => 'range',
-			'icon'   => 'fa-medal',
-			'title'  => 'Equipment Level',
-		],
-		'eclass' => [
-			'for'    => 'equipment',
-			'filter' => 'eclass',
-			'type'   => 'multiple',
-			'icon'   => 'fa-chess-rook',
-			'title'  => 'Equipment Class',
-		],
-		'slot' => [
-			'for'    => 'equipment',
-			'filter' => 'slot',
-			'type'   => 'multiple',
-			'icon'   => 'fa-hand-paper',
-			'title'  => 'Equipment Slot',
-		],
-		'sockets' => [
-			'for'    => 'equipment',
-			'filter' => 'sockets',
-			'type'   => 'multiple',
-			'icon'   => 'fa-gem',
-			'title'  => 'Materia Sockets',
-		],
-	];
-@endphp
 
 @section('content')
 		<div id='compendium'>
@@ -111,7 +112,7 @@
 						</select>
 					</div>
 
-					<ninja-dropdown title='Filter By' icon='fas fa-filter' placeholder='Add Filter'></ninja-dropdown>
+					<ninja-dropdown title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='filterDefinitions' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
 					{{-- <div class="post-filter__select ninja-dropdown">
 						<label class="post-filter__label">
@@ -147,7 +148,7 @@
 							<option value='' disabled selected>Add Filter</option>
 
 							@foreach ($filters as $filter)
-								<option value='{{ $filter['filter'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['filter'] }}")'>
+								<option value='{{ $filter['key'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['key'] }}")'>
 									<i class='fas {{ $filter['icon'] }} mr-1'></i>
 									{{ $filter['title'] }}
 								</option>
@@ -307,8 +308,8 @@
 						<div class='widget__content card__content'>
 							<ul class='widget__list'>
 								@foreach ($filters as $filter)
-								<li data-filter='{{ $filter['filter'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['filter'] }}")'>
-									<a href='#' @click.prevent='activeFilters.push("{{ $filter['filter'] }}")'>
+								<li data-filter='{{ $filter['key'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['key'] }}")'>
+									<a href='#' @click.prevent='activeFilters.push("{{ $filter['key'] }}")'>
 										<i class='fas {{ $filter['icon'] }} mr-1'></i>
 										{{ $filter['title'] }}
 									</a>

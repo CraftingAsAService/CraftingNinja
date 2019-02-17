@@ -18,8 +18,8 @@ var compendium = new Vue({
 		sorting: 'name:asc',
 		perPage: 15,
 		filters: {},
-		addFilter: '',
 		activeFilters: [],
+		filterDefinitions: filterDefinitions,
 		noResults: true,
 		results: {
 			data: [],
@@ -32,12 +32,6 @@ var compendium = new Vue({
 		this.buildRanges();
 		if (this.searchTerm)
 			this.search();
-	},
-	watch: {
-		addFilter:function(val) {
-			// console.log(val);
-			this.activeFilters.push(val);
-		}
 	},
 	methods: {
 		initializeDropdowns:function() {
@@ -154,12 +148,9 @@ var compendium = new Vue({
 		searchFocus:function() {
 			$('.search-form :input').focus().select();
 		},
-		filterAdded:function() {
-			var filter = this.addFilter;
-			console.log(filter);
-			activeFilters.push(filter);
-
-			this.addFilter = '';
+		onNinjaDropdownClick:function(key, value) {
+			if (key == 'filter')
+				this.activeFilters.push(value);
 		}
 	}
 });
