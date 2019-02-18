@@ -26,16 +26,14 @@ Vue.component('ninja-dropdown', {
 			</label>
 			<div :class='"cs-select cs-skin-border " + (open ? " cs-active" : "")'>
 				<span class='cs-placeholder' v-on:click='open = ! open'>{{ placeholder }}</span>
-				<div class='cs-options'>
-					<ul>
-						<li v-for='optionData in options' v-on:click='optionClick(option, optionData["key"])'>
-							<span>
-								<i :class='"fas " + optionData["icon"] + " mr-1"'></i>
-								{{ optionData["title"] }}
-							</span>
-						</li>
-					</ul>
-				</div>
+				<ul class='cs-options'>
+					<li v-for='optionData in options' v-on:click='optionClick(option, optionData["key"])' :class='optionData["endSection"] ? "end-section" : ""'>
+						<span>
+							<i :class='"fas " + optionData["icon"] + " fa-fw mr-1"'></i>
+							{{ optionData["title"] }}
+						</span>
+					</li>
+				</ul>
 			</div>
 		</div>
 	`,

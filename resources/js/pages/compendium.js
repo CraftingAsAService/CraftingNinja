@@ -19,7 +19,9 @@ var compendium = new Vue({
 		perPage: 15,
 		filters: {},
 		activeFilters: [],
-		filterDefinitions: filterDefinitions,
+		itemFilters: itemFilters,
+		recipeFilters: recipeFilters,
+		equipmentFilters: equipmentFilters,
 		noResults: true,
 		results: {
 			data: [],

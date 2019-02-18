@@ -75,6 +75,25 @@
 			'title'  => 'Materia Sockets',
 		],
 	];
+	$itemFilters = [
+		'ilvl' => $filters['ilvl'],
+		'rarity' => $filters['rarity'],
+	];
+	$recipeFilters = [
+		'ilvl' => $filters['ilvl'],
+		'rarity' => $filters['rarity'],
+		'rlevel' => $filters['rlevel'],
+		'rclass' => $filters['rclass'],
+		'rdifficulty' => $filters['rdifficulty'],
+	];
+	$equipmentFilters = [
+		'ilvl' => $filters['ilvl'],
+		'rarity' => $filters['rarity'],
+		'elevel' => $filters['elevel'],
+		'eclass' => $filters['eclass'],
+		'slot' => $filters['slot'],
+		'sockets' => $filters['sockets'],
+	];
 @endphp
 
 @section('head')
@@ -82,7 +101,9 @@
 		@if ($searchTerm)
 		var searchTerm = '{{ $searchTerm }}';
 		@endif
-		var filterDefinitions = @json(array_values($filters));
+		var itemFilters = @json(array_values($itemFilters)),
+			recipeFilters = @json(array_values($recipeFilters)),
+			equipmentFilters = @json(array_values($equipmentFilters));
 	</script>
 @endsection
 
@@ -112,55 +133,12 @@
 						</select>
 					</div>
 
-					<ninja-dropdown title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='filterDefinitions' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='itemFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					{{-- <div class="post-filter__select ninja-dropdown">
-						<label class="post-filter__label">
-							<i class="fas fa-filter mr-1"></i>
-							Filter By
-						</label>
-						<div class="cs-select cs-skin-border add-filter">
-							<span class="cs-placeholder">Add Filter</span>
-							<div class="cs-options">
-								<ul>
-									<li data-option="" data-value="ilvl" class="cs-selected">
-										<span>
-											Item Level
-										</span>
-									</li>
-									<li data-option="" data-value="rarity" class="">
-										<span>
-											Rarity
-										</span>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div> --}}
+					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='recipeFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
+					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='equipmentFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					<div class='post-filter__select'>
-						<label class='post-filter__label'>
-							<i class='fas fa-filter mr-1'></i>
-							Filter By
-						</label>
-						<select class='cs-select cs-skin-border add-filter' data-compendium-var='addFilter'>
-							<option value='' disabled selected>Add Filter</option>
-
-							@foreach ($filters as $filter)
-								<option value='{{ $filter['key'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['key'] }}")'>
-									<i class='fas {{ $filter['icon'] }} mr-1'></i>
-									{{ $filter['title'] }}
-								</option>
-							@endforeach
-								{{-- <option class='clear-filters'>
-									<a href='#' @click.prevent='activeFilters = []'>
-										<i class='fas fa-broom mr-1'></i>
-										Clear Filters
-									</a>
-								</option> --}}
-						</select>
-					</div>
 					<div class='post-filter__select'>
 						<label class='post-filter__label'>
 							<i class='fas fa-sort mr-1'></i>
