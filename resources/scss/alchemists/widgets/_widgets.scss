@@ -9,6 +9,10 @@
 }
 	.widget__title {
 		text-transform: uppercase;
+
+		.widget.-filter & {
+			padding: 12px 0 12px 23px;
+		}
 	}
 
 	.widget__content-inner {

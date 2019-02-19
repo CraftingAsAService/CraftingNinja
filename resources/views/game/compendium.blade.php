@@ -163,7 +163,7 @@
 						</select>
 					</div>
 					<div class='post-filter__submit'>
-						<button type='button' class='btn btn-primary btn-block'>
+						<button type='button' class='btn btn-primary btn-block' @click='search()'>
 							<i class='fas fa-check-square mr-1'></i>
 							Filter
 						</button>
@@ -172,7 +172,7 @@
 			</div>
 
 			<div class='row'>
-				<div class='col-md-9 order-md-2'>
+				<div :class='activeFilters.length > 0 ? "col-md-9 order-md-2" : "col-md-12"'>
 					<div class='card card--clean'>
 						{{-- Results --}}
 						<div class='card__content'>
@@ -272,7 +272,7 @@
 				</div>
 
 				{{-- Sidebar --}}
-				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
+				<div class='sidebar sidebar--shop col-md-3 order-md-1' v-if='activeFilters.length > 0'>
 
 
 					{{-- Filters List/Anchors --}}
@@ -338,15 +338,13 @@
 					@endcomponent
 
 					@component('game.compendium.widget', $filters['rclass'])
-						<ul class='filter-color'>
+						<div class='checkbox-table'>
 							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
 							@foreach ($jobSet->sortBy('id') as $job)
-								<li class='filter-color__item'>
-									<label class='checkbox' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-										<input type='checkbox' name='rclass[]' value='{{ $job->id }}' id='rclassId{{ $job->id }}' hidden>
-										<img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' class='checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
-									</label>
-								</li>
+								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
+									<input type='checkbox' name='rclass[]' value='{{ $job->id }}' id='rclassId{{ $job->id }}' hidden>
+									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
+								</label>
 							@endforeach
 							@endforeach
 						</ul>

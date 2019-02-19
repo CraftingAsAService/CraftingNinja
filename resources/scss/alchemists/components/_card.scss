@@ -193,6 +193,10 @@
 
 	.card__content {
 		padding: $card-vertical-padding $card-horizontal-padding;
+
+		.widget.-filter & {
+			padding: 10px;
+		}
 	}
 	.card__content-inner {
 		padding: 20px;

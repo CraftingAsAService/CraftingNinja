@@ -34,6 +34,16 @@ var compendium = new Vue({
 		this.buildRanges();
 		if (this.searchTerm)
 			this.search();
+
+		$('.search-form').on('submit', function(event) {
+			event.preventDefault();
+			compendium.searchTerm = $(this).find('input:visible').val();
+			compendium.search();
+			return false;
+		}).find('input:visible').on('keyup', function(event) {
+			if (event.which == 13)
+				$(this).closest('form').trigger('submit');
+		});
 	},
 	methods: {
 		initializeDropdowns:function() {

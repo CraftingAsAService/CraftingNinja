@@ -372,17 +372,18 @@ select.form-control--clean {
 
 		&:checked + .checkbox-indicator {
 			background-image: none !important;
-			background-color: $color-primary-darken;
+			// background-color: $color-primary-darken;
 			background-image: none;
-			border-color: $checkbox-border;
+			border-color: $alchemy-dark;// $color-primary-darken;//$checkbox-border;
 			color: #fff;
+			z-index: 1;
 		}
 	}
 
 	.checkbox-indicator {
 		content:"";
-		width: 44px;
-		height: 44px;
+		width: 42px;
+		height: 42px;
 		background-color: $input-bg;
 		border: 1px solid $checkbox-border;
 		border-radius: 0;
@@ -396,6 +397,10 @@ select.form-control--clean {
 		transition: all 0.2s ease;
 		text-align: center;
 		line-height: 42px;
+		> img {
+			width: 32px;
+			height: 32px;
+		}
 	}
 }
 
