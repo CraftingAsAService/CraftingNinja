@@ -208,10 +208,22 @@
 									</div>
 									<div class='jobs'>
 										<span class='rjobs'>
-											<img width='24' height='24' v-for='(recipe, rindex) in data.recipes' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
+											<span class='many-classes' v-if='data.recipes && data.recipes.length > 2' v-tooltip:bottom='data.recipes.length + " Classes can Craft"'>
+												<i class='fas fa-user-ninja'></i>
+												<i class='fas fa-plus'></i>
+											</span>
+											<span class='few-classes' v-else>
+												<img width='24' height='24' v-for='(recipe, rindex) in data.recipes' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
+											</span>
 										</span>
 										<span class='ejobs' v-if='data.equipment'>
-											<img width='24' height='24' v-for='(job, jindex) in data.equipment.jobs' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/" + job.icon + ".png"'>
+											<span class='many-classes' v-if='data.equipment && data.equipment.jobs.length > 2' v-tooltip:bottom='data.equipment.jobs.length + " Classes can Equip"'>
+												<i class='fas fa-user-ninja'></i>
+												<i class='fas fa-plus'></i>
+											</span>
+											<span class='few-classes' v-else>
+												<img width='24' height='24' v-for='(job, jindex) in data.equipment.jobs' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/" + job.icon + ".png"'>
+											</span>
 										</span>
 									</div>
 									<div class='product__content card__content'>

@@ -9,6 +9,15 @@ axios.defaults.headers.common = {
 	'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 };
 
+// https://stackoverflow.com/a/42461598/286467
+Vue.directive('tooltip', function(el, binding) {
+	$(el).tooltip({
+		 title: binding.value,
+		 placement: binding.arg,
+		 trigger: 'hover'
+	 });
+});
+
 var compendium = new Vue({
 	el: '#compendium',
 	data: {

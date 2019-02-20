@@ -6,6 +6,27 @@
 }
 	.product__item {
 		overflow: hidden;
+
+		.rjobs,
+		.ejobs {
+			.many-classes {
+				// i {
+				// 	position: relative;
+				// 	top: 2px;
+				// }
+			}
+		}
+
+		.rjobs {
+			.many-classes {
+				color: var(--color-recipes);
+			}
+		}
+		.ejobs {
+			.many-classes {
+				color: var(--color-equipment);
+			}
+		}
 	}
 		.product__content {
 
@@ -19,18 +40,6 @@
 
 			.level {
 				line-height: .7rem;
-			}
-			.recipe-data {
-				.level {
-					color: $white;
-					color: var(--color-recipes);
-				}
-			}
-			.equipment-data {
-				.level {
-					color: $white;
-					color: var(--color-equipment);
-				}
 			}
 		}
 		.product__header {
