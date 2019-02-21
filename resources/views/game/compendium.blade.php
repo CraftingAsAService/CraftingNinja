@@ -6,104 +6,16 @@
 	]
 ])
 
-{{-- Filters Defined --}}
-@php
-	// Filters array used to generate both filtration anchors and filtration widgets
-	$filters = [
-		'ilvl' => [
-			'key'	 => 'ilvl',
-			'for'    => 'items","recipes","equipment',
-			'type'   => 'range',
-			'icon'   => 'fa-info',
-			'title'  => 'Item Level',
-		],
-		'rarity' => [
-			'key'	 => 'rarity',
-			'for'    => 'items","recipes","equipment',
-			'type'   => 'multiple',
-			'icon'   => 'fa-registered',
-			'title'  => 'Rarity',
-		],
-		'rlevel' => [
-			'key'	 => 'rlevel',
-			'for'    => 'recipes',
-			'type'   => 'range',
-			'icon'   => 'fa-award',
-			'title'  => 'Recipe Level',
-		],
-		'rclass' => [
-			'key'	 => 'rclass',
-			'for'    => 'recipes',
-			'type'   => 'multiple',
-			'icon'   => 'fa-chess-bishop',
-			'title'  => 'Recipe Class',
-			'hidden' => true
-		],
-		'rdifficulty' => [
-			'key'	 => 'sublevel',
-			'for'    => 'recipes',
-			'type'   => 'multiple',
-			'icon'   => 'fa-star',
-			'title'  => 'Recipe Difficulty',
-		],
-		'elevel' => [
-			'key'	 => 'elevel',
-			'for'    => 'equipment',
-			'type'   => 'range',
-			'icon'   => 'fa-medal',
-			'title'  => 'Equipment Level',
-		],
-		'eclass' => [
-			'key'	 => 'eclass',
-			'for'    => 'equipment',
-			'type'   => 'multiple',
-			'icon'   => 'fa-chess-rook',
-			'title'  => 'Equipment Class',
-		],
-		'slot' => [
-			'key'	 => 'slot',
-			'for'    => 'equipment',
-			'type'   => 'multiple',
-			'icon'   => 'fa-hand-paper',
-			'title'  => 'Equipment Slot',
-		],
-		'sockets' => [
-			'key'	 => 'sockets',
-			'for'    => 'equipment',
-			'type'   => 'multiple',
-			'icon'   => 'fa-gem',
-			'title'  => 'Materia Sockets',
-		],
-	];
-	$itemFilters = [
-		'ilvl' => $filters['ilvl'],
-		'rarity' => $filters['rarity'],
-	];
-	$recipeFilters = [
-		'ilvl' => $filters['ilvl'],
-		'rarity' => $filters['rarity'],
-		'rlevel' => $filters['rlevel'],
-		'rclass' => $filters['rclass'],
-		'rdifficulty' => $filters['rdifficulty'],
-	];
-	$equipmentFilters = [
-		'ilvl' => $filters['ilvl'],
-		'rarity' => $filters['rarity'],
-		'elevel' => $filters['elevel'],
-		'eclass' => $filters['eclass'],
-		'slot' => $filters['slot'],
-		'sockets' => $filters['sockets'],
-	];
-@endphp
-
 @section('head')
 	<script>
 		@if ($searchTerm)
 		var searchTerm = '{{ $searchTerm }}';
 		@endif
-		var itemFilters = @json(array_values($itemFilters)),
-			recipeFilters = @json(array_values($recipeFilters)),
-			equipmentFilters = @json(array_values($equipmentFilters));
+		var itemFilters = @json(array_values(config('crafting.filters.item'))),
+			recipeFilters = @json(array_values(config('crafting.filters.recipe'))),
+			equipmentFilters = @json(array_values(config('crafting.filters.equipment'))),
+			sortingFilters = @json(array_values(config('crafting.filters.sorting'))),
+			perPageFilters = @json(array_values(config('crafting.filters.perPage')));
 	</script>
 @endsection
 
@@ -133,35 +45,16 @@
 						</select>
 					</div>
 
-					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='itemFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='recipeFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.recipe' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='equipmentFilters' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.equipment' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					<div class='post-filter__select'>
-						<label class='post-filter__label'>
-							<i class='fas fa-sort mr-1'></i>
-							Sorting
-						</label>
-						<select class='cs-select cs-skin-border' data-compendium-var='sorting'>
-							<option value='name:asc'>Name: A-Z</option>
-							<option value='name:desc'>Name: Z-A</option>
-							<option value='ilvl:asc'>iLv: Low to High</option>
-							<option value='ilvl:desc'>iLv: High to Low</option>
-						</select>
-					</div>
-					<div class='post-filter__select'>
-						<label class='post-filter__label'>
-							<i class='fas fa-grip-vertical mr-1'></i>
-							Per Page
-						</label>
-						<select class='cs-select cs-skin-border' data-compendium-var='perPage'>
-							<option value='15'>Show 15 per page</option>
-							<option value='30'>Show 30 per page</option>
-							<option value='45'>Show 45 per page</option>
-						</select>
-					</div>
+					<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+
+					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+
 					<div class='post-filter__submit'>
 						<button type='button' class='btn btn-primary btn-block' @click='search()'>
 							<i class='fas fa-check-square mr-1'></i>
@@ -213,7 +106,7 @@
 												<i class='fas fa-plus'></i>
 											</span>
 											<span class='few-classes' v-else>
-												<img width='24' height='24' v-for='(recipe, rindex) in data.recipes' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"'>
+												<img width='24' height='24' v-for='(recipe, rindex) in data.recipes' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + recipe.job.icon + ".png"' v-tooltip:bottom='recipe.job.icon'>
 											</span>
 										</span>
 										<span class='ejobs' v-if='data.equipment'>
@@ -222,7 +115,7 @@
 												<i class='fas fa-plus'></i>
 											</span>
 											<span class='few-classes' v-else>
-												<img width='24' height='24' v-for='(job, jindex) in data.equipment.jobs' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/" + job.icon + ".png"'>
+												<img width='24' height='24' v-for='(job, jindex) in data.equipment.jobs' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/" + job.icon + ".png"' v-tooltip:bottom='job.icon'>
 											</span>
 										</span>
 									</div>
@@ -231,31 +124,6 @@
 											<div class='product__header-inner'>
 												<h2 v-bind:class='"product__title rarity-" + data.rarity' v-html='data.name'></h2>
 											</div>
-										</div>
-									</div>
-									<div class='media' hidden>
-										<img src='' alt='' width='48' height='48'>
-										<div class='media-body'>
-											<h6 class='name'></h6>
-											<div class='secondary'>
-												<span class='ilvl'></span>
-												<span class='recipes'>
-													<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
-													<span class='level'></span>
-												</span>
-												<span class='equipment'>
-													<span class='job'><img src='' alt='' width='24' height='24'><img src='' alt='' width='24' height='24'><span class='multiple'>✚</span></span>
-													<span class='level'></span>
-												</span>
-
-												<div class='category'></div>
-											</div>
-										</div>
-										<div class='button'>
-											<button type='button' class='btn btn-light add-to-list' data-id='' data-type='item'>
-												<img src='/images/icons/swap-bag.svg' class='svg-icon' alt=''>
-												<span class='badge badge-light' hidden></span>
-											</button>
 										</div>
 									</div>
 								</li>
@@ -297,7 +165,7 @@
 						</div>
 						<div class='widget__content card__content'>
 							<ul class='widget__list'>
-								@foreach ($filters as $filter)
+								@foreach (config('crafting.filters.all') as $filter)
 								<li data-filter='{{ $filter['key'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['key'] }}")'>
 									<a href='#' @click.prevent='activeFilters.push("{{ $filter['key'] }}")'>
 										<i class='fas {{ $filter['icon'] }} mr-1'></i>
@@ -316,7 +184,7 @@
 					</aside> --}}
 
 					{{-- Filter Widgets --}}
-					@component('game.compendium.widget', $filters['ilvl'])
+					@component('game.compendium.widget', config('crafting.filters.all')['ilvl'])
 						<div class='slider-range-wrapper'>
 							<div class='slider-range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $max['ilvl'] }}'></div>
 							<div class='slider-range-label'>
@@ -325,7 +193,7 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['rarity'])
+					@component('game.compendium.widget', config('crafting.filters.all')['rarity'])
 						<div class='row'>
 							@foreach (config('game.rarity') as $rarityKey => $rarity)
 								<div class='col-md-6'>
@@ -340,7 +208,7 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['rlevel'])
+					@component('game.compendium.widget', config('crafting.filters.all')['rlevel'])
 						<div class='slider-range-wrapper'>
 							<div class='slider-range' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $max['rlvl'] }}'></div>
 							<div class='slider-range-label'>
@@ -349,7 +217,7 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['rclass'])
+					@component('game.compendium.widget', config('crafting.filters.all')['rclass'])
 						<div class='checkbox-table'>
 							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
 							@foreach ($jobSet->sortBy('id') as $job)
@@ -362,7 +230,7 @@
 						</ul>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['rdifficulty'])
+					@component('game.compendium.widget', config('crafting.filters.all')['rdifficulty'])
 						<div class='row'>
 							@foreach (range(0, config('game.maxDifficulty')) as $sublevel)
 								<div class='col-md-6'>
@@ -384,7 +252,7 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['elevel'])
+					@component('game.compendium.widget', config('crafting.filters.all')['elevel'])
 						<div class='slider-range-wrapper'>
 							<div class='slider-range' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $max['elvl'] }}'></div>
 							<div class='slider-range-label'>
@@ -393,7 +261,7 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['eclass'])
+					@component('game.compendium.widget', config('crafting.filters.all')['eclass'])
 						<ul class='filter-color'>
 							@foreach ($jobs as $jobType => $jobTiers)
 							@foreach ($jobTiers as $jobTier => $jobSet)
@@ -410,7 +278,7 @@
 						</ul>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['slot'])
+					@component('game.compendium.widget', config('crafting.filters.all')['slot'])
 						<ul class='filter-color'>
 							@foreach (collect(config('game.equipmentLayout'))->unique() as $name => $key)
 								<li class='filter-color__item'>
@@ -423,7 +291,7 @@
 						</ul>
 					@endcomponent
 
-					@component('game.compendium.widget', $filters['sockets'])
+					@component('game.compendium.widget', config('crafting.filters.all')['sockets'])
 						<div class='row'>
 							@foreach (range(0, config('game.maxSockets')) as $sockets)
 								<div class='col-md-6'>

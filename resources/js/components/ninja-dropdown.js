@@ -25,9 +25,9 @@ Vue.component('ninja-dropdown', {
 				{{ title }}
 			</label>
 			<div :class='"cs-select cs-skin-border " + (open ? " cs-active" : "")'>
-				<span class='cs-placeholder' v-on:click='open = ! open'>{{ placeholder }}</span>
+				<span class='cs-placeholder' v-on:click='open = ! open'>{{ placeholder || displayTitle }}</span>
 				<ul class='cs-options'>
-					<li v-for='optionData in options' v-on:click='optionClick(option, optionData["key"])' :class='optionData["endSection"] ? "end-section" : ""'>
+					<li v-for='optionData in options' v-on:click='optionClick(option, optionData["key"], optionData["title"])'>
 						<span>
 							<i :class='"fas " + optionData["icon"] + " fa-fw mr-1"'></i>
 							{{ optionData["title"] }}
@@ -39,14 +39,19 @@ Vue.component('ninja-dropdown', {
 	`,
 	data:function() {
 		return {
+			displayTitle: null,
 			open: false
 		}
+	},
+	mounted:function() {
+		this.displayTitle = this.options[0].title;
 	},
 	methods: {
 		close:function() {
 			this.open = false;
 		},
-		optionClick:function(key, value) {
+		optionClick:function(key, value, title) {
+			this.displayTitle = title;
 			this.$emit('clicked', key, value)
 			this.close();
 		}

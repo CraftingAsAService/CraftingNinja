@@ -24,19 +24,25 @@ var compendium = new Vue({
 		firstLoad: true,
 		searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
 		chapter: 'items',
-		sorting: 'name:asc',
-		perPage: 15,
-		filters: {},
 		activeFilters: [],
-		itemFilters: itemFilters,
-		recipeFilters: recipeFilters,
-		equipmentFilters: equipmentFilters,
 		noResults: true,
 		results: {
 			data: [],
 			links: {},
 			meta: {},
 		},
+		// These are submitted as parameters
+		filters: {},
+		sorting: 'name:asc',
+		perPage: 15,
+		// Setting to pass off to Ninja Dropdown
+		ninjaFilters: {
+			item: itemFilters,
+			recipe: recipeFilters,
+			equipment: equipmentFilters,
+			sorting: sortingFilters,
+			perPage: perPageFilters
+		}
 	},
 	mounted:function() {
 		this.initializeDropdowns();
@@ -172,6 +178,8 @@ var compendium = new Vue({
 		onNinjaDropdownClick:function(key, value) {
 			if (key == 'filter')
 				this.activeFilters.push(value);
+			else
+				this[key] = value;
 		}
 	}
 });
