@@ -63,6 +63,12 @@
 	<link rel='stylesheet' href='/css/themes/{{ config('game.slug') }}.css'>
 	@endif
 
+	@isset($css)
+	@foreach($css as $file)
+	<link href='/css/{!! $file !!}.css' rel='stylesheet'>
+	@endforeach
+	@endisset
+
 	<script>
 		var
 			@if (config('game.slug'))

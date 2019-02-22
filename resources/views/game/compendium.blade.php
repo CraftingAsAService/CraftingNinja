@@ -1,8 +1,11 @@
 @extends('app', [
 	'active' => '/compendium',
+	'css' => [
+		'pages/compendium',
+	],
 	'js' => [
 		'components/ninja-dropdown',
-		'pages/compendium'
+		'pages/compendium',
 	]
 ])
 
@@ -30,7 +33,7 @@
 
 @section('content')
 		<div id='compendium'>
-			<div class='post-filter post-filter--boxed mb-3'>
+			<div class='post-filter post-filter--boxed mb-0'>
 				<form action='#' class='post-filter__form'>
 					<div class='post-filter__select'>
 						<label class='post-filter__label'>
@@ -44,13 +47,13 @@
 							<option value='quests'>Quests</option>
 						</select>
 					</div>
-
+					{{--
 					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
 					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.recipe' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
 					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.equipment' @clicked='onNinjaDropdownClick'></ninja-dropdown>
-
+					--}}
 					<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
 					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='onNinjaDropdownClick'></ninja-dropdown>
@@ -58,13 +61,19 @@
 					<div class='post-filter__submit'>
 						<button type='button' class='btn btn-primary btn-block' @click='search()'>
 							<i class='fas fa-check-square mr-1'></i>
-							Filter
+							Apply Filters
 						</button>
 					</div>
 				</form>
 			</div>
+			<div class='sub-filter'>
+				<div class='tab'>
+					<i class='fas fa-filter'></i>
+				</div>
+				Filter A
+			</div>
 
-			<div class='row'>
+			<div class='row mt-3'>
 				<div :class='activeFilters.length > 0 ? "col-md-9 order-md-2" : "col-md-12"'>
 					<div class='card card--clean'>
 						{{-- Results --}}
