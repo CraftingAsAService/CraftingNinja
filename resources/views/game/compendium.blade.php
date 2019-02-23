@@ -66,14 +66,28 @@
 					</div>
 				</form>
 			</div>
-			<div class='sub-filter'>
-				<div class='tab'>
-					<i class='fas fa-filter'></i>
+			<div class='sub-filter mb-3'>
+				<div class='filter-box -open'>
+					<div class='filter-content'>
+						<i class='fas {!! config('crafting.filters.all')['rarity']['icon'] !!}'></i>
+						<span class='mr-2'>{!! config('crafting.filters.all')['rarity']['title'] !!}</span>
+						<span class='badge badge-light'>1</span>
+						<i class='fas fa-angle-down' hidden></i>
+					</div>
+					<div class='filter-dropdown'>
+						@foreach (config('game.rarity') as $rarityKey => $rarity)
+							<div>
+								<label class='checkbox checkbox-inline'>
+									<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
+									<span class='checkbox-indicator'></span>
+								</label>
+							</div>
+						@endforeach
+					</div>
 				</div>
-				Filter A
 			</div>
 
-			<div class='row mt-3'>
+			<div class='row'>
 				<div :class='activeFilters.length > 0 ? "col-md-9 order-md-2" : "col-md-12"'>
 					<div class='card card--clean'>
 						{{-- Results --}}
