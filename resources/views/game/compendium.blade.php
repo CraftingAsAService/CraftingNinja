@@ -66,15 +66,38 @@
 					</div>
 				</form>
 			</div>
-			<div class='sub-filter mb-3'>
-				<div class='filter-box -open'>
+			<div class='ninja-filters mb-3'>
+				<div class='ninja-filter'>
+					<div class='filter-content'>
+						<i class='fas {!! config('crafting.filters.all')['ilvl']['icon'] !!}'></i>
+						<span class='mr-2'>{!! config('crafting.filters.all')['ilvl']['title'] !!}</span>
+						<span class='badge badge-light' hidden>0</span>
+						<i class='fas fa-angle-down'></i>
+					</div>
+					<div class='filter-dropdown -range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $max['ilvl'] }}'>
+						<input type='number' name='ilvlMin' class='form-control' value='' min='1' max='{{ $max['ilvl'] }}'>
+						<div class='text-center'>
+							<i class='fas fa-long-arrow-alt-down'></i>
+						</div>
+						<input type='number' name='ilvlMax' class='form-control' value='' min='1' max='{{ $max['ilvl'] }}'>
+						{{-- @foreach (config('game.rarity') as $rarityKey => $rarity)
+							<div>
+								<label class='checkbox checkbox-inline'>
+									<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
+									<span class='checkbox-indicator'></span>
+								</label>
+							</div>
+						@endforeach --}}
+					</div>
+				</div>
+				<div class='ninja-filter'>
 					<div class='filter-content'>
 						<i class='fas {!! config('crafting.filters.all')['rarity']['icon'] !!}'></i>
 						<span class='mr-2'>{!! config('crafting.filters.all')['rarity']['title'] !!}</span>
-						<span class='badge badge-light'>1</span>
-						<i class='fas fa-angle-down' hidden></i>
+						<span class='badge badge-light' hidden>0</span>
+						<i class='fas fa-angle-down'></i>
 					</div>
-					<div class='filter-dropdown'>
+					<div class='filter-dropdown -checkboxes'>
 						@foreach (config('game.rarity') as $rarityKey => $rarity)
 							<div>
 								<label class='checkbox checkbox-inline'>

@@ -1,15 +1,22 @@
 @import 'alchemists/config/variables-esports';
 
-.sub-filter {
+.post-filter {
+	position: relative;
+	z-index: 2;
+}
+
+.ninja-filters {
+	position: relative;
+	z-index: 1;
 	background-color: darken($color-dark-2, 10%);
 	border: 1px solid darken($color-dark-lighten-2, 10%);
 	border-radius: 0 0 0 4px;
-	padding: 1.5rem;
+	padding: .75rem;
 	margin: 0 .5rem;
 
-	.filter-box {
+	.ninja-filter {
 		display: inline-block;
-		margin-right: 1rem;
+		margin-right: .5rem;
 		position: relative;
 
 		.filter-content {
@@ -28,6 +35,7 @@
 			border: 1px solid $color-dark-lighten-2;
 			border-radius: 0 4px 4px 4px;
 			position: absolute;
+			min-width: calc(100% + .5rem);
 
 			z-index: 1;
 			top: 43px;
@@ -40,7 +48,11 @@
 				border-radius: 4px 4px 0 0;
 				border-bottom-color: $color-dark-2;
 			}
+		}
+
+		&:not(.-open) {
 			.filter-dropdown {
+				display: none;
 			}
 		}
 	}
