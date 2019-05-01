@@ -1,4 +1,7 @@
 {
+    "/js/app.js": "/js/app.js",
+    "/js/manifest.js": "/js/manifest.js",
+    "/js/pages/compendium.js": "/js/pages/compendium.js",
     "/css/app.css": "/css/app.css",
-    "/css/themes/ffxiv.css": "/css/themes/ffxiv.css"
+    "/js/vendor.js": "/js/vendor.js"
 }

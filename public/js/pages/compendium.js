@@ -1,1 +1,510 @@
-"use strict";axios.defaults.headers.common={"X-Requested-With":"XMLHttpRequest","X-CSRF-TOKEN":document.querySelector('meta[name="csrf-token"]').getAttribute("content")},Vue.directive("tooltip",function(e,t){$(e).tooltip({title:t.value,placement:t.arg,trigger:"hover"})});var compendium=new Vue({el:"#compendium",data:{firstLoad:!0,searchTerm:"undefined"!=typeof searchTerm?searchTerm:"",chapter:"items",activeFilters:[],noResults:!0,results:{data:[],links:{},meta:{}},filters:{},sorting:"name:asc",perPage:15,ninjaFilters:{item:itemFilters,recipe:recipeFilters,equipment:equipmentFilters,sorting:sortingFilters,perPage:perPageFilters}},mounted:function(){this.initializeDropdowns(),this.buildRanges(),this.searchTerm&&this.search(),$(".search-form").on("submit",function(e){return e.preventDefault(),compendium.searchTerm=$(this).find("input:visible").val(),compendium.search(),!1}).find("input:visible").on("keyup",function(e){13==e.which&&$(this).closest("form").trigger("submit")})},methods:{initializeDropdowns:function(){$("#compendium").find("select.cs-select").each(function(){var e=$(this).data("compendium-var");new SelectFx(this,{onChange:function(t){compendium[e]=t}})})},search:function(){var e="items";"quests"==this.chapters&&(e="quests");var t=Object.assign({},this.filters);t.name=this.searchTerm,t.sorting=this.sorting.split(":")[0],t.ordering=this.sorting.split(":")[1],t.perPage=this.perPage,axios.post("/api/"+e,t).then(e=>{this.results=e.data,this.firstLoad=!1}).catch(e=>console.log(e))},buildRanges:function(){$(".slider-range").each(function(){var e=$(this),t=e[0],i=parseInt(e.data("min")),a=parseInt(e.data("max")),s=[e.parent().find(".min"),e.parent().find(".max")];noUiSlider.create(t,{start:[i,a],connect:!0,step:1,range:{min:[i],max:[a]}}),t.noUiSlider.on("update",function(e,t){s[t].html(e[t].replace(".00",""))})})},removeFilter:function(e){this.activeFilters=this.activeFilters.filter(function(t){return t!=e}),this.applyFilter(e)},applyFilter:function(e){var t=$(".widget.-filter.-"+e),i=t.data("type");if(t.is(":visible")){if("range"==i){r=(l=t.find(".slider-range")).data("keys").split(",");var a=parseInt(l.parent().find(".min").html()),s=parseInt(l.parent().find(".max").html());this.filters[r[0]]=a,this.filters[r[1]]=s}else if("multiple"==i){var n=t.find("input:checkbox:checked").map(function(){return this.value}).get();this.filters[e]=n}}else if("range"==i){var l,r=(l=t.find(".slider-range")).data("keys").split(",");this.filters.delete(r[0]),this.filters.delete(r[1])}else this.filters.delete(e);void 0!==this.filters.page&&this.filters.delete("page"),this.search()},previousPage:function(){},nextPage:function(){},searchFocus:function(){$(".search-form :input").focus().select()},onNinjaDropdownClick:function(e,t){"filter"==e?this.activeFilters.push(t):this[e]=t}}});let defaultFilters={chapter:"items",sorting:"name",ordering:"asc",active:[]};var OLDcompendium={filters:Object.assign({},defaultFilters),results:null,pause:!1,init:function(){this.setup(),this.events()},setup:function(){this.restoreFilters()},events:function(){$("#chapter-select .dropdown-item").on("click",this.chapterSelect),$("a.page-link").on("click",this.paginate),$("input[name=name]").on("keyup keypress focus blur change",this.searchWidth).on("keyup keypress change blur",$.debounce(250,!1,caas.compendium.search)),$("#name-filter .dropdown-item").on("click",this.sorting),$("#select-filters .dropdown-item").on("click",this.createFilter),$("body").on("click",this.closeFilter).on("click",".filter",this.activateFilter).on("click",".filter .delete",this.destroyFilter),$(".large-view").on("click",this.switchView)},chapterSelect:function(e){void 0!==e&&e.preventDefault();var t=$(this),i=t.data("chapter");t.siblings().removeClass("active"),t.addClass("active"),$("#chapter").html(t.text()),$("#filters [data-chapter]").each(function(){var e=$(this),t=e.data("chapter");e.toggleAttr("hidden",-1===t.indexOf(i))}),caas.compendium.filters.chapter=i,$("#results").attr("data-chapter",i),caas.compendium.getResults()},switchView:function(e){void 0!==e&&e.preventDefault();var t=$("#results").hasClass("-large-view");$("#results").toggleClass("-large-view",!t),$(".large-view .-disable").toggleAttr("hidden",t),$(".large-view .-enable").toggleAttr("hidden",!t)},activateFilter:function(e){var t=$(this);t.hasClass("-active")||(void 0!==e&&e.preventDefault(),$("#filtration .filter").removeClass("-active").css("left","inherit"),t.addClass("-active"),setTimeout(function(){var e=t.find(".delete"),i=e.offset().left+e.outerWidth()+16-$(window).width();i>0&&t.css("left","-"+i+"px")},250),0==t.find("input:focus").length&&t.find("input:visible").first().focus())},closeFilter:function(e){if(void 0!==e&&($(e.target).closest(".filter").length>0||0==$("#filtration .filter.-active").length))return;var t=$("#filtration .filter.-active").first(),i=t.data("filter"),a=t.data("type"),s=t.hasClass("-keep");if(t.removeClass(s?"-keep":"-active"),s||t.css("left","inherit"),"enabled"==a)caas.compendium.filters[i]="true";else if("single"==a)caas.compendium.filters[i]=t.find('input[name="'+i+'"]').val();else if("range"==a){var n=t.data("keys");caas.compendium.filters[n[0]]=t.find('input[name="'+n[0]+'"]').val(),caas.compendium.filters[n[1]]=t.find('input[name="'+n[1]+'"]').val()}else{var l=t.find("input").attr("name").replace(/\[\]$/,""),r=[];t.find("input:checked").each(function(){r.push($(this).val())}),caas.compendium.filters[l]=r.join(",");var c=t.find(".values");if(""==caas.compendium.filters[l].length)c.find("img, i, .multiple").toggleAttr("hidden",!0),c.find(".waiting-icon").toggleAttr("hidden",!1);else{var o=t.find("input:checked").length>1,d=t.find("input:checked").first().next("label").children().first();c.find("img, i").toggleAttr("hidden",!1),d.is("i")?c.find("i").first().attr("class",d.attr("class")):d.is("img")&&c.find("img").first().attr("src",d.attr("src")),c.find(".multiple").toggleAttr("hidden",!o),c.find(".waiting-icon").toggleAttr("hidden",!0)}}caas.compendium.getResults()},destroyFilter:function(e){var t=$(this).closest(".filter"),i=t.data("filter"),a=t.data("type");if(t.is(".-active")||caas.compendium.pause){if("enabled"==a||"single"==a)delete caas.compendium.filters[i];else if("range"==a){var s=t.data("keys");delete caas.compendium.filters[s[0]],delete caas.compendium.filters[s[1]]}else{var n=t.find("input").attr("name").replace(/\[\]$/,"");delete caas.compendium.filters[n]}var l=caas.compendium.filters.active.indexOf(i);l>-1&&caas.compendium.filters.active.splice(l),t.remove(),$('#select-filters .dropdown-item[data-filter="'+i+'"]').removeClass("disabled"),caas.compendium.getResults()}},createFilter:function(e){void 0!==e&&e.preventDefault();var t=$(this);if(!t.hasClass("disabled")){var i=t.data("filter");if("clear"==i)return caas.compendium.clearFilters();var a=t.data("type"),s=t.data("text")||t.text(),n=t.find("i").attr("class"),l=$("#filters .filter.-"+a).clone();if(t.addClass("disabled"),l.find(".filter-icon").addClass(n),l.find(".filter-label").html(s),l.data("filter",i).data("type",a),"enabled"==a)l.find("input").attr("name",i);else if("single"==a){var r=l.find("input");r.attr("name",i).attr("min",t.data("min")).attr("max",t.data("max"));var c=t.data("list");if(void 0!==c){var o=$('<datalist id="'+i+'List"></datalist>');r.attr("list",i+"List"),$.each(c.split(","),function(){o.append($('<option value="'+this+'"></option>'))}),o.insertAfter(r)}}else if("range"==a){var d=l.find("input"),m=t.data("keys").split(",");l.data("keys",m),d.first().attr("name",m[0]),d.last().attr("name",m[1]),d.attr("min",t.data("min")).attr("max",t.data("max"))}$("#filtration").append(l),caas.compendium.filters.active.push(i),caas.pause||(caas.tooltip.init(),caas.compendium.activateFilter.call(l),l.addClass("-keep"),"enabled"==a&&(caas.compendium.getResults(),setTimeout(function(){l.removeClass("-active"),l.css("left","inherit")},500)))}},clearFilters:function(){this.pause=!0,$("#name-filter input").val(""),this.sorting.call($("#name-filter .dropdown-item").first()),$("#filtration .filter .delete").each(function(){caas.compendium.destroyFilter.call($(this))}),this.pause=!1,$("#pre-results").toggleAttr("hidden",!1),$("#no-results").toggleAttr("hidden",!0),$("#results .compendium-item:not(.-template)").remove(),this.filters=Object.assign({},defaultFilters),caas.storage.remove(game.slug+"-compendium-filters"),caas.storage.remove(game.slug+"-compendium-results"),$("#name-filter input").focus()},searchWidth:function(){var e=$(this);e.css("width",7*(e.val().length+2)+24+"px")},search:function(e){var t=(caas.compendium.filters.name||"")+"";caas.compendium.filters.name=$(this).val(),t!=caas.compendium.filters.name&&caas.compendium.getResults()},getResults:function(e){if(!caas.compendium.pause){void 0!==this.jqXHR&&this.jqXHR.abort(),void 0===e&&(e=1),this.filters.page=e,this.toggleLoader(!0);var t=Object.assign({},this.filters);delete t.chapter,delete t.active,this.jqXHR=$.ajax({method:"GET",url:"/api/"+this.filters.chapter,data:t,dataType:"json"}).done(this.buildResults).always(function(){caas.compendium.toggleLoader(!1)})}},toggleLoader:function(e){$("#select-filters > button > i").toggleClass("fa-filter",!e).toggleClass("fa-cog fa-spin",e)},buildResults:function(e){caas.compendium.pause||(caas.storage.set(game.slug+"-compendium-filters",JSON.stringify(caas.compendium.filters)),caas.storage.set(game.slug+"-compendium-results",JSON.stringify(e)));caas.compendium.filters;if($("#pre-results").toggleAttr("hidden",!0),$("#no-results").toggleAttr("hidden",0!=e.data.length),0!=e.data.length){var t=$("#results"),i=t.find(".-template");t.find(".compendium-item:not(.-template)").remove(),$.each(e.data,function(e,t){var a=i.clone(!0);a=caas.compendium.buildRow(a,t),caas.lists.updateButtons(),a.removeClass("-template"),a.toggleAttr("hidden",!1),a.insertBefore(i)}),caas.tooltip.init(),caas.compendium.buildNavigation(e)}},buildNavigation:function(e){$("#pageNumber").html(e.meta.current_page),["prev","next"].forEach(function(t){var i=$(".page-link.-"+t),a=e.links[t],s=null!==a;s?(i.toggleAttr("tabindex",!1),a=a.replace(/^.*page=/,"")):i.attr("tabindex","-1"),i.data("page",a).closest(".page-item").toggleClass("disabled",!s)})},paginate:function(e){e.preventDefault();var t=$(this);t.closest(".page-item").hasClass("disabled")||caas.compendium.getResults(t.data("page"))},buildRow:function(e,t){if(e.find("> img").attr("src","/assets/"+game.slug+"/item/"+t.icon+".png"),e.find(".name").addClass("rarity-"+t.rarity).html(t.name),e.find(".ilvl").html(t.ilvl),e.find(".category").html(t.category),void 0!==t.recipes){var i=t.recipes[0];if(e.find(".recipes .level").html(i.level),null!==i.sublevel&&i.sublevel>0)for(var a=0;a<i.sublevel;a++)e.find(".recipes .level").append('<span class="sublevel-icon"></span>');e.find(".recipes .job img").first().attr("src","/assets/"+game.slug+"/jobs/crafting-"+i.job.icon+".png"),2==t.recipes.length?(e.find(".recipes .job img").last().attr("src","/assets/"+game.slug+"/jobs/crafting-"+t.recipes[1].job.icon+".png"),e.find(".recipes .multiple").remove()):t.recipes.length>2?(e.find(".recipes .job img").last().remove(),e.find(".recipes .multiple").html("✚").attr("data-toggle","tooltip").attr("title",i.job.icon+" + "+(t.recipes.length-1)+" others")):(e.find(".recipes .multiple").remove(),e.find(".recipes .job img").last().remove())}else e.find(".recipes").remove();return void 0!==t.equipment?(e.find(".equipment .level").html(t.equipment.level),e.find(".equipment .job img").first().attr("src","/assets/"+game.slug+"/jobs/"+t.equipment.jobs[0].icon+".png"),2==t.equipment.jobs.length?(e.find(".equipment .job img").last().attr("src","/assets/"+game.slug+"/jobs/"+t.equipment.jobs[1].icon+".png"),e.find(".equipment .multiple").remove()):t.equipment.jobs.length>2?(e.find(".equipment .job img").last().remove(),e.find(".equipment .multiple").html("✚").attr("data-toggle","tooltip").attr("title",t.equipment.jobs[0].icon+" + "+(t.equipment.jobs.length-1)+" others")):(e.find(".equipment .multiple").remove(),e.find(".equipment .job img").last().remove())):e.find(".equipment").remove(),e.find(".add-to-list").data("id",t.id),e},restoreFilters:function(){this.pause=!0;var e=JSON.parse(caas.storage.get(game.slug+"-compendium-filters"))||Object.assign({},this.filters),t=JSON.parse(caas.storage.get(game.slug+"-compendium-results"));if(null!=t&&void 0!==t.data&&this.buildResults(t),this.chapterSelect.call($('#chapter-select [data-chapter="'+e.chapter+'"]')),$("#filtration input[name=name]").val(e.name),this.searchWidth.call($("input[name=name]")),this.sorting.call($('#name-filter .dropdown-item[data-sorting="'+e.sorting+'"][data-ordering="'+e.ordering+'"]')),e.active.length>0)for(var i=0;i<e.active.length;i++){var a=e.active[i],s=$('#select-filters .dropdown-item[data-filter="'+a+'"]'),n=s.data("filter"),l=s.data("type");this.createFilter.call(s);var r=$("#filtration .filter").last();if("enabled"==l);else if("single"==l)void 0!==e[n]&&r.find("input").val(e[n]);else if("range"==l)r.find("input").each(function(){var t=$(this);t.val(e[t.attr("name")])});else if(void 0!==e[n])for(var c=e[n].split(","),o=0;o<c.length;o++)r.find('input[name="'+n+'[]"][value="'+c[o]+'"]').prop("checked",!0);this.closeFilter(),r.removeClass("-active"),r.css("left","inherit")}$("#name-filter input").focus(),this.filters=e,caas.tooltip.init(),this.pause=!1},sorting:function(e){void 0!==e&&e.preventDefault();var t=$(this);t.siblings(".dropdown-item").removeClass("active"),t.addClass("active"),$("#name-filter .dropdown-toggle").html(t.html()),caas.compendium.filters.sorting=t.data("sorting"),caas.compendium.filters.ordering=t.data("ordering"),caas.compendium.getResults()},toggleFilter:function(){$("html").toggleClass("filter-open")}};
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/js/pages/compendium"],{
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['title', 'icon', 'placeholder', 'option', 'options'],
+  data: function data() {
+    return {
+      displayTitle: null,
+      open: false
+    };
+  },
+  mounted: function mounted() {
+    this.displayTitle = this.options[0].title;
+  },
+  methods: {
+    close: function close() {
+      this.open = false;
+    },
+    optionClick: function optionClick(key, value, title) {
+      this.displayTitle = title;
+      this.$emit('clicked', key, value);
+      this.close();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      directives: [
+        {
+          name: "click-outside",
+          rawName: "v-click-outside",
+          value: _vm.close,
+          expression: "close"
+        }
+      ],
+      staticClass: "post-filter__select ninja-dropdown"
+    },
+    [
+      _c("label", { staticClass: "post-filter__label" }, [
+        _c("i", { class: _vm.icon + " mr-1" }),
+        _vm._v("\n\t\t" + _vm._s(_vm.title) + "\n\t")
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { class: "cs-select cs-skin-border " + (_vm.open ? " cs-active" : "") },
+        [
+          _c(
+            "span",
+            {
+              staticClass: "cs-placeholder",
+              on: {
+                click: function($event) {
+                  _vm.open = !_vm.open
+                }
+              }
+            },
+            [_vm._v(_vm._s(_vm.placeholder || _vm.displayTitle))]
+          ),
+          _vm._v(" "),
+          _c(
+            "ul",
+            { staticClass: "cs-options" },
+            _vm._l(_vm.options, function(optionData) {
+              return _c(
+                "li",
+                {
+                  on: {
+                    click: function($event) {
+                      return _vm.optionClick(
+                        _vm.option,
+                        optionData["key"],
+                        optionData["title"]
+                      )
+                    }
+                  }
+                },
+                [
+                  _c("span", [
+                    _c("i", {
+                      class: "fas " + optionData["icon"] + " fa-fw mr-1"
+                    }),
+                    _vm._v(
+                      "\n\t\t\t\t\t" +
+                        _vm._s(optionData["title"]) +
+                        "\n\t\t\t\t"
+                    )
+                  ])
+                ]
+              )
+            }),
+            0
+          )
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return normalizeComponent; });
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
+) {
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = 'data-v-' + scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
+  }
+
+  if (hook) {
+    if (options.functional) {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      var originalRender = options.render
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return originalRender(h, context)
+      }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    }
+  }
+
+  return {
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+
+/***/ "./resources/js/components/NinjaDropdown.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/NinjaDropdown.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NinjaDropdown.vue?vue&type=template&id=181e42e0& */ "./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0&");
+/* harmony import */ var _NinjaDropdown_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NinjaDropdown.vue?vue&type=script&lang=js& */ "./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _NinjaDropdown_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/NinjaDropdown.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaDropdown_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaDropdown.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaDropdown.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaDropdown_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaDropdown.vue?vue&type=template&id=181e42e0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaDropdown.vue?vue&type=template&id=181e42e0&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaDropdown_vue_vue_type_template_id_181e42e0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/compendium.js":
+/*!******************************************!*\
+  !*** ./resources/js/pages/compendium.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Compendium Page
+ */
+
+
+Vue.component('ninja-dropdown', __webpack_require__(/*! ../components/NinjaDropdown.vue */ "./resources/js/components/NinjaDropdown.vue")["default"]);
+var compendium = new Vue({
+  el: '#compendium',
+  data: {
+    firstLoad: true,
+    searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
+    chapter: 'items',
+    activeFilters: [],
+    noResults: true,
+    results: {
+      data: [],
+      links: {},
+      meta: {}
+    },
+    // These are submitted as parameters
+    filters: {},
+    sorting: 'name:asc',
+    perPage: 15,
+    // Setting to pass off to Ninja Dropdown
+    ninjaFilters: {
+      item: itemFilters,
+      recipe: recipeFilters,
+      equipment: equipmentFilters,
+      sorting: sortingFilters,
+      perPage: perPageFilters
+    }
+  },
+  mounted: function mounted() {
+    this.initializeDropdowns();
+    this.buildRanges();
+    if (this.searchTerm) this.search();
+    $('.search-form').on('submit', function (event) {
+      event.preventDefault();
+      compendium.searchTerm = $(this).find('input:visible').val();
+      compendium.search();
+      return false;
+    }).find('input:visible').on('keyup', function (event) {
+      if (event.which == 13) $(this).closest('form').trigger('submit');
+    });
+  },
+  methods: {
+    initializeDropdowns: function initializeDropdowns() {
+      $('#compendium').find('select.cs-select').each(function () {
+        var compendiumVar = $(this).data('compendium-var');
+        new SelectFx(this, {
+          onChange: function onChange(val) {
+            compendium[compendiumVar] = val;
+          }
+        });
+      });
+    },
+    search: function search() {
+      var _this = this;
+
+      var call = 'items'; // TODO search "Blue Dye"
+      // TODO search "Moogle"
+
+      if (this.chapters == 'quests') call = 'quests';
+      var data = Object.assign({}, this.filters);
+      data.name = this.searchTerm;
+      data.sorting = this.sorting.split(':')[0];
+      data.ordering = this.sorting.split(':')[1];
+      data.perPage = this.perPage;
+      axios.post('/api/' + call, data).then(function (response) {
+        _this.results = response.data;
+        _this.firstLoad = false;
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    buildRanges: function buildRanges() {
+      $('.slider-range').each(function () {
+        var el = $(this),
+            domEl = el[0],
+            min = parseInt(el.data('min')),
+            max = parseInt(el.data('max')),
+            snapEls = [el.parent().find('.min'), el.parent().find('.max')];
+        noUiSlider.create(domEl, {
+          start: [min, max],
+          connect: true,
+          step: 1,
+          range: {
+            'min': [min],
+            'max': [max]
+          }
+        });
+        domEl.noUiSlider.on('update', function (values, key) {
+          snapEls[key].html(values[key].replace('.00', ''));
+        });
+      });
+    },
+    removeFilter: function removeFilter(filterName) {
+      this.activeFilters = this.activeFilters.filter(function (value) {
+        return value != filterName;
+      });
+      this.applyFilter(filterName);
+    },
+    applyFilter: function applyFilter(filterName) {
+      var widgetEl = $('.widget.-filter.-' + filterName),
+          type = widgetEl.data('type');
+
+      if (!widgetEl.is(':visible')) {
+        if (type == 'range') {
+          var sliderEl = widgetEl.find('.slider-range'),
+              keys = sliderEl.data('keys').split(',');
+          this.filters["delete"](keys[0]);
+          this.filters["delete"](keys[1]);
+        } else {
+          this.filters["delete"](filterName);
+        }
+      } else {
+        if (type == 'range') {
+          var sliderEl = widgetEl.find('.slider-range'),
+              keys = sliderEl.data('keys').split(','),
+              min = parseInt(sliderEl.parent().find('.min').html()),
+              max = parseInt(sliderEl.parent().find('.max').html());
+          this.filters[keys[0]] = min;
+          this.filters[keys[1]] = max;
+        } else if (type == 'multiple') {
+          var values = widgetEl.find('input:checkbox:checked').map(function () {
+            return this.value;
+          }).get();
+          this.filters[filterName] = values;
+        }
+      } // Clear the page
+
+
+      if (typeof this.filters.page !== 'undefined') this.filters["delete"]('page');
+      this.search();
+    },
+    previousPage: function previousPage() {},
+    nextPage: function nextPage() {},
+    searchFocus: function searchFocus() {
+      $('.search-form :input').focus().select();
+    },
+    onNinjaDropdownClick: function onNinjaDropdownClick(key, value) {
+      if (key == 'filter') this.activeFilters.push(value);else this[key] = value;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/scss/app.scss":
+/*!*********************************!*\
+  !*** ./resources/scss/app.scss ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 0:
+/*!**************************************************************************!*\
+  !*** multi ./resources/js/pages/compendium.js ./resources/scss/app.scss ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/js/pages/compendium.js */"./resources/js/pages/compendium.js");
+module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/app.scss */"./resources/scss/app.scss");
+
+
+/***/ })
+
+},[[0,"/js/manifest"]]]);

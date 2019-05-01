@@ -4,7 +4,6 @@
 		'pages/compendium',
 	],
 	'js' => [
-		'components/ninja-dropdown',
 		'pages/compendium',
 	]
 ])

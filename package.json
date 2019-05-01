@@ -1,44 +1,29 @@
 {
-	"name": "caas",
-	"description": "Gulp configuration for content and asset handling",
-	"author": "Nick Wright",
 	"private": true,
-	"dependencies": {
-		"axios": "^0.18.0",
-		"bootstrap": "^4.1.3",
-		"bootstrap4-notify": "^4.0.3",
-		"debounce": "^1.1.0",
-		"del": "^3.0.0",
-		"fb-watchman": "^2.0.0",
-		"gm": "^1.23.0",
-		"gulp": "^4.0.0",
-		"gulp-autoprefixer": "^3.1.1",
-		"gulp-cached": "^1.1.1",
-		"gulp-changed": "^3.2.0",
-		"gulp-concat": "^2.6.1",
-		"gulp-filter": "^5.0.0",
-		"gulp-if": "^2.0.2",
-		"gulp-ignore": "^2.0.2",
-		"gulp-imageoptim": "^1.0.9",
-		"gulp-js-import": "^1.0.5",
-		"gulp-livereload": "^3.8.1",
-		"gulp-load-plugins": "^1.5.0",
-		"gulp-newer": "^1.4.0",
-		"gulp-notify": "^3.0.0",
-		"gulp-plumber": "^1.1.0",
-		"gulp-sass": "^4.0.1",
-		"gulp-sass-multi-inheritance": "^1.0.2",
-		"gulp-shell": "^0.6.3",
-		"gulp-terser": "^1.0.1",
-		"imagemin": "^5.3.1",
-		"imagemin-webp": "^4.0.0",
-		"imageoptim-cli": "^1.14.9",
-		"sw-toolbox": "^3.6.0",
-		"vue": "^2.5.17"
+	"scripts": {
+		"dev": "npm run development",
+		"development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+		"watch": "npm run development -- --watch",
+		"watch-poll": "npm run watch -- --watch-poll",
+		"hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+		"prod": "npm run production",
+		"production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
 	},
-	"browserslist": [
-		"> 1%",
-		"Last 2 versions"
-	],
-	"engine": "node >= 0.10"
+	"devDependencies": {
+		"axios": "^0.18",
+		"bootstrap": "^4.3.1",
+		"cross-env": "^5.1",
+		"jquery": "^3.2",
+		"laravel-mix": "^4.0.7",
+		"lodash": "^4.17.11",
+		"popper.js": "^1.12",
+		"resolve-url-loader": "^2.3.1",
+		"sass": "^1.15.2",
+		"sass-loader": "^7.1.0",
+		"vue": "^2.6.10",
+		"vue-template-compiler": "^2.6.10"
+	},
+	"dependencies": {
+		"junk": "^3.1.0"
+	}
 }
