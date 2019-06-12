@@ -14,6 +14,10 @@ getFiles('resources/js/pages').forEach(function (filepath) {
 	mix.js('resources/js/pages/' + filepath, 'public/js/pages');
 });
 
+getFiles('resources/scss/pages').forEach(function (filepath) {
+	mix.sass('resources/scss/pages/' + filepath, 'public/css/pages');
+});
+
 mix.sass('resources/scss/app.scss', 'public/css');
 
 mix.js('resources/js/app.js', 'public/js')

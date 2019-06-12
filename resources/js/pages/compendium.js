@@ -34,9 +34,6 @@ const compendium = new Vue({
 	},
 	mounted:function() {
 		this.initializeDropdowns();
-		this.buildRanges();
-		if (this.searchTerm)
-			this.search();
 
 		$('.search-form').on('submit', function(event) {
 			event.preventDefault();
@@ -50,6 +47,8 @@ const compendium = new Vue({
 	},
 	methods: {
 		initializeDropdowns:function() {
+			var thisObject = this;
+
 			$('#compendium').find('select.cs-select').each(function() {
 				var compendiumVar = $(this).data('compendium-var');
 				new SelectFx(this, {
@@ -57,7 +56,18 @@ const compendium = new Vue({
 						compendium[compendiumVar] = val;
 					}
 				});
+
+				// Set initial value
+				thisObject[compendiumVar] = $(this).val();
 			});
+
+			this.activeFilters = [];
+
+			$.each(this.ninjaFilters[this.chapter], function() {
+				thisObject.activeFilters.push(this.key);
+			});
+
+			this.applyFilters();
 		},
 		search:function() {
 			var call = 'items';
@@ -65,8 +75,10 @@ const compendium = new Vue({
 			// TODO search "Blue Dye"
 			// TODO search "Moogle"
 
-			if (this.chapters == 'quests')
+			if (this.chapters == 'quest')
 				call = 'quests';
+			else if (this.chapters == 'mob')
+				call = 'mobs';
 
 			var data = Object.assign({}, this.filters);
 
@@ -83,38 +95,18 @@ const compendium = new Vue({
 				})
 				.catch(error => console.log(error));
 		},
-		buildRanges:function() {
-			$('.slider-range').each(function() {
-				var el = $(this),
-					domEl = el[0],
-					min = parseInt(el.data('min')),
-					max = parseInt(el.data('max')),
-					snapEls = [
-						el.parent().find('.min'),
-						el.parent().find('.max'),
-					];
+		applyFilters:function() {
+			var thisObject = this;
 
-				noUiSlider.create(domEl, {
-					start: [ min, max ],
-					connect: true,
-					step: 1,
-					range: {
-						'min': [ min ],
-						'max': [ max ]
-					}
-				});
-
-				domEl.noUiSlider.on('update', function(values, key) {
-					snapEls[key].html(values[key].replace('.00', ''));
-				});
-			});
-		},
-		removeFilter:function(filterName) {
-			this.activeFilters = this.activeFilters.filter(function(value) {
-				return value != filterName;
+			$.each(this.ninjaFilters[this.chapter], function() {
+				thisObject.applyFilter(this.key);
 			});
 
-			this.applyFilter(filterName);
+			// Clear the page
+			if (typeof this.filters.page !== 'undefined')
+				this.filters.delete('page');
+
+			this.search();
 		},
 		applyFilter:function(filterName) {
 			var widgetEl = $('.widget.-filter.-' + filterName),
@@ -134,12 +126,10 @@ const compendium = new Vue({
 			else
 			{
 				if (type == 'range') {
-					var sliderEl = widgetEl.find('.slider-range'),
-						keys = sliderEl.data('keys').split(','),
-						min = parseInt(sliderEl.parent().find('.min').html()),
-						max = parseInt(sliderEl.parent().find('.max').html());
-					this.filters[keys[0]] = min;
-					this.filters[keys[1]] = max;
+					var min = parseInt(widgetEl.find('.min').val()),
+						max = parseInt(widgetEl.find('.max').val());
+					this.filters[filterName + 'Min'] = min;
+					this.filters[filterName + 'Max'] = max;
 				} else if (type == 'multiple') {
 					var values = widgetEl.find('input:checkbox:checked').map(function() {
 						return this.value;
@@ -147,12 +137,6 @@ const compendium = new Vue({
 					this.filters[filterName] = values;
 				}
 			}
-
-			// Clear the page
-			if (typeof this.filters.page !== 'undefined')
-				this.filters.delete('page');
-
-			this.search();
 		},
 		previousPage:function() {
 

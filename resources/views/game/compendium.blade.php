@@ -32,7 +32,7 @@
 
 @section('content')
 		<div id='compendium'>
-			<div class='post-filter post-filter--boxed mb-0'>
+			<div class='post-filter post-filter--boxed mb-3'>
 				<form action='#' class='post-filter__form'>
 					<div class='post-filter__select'>
 						<label class='post-filter__label'>
@@ -40,10 +40,13 @@
 							Chapter
 						</label>
 						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
-							<option value='items'>Items</option>
-							<option value='recipes'>Recipes</option>
+							<option value='recipe'>Recipes</option>
+							{{--
 							<option value='equipment'>Equipment</option>
-							<option value='quests'>Quests</option>
+							<option value='item'>All Items</option>
+							<option value='quest'>Quests</option>
+							<option value='mob'>Enemies</option>
+							--}}
 						</select>
 					</div>
 					{{--
@@ -58,55 +61,12 @@
 					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
 					<div class='post-filter__submit'>
-						<button type='button' class='btn btn-primary btn-block' @click='search()'>
+						<button type='button' class='btn btn-primary btn-block' @click='applyFilters()'>
 							<i class='fas fa-check-square mr-1'></i>
 							Apply Filters
 						</button>
 					</div>
 				</form>
-			</div>
-			<div class='ninja-filters mb-3'>
-				<div class='ninja-filter'>
-					<div class='filter-content'>
-						<i class='fas {!! config('crafting.filters.all')['ilvl']['icon'] !!}'></i>
-						<span class='mr-2'>{!! config('crafting.filters.all')['ilvl']['title'] !!}</span>
-						<span class='badge badge-light' hidden>0</span>
-						<i class='fas fa-angle-down'></i>
-					</div>
-					<div class='filter-dropdown -range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $max['ilvl'] }}'>
-						<input type='number' name='ilvlMin' class='form-control' value='' min='1' max='{{ $max['ilvl'] }}'>
-						<div class='text-center'>
-							<i class='fas fa-long-arrow-alt-down'></i>
-						</div>
-						<input type='number' name='ilvlMax' class='form-control' value='' min='1' max='{{ $max['ilvl'] }}'>
-						{{-- @foreach (config('game.rarity') as $rarityKey => $rarity)
-							<div>
-								<label class='checkbox checkbox-inline'>
-									<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
-									<span class='checkbox-indicator'></span>
-								</label>
-							</div>
-						@endforeach --}}
-					</div>
-				</div>
-				<div class='ninja-filter'>
-					<div class='filter-content'>
-						<i class='fas {!! config('crafting.filters.all')['rarity']['icon'] !!}'></i>
-						<span class='mr-2'>{!! config('crafting.filters.all')['rarity']['title'] !!}</span>
-						<span class='badge badge-light' hidden>0</span>
-						<i class='fas fa-angle-down'></i>
-					</div>
-					<div class='filter-dropdown -checkboxes'>
-						@foreach (config('game.rarity') as $rarityKey => $rarity)
-							<div>
-								<label class='checkbox checkbox-inline'>
-									<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
-									<span class='checkbox-indicator'></span>
-								</label>
-							</div>
-						@endforeach
-					</div>
-				</div>
 			</div>
 
 			<div class='row'>
@@ -199,41 +159,17 @@
 				{{-- Sidebar --}}
 				<div class='sidebar sidebar--shop col-md-3 order-md-1' v-if='activeFilters.length > 0'>
 
-
-					{{-- Filters List/Anchors --}}
-					{{-- <aside class='widget card widget--sidebar -filters'>
-						<div class='widget__title card__header card__header--has-btn'>
-							<h4>
-								<i class='fas fa-filter'></i>
-								Filter By&hellip;
-							</h4>
-						</div>
-						<div class='widget__content card__content'>
-							<ul class='widget__list'>
-								@foreach (config('crafting.filters.all') as $filter)
-								<li data-filter='{{ $filter['key'] }}' v-if='["{!! $filter['for'] !!}"].includes(chapter) && ! activeFilters.includes("{{ $filter['key'] }}")'>
-									<a href='#' @click.prevent='activeFilters.push("{{ $filter['key'] }}")'>
-										<i class='fas {{ $filter['icon'] }} mr-1'></i>
-										{{ $filter['title'] }}
-									</a>
-								</li>
-								@endforeach
-								<li class='clear-filters'>
-									<a href='#' @click.prevent='activeFilters = []'>
-										<i class='fas fa-broom mr-1'></i>
-										Clear Filters
-									</a>
-								</li>
-							</ul>
-						</div>
-					</aside> --}}
-
 					{{-- Filter Widgets --}}
 					@component('game.compendium.widget', config('crafting.filters.all')['ilvl'])
-						<div class='slider-range-wrapper'>
-							<div class='slider-range' data-keys='ilvlMin,ilvlMax' data-min='1' data-max='{{ $max['ilvl'] }}'></div>
-							<div class='slider-range-label'>
-								iLv: <span class='min'></span> - <span class='max'></span>
+						<div class='row'>
+							<div class='col'>
+								<input type='number' class='form-control min' value='1' min='1' max='{{ $max['ilvl'] }}'>
+							</div>
+							<div class='col-auto'>
+								<i class='fas fa-exchange-alt mt-3'></i>
+							</div>
+							<div class='col'>
+								<input type='number' class='form-control max' value='{{ $max['ilvl'] }}' min='1' max='{{ $max['ilvl'] }}'>
 							</div>
 						</div>
 					@endcomponent
@@ -241,9 +177,9 @@
 					@component('game.compendium.widget', config('crafting.filters.all')['rarity'])
 						<div class='row'>
 							@foreach (config('game.rarity') as $rarityKey => $rarity)
-								<div class='col-md-6'>
-									<div class='form-group form-group--xs'>
-										<label class='checkbox checkbox-inline'>
+								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
+									<div class='form-group form-group--xs mb-2'>
+										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
 											<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
 											<span class='checkbox-indicator'></span>
 										</label>
@@ -254,10 +190,15 @@
 					@endcomponent
 
 					@component('game.compendium.widget', config('crafting.filters.all')['rlevel'])
-						<div class='slider-range-wrapper'>
-							<div class='slider-range' data-keys='rlvlMin,rlvlMax' data-min='1' data-max='{{ $max['rlvl'] }}'></div>
-							<div class='slider-range-label'>
-								rLv: <span class='min'></span> - <span class='max'></span>
+						<div class='row'>
+							<div class='col'>
+								<input type='number' class='form-control min' value='1' min='1' max='{{ $max['rlvl'] }}'>
+							</div>
+							<div class='col-auto'>
+								<i class='fas fa-exchange-alt mt-3'></i>
+							</div>
+							<div class='col'>
+								<input type='number' class='form-control max' value='{{ $max['rlvl'] }}' min='1' max='{{ $max['rlvl'] }}'>
 							</div>
 						</div>
 					@endcomponent
@@ -278,8 +219,8 @@
 					@component('game.compendium.widget', config('crafting.filters.all')['rdifficulty'])
 						<div class='row'>
 							@foreach (range(0, config('game.maxDifficulty')) as $sublevel)
-								<div class='col-md-6'>
-									<div class='form-group form-group--xs'>
+								<div class='col-md-{{ $sublevel == 0 ? 12 : 6 }}'>
+									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline'>
 											<input type='checkbox' name='sublevel[]' id='sublevel-{{ $sublevel }}' value='{{ $sublevel }}' checked>
 											<span class='checkbox-indicator'></span>
@@ -340,7 +281,7 @@
 						<div class='row'>
 							@foreach (range(0, config('game.maxSockets')) as $sockets)
 								<div class='col-md-6'>
-									<div class='form-group form-group--xs'>
+									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline'>
 											<input type='checkbox' name='sockets[]' id='sockets-{{ $sockets }}' value='{{ $sockets }}' checked>
 											<span class='checkbox-indicator'></span>

@@ -369,8 +369,6 @@ var compendium = new Vue({
   },
   mounted: function mounted() {
     this.initializeDropdowns();
-    this.buildRanges();
-    if (this.searchTerm) this.search();
     $('.search-form').on('submit', function (event) {
       event.preventDefault();
       compendium.searchTerm = $(this).find('input:visible').val();
@@ -382,14 +380,22 @@ var compendium = new Vue({
   },
   methods: {
     initializeDropdowns: function initializeDropdowns() {
+      var thisObject = this;
       $('#compendium').find('select.cs-select').each(function () {
         var compendiumVar = $(this).data('compendium-var');
         new SelectFx(this, {
           onChange: function onChange(val) {
             compendium[compendiumVar] = val;
           }
-        });
+        }); // Set initial value
+
+        thisObject[compendiumVar] = $(this).val();
       });
+      this.activeFilters = [];
+      $.each(this.ninjaFilters[this.chapter], function () {
+        thisObject.activeFilters.push(this.key);
+      });
+      this.applyFilters();
     },
     search: function search() {
       var _this = this;
@@ -397,7 +403,7 @@ var compendium = new Vue({
       var call = 'items'; // TODO search "Blue Dye"
       // TODO search "Moogle"
 
-      if (this.chapters == 'quests') call = 'quests';
+      if (this.chapters == 'quest') call = 'quests';else if (this.chapters == 'mob') call = 'mobs';
       var data = Object.assign({}, this.filters);
       data.name = this.searchTerm;
       data.sorting = this.sorting.split(':')[0];
@@ -410,32 +416,14 @@ var compendium = new Vue({
         return console.log(error);
       });
     },
-    buildRanges: function buildRanges() {
-      $('.slider-range').each(function () {
-        var el = $(this),
-            domEl = el[0],
-            min = parseInt(el.data('min')),
-            max = parseInt(el.data('max')),
-            snapEls = [el.parent().find('.min'), el.parent().find('.max')];
-        noUiSlider.create(domEl, {
-          start: [min, max],
-          connect: true,
-          step: 1,
-          range: {
-            'min': [min],
-            'max': [max]
-          }
-        });
-        domEl.noUiSlider.on('update', function (values, key) {
-          snapEls[key].html(values[key].replace('.00', ''));
-        });
-      });
-    },
-    removeFilter: function removeFilter(filterName) {
-      this.activeFilters = this.activeFilters.filter(function (value) {
-        return value != filterName;
-      });
-      this.applyFilter(filterName);
+    applyFilters: function applyFilters() {
+      var thisObject = this;
+      $.each(this.ninjaFilters[this.chapter], function () {
+        thisObject.applyFilter(this.key);
+      }); // Clear the page
+
+      if (typeof this.filters.page !== 'undefined') this.filters["delete"]('page');
+      this.search();
     },
     applyFilter: function applyFilter(filterName) {
       var widgetEl = $('.widget.-filter.-' + filterName),
@@ -452,23 +440,17 @@ var compendium = new Vue({
         }
       } else {
         if (type == 'range') {
-          var sliderEl = widgetEl.find('.slider-range'),
-              keys = sliderEl.data('keys').split(','),
-              min = parseInt(sliderEl.parent().find('.min').html()),
-              max = parseInt(sliderEl.parent().find('.max').html());
-          this.filters[keys[0]] = min;
-          this.filters[keys[1]] = max;
+          var min = parseInt(widgetEl.find('.min').val()),
+              max = parseInt(widgetEl.find('.max').val());
+          this.filters[filterName + 'Min'] = min;
+          this.filters[filterName + 'Max'] = max;
         } else if (type == 'multiple') {
           var values = widgetEl.find('input:checkbox:checked').map(function () {
             return this.value;
           }).get();
           this.filters[filterName] = values;
         }
-      } // Clear the page
-
-
-      if (typeof this.filters.page !== 'undefined') this.filters["delete"]('page');
-      this.search();
+      }
     },
     previousPage: function previousPage() {},
     nextPage: function nextPage() {},
@@ -494,14 +476,38 @@ var compendium = new Vue({
 
 /***/ }),
 
+/***/ "./resources/scss/pages/compendium.scss":
+/*!**********************************************!*\
+  !*** ./resources/scss/pages/compendium.scss ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "./resources/scss/pages/game-index.scss":
+/*!**********************************************!*\
+  !*** ./resources/scss/pages/game-index.scss ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ 0:
-/*!**************************************************************************!*\
-  !*** multi ./resources/js/pages/compendium.js ./resources/scss/app.scss ***!
-  \**************************************************************************/
+/*!********************************************************************************************************************************************************!*\
+  !*** multi ./resources/js/pages/compendium.js ./resources/scss/pages/compendium.scss ./resources/scss/pages/game-index.scss ./resources/scss/app.scss ***!
+  \********************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/js/pages/compendium.js */"./resources/js/pages/compendium.js");
+__webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/compendium.scss */"./resources/scss/pages/compendium.scss");
+__webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/game-index.scss */"./resources/scss/pages/game-index.scss");
 module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/app.scss */"./resources/scss/app.scss");
 
 
