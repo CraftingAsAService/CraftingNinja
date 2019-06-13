@@ -89,11 +89,13 @@
 						<!-- Header Search Form -->
 						@if (config('game'))
 						<div class='header-search-form'>
+							@if ( ! \Request::is('compendium'))
 							<form action='/compendium' method='post' id='mobile-search-form' class='search-form'>
 								@csrf
 								<input type='text' class='form-control header-mobile__search-control' name='search' value='{{ request('search') }}' placeholder='Search the compendium'>
 								<button type='submit' class='header-mobile__search-submit'><i class='fa fa-search'></i></button>
 							</form>
+							@endif
 						</div>
 						@endif
 						<!-- Header Search Form / End -->

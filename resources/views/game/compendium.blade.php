@@ -10,10 +10,8 @@
 
 @section('head')
 	<script>
-		@if ($searchTerm)
-		var searchTerm = '{{ $searchTerm }}';
-		@endif
-		var itemFilters = @json(array_values(config('crafting.filters.item'))),
+		var searchTerm = '{{ $searchTerm }}',
+			itemFilters = @json(array_values(config('crafting.filters.item'))),
 			recipeFilters = @json(array_values(config('crafting.filters.recipe'))),
 			equipmentFilters = @json(array_values(config('crafting.filters.equipment'))),
 			sortingFilters = @json(array_values(config('crafting.filters.sorting'))),
@@ -60,17 +58,17 @@
 
 					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
-					<div class='post-filter__submit'>
+					{{-- <div class='post-filter__submit'>
 						<button type='button' class='btn btn-primary btn-block' @click='applyFilters()'>
 							<i class='fas fa-check-square mr-1'></i>
 							Apply Filters
 						</button>
-					</div>
+					</div> --}}
 				</form>
 			</div>
 
 			<div class='row'>
-				<div :class='activeFilters.length > 0 ? "col-md-9 order-md-2" : "col-md-12"'>
+				<div class='col-md-9 order-md-2'>
 					<div class='card card--clean'>
 						{{-- Results --}}
 						<div class='card__content'>
@@ -157,19 +155,23 @@
 				</div>
 
 				{{-- Sidebar --}}
-				<div class='sidebar sidebar--shop col-md-3 order-md-1' v-if='activeFilters.length > 0'>
+				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
 
 					{{-- Filter Widgets --}}
+					@component('game.compendium.widget', config('crafting.filters.all')['name'])
+						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch'>
+					@endcomponent
+
 					@component('game.compendium.widget', config('crafting.filters.all')['ilvl'])
 						<div class='row'>
 							<div class='col'>
-								<input type='number' class='form-control min' value='1' min='1' max='{{ $max['ilvl'] }}'>
+								<input type='number' class='form-control min' v-model='filters.ilvlMin' min='1' max='{{ $max['ilvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 							<div class='col-auto'>
 								<i class='fas fa-exchange-alt mt-3'></i>
 							</div>
 							<div class='col'>
-								<input type='number' class='form-control max' value='{{ $max['ilvl'] }}' min='1' max='{{ $max['ilvl'] }}'>
+								<input type='number' class='form-control max' v-model='filters.ilvlMax' min='1' max='{{ $max['ilvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 						</div>
 					@endcomponent
@@ -180,7 +182,7 @@
 								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
 									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
-											<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' value='{{ $rarityKey }}' checked> {{ $rarity }}
+											<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' v-model='filters.rarity[{{ $rarityKey }}]' v-on:input='debouncedSearch'> {{ $rarity }}
 											<span class='checkbox-indicator'></span>
 										</label>
 									</div>
@@ -189,16 +191,16 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', config('crafting.filters.all')['rlevel'])
+					@component('game.compendium.widget', config('crafting.filters.all')['rlvl'])
 						<div class='row'>
 							<div class='col'>
-								<input type='number' class='form-control min' value='1' min='1' max='{{ $max['rlvl'] }}'>
+								<input type='number' class='form-control min' v-model='filters.rlvlMin' min='1' max='{{ $max['rlvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 							<div class='col-auto'>
 								<i class='fas fa-exchange-alt mt-3'></i>
 							</div>
 							<div class='col'>
-								<input type='number' class='form-control max' value='{{ $max['rlvl'] }}' min='1' max='{{ $max['rlvl'] }}'>
+								<input type='number' class='form-control max' v-model='filters.rlvlMax' min='1' max='{{ $max['rlvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 						</div>
 					@endcomponent
@@ -208,7 +210,7 @@
 							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
 							@foreach ($jobSet->sortBy('id') as $job)
 								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-									<input type='checkbox' name='rclass[]' value='{{ $job->id }}' id='rclassId{{ $job->id }}' hidden>
+									<input type='checkbox' name='rclass[]' id='rclassId{{ $job->id }}' v-model='filters.rclass[{{ $job->id }}]' v-on:input='debouncedSearch' hidden>
 									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
 								</label>
 							@endforeach
@@ -222,7 +224,7 @@
 								<div class='col-md-{{ $sublevel == 0 ? 12 : 6 }}'>
 									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline'>
-											<input type='checkbox' name='sublevel[]' id='sublevel-{{ $sublevel }}' value='{{ $sublevel }}' checked>
+											<input type='checkbox' name='sublevel[]' id='sublevel-{{ $sublevel }}' v-model='filters.sublevel[{{ $sublevel }}]' v-on:input='debouncedSearch'>
 											<span class='checkbox-indicator'></span>
 											@if ($sublevel == 0)
 												Base Difficulty
@@ -238,11 +240,16 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', config('crafting.filters.all')['elevel'])
-						<div class='slider-range-wrapper'>
-							<div class='slider-range' data-keys='elvlMin,elvlMax' data-min='1' data-max='{{ $max['elvl'] }}'></div>
-							<div class='slider-range-label'>
-								eLv: <span class='min'></span> - <span class='max'></span>
+					@component('game.compendium.widget', config('crafting.filters.all')['elvl'])
+						<div class='row'>
+							<div class='col'>
+								<input type='number' class='form-control min' v-model='filters.elvlMin' min='1' max='{{ $max['elvl'] }}' v-on:input='debouncedSearch'>
+							</div>
+							<div class='col-auto'>
+								<i class='fas fa-exchange-alt mt-3'></i>
+							</div>
+							<div class='col'>
+								<input type='number' class='form-control max' v-model='filters.elvlMax' min='1' max='{{ $max['elvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 						</div>
 					@endcomponent
@@ -254,7 +261,7 @@
 							@foreach ($jobSet->sortBy('id') as $job)
 								<li class='filter-color__item {{ $jobType }}-job'>
 									<label class='checkbox' data-toggle='tooltip' title='{{ $job->name }}' for='eclassId{{ $job->id }}'>
-										<input type='checkbox' name='eclass[]' value='{{ $job->id }}' id='eclassId{{ $job->id }}' hidden>
+										<input type='checkbox' name='eclass[]' id='eclassId{{ $job->id }}' v-model='filters.eclass[{{ $job->id }}]' v-on:input='debouncedSearch' hidden>
 										<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->abbreviation }}.png' class='checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
 									</label>
 								</li>

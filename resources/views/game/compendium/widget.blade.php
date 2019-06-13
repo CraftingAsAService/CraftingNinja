@@ -1,4 +1,4 @@
-<aside class='widget card widget--sidebar -filter -{{ $key }}' data-type='{{ $type }}' v-show='["{!! implode('","', $for) !!}"].includes(chapter) && activeFilters.includes("{{ $key }}")'>
+<aside class='widget card widget--sidebar -filter -{{ $key }}' data-type='{{ $type }}' v-show='["{!! implode('","', $for) !!}"].includes(chapter)'>
 	<div class='widget__title card__header card__header--has-btn'>
 		<h4>
 			<i class='fas {{ $icon }} mr-1'></i>

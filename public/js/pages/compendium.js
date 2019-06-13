@@ -345,9 +345,7 @@ var compendium = new Vue({
   el: '#compendium',
   data: {
     firstLoad: true,
-    searchTerm: typeof searchTerm !== 'undefined' ? searchTerm : '',
-    chapter: 'items',
-    activeFilters: [],
+    chapter: 'recipe',
     noResults: true,
     results: {
       data: [],
@@ -355,7 +353,14 @@ var compendium = new Vue({
       meta: {}
     },
     // These are submitted as parameters
-    filters: {},
+    filters: {
+      name: searchTerm,
+      // Arrays need pre-defined as arrays
+      rclass: [],
+      sublevel: [],
+      rarity: [],
+      eclass: []
+    },
     sorting: 'name:asc',
     perPage: 15,
     // Setting to pass off to Ninja Dropdown
@@ -369,14 +374,10 @@ var compendium = new Vue({
   },
   mounted: function mounted() {
     this.initializeDropdowns();
-    $('.search-form').on('submit', function (event) {
-      event.preventDefault();
-      compendium.searchTerm = $(this).find('input:visible').val();
-      compendium.search();
-      return false;
-    }).find('input:visible').on('keyup', function (event) {
-      if (event.which == 13) $(this).closest('form').trigger('submit');
-    });
+    if (this.filters.name != '') this.search();
+  },
+  created: function created() {
+    this.debouncedSearch = _.debounce(this.search, 250);
   },
   methods: {
     initializeDropdowns: function initializeDropdowns() {
@@ -390,12 +391,10 @@ var compendium = new Vue({
         }); // Set initial value
 
         thisObject[compendiumVar] = $(this).val();
-      });
-      this.activeFilters = [];
-      $.each(this.ninjaFilters[this.chapter], function () {
-        thisObject.activeFilters.push(this.key);
-      });
-      this.applyFilters();
+      }); // this.activeFilters = [];
+      // for (var i = 0; i < this.ninjaFilters[this.chapter].length; i++)
+      // 	this.activeFilters.push(this.ninjaFilters[this.chapter][i].key);
+      // this.applyFilters();
     },
     search: function search() {
       var _this = this;
@@ -403,9 +402,24 @@ var compendium = new Vue({
       var call = 'items'; // TODO search "Blue Dye"
       // TODO search "Moogle"
 
-      if (this.chapters == 'quest') call = 'quests';else if (this.chapters == 'mob') call = 'mobs';
-      var data = Object.assign({}, this.filters);
-      data.name = this.searchTerm;
+      if (this.chapter == 'quest') call = 'quests';else if (this.chapter == 'mob') call = 'mobs'; // Clear data of any vue/observer interference
+
+      var data = JSON.parse(JSON.stringify(Object.assign({}, this.filters))); // Remove any values that don't match what the chapter expects
+
+      var allowableFields = [];
+
+      for (var prop in this.ninjaFilters[this.chapter]) {
+        if (this.ninjaFilters[this.chapter][prop].type == 'range') {
+          allowableFields.push(this.ninjaFilters[this.chapter][prop].key + 'Min');
+          allowableFields.push(this.ninjaFilters[this.chapter][prop].key + 'Max');
+        } else allowableFields.push(this.ninjaFilters[this.chapter][prop].key);
+      } // Any empty values also need removed
+
+
+      for (var prop in data) {
+        if (!data[prop].length || !allowableFields.includes(prop)) delete data[prop];
+      }
+
       data.sorting = this.sorting.split(':')[0];
       data.ordering = this.sorting.split(':')[1];
       data.perPage = this.perPage;
@@ -416,49 +430,53 @@ var compendium = new Vue({
         return console.log(error);
       });
     },
-    applyFilters: function applyFilters() {
-      var thisObject = this;
-      $.each(this.ninjaFilters[this.chapter], function () {
-        thisObject.applyFilter(this.key);
-      }); // Clear the page
-
-      if (typeof this.filters.page !== 'undefined') this.filters["delete"]('page');
-      this.search();
-    },
-    applyFilter: function applyFilter(filterName) {
-      var widgetEl = $('.widget.-filter.-' + filterName),
-          type = widgetEl.data('type');
-
-      if (!widgetEl.is(':visible')) {
-        if (type == 'range') {
-          var sliderEl = widgetEl.find('.slider-range'),
-              keys = sliderEl.data('keys').split(',');
-          this.filters["delete"](keys[0]);
-          this.filters["delete"](keys[1]);
-        } else {
-          this.filters["delete"](filterName);
-        }
-      } else {
-        if (type == 'range') {
-          var min = parseInt(widgetEl.find('.min').val()),
-              max = parseInt(widgetEl.find('.max').val());
-          this.filters[filterName + 'Min'] = min;
-          this.filters[filterName + 'Max'] = max;
-        } else if (type == 'multiple') {
-          var values = widgetEl.find('input:checkbox:checked').map(function () {
-            return this.value;
-          }).get();
-          this.filters[filterName] = values;
-        }
-      }
-    },
+    // applyFilters:function() {
+    // 	for (var i = 0; i < this.ninjaFilters[this.chapter].length; i++)
+    // 		this.applyFilter(this.ninjaFilters[this.chapter][i].key);
+    // 	// Clear the page
+    // 	if (typeof this.filters.page !== 'undefined')
+    // 		this.filters.delete('page');
+    // 	this.search();
+    // },
+    // applyFilter:function(filterName) {
+    // 	var widgetEl = $('.widget.-filter.-' + filterName),
+    // 		type = widgetEl.data('type');
+    // 	if ( ! widgetEl.is(':visible'))
+    // 	{
+    // 		if (type == 'range') {
+    // 			var sliderEl = widgetEl.find('.slider-range'),
+    // 				keys = sliderEl.data('keys').split(',');
+    // 			this.filters.delete(keys[0]);
+    // 			this.filters.delete(keys[1]);
+    // 		} else {
+    // 			this.filters.delete(filterName);
+    // 		}
+    // 	}
+    // 	else
+    // 	{
+    // 		if (type == 'range') {
+    // 			var min = parseInt(widgetEl.find('.min').val()),
+    // 				max = parseInt(widgetEl.find('.max').val());
+    // 			this.filters[filterName + 'Min'] = min;
+    // 			this.filters[filterName + 'Max'] = max;
+    // 		} else if (type == 'multiple') {
+    // 			var values = widgetEl.find('input:checkbox:checked').map(function() {
+    // 				return this.value;
+    // 			}).get();
+    // 			this.filters[filterName] = values;
+    // 		}
+    // 	}
+    // },
     previousPage: function previousPage() {},
     nextPage: function nextPage() {},
-    searchFocus: function searchFocus() {
-      $('.search-form :input').focus().select();
-    },
+    // searchFocus:function() {
+    // 	$('.search-form :input').focus().select();
+    // },
     onNinjaDropdownClick: function onNinjaDropdownClick(key, value) {
-      if (key == 'filter') this.activeFilters.push(value);else this[key] = value;
+      // if (key == 'filter')
+      // 	this.activeFilters.push(value);
+      // else
+      this[key] = value;
     }
   }
 });
