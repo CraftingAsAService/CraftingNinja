@@ -396,6 +396,12 @@ var compendium = new Vue({
       // 	this.activeFilters.push(this.ninjaFilters[this.chapter][i].key);
       // this.applyFilters();
     },
+    toggleFilter: function toggleFilter(filter, value) {
+      if (this.filters[filter].includes(value)) this.filters[filter] = this.filters[filter].filter(function (filterValue) {
+        return filterValue != value;
+      });else this.filters[filter].push(value);
+      this.debouncedSearch();
+    },
     search: function search() {
       var _this = this;
 
@@ -483,6 +489,17 @@ var compendium = new Vue({
 
 /***/ }),
 
+/***/ "./resources/scss/alchemists/theme.scss":
+/*!**********************************************!*\
+  !*** ./resources/scss/alchemists/theme.scss ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ "./resources/scss/app.scss":
 /*!*********************************!*\
   !*** ./resources/scss/app.scss ***!
@@ -517,16 +534,17 @@ var compendium = new Vue({
 /***/ }),
 
 /***/ 0:
-/*!********************************************************************************************************************************************************!*\
-  !*** multi ./resources/js/pages/compendium.js ./resources/scss/pages/compendium.scss ./resources/scss/pages/game-index.scss ./resources/scss/app.scss ***!
-  \********************************************************************************************************************************************************/
+/*!***********************************************************************************************************************************************************************************************!*\
+  !*** multi ./resources/js/pages/compendium.js ./resources/scss/pages/compendium.scss ./resources/scss/pages/game-index.scss ./resources/scss/app.scss ./resources/scss/alchemists/theme.scss ***!
+  \***********************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/js/pages/compendium.js */"./resources/js/pages/compendium.js");
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/compendium.scss */"./resources/scss/pages/compendium.scss");
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/game-index.scss */"./resources/scss/pages/game-index.scss");
-module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/app.scss */"./resources/scss/app.scss");
+__webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/app.scss */"./resources/scss/app.scss");
+module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/alchemists/theme.scss */"./resources/scss/alchemists/theme.scss");
 
 
 /***/ })

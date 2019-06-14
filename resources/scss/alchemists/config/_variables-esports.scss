@@ -599,7 +599,7 @@ $pushy-panel-bg-dark: $color-dark-lighten !default;
 //- ----------------------------------------------
 $page-heading-padding-lg: 45px 0 40px 0 !default;
 $page-heading-bg-color: $color-dark !default;
-$page-heading-bg-image-url: url("../images/esports/samples/page-heading.jpg") !default;
+$page-heading-bg-image-url: url("/images/esports/samples/page-heading.jpg") !default;
 $page-heading-bg-pattern-url: repeating-radial-gradient(at 50% 50%, #000, #000 1px, transparent 1px, transparent 4px) !default;
 $page-heading-bg-pattern-size: 5px 5px !default;
 $page-heading-bg-pattern-repeat: repeat !default;
@@ -612,7 +612,7 @@ $page-heading-font-style: italic !default;
 //- Player Page Heading
 //- ----------------------------------------------
 $player-page-heading-bg-color: $color-dark !default;
-$player-page-heading-bg-image-url: url("../images/football/player-page-heading.jpg") !default;
+$player-page-heading-bg-image-url: url("/images/football/player-page-heading.jpg") !default;
 $player-page-heading-bg-pattern-url: repeating-radial-gradient(at 50% 50%, #000, #000 1px, transparent 1px, transparent 4px) !default;
 $player-page-heading-bg-pattern-opacity: 0.4 !default;
 $player-page-heading-bg-pattern-size: 5px 5px !default;
@@ -728,7 +728,7 @@ $widget-player-stats-label-text-transform: none !default;
 $single-post-author-avatar-size:          100px !default;
 $single-post-author-avatar-border-radius: 4px !default;
 
-$single-post-3-image:                     url("../images/esports/samples/single-post-img14.jpg") !default;
+$single-post-3-image:                     url("/images/esports/samples/single-post-img14.jpg") !default;
 
 
 //- Pagination
@@ -806,7 +806,7 @@ $tournament-divider: $color-dark-2;
 
 //- Footer
 //- ----------------------------------------------
-$footer-widgets-bg:        url("../images/esports/samples/footer-bg.jpg") #3b2f4c !default;
+$footer-widgets-bg:        url("/images/esports/samples/footer-bg.jpg") #3b2f4c !default;
 $footer-secondary-bg:      $color-dark !default;
 $footer-secondary-side-bg: $color-primary !default;
 $footer-font-size:         13px !default;

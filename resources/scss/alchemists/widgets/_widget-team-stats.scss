@@ -250,7 +250,7 @@
 
 	// Cell Background
 	.team-stats-box--cell-bg {
-		background-image: url("../images/football/graph-bg.png"), linear-gradient(to right, rgba($card-border-color, 0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba($card-border-color, 0.4) 1px, transparent 1px);
+		background-image: url("/images/football/graph-bg.png"), linear-gradient(to right, rgba($card-border-color, 0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba($card-border-color, 0.4) 1px, transparent 1px);
 		background-repeat: no-repeat, repeat-x, repeat-y;
 		background-size: auto auto, 15px 100%, 100% 15px;
 		background-position: 50% 100%, -7px 0, 0 5px;

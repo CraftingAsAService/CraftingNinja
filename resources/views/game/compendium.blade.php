@@ -93,6 +93,9 @@
 												<span class='ilvl' v-html='data.ilvl'></span>
 												<span class='rlvl' v-if='data.recipes && data.ilvl != data.recipes[0].level' v-html='data.recipes[0].level'></span>
 												<span class='elvl' v-if='data.equipment && data.ilvl != data.equipment.level' v-html='data.equipment.level'></span>
+												<span class='difficulty' v-if='data.recipes[0].sublevel'>
+													<span class='sublevel-icon' v-for='n in data.recipes[0].sublevel'></span>
+												</span>
 											</span>
 											<span class='category badge badge-pill badge-secondary' v-if='data.category' v-html='data.category'></span>
 										</div>
@@ -182,7 +185,7 @@
 								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
 									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
-											<input type='checkbox' name='rarity[]' id='rarity-{{ $rarityKey }}' v-model='filters.rarity[{{ $rarityKey }}]' v-on:input='debouncedSearch'> {{ $rarity }}
+											<input type='checkbox' id='rarity-{{ $rarityKey }}' v-on:input='toggleFilter("rarity", "{{ $rarityKey }}")'> {{ $rarity }}
 											<span class='checkbox-indicator'></span>
 										</label>
 									</div>
@@ -210,7 +213,7 @@
 							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
 							@foreach ($jobSet->sortBy('id') as $job)
 								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-									<input type='checkbox' name='rclass[]' id='rclassId{{ $job->id }}' v-model='filters.rclass[{{ $job->id }}]' v-on:input='debouncedSearch' hidden>
+									<input type='checkbox' id='rclassId{{ $job->id }}' v-on:input='toggleFilter("rclass", "{{ $job->id }}")' hidden>
 									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
 								</label>
 							@endforeach
@@ -224,7 +227,7 @@
 								<div class='col-md-{{ $sublevel == 0 ? 12 : 6 }}'>
 									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline'>
-											<input type='checkbox' name='sublevel[]' id='sublevel-{{ $sublevel }}' v-model='filters.sublevel[{{ $sublevel }}]' v-on:input='debouncedSearch'>
+											<input type='checkbox' id='sublevel-{{ $sublevel }}' v-on:input='toggleFilter("sublevel", "{{ $sublevel }}")'>
 											<span class='checkbox-indicator'></span>
 											@if ($sublevel == 0)
 												Base Difficulty
@@ -261,7 +264,7 @@
 							@foreach ($jobSet->sortBy('id') as $job)
 								<li class='filter-color__item {{ $jobType }}-job'>
 									<label class='checkbox' data-toggle='tooltip' title='{{ $job->name }}' for='eclassId{{ $job->id }}'>
-										<input type='checkbox' name='eclass[]' id='eclassId{{ $job->id }}' v-model='filters.eclass[{{ $job->id }}]' v-on:input='debouncedSearch' hidden>
+										<input type='checkbox' id='eclassId{{ $job->id }}' v-on:input='toggleFilter("eclass", "{{ $job->id }}")' hidden>
 										<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->abbreviation }}.png' class='checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
 									</label>
 								</li>
@@ -276,7 +279,7 @@
 							@foreach (collect(config('game.equipmentLayout'))->unique() as $name => $key)
 								<li class='filter-color__item'>
 									<label class='checkbox' data-toggle='tooltip' title='{{ $name }}' for='slotId{{ $key }}'>
-										<input type='checkbox' name='slot[]' value='{{ $key }}' id='slotId{{ $key }}' hidden>
+										<input type='checkbox' id='slotId{{ $key }}' v-on:input='toggleFilter("slot", "{{ $key }}")' hidden>
 										<img src='/assets/{{ config('game.slug') }}/slots/{{ $key }}.png' alt='{{ $name }}' class='checkbox-indicator' width='24' height='24'>
 									</label>
 								</li>
@@ -290,7 +293,7 @@
 								<div class='col-md-6'>
 									<div class='form-group form-group--xs mb-2'>
 										<label class='checkbox checkbox-inline'>
-											<input type='checkbox' name='sockets[]' id='sockets-{{ $sockets }}' value='{{ $sockets }}' checked>
+											<input type='checkbox' id='sockets-{{ $sockets }}' v-on:input='toggleFilter("sockets", "{{ $sockets }}")' checked>
 											<span class='checkbox-indicator'></span>
 											@if ($sockets == 0)
 												Socketless

@@ -578,8 +578,8 @@ $pushy-panel-bg-dark: $color-dark-lighten;
 //- ----------------------------------------------
 $page-heading-padding-lg: 110px 0 106px 0;
 $page-heading-bg-color: $color-dark;
-$page-heading-bg-image-url: url("../images/soccer/page-heading.jpg");
-$page-heading-bg-pattern-url: url("../images/page-heading-pattern.png");
+$page-heading-bg-image-url: url("/images/soccer/page-heading.jpg");
+$page-heading-bg-pattern-url: url("/images/page-heading-pattern.png");
 $page-heading-bg-pattern-size: auto;
 $page-heading-bg-pattern-repeat: no-repeat;
 $page-heading-bg-pattern-opacity: 0.4;
@@ -591,8 +591,8 @@ $page-heading-font-style: normal;
 //- Player Page Heading
 //- ----------------------------------------------
 $player-page-heading-bg-color: $color-dark;
-$player-page-heading-bg-image-url: url("../images/soccer/page-heading.jpg");
-$player-page-heading-bg-pattern-url: url("../images/page-heading-pattern.png");
+$player-page-heading-bg-image-url: url("/images/soccer/page-heading.jpg");
+$player-page-heading-bg-pattern-url: url("/images/page-heading-pattern.png");
 $player-page-heading-bg-pattern-opacity: 0.4;
 $player-page-heading-bg-pattern-size: auto;
 $player-page-heading-bg-pattern-repeat: no-repeat;
@@ -706,7 +706,7 @@ $widget-player-stats-label-text-transform: uppercase !default;
 $single-post-author-avatar-size:          60px;
 $single-post-author-avatar-border-radius: 50%;
 
-$single-post-3-image:                     url("../images/soccer/samples/_soccer_single-post-img5.jpg");
+$single-post-3-image:                     url("/images/soccer/samples/_soccer_single-post-img5.jpg");
 
 
 //- Pagination

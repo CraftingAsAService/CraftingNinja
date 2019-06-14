@@ -590,7 +590,7 @@ $pushy-panel-bg-dark: $color-dark-lighten;
 //- ----------------------------------------------
 $page-heading-padding-lg: 67px 0 63px 0;
 $page-heading-bg-color: $color-dark;
-$page-heading-bg-image-url: url("../images/football/page-heading.jpg");
+$page-heading-bg-image-url: url("/images/football/page-heading.jpg");
 $page-heading-bg-pattern-url: repeating-radial-gradient(at 50% 50%, #000, #000 1px, transparent 1px, transparent 4px);
 $page-heading-bg-pattern-size: 5px 5px;
 $page-heading-bg-pattern-repeat: repeat;
@@ -603,7 +603,7 @@ $page-heading-font-style: normal;
 //- Player Page Heading
 //- ----------------------------------------------
 $player-page-heading-bg-color: $color-dark;
-$player-page-heading-bg-image-url: url("../images/football/player-page-heading.jpg");
+$player-page-heading-bg-image-url: url("/images/football/player-page-heading.jpg");
 $player-page-heading-bg-pattern-url: repeating-radial-gradient(at 50% 50%, #000, #000 1px, transparent 1px, transparent 4px);
 $player-page-heading-bg-pattern-opacity: 0.4;
 $player-page-heading-bg-pattern-size: 5px 5px;
@@ -718,7 +718,7 @@ $widget-player-stats-label-text-transform: uppercase !default;
 $single-post-author-avatar-size:          100px;
 $single-post-author-avatar-border-radius: 4px;
 
-$single-post-3-image:                     url("../images/football/samples/single-post-img25.jpg");
+$single-post-3-image:                     url("/images/football/samples/single-post-img25.jpg");
 
 
 //- Pagination

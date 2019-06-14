@@ -123,7 +123,7 @@
 
 /* With Background */
 .main-news-banner--bg {
-	background-image: url("../images/samples/main-news-banner__bg.jpg");
+	background-image: url("/images/samples/main-news-banner__bg.jpg");
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 	background-size: cover;
@@ -166,7 +166,7 @@
 
 	/* with Soccer Ball */
 	.main-news-banner--soccer-ball {
-		background-image: url("../images/soccer/samples/banner-soccer-ball.png");
+		background-image: url("/images/soccer/samples/banner-soccer-ball.png");
 		background-repeat: no-repeat;
 		background-position: 100% 100%;
 
@@ -210,7 +210,7 @@
 
 		/* With Background */
 		&.main-news-banner--bg {
-			background-image: url("../images/football/banner-helmet.png");
+			background-image: url("/images/football/banner-helmet.png");
 			background-repeat: no-repeat;
 			background-position: 0 0;
 			background-size: auto;
@@ -271,7 +271,7 @@
 @if $template == 'esports' {
 
 	.main-news-banner--bg {
-		background-image: url("../images/esports/samples/banner-bg.jpg");
+		background-image: url("/images/esports/samples/banner-bg.jpg");
 		background-position: 0 0;
 
 		&::before {

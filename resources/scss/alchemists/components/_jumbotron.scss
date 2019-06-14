@@ -23,7 +23,7 @@
 	.jumbotron--style1 {
 
 		@if $template == "esports" {
-			background-image: url("../images/esports/samples/jumbotron-bg1.jpg");
+			background-image: url("/images/esports/samples/jumbotron-bg1.jpg");
 		}
 
 		padding: 0;

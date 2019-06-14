@@ -349,17 +349,17 @@
 
 	// Banner 1
 	.main-nav-banner--img-1 {
-		background-image: url("../images/esports/samples/megamenu-banner-1.jpg");
+		background-image: url("/images/esports/samples/megamenu-banner-1.jpg");
 	}
 
 	// Banner 2
 	.main-nav-banner--img-2 {
-		background-image: url("../images/esports/samples/megamenu-banner-2.jpg");
+		background-image: url("/images/esports/samples/megamenu-banner-2.jpg");
 	}
 
 	// Banner 3
 	.main-nav-banner--img-3 {
-		background-image: url("../images/esports/samples/megamenu-banner-3.jpg");
+		background-image: url("/images/esports/samples/megamenu-banner-3.jpg");
 	}
 }
 
@@ -396,7 +396,7 @@
 	.main-nav__megamenu--has-bg {
 
 		@media (min-width: 992px) {
-			background-image: url("../images/esports/samples/megamenu-bg.png");
+			background-image: url("/images/esports/samples/megamenu-bg.png");
 			background-repeat: no-repeat;
 			background-position: 100% 100%;
 			padding-right: 142px;

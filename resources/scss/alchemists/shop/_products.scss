@@ -1383,6 +1383,7 @@
 				position: absolute;
 				top: .25rem;
 				right: .25rem;
+				box-shadow: 1px 1px $woodsmoke;
 
 				// .divider {
 				// 	&::before {
@@ -1414,6 +1415,14 @@
 							color: $woodsmoke;
 						}
 					}
+				}
+				.difficulty {
+					position: absolute;
+					top: 1.25rem;
+					right: .25rem;
+					display: block;
+					color: $white;
+					text-shadow: 1px 1px $woodsmoke;
 				}
 			}
 			.category {
@@ -1744,7 +1753,7 @@
 				width: 80px;
 				height: 80px;
 				margin: 0 10px 20px 10px;
-				// background-image: url("../images/esports/placeholder-cart-sm.png");
+				// background-image: url("/images/esports/placeholder-cart-sm.png");
 				background-position: 50% 50%;
 				background-repeat: no-repeat;
 				border-radius: $card-border-radius;

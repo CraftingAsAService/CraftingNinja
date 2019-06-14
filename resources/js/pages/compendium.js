@@ -69,6 +69,16 @@ const compendium = new Vue({
 
 			// this.applyFilters();
 		},
+		toggleFilter:function(filter, value) {
+			if (this.filters[filter].includes(value))
+				this.filters[filter] = this.filters[filter].filter(function(filterValue) {
+					return filterValue != value;
+				});
+			else
+				this.filters[filter].push(value);
+
+			this.debouncedSearch();
+		},
 		search:function() {
 			var call = 'items';
 

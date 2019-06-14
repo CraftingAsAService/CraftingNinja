@@ -580,8 +580,8 @@ $pushy-panel-bg-dark: $color-dark-lighten !default;
 //- ----------------------------------------------
 $page-heading-padding-lg: 110px 0 106px 0 !default;
 $page-heading-bg-color: $color-dark !default;
-$page-heading-bg-image-url: url("../images/page-heading.jpg") !default;
-$page-heading-bg-pattern-url: url("../images/page-heading-pattern.png") !default;
+$page-heading-bg-image-url: url("/images/page-heading.jpg") !default;
+$page-heading-bg-pattern-url: url("/images/page-heading-pattern.png") !default;
 $page-heading-bg-pattern-size: auto !default;
 $page-heading-bg-pattern-repeat: no-repeat !default;
 $page-heading-bg-pattern-opacity: 0.4 !default;
@@ -593,8 +593,8 @@ $page-heading-font-style: normal !default;
 //- Player Page Heading
 //- ----------------------------------------------
 $player-page-heading-bg-color: $color-dark !default;
-$player-page-heading-bg-image-url: url("../images/page-heading.jpg") !default;
-$player-page-heading-bg-pattern-url: url("../images/page-heading-pattern.png") !default;
+$player-page-heading-bg-image-url: url("/images/page-heading.jpg") !default;
+$player-page-heading-bg-pattern-url: url("/images/page-heading-pattern.png") !default;
 $player-page-heading-bg-pattern-opacity: 0.4 !default;
 $player-page-heading-bg-pattern-size: auto !default;
 $player-page-heading-bg-pattern-repeat: no-repeat !default;
@@ -708,7 +708,7 @@ $widget-player-stats-label-text-transform: uppercase !default;
 $single-post-author-avatar-size:          60px !default;
 $single-post-author-avatar-border-radius: 50% !default;
 
-$single-post-3-image:                     url("../images/samples/single-post-img5.jpg") !default;
+$single-post-3-image:                     url("/images/samples/single-post-img5.jpg") !default;
 
 
 //- Pagination

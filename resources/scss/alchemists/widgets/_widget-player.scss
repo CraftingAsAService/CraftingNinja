@@ -386,7 +386,7 @@
 			bottom: 1px;
 
 			@if $template == 'esports' {
-				background-image: url("../images/esports/samples/widget-featured-player-bg.jpg");
+				background-image: url("/images/esports/samples/widget-featured-player-bg.jpg");
 				filter: url("#duotone-filter-base");
 
 				// MS Edge fallback
