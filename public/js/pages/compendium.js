@@ -361,6 +361,11 @@ var compendium = new Vue({
       rarity: [],
       eclass: []
     },
+    collapsed: recipeFilters.filter(function (record) {
+      return !record.expanded;
+    }).map(function (record) {
+      return record.key;
+    }),
     sorting: 'name:asc',
     perPage: 15,
     // Setting to pass off to Ninja Dropdown
@@ -391,15 +396,18 @@ var compendium = new Vue({
         }); // Set initial value
 
         thisObject[compendiumVar] = $(this).val();
-      }); // this.activeFilters = [];
-      // for (var i = 0; i < this.ninjaFilters[this.chapter].length; i++)
-      // 	this.activeFilters.push(this.ninjaFilters[this.chapter][i].key);
-      // this.applyFilters();
+      });
     },
     toggleFilter: function toggleFilter(filter, value) {
       if (this.filters[filter].includes(value)) this.filters[filter] = this.filters[filter].filter(function (filterValue) {
         return filterValue != value;
       });else this.filters[filter].push(value);
+      this.debouncedSearch();
+    },
+    toggleCollapse: function toggleCollapse(section) {
+      if (this.collapsed.includes(section)) this.collapsed = this.collapsed.filter(function (value) {
+        return value != section;
+      });else this.collapsed.push(section);
       this.debouncedSearch();
     },
     search: function search() {
@@ -411,10 +419,13 @@ var compendium = new Vue({
       if (this.chapter == 'quest') call = 'quests';else if (this.chapter == 'mob') call = 'mobs'; // Clear data of any vue/observer interference
 
       var data = JSON.parse(JSON.stringify(Object.assign({}, this.filters))); // Remove any values that don't match what the chapter expects
+      //  And remove anything collapsed sections
 
       var allowableFields = [];
 
       for (var prop in this.ninjaFilters[this.chapter]) {
+        if (this.collapsed.includes(this.ninjaFilters[this.chapter][prop].key)) continue;
+
         if (this.ninjaFilters[this.chapter][prop].type == 'range') {
           allowableFields.push(this.ninjaFilters[this.chapter][prop].key + 'Min');
           allowableFields.push(this.ninjaFilters[this.chapter][prop].key + 'Max');
@@ -436,52 +447,9 @@ var compendium = new Vue({
         return console.log(error);
       });
     },
-    // applyFilters:function() {
-    // 	for (var i = 0; i < this.ninjaFilters[this.chapter].length; i++)
-    // 		this.applyFilter(this.ninjaFilters[this.chapter][i].key);
-    // 	// Clear the page
-    // 	if (typeof this.filters.page !== 'undefined')
-    // 		this.filters.delete('page');
-    // 	this.search();
-    // },
-    // applyFilter:function(filterName) {
-    // 	var widgetEl = $('.widget.-filter.-' + filterName),
-    // 		type = widgetEl.data('type');
-    // 	if ( ! widgetEl.is(':visible'))
-    // 	{
-    // 		if (type == 'range') {
-    // 			var sliderEl = widgetEl.find('.slider-range'),
-    // 				keys = sliderEl.data('keys').split(',');
-    // 			this.filters.delete(keys[0]);
-    // 			this.filters.delete(keys[1]);
-    // 		} else {
-    // 			this.filters.delete(filterName);
-    // 		}
-    // 	}
-    // 	else
-    // 	{
-    // 		if (type == 'range') {
-    // 			var min = parseInt(widgetEl.find('.min').val()),
-    // 				max = parseInt(widgetEl.find('.max').val());
-    // 			this.filters[filterName + 'Min'] = min;
-    // 			this.filters[filterName + 'Max'] = max;
-    // 		} else if (type == 'multiple') {
-    // 			var values = widgetEl.find('input:checkbox:checked').map(function() {
-    // 				return this.value;
-    // 			}).get();
-    // 			this.filters[filterName] = values;
-    // 		}
-    // 	}
-    // },
     previousPage: function previousPage() {},
     nextPage: function nextPage() {},
-    // searchFocus:function() {
-    // 	$('.search-form :input').focus().select();
-    // },
     onNinjaDropdownClick: function onNinjaDropdownClick(key, value) {
-      // if (key == 'filter')
-      // 	this.activeFilters.push(value);
-      // else
       this[key] = value;
     }
   }

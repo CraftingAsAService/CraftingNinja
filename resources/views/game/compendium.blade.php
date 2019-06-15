@@ -93,7 +93,7 @@
 												<span class='ilvl' v-html='data.ilvl'></span>
 												<span class='rlvl' v-if='data.recipes && data.ilvl != data.recipes[0].level' v-html='data.recipes[0].level'></span>
 												<span class='elvl' v-if='data.equipment && data.ilvl != data.equipment.level' v-html='data.equipment.level'></span>
-												<span class='difficulty' v-if='data.recipes[0].sublevel'>
+												<span class='difficulty' v-if='data.recipes && data.recipes[0].sublevel'>
 													<span class='sublevel-icon' v-for='n in data.recipes[0].sublevel'></span>
 												</span>
 											</span>

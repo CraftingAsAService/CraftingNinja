@@ -3,25 +3,28 @@
 // Filters array used to generate both filtration anchors and filtration widgets
 $filters = [
 	'name' => [
-		'key'	 => 'name',
-		'for'    => ['item', 'recipe', 'equipment', 'quest', 'mob'],
-		'type'   => 'string',
-		'icon'   => 'fa-magnify',
-		'title'  => 'Search',
+		'key'	   => 'name',
+		'for'      => ['item', 'recipe', 'equipment', 'quest', 'mob'],
+		'type'     => 'string',
+		'icon'     => 'fa-search',
+		'title'    => 'Search',
+		'expanded' => true,
 	],
 	'ilvl' => [
-		'key'	 => 'ilvl',
-		'for'    => ['item', 'recipe', 'equipment'],
-		'type'   => 'range',
-		'icon'   => 'fa-info',
-		'title'  => 'Item Level',
+		'key'	   => 'ilvl',
+		'for'      => ['item', 'recipe', 'equipment'],
+		'type'     => 'range',
+		'icon'     => 'fa-info',
+		'title'    => 'Item Level',
+		'expanded' => true,
 	],
-	'rarity' => [
-		'key'	 => 'rarity',
-		'for'    => ['item', 'recipe', 'equipment'],
-		'type'   => 'multiple',
-		'icon'   => 'fa-registered',
-		'title'  => 'Rarity',
+	'rclass' => [
+		'key'	   => 'rclass',
+		'for'      => ['recipe'],
+		'type'     => 'multiple',
+		'icon'     => 'fa-chess-bishop',
+		'title'    => 'Recipe Class',
+		'expanded' => true,
 	],
 	'rlvl' => [
 		'key'	 => 'rlvl',
@@ -29,13 +32,6 @@ $filters = [
 		'type'   => 'range',
 		'icon'   => 'fa-award',
 		'title'  => 'Recipe Level',
-	],
-	'rclass' => [
-		'key'	 => 'rclass',
-		'for'    => ['recipe'],
-		'type'   => 'multiple',
-		'icon'   => 'fa-chess-bishop',
-		'title'  => 'Recipe Class',
 	],
 	'rdifficulty' => [
 		'key'	 => 'sublevel',
@@ -72,16 +68,23 @@ $filters = [
 		'icon'   => 'fa-gem',
 		'title'  => 'Materia Sockets',
 	],
+	'rarity' => [
+		'key'	 => 'rarity',
+		'for'    => ['item', 'recipe', 'equipment'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-registered',
+		'title'  => 'Rarity',
+	],
 ];
 
 return [
 	'all' => $filters,
 
-	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity'])),
+	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', ])),
 
-	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'rlvl', 'rclass', 'rdifficulty'])),
+	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
 
-	'equipment' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'elvl', 'eclass', 'slot', 'sockets'])),
+	'equipment' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'elvl', 'eclass', 'slot', 'sockets', ])),
 
 	'sorting' => [
 		'name:asc' => [
