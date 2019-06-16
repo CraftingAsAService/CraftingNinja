@@ -345,6 +345,7 @@ var compendium = new Vue({
   el: '#compendium',
   data: {
     firstLoad: true,
+    loading: false,
     chapter: 'recipe',
     noResults: true,
     results: {
@@ -402,13 +403,13 @@ var compendium = new Vue({
       if (this.filters[filter].includes(value)) this.filters[filter] = this.filters[filter].filter(function (filterValue) {
         return filterValue != value;
       });else this.filters[filter].push(value);
-      this.debouncedSearch();
+      this.search();
     },
     toggleCollapse: function toggleCollapse(section) {
       if (this.collapsed.includes(section)) this.collapsed = this.collapsed.filter(function (value) {
         return value != section;
       });else this.collapsed.push(section);
-      this.debouncedSearch();
+      this.search();
     },
     search: function search() {
       var _this = this;
@@ -440,17 +441,26 @@ var compendium = new Vue({
       data.sorting = this.sorting.split(':')[0];
       data.ordering = this.sorting.split(':')[1];
       data.perPage = this.perPage;
+      data.page = this.filters.page;
+      this.loading = true;
       axios.post('/api/' + call, data).then(function (response) {
         _this.results = response.data;
-        _this.firstLoad = false;
+        _this.loading = _this.firstLoad = false;
       })["catch"](function (error) {
         return console.log(error);
       });
     },
-    previousPage: function previousPage() {},
-    nextPage: function nextPage() {},
+    previousPage: function previousPage() {
+      this.filters.page = this.results.meta.current_page - 1;
+      this.search();
+    },
+    nextPage: function nextPage() {
+      this.filters.page = this.results.meta.current_page + 1;
+      this.search();
+    },
     onNinjaDropdownClick: function onNinjaDropdownClick(key, value) {
       this[key] = value;
+      this.search();
     }
   }
 });

@@ -68,6 +68,16 @@
 					font-size: 9px;
 				}
 			}
+
+			&.-search {
+				input {
+					height: 2rem;
+					margin: 1.5rem 1rem 0;
+					width: calc(100% - 2rem);
+					border-radius: .5rem;
+					color: var(--light);
+				}
+			}
 		}
 
 		// Submit

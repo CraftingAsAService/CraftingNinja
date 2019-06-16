@@ -14092,6 +14092,14 @@ ul.posts:not(.post-grid) {
   font-size: 9px;
 }
 
+.post-filter__select.-search input {
+  height: 2rem;
+  margin: 1.5rem 1rem 0;
+  width: calc(100% - 2rem);
+  border-radius: 0.5rem;
+  color: var(--light);
+}
+
 .post-filter__submit {
   display: flex;
   width: 100%;
@@ -23196,7 +23204,7 @@ td.team-leader__avg {
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
-  box-shadow: 1px 1px #18191a;
+  box-shadow: 1px 1px 3px var(--light);
 }
 
 .products--grid-simple .product__thumb .levels .ilvl {
@@ -23239,6 +23247,7 @@ td.team-leader__avg {
   position: absolute;
   bottom: 0.25rem;
   right: 0.25rem;
+  box-shadow: 1px 1px 3px var(--secondary);
   max-width: calc(100% - .5rem);
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -47,6 +47,13 @@
 							--}}
 						</select>
 					</div>
+					<div class='post-filter__select -search'>
+						<label class='post-filter__label'>
+							<i class='fas fa-search mr-1'></i>
+							Search
+						</label>
+						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch'>
+					</div>
 					{{--
 					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='onNinjaDropdownClick'></ninja-dropdown>
 
@@ -161,9 +168,10 @@
 				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
 
 					{{-- Filter Widgets --}}
+					{{--
 					@component('game.compendium.widget', config('crafting.filters.all')['name'])
-						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch'>
-					@endcomponent
+						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch' :placeholder='"Find your " + chapter'>
+					@endcomponent --}}
 
 					@component('game.compendium.widget', config('crafting.filters.all')['ilvl'])
 						<div class='row'>
@@ -179,19 +187,17 @@
 						</div>
 					@endcomponent
 
-					@component('game.compendium.widget', config('crafting.filters.all')['rarity'])
-						<div class='row'>
-							@foreach (config('game.rarity') as $rarityKey => $rarity)
-								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
-									<div class='form-group form-group--xs mb-2'>
-										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
-											<input type='checkbox' id='rarity-{{ $rarityKey }}' v-on:input='toggleFilter("rarity", "{{ $rarityKey }}")'> {{ $rarity }}
-											<span class='checkbox-indicator'></span>
-										</label>
-									</div>
-								</div>
+					@component('game.compendium.widget', config('crafting.filters.all')['rclass'])
+						<div class='checkbox-table'>
+							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
+							@foreach ($jobSet->sortBy('id') as $job)
+								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
+									<input type='checkbox' id='rclassId{{ $job->id }}' v-on:input='toggleFilter("rclass", "{{ $job->id }}")' hidden>
+									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
+								</label>
 							@endforeach
-						</div>
+							@endforeach
+						</ul>
 					@endcomponent
 
 					@component('game.compendium.widget', config('crafting.filters.all')['rlvl'])
@@ -206,19 +212,6 @@
 								<input type='number' class='form-control max' v-model='filters.rlvlMax' min='1' max='{{ $max['rlvl'] }}' v-on:input='debouncedSearch'>
 							</div>
 						</div>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['rclass'])
-						<div class='checkbox-table'>
-							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
-							@foreach ($jobSet->sortBy('id') as $job)
-								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-									<input type='checkbox' id='rclassId{{ $job->id }}' v-on:input='toggleFilter("rclass", "{{ $job->id }}")' hidden>
-									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
-								</label>
-							@endforeach
-							@endforeach
-						</ul>
 					@endcomponent
 
 					@component('game.compendium.widget', config('crafting.filters.all')['rdifficulty'])
@@ -302,6 +295,21 @@
 												<span class='fas fa-gem' style='font-size: 13px;'></span>
 												@endforeach
 											@endif
+										</label>
+									</div>
+								</div>
+							@endforeach
+						</div>
+					@endcomponent
+
+					@component('game.compendium.widget', config('crafting.filters.all')['rarity'])
+						<div class='row'>
+							@foreach (config('game.rarity') as $rarityKey => $rarity)
+								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
+									<div class='form-group form-group--xs mb-2'>
+										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
+											<input type='checkbox' id='rarity-{{ $rarityKey }}' v-on:input='toggleFilter("rarity", "{{ $rarityKey }}")'> {{ $rarity }}
+											<span class='checkbox-indicator'></span>
 										</label>
 									</div>
 								</div>

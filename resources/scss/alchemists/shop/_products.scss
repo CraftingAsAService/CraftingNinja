@@ -1383,7 +1383,7 @@
 				position: absolute;
 				top: .25rem;
 				right: .25rem;
-				box-shadow: 1px 1px $woodsmoke;
+				box-shadow: 1px 1px 3px var(--light);
 
 				// .divider {
 				// 	&::before {
@@ -1429,8 +1429,9 @@
 				position: absolute;
 				bottom: .25rem;
 				right: .25rem;
-				max-width: calc(100% - .5rem);
+				box-shadow: 1px 1px 3px var(--secondary);
 
+				max-width: calc(100% - .5rem);
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				overflow: hidden;

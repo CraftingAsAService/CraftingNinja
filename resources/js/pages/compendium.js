@@ -10,6 +10,7 @@ const compendium = new Vue({
 	el: '#compendium',
 	data: {
 		firstLoad: true,
+		loading: false,
 		chapter: 'recipe',
 		noResults: true,
 		results: {
@@ -76,7 +77,7 @@ const compendium = new Vue({
 			else
 				this.filters[filter].push(value);
 
-			this.debouncedSearch();
+			this.search();
 		},
 		toggleCollapse:function(section) {
 			if (this.collapsed.includes(section))
@@ -86,7 +87,7 @@ const compendium = new Vue({
 			else
 				this.collapsed.push(section);
 
-			this.debouncedSearch();
+			this.search();
 		},
 		search:function() {
 			var call = 'items';
@@ -127,23 +128,28 @@ const compendium = new Vue({
 			data.sorting = this.sorting.split(':')[0];
 			data.ordering = this.sorting.split(':')[1];
 			data.perPage = this.perPage;
+			data.page = this.filters.page;
 
+			this.loading = true;
 			axios
 				.post('/api/' + call, data)
 				.then(response => {
 					this.results = response.data;
-					this.firstLoad = false;
+					this.loading = this.firstLoad = false;
 				})
 				.catch(error => console.log(error));
 		},
 		previousPage:function() {
-
+			this.filters.page = this.results.meta.current_page - 1;
+			this.search();
 		},
 		nextPage:function() {
-
+			this.filters.page = this.results.meta.current_page + 1;
+			this.search();
 		},
 		onNinjaDropdownClick:function(key, value) {
 			this[key] = value;
+			this.search();
 		}
 	}
 });

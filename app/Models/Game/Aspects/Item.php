@@ -64,7 +64,8 @@ class Item extends Aspect
 	public function scopeFilterRecipes($query, $filters)
 	{
 		$recipeFilters = array_intersect([
-			'recipes',
+			'rlvlMin',
+			'rlvlMax',
 			'sublevel',
 			'rclass',
 		], array_keys($filters));
@@ -73,6 +74,8 @@ class Item extends Aspect
 		{
 			$query->join('recipes', 'recipes.item_id', '=', 'items.id')
 				->groupBy('items.id');
+
+			$query->filterByLevelRange($filters, 'recipes.level', 'rlvlMin', 'rlvlMax');
 
 			if (isset($filters['sublevel']))
 				$query->where('recipes.sublevel', $filters['sublevel']);
