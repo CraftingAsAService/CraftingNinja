@@ -5,6 +5,7 @@
 'use strict';
 
 Vue.component('ninja-dropdown', require('../components/NinjaDropdown.vue').default);
+Vue.component('ninja-bag', require('../components/NinjaBag.vue').default);
 
 const compendium = new Vue({
 	el: '#compendium',
@@ -69,6 +70,12 @@ const compendium = new Vue({
 				thisObject[compendiumVar] = $(this).val();
 			});
 		},
+		nameUpdated:function() {
+			// Reset the page if name is altered
+			this.filters.page = 1;
+
+			this.debouncedSearch();
+		},
 		toggleFilter:function(filter, value) {
 			if (this.filters[filter].includes(value))
 				this.filters[filter] = this.filters[filter].filter(function(filterValue) {
@@ -92,8 +99,7 @@ const compendium = new Vue({
 		search:function() {
 			var call = 'items';
 
-			// TODO search "Blue Dye"
-			// TODO search "Moogle"
+			// TODO need 128x128 imagery
 
 			if (this.chapter == 'quest')
 				call = 'quests';
@@ -147,9 +153,16 @@ const compendium = new Vue({
 			this.filters.page = this.results.meta.current_page + 1;
 			this.search();
 		},
-		onNinjaDropdownClick:function(key, value) {
+		ninjaDropdownUpdated:function(key, value) {
 			this[key] = value;
+
+			// Reset the page if any of these were altered
+			this.filters.page = 1;
+
 			this.search();
+		},
+		addToBag:function() {
+
 		}
 	}
 });

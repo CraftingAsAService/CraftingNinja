@@ -23200,6 +23200,10 @@ td.team-leader__avg {
   margin: 0 auto;
 }
 
+.products--grid-simple .product__thumb img {
+  width: 100%;
+}
+
 .products--grid-simple .product__thumb .levels {
   position: absolute;
   top: 0.25rem;

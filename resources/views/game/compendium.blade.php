@@ -52,18 +52,18 @@
 							<i class='fas fa-search mr-1'></i>
 							Search
 						</label>
-						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch'>
+						<input type='text' class='form-control' v-model='filters.name' v-on:input='nameUpdated'>
 					</div>
 					{{--
-					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
 
-					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.recipe' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.recipe' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
 
-					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.equipment' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.equipment' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
 					--}}
-					<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
 
-					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='onNinjaDropdownClick'></ninja-dropdown>
+					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
 
 					{{-- <div class='post-filter__submit'>
 						<button type='button' class='btn btn-primary btn-block' @click='applyFilters()'>
@@ -108,7 +108,7 @@
 										</div>
 										<div class='product__overlay'>
 											<div class='product__btns'>
-												<a href='#' class='btn btn-primary-inverse btn-block btn-icon'><i class='icon-bag'></i> Add to bag</a>
+												<ninja-bag text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id'></ninja-dropdown>
 											</div>
 										</div>
 									</div>

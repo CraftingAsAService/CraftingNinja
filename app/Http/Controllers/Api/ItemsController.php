@@ -20,7 +20,7 @@ class ItemsController extends Controller
 
 		$items = Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.niche.jobs', 'recipes.job')
 			->filter($request->all())
-			->simplePaginate(15);
+			->simplePaginate($request->get('perPage'));
 
 		return ItemResource::collection($items);
 	}
@@ -33,6 +33,9 @@ class ItemsController extends Controller
 			],
 			'ordering' => [
 				Rule::in(['asc', 'desc'])
+			],
+			'perPage' => [
+				Rule::in(['', 15, 30, 45])
 			],
 		]);
 	}
