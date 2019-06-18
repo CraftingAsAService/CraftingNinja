@@ -5,7 +5,7 @@
 'use strict';
 
 Vue.component('ninja-dropdown', require('../components/NinjaDropdown.vue').default);
-Vue.component('ninja-bag', require('../components/NinjaBag.vue').default);
+Vue.component('ninja-bag-button', require('../components/NinjaBagButton.vue').default);
 
 const compendium = new Vue({
 	el: '#compendium',

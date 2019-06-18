@@ -506,6 +506,9 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
 __webpack_require__(/*! ./directives/ClickOutside.js */ "./resources/js/directives/ClickOutside.js");
@@ -513,6 +516,8 @@ __webpack_require__(/*! ./directives/ClickOutside.js */ "./resources/js/directiv
 __webpack_require__(/*! ./directives/Tooltip.js */ "./resources/js/directives/Tooltip.js");
 
 __webpack_require__(/*! ./directives/Axios.js */ "./resources/js/directives/Axios.js");
+
+__webpack_require__(/*! ./modules/NinjaCart.js */ "./resources/js/modules/NinjaCart.js");
 
 /***/ }),
 
@@ -570,6 +575,24 @@ Vue.directive('tooltip', function (el, binding) {
     placement: binding.arg,
     trigger: 'hover'
   });
+});
+
+/***/ }),
+
+/***/ "./resources/js/modules/NinjaCart.js":
+/*!*******************************************!*\
+  !*** ./resources/js/modules/NinjaCart.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var ninjaCart = new Vue({
+  el: '.ninja-cart',
+  data: {
+    count: 0
+  },
+  mounted: function mounted() {},
+  parseCookie: function parseCookie() {}
 });
 
 /***/ }),

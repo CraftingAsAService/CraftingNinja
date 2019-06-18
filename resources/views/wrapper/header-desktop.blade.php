@@ -102,15 +102,20 @@
 
 						<!-- Header Info Block -->
 						@if (config('game'))
-						<ul class='info-block info-block--header'>
+						<ul class='info-block info-block--header ninja-cart'>
 
-							<li class='info-block__item info-block__item--shopping-cart js-info-block__item--onclick'>
+							<li :class='"info-block__item info-block__item--shopping-cart" + (count ? " js-info-block__item--onclick" : "")'>
 								<a href='/knapsack' class='info-block__link-wrapper'>
 									<svg role='img' class='df-icon df-icon--shopping-cart'>
 										<use xlink:href='/alchemists/images/esports/icons-esports.svg#cart'/>
 									</svg>
 									<h6 class='info-block__heading'>Your Bag</h6>
-									<span class='info-block__cart-sum'>999 items</span>
+									<span class='info-block__cart-sum'>
+										<span v-if='count == 0'>empty</span>
+										<span v-else>
+											<span v-html='count'></span> item<span v-if='count != 1'>s</span>
+										</span>
+									</span>
 								</a>
 
 								<!-- Dropdown Shopping Cart -->

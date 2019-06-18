@@ -108,7 +108,7 @@
 										</div>
 										<div class='product__overlay'>
 											<div class='product__btns'>
-												<ninja-bag text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id'></ninja-dropdown>
+												<ninja-bag-button text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id'></ninja-bag-button>
 											</div>
 										</div>
 									</div>
