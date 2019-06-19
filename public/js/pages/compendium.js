@@ -17,15 +17,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['text', 'icon', 'type', 'id'],
   methods: {
-    addToBag: function addToBag() {
-      axios.post('/knapsack', {
-        'id': this.id,
-        'type': this.type,
-        'quantity': 1
-      }).then(function (response) {// bag.refresh();
-      })["catch"](function (error) {
-        return console.log(error);
-      });
+    add: function add() {
+      this.$eventBus.$emit('addToCart', this.id, this.type, 1); // axios
+      // 	.post('/knapsack', {
+      // 		'id': this.id,
+      // 		'type': this.type,
+      // 		'quantity': 1
+      // 	})
+      // 	.then(response => {
+      // 		// bag.refresh();
+      // 	})
+      // 	.catch(error => console.log(error));
     }
   }
 });
@@ -110,7 +112,7 @@ var render = function() {
       on: {
         click: function($event) {
           $event.preventDefault()
-          return _vm.addToBag($event)
+          return _vm.add($event)
         }
       }
     },
