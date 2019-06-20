@@ -2,7 +2,7 @@
 	<ul class='info-block info-block--header ninja-cart'>
 		<li :class='"info-block__item info-block__item--shopping-cart" + (count ? " js-info-block__item--onclick" : "")'>
 			<a href='/knapsack' class='info-block__link-wrapper'>
-				<svg role='img' class='df-icon df-icon--shopping-cart'>
+				<svg ref='bagIcon' role='img' class='df-icon df-icon--shopping-cart'>
 					<use xlink:href='/alchemists/images/esports/icons-esports.svg#cart'/>
 				</svg>
 				<h6 class='info-block__heading'>Your Bag</h6>
@@ -62,21 +62,74 @@
 			}
 		},
 		created:function() {
-			console.log('Created!');
 			this.$eventBus.$on('addToCart', this.addToCart);
 		},
 		beforeDestroy:function() {
 			this.$eventBus.$off('addToCart');
 		},
 		methods: {
-			addToCart:function(id, type, quantity) {
-				console.log(id, type, quantity);
-				this.contents[type][id] += quantity;
-				console.log(this.contents);
-			},
-			// parseCookie:function() {
+			addToCart:function(id, type, quantity, el) {
+				if (typeof this.contents[type] === 'undefined')
+					this.contents[type] = [];
 
-			// }
+				if (typeof this.contents[type][id] === 'undefined')
+					this.contents[type][id] = 0;
+
+				this.contents[type][id] += quantity;
+
+				this.count += quantity;
+
+				this.addToCartAnimation(el);
+			},
+			addToCartAnimation:function(el) {
+				var fromPosition = $(el).offset(),
+					bagIconEl = $(this.$refs.bagIcon),
+					toPosition = bagIconEl.offset(),
+					icons = ['grin', 'grin-hearts', 'grin-stars', 'surprise', 'smile', 'laugh'],
+					// icons = ['box', 'gift', 'cube', 'heart', 'star'],
+					iconEl = $('<i class="fas fa-' + icons[Math.floor(Math.random() * icons.length)] + '"></i>');
+
+				iconEl
+					.css({
+						'position': 'absolute',
+						'top': fromPosition.top + 'px',
+						'left': fromPosition.left + 'px',
+						'font-size': '2rem',
+						'color': 'var(--white)',
+						'text-shadow': '0px 0px 5px var(--dark)',
+						'z-index': '500'
+					})
+					.appendTo($('body'))
+					.animate({
+						'top': toPosition.top + 'px',
+						'left': toPosition.left + 'px',
+						'font-size': '.1rem',
+						'opacity': '.25',
+					}, {
+						duration: 1000,
+						always:function() {
+							iconEl.detach();
+						}
+					});
+
+				setTimeout(function() {
+					bagIconEl
+						.css({ 'position': 'absolute' })
+						.animate({ left: '-3px' }, 50)
+						.animate({ left: '7px' }, 50)
+						.animate({ left: '-7px' }, 50)
+						.animate({ left: '3px' }, 50)
+						.animate({ left: '0px' }, {
+							duration: 50,
+							always:function() {
+								bagIconEl.css({
+									'position': '',
+									'left': ''
+								});
+							}
+						});
+				}, 1000);
+			}
 		}
 	}
 </script>

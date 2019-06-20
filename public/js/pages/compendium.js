@@ -18,7 +18,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['text', 'icon', 'type', 'id'],
   methods: {
     add: function add() {
-      this.$eventBus.$emit('addToCart', this.id, this.type, 1); // axios
+      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.$refs.ninjaBagButton); // axios
       // 	.post('/knapsack', {
       // 		'id': this.id,
       // 		'type': this.type,
@@ -107,6 +107,7 @@ var render = function() {
   return _c(
     "a",
     {
+      ref: "ninjaBagButton",
       staticClass: "btn btn-primary-inverse btn-block btn-icon",
       attrs: { href: "#" },
       on: {

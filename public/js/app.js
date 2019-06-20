@@ -72,20 +72,69 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    console.log('Created!');
     this.$eventBus.$on('addToCart', this.addToCart);
   },
   beforeDestroy: function beforeDestroy() {
     this.$eventBus.$off('addToCart');
   },
   methods: {
-    addToCart: function addToCart(id, type, quantity) {
-      console.log(id, type, quantity);
+    addToCart: function addToCart(id, type, quantity, el) {
+      if (typeof this.contents[type] === 'undefined') this.contents[type] = [];
+      if (typeof this.contents[type][id] === 'undefined') this.contents[type][id] = 0;
       this.contents[type][id] += quantity;
-      console.log(this.contents);
-    } // parseCookie:function() {
-    // }
-
+      this.count += quantity;
+      this.addToCartAnimation(el);
+    },
+    addToCartAnimation: function addToCartAnimation(el) {
+      var fromPosition = $(el).offset(),
+          bagIconEl = $(this.$refs.bagIcon),
+          toPosition = bagIconEl.offset(),
+          icons = ['grin', 'grin-hearts', 'grin-stars', 'surprise', 'smile', 'laugh'],
+          // icons = ['box', 'gift', 'cube', 'heart', 'star'],
+      iconEl = $('<i class="fas fa-' + icons[Math.floor(Math.random() * icons.length)] + '"></i>');
+      iconEl.css({
+        'position': 'absolute',
+        'top': fromPosition.top + 'px',
+        'left': fromPosition.left + 'px',
+        'font-size': '2rem',
+        'color': 'var(--white)',
+        'text-shadow': '0px 0px 5px var(--dark)',
+        'z-index': '500'
+      }).appendTo($('body')).animate({
+        'top': toPosition.top + 'px',
+        'left': toPosition.left + 'px',
+        'font-size': '.1rem',
+        'opacity': '.25'
+      }, {
+        duration: 1000,
+        always: function always() {
+          iconEl.detach();
+        }
+      });
+      setTimeout(function () {
+        bagIconEl.css({
+          'position': 'absolute'
+        }).animate({
+          left: '-3px'
+        }, 50).animate({
+          left: '7px'
+        }, 50).animate({
+          left: '-7px'
+        }, 50).animate({
+          left: '3px'
+        }, 50).animate({
+          left: '0px'
+        }, {
+          duration: 50,
+          always: function always() {
+            bagIconEl.css({
+              'position': '',
+              'left': ''
+            });
+          }
+        });
+      }, 1000);
+    }
   }
 });
 
@@ -593,6 +642,7 @@ var render = function() {
             _c(
               "svg",
               {
+                ref: "bagIcon",
                 staticClass: "df-icon df-icon--shopping-cart",
                 attrs: { role: "img" }
               },
@@ -841,12 +891,10 @@ module.exports = g;
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_NinjaCart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/NinjaCart */ "./resources/js/components/NinjaCart.vue");
 
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -859,15 +907,9 @@ __webpack_require__(/*! ./directives/Axios.js */ "./resources/js/directives/Axio
 
 Vue.prototype.$eventBus = new Vue(); // Global Event Bus
 
-
-var app = new Vue({
-  el: '#app',
-  created: function created() {
-    console.log('App!');
-  },
-  components: {
-    NinjaCart: _components_NinjaCart__WEBPACK_IMPORTED_MODULE_0__["default"]
-  }
+Vue.component('ninja-cart', __webpack_require__(/*! ./components/NinjaCart.vue */ "./resources/js/components/NinjaCart.vue")["default"]);
+var header = new Vue({
+  el: '#header'
 });
 
 /***/ }),

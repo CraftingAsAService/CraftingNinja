@@ -1,4 +1,4 @@
-		<header class='header header--layout-3'>
+		<header class='header header--layout-3' id='header'>
 
 			<!-- Header Top Bar -->
 			<div class='header__top-bar clearfix'>

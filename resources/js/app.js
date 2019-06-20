@@ -8,14 +8,8 @@ require('./directives/Axios.js');
 
 Vue.prototype.$eventBus = new Vue(); // Global Event Bus
 
-import NinjaCart from './components/NinjaCart'
+Vue.component('ninja-cart', require('./components/NinjaCart.vue').default);
 
-const app = new Vue({
-	el: '#app',
-	created:function() {
-		console.log('App!');
-	},
-	components: {
-		NinjaCart
-	}
+const header = new Vue({
+	el: '#header'
 })
