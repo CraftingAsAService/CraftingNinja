@@ -78,38 +78,36 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventBus.$off('addToCart');
   },
   methods: {
-    addToCart: function addToCart(id, type, quantity, el) {
+    addToCart: function addToCart(id, type, quantity, img, el) {
       if (typeof this.contents[type] === 'undefined') this.contents[type] = [];
       if (typeof this.contents[type][id] === 'undefined') this.contents[type][id] = 0;
       this.contents[type][id] += quantity;
       this.count += quantity;
-      this.addToCartAnimation(el);
+      this.addToCartAnimation(img, el);
     },
-    addToCartAnimation: function addToCartAnimation(el) {
+    addToCartAnimation: function addToCartAnimation(img, el) {
       var fromPosition = $(el).offset(),
           bagIconEl = $(this.$refs.bagIcon),
           toPosition = bagIconEl.offset(),
-          icons = ['grin', 'grin-hearts', 'grin-stars', 'surprise', 'smile', 'laugh'],
-          // icons = ['box', 'gift', 'cube', 'heart', 'star'],
-      iconEl = $('<i class="fas fa-' + icons[Math.floor(Math.random() * icons.length)] + '"></i>');
-      iconEl.css({
+          imgEl = $('<img src="' + img + '">');
+      toPosition.top += bagIconEl.outerHeight() / 2;
+      toPosition.left += bagIconEl.outerWidth() / 2;
+      imgEl.css({
+        // 'opacity': '.5',
         'position': 'absolute',
         'top': fromPosition.top + 'px',
         'left': fromPosition.left + 'px',
-        'font-size': '2rem',
-        'color': 'var(--white)',
-        'text-shadow': '0px 0px 5px var(--dark)',
-        'z-index': '500'
+        'width': '48px',
+        'height': '48px',
+        'border': '1px solid var(--dark)',
+        'z-index': '500',
+        'border-radius': '50%'
       }).appendTo($('body')).animate({
         'top': toPosition.top + 'px',
-        'left': toPosition.left + 'px',
-        'font-size': '.1rem',
-        'opacity': '.25'
+        'left': toPosition.left + 'px'
       }, {
-        duration: 1000,
-        always: function always() {
-          iconEl.detach();
-        }
+        easing: 'linear',
+        duration: 400
       });
       setTimeout(function () {
         bagIconEl.css({
@@ -133,7 +131,14 @@ __webpack_require__.r(__webpack_exports__);
             });
           }
         });
-      }, 1000);
+      }, 500); // Somewhere between the number above (400), and that number plus the number below (400+250)
+
+      imgEl.animate({
+        'width': 0,
+        'height': 0
+      }, 200, function () {
+        imgEl.remove();
+      });
     }
   }
 });

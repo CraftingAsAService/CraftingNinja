@@ -68,7 +68,7 @@
 			this.$eventBus.$off('addToCart');
 		},
 		methods: {
-			addToCart:function(id, type, quantity, el) {
+			addToCart:function(id, type, quantity, img, el) {
 				if (typeof this.contents[type] === 'undefined')
 					this.contents[type] = [];
 
@@ -79,37 +79,36 @@
 
 				this.count += quantity;
 
-				this.addToCartAnimation(el);
+				this.addToCartAnimation(img, el);
 			},
-			addToCartAnimation:function(el) {
+			addToCartAnimation:function(img, el) {
 				var fromPosition = $(el).offset(),
 					bagIconEl = $(this.$refs.bagIcon),
 					toPosition = bagIconEl.offset(),
-					icons = ['grin', 'grin-hearts', 'grin-stars', 'surprise', 'smile', 'laugh'],
-					// icons = ['box', 'gift', 'cube', 'heart', 'star'],
-					iconEl = $('<i class="fas fa-' + icons[Math.floor(Math.random() * icons.length)] + '"></i>');
+					imgEl = $('<img src="' + img + '">');
 
-				iconEl
+				toPosition.top += bagIconEl.outerHeight() / 2;
+				toPosition.left += bagIconEl.outerWidth() / 2;
+
+				imgEl
 					.css({
+						// 'opacity': '.5',
 						'position': 'absolute',
 						'top': fromPosition.top + 'px',
 						'left': fromPosition.left + 'px',
-						'font-size': '2rem',
-						'color': 'var(--white)',
-						'text-shadow': '0px 0px 5px var(--dark)',
-						'z-index': '500'
+						'width': '48px',
+						'height': '48px',
+						'border': '1px solid var(--dark)',
+						'z-index': '500',
+						'border-radius': '50%'
 					})
 					.appendTo($('body'))
 					.animate({
 						'top': toPosition.top + 'px',
 						'left': toPosition.left + 'px',
-						'font-size': '.1rem',
-						'opacity': '.25',
 					}, {
-						duration: 1000,
-						always:function() {
-							iconEl.detach();
-						}
+						easing: 'linear',
+						duration: 400
 					});
 
 				setTimeout(function() {
@@ -128,7 +127,14 @@
 								});
 							}
 						});
-				}, 1000);
+				}, 500); // Somewhere between the number above (400), and that number plus the number below (400+250)
+
+				imgEl.animate({
+					'width': 0,
+					'height': 0
+				}, 200, function() {
+					imgEl.remove();
+				});
 			}
 		}
 	}

@@ -15,10 +15,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['text', 'icon', 'type', 'id'],
+  props: ['text', 'icon', 'type', 'id', 'img'],
   methods: {
     add: function add() {
-      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.$refs.ninjaBagButton); // axios
+      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton); // axios
       // 	.post('/knapsack', {
       // 		'id': this.id,
       // 		'type': this.type,

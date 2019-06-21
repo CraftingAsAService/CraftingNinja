@@ -108,7 +108,7 @@
 										</div>
 										<div class='product__overlay'>
 											<div class='product__btns'>
-												<ninja-bag-button text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id'></ninja-bag-button>
+												<ninja-bag-button text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id' :img='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"'></ninja-bag-button>
 											</div>
 										</div>
 									</div>
