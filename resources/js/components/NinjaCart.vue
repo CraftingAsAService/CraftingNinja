@@ -67,19 +67,24 @@
 		beforeDestroy:function() {
 			this.$eventBus.$off('addToCart');
 		},
+		mounted:function() {
+			this.loadFromCookie();
+		},
 		methods: {
 			addToCart:function(id, type, quantity, img, el) {
 				if (typeof this.contents[type] === 'undefined')
 					this.contents[type] = [];
 
-				if (typeof this.contents[type][id] === 'undefined')
-					this.contents[type][id] = 0;
+				if (typeof this.contents[type]["id:" + id] === 'undefined')
+					this.contents[type]["id:" + id] = 0;
 
-				this.contents[type][id] += quantity;
-
-				this.count += quantity;
+				this.contents[type]["id:" + id] += quantity;
 
 				this.addToCartAnimation(img, el);
+
+				this.recount();
+
+				this.saveToCookie();
 			},
 			addToCartAnimation:function(img, el) {
 				var fromPosition = $(el).offset(),
@@ -96,10 +101,11 @@
 						'position': 'absolute',
 						'top': fromPosition.top + 'px',
 						'left': fromPosition.left + 'px',
+						'z-index': '500',
 						'width': '48px',
 						'height': '48px',
 						'border': '1px solid var(--dark)',
-						'z-index': '500',
+						'background-color': 'var(--dark)',
 						'border-radius': '50%'
 					})
 					.appendTo($('body'))
@@ -135,6 +141,18 @@
 				}, 200, function() {
 					imgEl.remove();
 				});
+			},
+			loadFromCookie:function() {
+				this.contents = this.$cookies.get('NinjaCart') || {};
+				this.recount();
+			},
+			saveToCookie:function() {
+				console.log(JSON.parse(JSON.stringify(this.contents)));
+				this.$cookies.set('NinjaCart', JSON.stringify(Object.assign({}, this.contents)));
+				console.log(this.$cookies.get('NinjaCart'));
+			},
+			recount:function() {
+				console.log('recount!', this.contents);
 			}
 		}
 	}

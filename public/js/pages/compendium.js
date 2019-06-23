@@ -18,16 +18,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['text', 'icon', 'type', 'id', 'img'],
   methods: {
     add: function add() {
-      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton); // axios
-      // 	.post('/knapsack', {
-      // 		'id': this.id,
-      // 		'type': this.type,
-      // 		'quantity': 1
-      // 	})
-      // 	.then(response => {
-      // 		// bag.refresh();
-      // 	})
-      // 	.catch(error => console.log(error));
+      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton);
     }
   }
 });
