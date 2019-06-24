@@ -82,11 +82,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     addToCart: function addToCart(id, type, quantity, img, el) {
-      if (typeof this.contents[type] === 'undefined') this.contents[type] = [];
-      if (typeof this.contents[type]["id:" + id] === 'undefined') this.contents[type]["id:" + id] = 0;
-      this.contents[type]["id:" + id] += quantity;
+      if (typeof this.contents[type] === 'undefined') this.contents[type] = {};
+      if (typeof this.contents[type][id] === 'undefined') this.contents[type][id] = 0;
+      this.contents[type][id] += parseInt(quantity);
       this.addToCartAnimation(img, el);
-      this.recount();
       this.saveToCookie();
     },
     addToCartAnimation: function addToCartAnimation(img, el) {
@@ -96,6 +95,7 @@ __webpack_require__.r(__webpack_exports__);
           imgEl = $('<img src="' + img + '">');
       toPosition.top += bagIconEl.outerHeight() / 2;
       toPosition.left += bagIconEl.outerWidth() / 2;
+      var thisObj = this;
       imgEl.css({
         // 'opacity': '.5',
         'position': 'absolute',
@@ -133,7 +133,9 @@ __webpack_require__.r(__webpack_exports__);
             bagIconEl.css({
               'position': '',
               'left': ''
-            });
+            }); // not recounting until bag shakes
+
+            thisObj.recount();
           }
         });
       }, 500); // Somewhere between the number above (400), and that number plus the number below (400+250)
@@ -146,16 +148,60 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     loadFromCookie: function loadFromCookie() {
-      this.contents = this.$cookies.get('NinjaCart') || {};
+      this.parse();
       this.recount();
     },
+    stringify: function stringify() {
+      var stringify = '';
+
+      for (var prop in this.contents) {
+        if (this.contents.hasOwnProperty(prop)) {
+          stringify += prop + ':';
+
+          for (var id in this.contents[prop]) {
+            stringify += id + 'x' + this.contents[prop][id] + ',';
+          }
+
+          stringify = stringify.replace(/,$/, '') + ';';
+        }
+
+        stringify = stringify.replace(/;$/, '');
+      }
+
+      return stringify;
+    },
+    parse: function parse() {
+      var cookieValue = this.$cookies.get('NinjaCart');
+      if (cookieValue === null) return {};
+      cookieValue = decodeURIComponent(cookieValue).split(';');
+
+      for (var section in cookieValue) {
+        var prop = cookieValue[section].split(':')[0],
+            entries = cookieValue[section].split(':')[1].split(',');
+        this.contents[prop] = {};
+
+        for (var pair in entries) {
+          var id = entries[pair].split('x')[0],
+              qty = entries[pair].split('x')[1];
+          this.contents[prop][id] = qty;
+        }
+      }
+    },
     saveToCookie: function saveToCookie() {
-      console.log(JSON.parse(JSON.stringify(this.contents)));
-      this.$cookies.set('NinjaCart', JSON.stringify(Object.assign({}, this.contents)));
-      console.log(this.$cookies.get('NinjaCart'));
+      this.$cookies.set('NinjaCart', this.stringify());
     },
     recount: function recount() {
-      console.log('recount!', this.contents);
+      var count = 0;
+
+      for (var prop in this.contents) {
+        if (this.contents.hasOwnProperty(prop)) {
+          for (var id in this.contents[prop]) {
+            count += parseInt(this.contents[prop][id]);
+          }
+        }
+      }
+
+      this.count = count;
     }
   }
 });
