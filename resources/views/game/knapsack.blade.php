@@ -1,5 +1,11 @@
 {{-- TODO LAYOUT --}}
 
+@foreach ($ninjaCart as $section => $entries)
+	@foreach ($entries as $entry)
+		{{ $entry->name }} {{ $entry->quantity }}
+	@endforeach
+@endforeach
+
 @foreach ($listings as $listing)
 
 	@if ($listing->isPublished())

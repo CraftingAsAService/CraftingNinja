@@ -65,7 +65,7 @@ class Listing extends Concept
 
 	public function scopeFromUser($query, $userId = null)
 	{
-		return $query->where('user_id', $userId ?? auth()->user()->id);
+		return $query->where('user_id', $userId ?? auth()->user()->id ?? null);
 	}
 
 	public function scopePublished($query)

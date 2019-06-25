@@ -67,6 +67,7 @@
 }
 
 .card figure.-icon a i {
+  -webkit-transition: all 250ms ease-in-out;
   transition: all 250ms ease-in-out;
 }
 
@@ -93,6 +94,7 @@
   left: 0;
   opacity: 0;
   content: "";
+  -webkit-transition: all 250ms ease-in-out;
   transition: all 250ms ease-in-out;
 }
 
@@ -108,6 +110,7 @@
 }
 
 .card figure.-gradient-1 a::after {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 156, 174, 0.1)), to(rgba(255, 13, 13, 0.1)));
   background: linear-gradient(90deg, rgba(165, 156, 174, 0.1) 0%, rgba(255, 13, 13, 0.1) 100%);
 }
 
@@ -116,6 +119,7 @@
 }
 
 .card figure.-gradient-2 a::after {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 156, 174, 0.1)), to(rgba(106, 59, 192, 0.1)));
   background: linear-gradient(90deg, rgba(165, 156, 174, 0.1) 0%, rgba(106, 59, 192, 0.1) 100%);
 }
 
@@ -124,6 +128,7 @@
 }
 
 .card figure.-gradient-3 a::after {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 156, 174, 0.1)), to(rgba(0, 255, 91, 0.1)));
   background: linear-gradient(90deg, rgba(165, 156, 174, 0.1) 0%, rgba(0, 255, 91, 0.1) 100%);
 }
 
@@ -132,6 +137,7 @@
 }
 
 .card figure.-gradient-4 a::after {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 156, 174, 0.1)), to(rgba(255, 180, 0, 0.1)));
   background: linear-gradient(90deg, rgba(165, 156, 174, 0.1) 0%, rgba(255, 180, 0, 0.1) 100%);
 }
 
