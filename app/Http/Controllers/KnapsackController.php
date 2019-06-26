@@ -22,19 +22,20 @@ class KnapsackController extends Controller
 	{
 		$ninjaCart = [];
 
-		foreach (explode(';', $_COOKIE['NinjaCart']) as $section)
-		{
-			list($key, $values) = explode(':', $section);
-			$ninjaCart[$key] = [];
-			foreach (explode(',', $values) as $set)
+		if (isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart'])
+			foreach (explode(';', $_COOKIE['NinjaCart']) as $section)
 			{
-				list($id, $quantity) = explode('x', $set);
+				list($key, $values) = explode(':', $section);
+				$ninjaCart[$key] = [];
+				foreach (explode(',', $values) as $set)
+				{
+					list($id, $quantity) = explode('x', $set);
 
-				if ($key == 'item')
-					if ($ninjaCart[$key][$id] = Item::whereId($id)->first())
-						$ninjaCart[$key][$id]->quantity = $quantity;
+					if ($key == 'item')
+						if ($ninjaCart[$key][$id] = Item::whereId($id)->first())
+							$ninjaCart[$key][$id]->quantity = $quantity;
+				}
 			}
-		}
 
 		return $ninjaCart;
 	}
