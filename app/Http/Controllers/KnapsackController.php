@@ -15,29 +15,23 @@ class KnapsackController extends Controller
 		$ninjaCart = $this->parseCookie();
 		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->fromUser()->get();
 
-		return view('game.knapsack', compact('ninjaCart', 'listings'));
+		return view('game.knapsack', compact('ninjaCart', 'ninjaCartSum', 'listings'));
 	}
 
 	private function parseCookie()
 	{
-		$ninjaCart = [];
+		$ninjaCart = isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart']
+			? json_decode($_COOKIE['NinjaCart'])
+			: [];
 
-		if (isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart'])
-			foreach (explode(';', $_COOKIE['NinjaCart']) as $section)
-			{
-				list($key, $values) = explode(':', $section);
-				$ninjaCart[$key] = [];
-				foreach (explode(',', $values) as $set)
-				{
-					list($id, $quantity) = explode('x', $set);
+		foreach ($ninjaCart as &$entry)
+		{
+			if ($entry['t'] == 'item')
+				// TODO ADD setQuantity FUNCTION
+				$entry = Item::whereId($entry['i'])->first()->setQuantity($entry['q']);
+		}
 
-					if ($key == 'item')
-						if ($ninjaCart[$key][$id] = Item::whereId($id)->first())
-							$ninjaCart[$key][$id]->quantity = $quantity;
-				}
-			}
-
-		return $ninjaCart;
+		return collect($ninjaCart);
 	}
 
 	public function addActiveEntry(Request $request)

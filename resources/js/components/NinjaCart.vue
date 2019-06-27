@@ -17,28 +17,16 @@
 			<!-- Dropdown Shopping Cart -->
 			<ul class='header-cart header-cart--inventory'>
 				<li class='header-cart__item header-cart__item--title'>
-					<h5>Inventory</h5>
+					<h5>Knapsack</h5>
 				</li>
-				<li class='header-cart__item'>
+				<li class='header-cart__item' v-for='entry in contents'>
 					<figure class='header-cart__product-thumb'>
-						<img src='/alchemists/images/esports/samples/cart-sm-1.jpg' alt='Jaxxy Framed Art Print'>
+						<img :src='entry.p' alt=''>
 					</figure>
 					<div class='header-cart__badges'>
-						<span class='badge badge-primary'>2</span>
+						<span class='badge badge-primary' v-if='entry.q > 1' v-html='entry.q'></span>
 						<span class='badge badge-default badge-close'><i class='fa fa-times'></i></span>
 					</div>
-				</li>
-				<li class='header-cart__item'>
-					<figure class='header-cart__product-thumb'>
-						<img src='/alchemists/images/esports/samples/cart-sm-4.jpg' alt='Mercenaries Framed Art Print'>
-					</figure>
-					<div class='header-cart__badges'>
-						<span class='badge badge-default badge-close'><i class='fa fa-times'></i></span>
-					</div>
-				</li>
-				<!-- Fill space for style -->
-				<li class='header-cart__item'>
-					<figure class='header-cart__product-thumb'></figure>
 				</li>
 
 				<li class='header-cart__item header-cart__item--action'>
@@ -57,7 +45,7 @@
 	export default {
 		data () {
 			return {
-				contents: {},
+				contents: [],
 				count: 0
 			}
 		},
@@ -72,15 +60,29 @@
 		},
 		methods: {
 			addToCart:function(id, type, quantity, img, el) {
-				if (typeof this.contents[type] === 'undefined')
-					this.contents[type] = {};
-
-				if (typeof this.contents[type][id] === 'undefined')
-					this.contents[type][id] = 0;
-
-				this.contents[type][id] += parseInt(quantity);
-
 				this.addToCartAnimation(img, el);
+				this.addToCookie(id, type, quantity, img);
+			},
+			addToCookie:function(id, type, quantity, img) {
+				// Look for an existing entry
+				var hasExistingEntry = false;
+				for (var entry in this.contents)
+				{
+					if (this.contents[entry].t == type && this.contents[entry].i == id)
+					{
+						this.contents[entry].q += quantity;
+						hasExistingEntry = true;
+						break;
+					}
+				}
+
+				if ( ! hasExistingEntry)
+					this.contents.push({
+						"i": id,
+						"t": type,
+						"q": quantity,
+						"p": img
+					});
 
 				this.saveToCookie();
 			},
@@ -149,51 +151,22 @@
 				this.parse();
 				this.recount();
 			},
-			stringify:function() {
-				let stringify = '';
-				for (const prop in this.contents) {
-					if (this.contents.hasOwnProperty(prop)) {
-						stringify += prop + ':';
-						for (const id in this.contents[prop]) {
-							stringify += id + 'x' + this.contents[prop][id] + ',';
-						}
-						stringify = stringify.replace(/,$/, '') + ';';
-					}
-					stringify = stringify.replace(/;$/, '');
-				}
-				return stringify;
-			},
 			parse:function() {
 				let cookieValue = this.$cookies.get('NinjaCart');
 
 				if (cookieValue === null)
 					return {};
 
-				cookieValue = decodeURIComponent(cookieValue).split(';');
-
-				for (const section in cookieValue) {
-					var prop    = cookieValue[section].split(':')[0],
-						entries = cookieValue[section].split(':')[1].split(',');
-					this.contents[prop] = {};
-					for (const pair in entries) {
-						var id  = entries[pair].split('x')[0],
-							qty = entries[pair].split('x')[1];
-						this.contents[prop][id] = qty;
-					}
-				}
+				this.contents = JSON.parse(cookieValue);
 			},
 			saveToCookie:function() {
-				this.$cookies.set('NinjaCart', this.stringify());
+				this.$cookies.set('NinjaCart', JSON.stringify(this.contents));
 			},
 			recount:function() {
 				let count = 0;
-				for (const prop in this.contents) {
-					if (this.contents.hasOwnProperty(prop)) {
-						for (const id in this.contents[prop]) {
-							count += parseInt(this.contents[prop][id]);
-						}
-					}
-				}
+
+				for (var entry in this.contents)
+					count += this.contents[entry].q;
 
 				this.count = count;
 			}

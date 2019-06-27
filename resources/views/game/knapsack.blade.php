@@ -30,41 +30,47 @@
 			<p class='lead mt-4 mb-0'>Head over to the <a href='/compendium'>Compendium</a> to add stuff.</p>
 		</div>
 	@else
-	<div class='card'>
+	<div class='card card--no-paddings alc'>
 		<div class='card__header card__header--has-btn'>
 			<h4>Your Knapsack</h4>
 			<a class='btn btn-default btn-xs card-header__button' href='#'>Clear</a>
 		</div>
-		<div class='card__content pt-0'>
-			<ul class='alc-products-wishlist list-unstyled mt-3'>
-				@foreach ($ninjaCart as $section => $entries)
-					@foreach ($entries as $entry)
-				<li class='alc-product-wishlist__item'>
-					<figure class='alc-product-wishlist__thumb'>
-						<img src='/assets/{{ config('game.slug') }}/item/{{ $entry->icon }}.png' alt=''>
-						<a href='#' class='alc-product-wishlist__close btn-circle btn-default btn-xs'>
-							<i class='fa fa-times'></i>
-						</a>
-					</figure>
-					<div class='alc-product-wishlist__body'>
-						<h5 class='alc-product-wishlist__title rarity-{{ $entry->rarity }}'>{{ $entry->name }}</h5>
-						<p>x{{ $entry->quantity }}</p>
+		<div class='card__content pt-3'>
+			<div class='alc-inventory'>
+				<div class='al-inventory__side'>
+					<div class='card__content-inner'>
+						<ul class='alc-inventory__list list-unstyled'>
+							@foreach ($ninjaCart as $section => $entries)
+								@foreach ($entries as $entry)
+							<li class='alc-inventory__item'>
+								<figure class='alc-inventory__item-thumb'>
+									<img src='/assets/{{ config('game.slug') }}/item/{{ $entry->icon }}.png' alt=''>
+								</figure>
+								<div class='alc-inventory__item-badges'>
+									<span class='badge badge-primary'>{{ $entry->quantity }}</span>
+									<span class='badge badge-default badge-close'><i class='fa fa-times -desize'></i></span>
+								</div>
+								<div class='alc-product-wishlist__body text-center mt-1'>
+									<h5 class='alc-product-wishlist__title rarity-{{ $entry->rarity }}'>{{ $entry->name }}</h5>
+								</div>
+							</li>
+								@endforeach
+							@endforeach
+						</ul>
 					</div>
-				</li>
-					@endforeach
-				@endforeach
-			</ul>
+				</div>
+			</div>
 		</div>
 		<div class='card__content-inner'>
 			<div class='row'>
 				<div class='col-sm-3 col-lg-2'>
-					<a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a>
+					{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a> --}}
 				</div>
 				<div class='col-sm-3 col-lg-2'>
-					<a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a>
+					{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a> --}}
 				</div>
 				<div class='col-sm-3 offset-sm-3 col-lg-2 offset-lg-6'>
-					<a href='/craft/knapsack' class='btn btn-primary btn-sm btn-block'>Start Crafting</a>
+					<a href='/craft/sack' class='btn btn-primary btn-sm btn-block'>Start Crafting</a>
 				</div>
 			</div>
 		</div>

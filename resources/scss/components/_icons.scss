@@ -1,5 +1,7 @@
 .fa, .fab, .fal, .far, .fas {
-	font-size: 14px;
+	&:not(.-desize) {
+		font-size: 14px;
+	}
 }
 
 // .md-icon {

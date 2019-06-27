@@ -44,11 +44,11 @@
   color: var(--rarity10);
 }
 
-.fa,
-.fab,
-.fal,
-.far,
-.fas {
+.fa:not(.-desize),
+.fab:not(.-desize),
+.fal:not(.-desize),
+.far:not(.-desize),
+.fas:not(.-desize) {
   font-size: 14px;
 }
 

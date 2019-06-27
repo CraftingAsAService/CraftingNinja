@@ -52,22 +52,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      contents: {},
+      contents: [],
       count: 0
     };
   },
@@ -82,10 +70,27 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     addToCart: function addToCart(id, type, quantity, img, el) {
-      if (typeof this.contents[type] === 'undefined') this.contents[type] = {};
-      if (typeof this.contents[type][id] === 'undefined') this.contents[type][id] = 0;
-      this.contents[type][id] += parseInt(quantity);
       this.addToCartAnimation(img, el);
+      this.addToCookie(id, type, quantity, img);
+    },
+    addToCookie: function addToCookie(id, type, quantity, img) {
+      // Look for an existing entry
+      var hasExistingEntry = false;
+
+      for (var entry in this.contents) {
+        if (this.contents[entry].t == type && this.contents[entry].i == id) {
+          this.contents[entry].q += quantity;
+          hasExistingEntry = true;
+          break;
+        }
+      }
+
+      if (!hasExistingEntry) this.contents.push({
+        "i": id,
+        "t": type,
+        "q": quantity,
+        "p": img
+      });
       this.saveToCookie();
     },
     addToCartAnimation: function addToCartAnimation(img, el) {
@@ -151,54 +156,19 @@ __webpack_require__.r(__webpack_exports__);
       this.parse();
       this.recount();
     },
-    stringify: function stringify() {
-      var stringify = '';
-
-      for (var prop in this.contents) {
-        if (this.contents.hasOwnProperty(prop)) {
-          stringify += prop + ':';
-
-          for (var id in this.contents[prop]) {
-            stringify += id + 'x' + this.contents[prop][id] + ',';
-          }
-
-          stringify = stringify.replace(/,$/, '') + ';';
-        }
-
-        stringify = stringify.replace(/;$/, '');
-      }
-
-      return stringify;
-    },
     parse: function parse() {
       var cookieValue = this.$cookies.get('NinjaCart');
       if (cookieValue === null) return {};
-      cookieValue = decodeURIComponent(cookieValue).split(';');
-
-      for (var section in cookieValue) {
-        var prop = cookieValue[section].split(':')[0],
-            entries = cookieValue[section].split(':')[1].split(',');
-        this.contents[prop] = {};
-
-        for (var pair in entries) {
-          var id = entries[pair].split('x')[0],
-              qty = entries[pair].split('x')[1];
-          this.contents[prop][id] = qty;
-        }
-      }
+      this.contents = JSON.parse(cookieValue);
     },
     saveToCookie: function saveToCookie() {
-      this.$cookies.set('NinjaCart', this.stringify());
+      this.$cookies.set('NinjaCart', JSON.stringify(this.contents));
     },
     recount: function recount() {
       var count = 0;
 
-      for (var prop in this.contents) {
-        if (this.contents.hasOwnProperty(prop)) {
-          for (var id in this.contents[prop]) {
-            count += parseInt(this.contents[prop][id]);
-          }
-        }
+      for (var entry in this.contents) {
+        count += this.contents[entry].q;
       }
 
       this.count = count;
@@ -866,7 +836,35 @@ var render = function() {
           ]
         ),
         _vm._v(" "),
-        _vm._m(0)
+        _c(
+          "ul",
+          { staticClass: "header-cart header-cart--inventory" },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _vm._l(_vm.contents, function(entry) {
+              return _c("li", { staticClass: "header-cart__item" }, [
+                _c("figure", { staticClass: "header-cart__product-thumb" }, [
+                  _c("img", { attrs: { src: entry.p, alt: "" } })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "header-cart__badges" }, [
+                  entry.q > 1
+                    ? _c("span", {
+                        staticClass: "badge badge-primary",
+                        domProps: { innerHTML: _vm._s(entry.q) }
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm._m(1, true)
+                ])
+              ])
+            }),
+            _vm._v(" "),
+            _vm._m(2)
+          ],
+          2
+        )
       ]
     )
   ])
@@ -876,52 +874,28 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "header-cart header-cart--inventory" }, [
-      _c("li", { staticClass: "header-cart__item header-cart__item--title" }, [
-        _c("h5", [_vm._v("Inventory")])
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "header-cart__item" }, [
-        _c("figure", { staticClass: "header-cart__product-thumb" }, [
-          _c("img", {
-            attrs: {
-              src: "/alchemists/images/esports/samples/cart-sm-1.jpg",
-              alt: "Jaxxy Framed Art Print"
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header-cart__badges" }, [
-          _c("span", { staticClass: "badge badge-primary" }, [_vm._v("2")]),
-          _vm._v(" "),
-          _c("span", { staticClass: "badge badge-default badge-close" }, [
-            _c("i", { staticClass: "fa fa-times" })
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "header-cart__item" }, [
-        _c("figure", { staticClass: "header-cart__product-thumb" }, [
-          _c("img", {
-            attrs: {
-              src: "/alchemists/images/esports/samples/cart-sm-4.jpg",
-              alt: "Mercenaries Framed Art Print"
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header-cart__badges" }, [
-          _c("span", { staticClass: "badge badge-default badge-close" }, [
-            _c("i", { staticClass: "fa fa-times" })
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "header-cart__item" }, [
-        _c("figure", { staticClass: "header-cart__product-thumb" })
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "header-cart__item header-cart__item--action" }, [
+    return _c(
+      "li",
+      { staticClass: "header-cart__item header-cart__item--title" },
+      [_c("h5", [_vm._v("Knapsack")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "badge badge-default badge-close" }, [
+      _c("i", { staticClass: "fa fa-times" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "li",
+      { staticClass: "header-cart__item header-cart__item--action" },
+      [
         _c(
           "a",
           {
@@ -933,8 +907,8 @@ var staticRenderFns = [
             _vm._v("\n\t\t\t\t\tCraft\n\t\t\t\t")
           ]
         )
-      ])
-    ])
+      ]
+    )
   }
 ]
 render._withStripped = true
