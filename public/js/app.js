@@ -1210,7 +1210,7 @@ Vue.directive('tooltip', function (el, binding) {
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!***********************************!*\
   !*** multi ./resources/js/app.js ***!
   \***********************************/
@@ -1222,4 +1222,4 @@ module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/crafti
 
 /***/ })
 
-},[[1,"/js/manifest","/js/vendor"]]]);
+},[[2,"/js/manifest","/js/vendor"]]]);

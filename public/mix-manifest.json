@@ -6,5 +6,6 @@
     "/css/pages/game-index.css": "/css/pages/game-index.css",
     "/css/app.css": "/css/app.css",
     "/css/alchemists/theme.css": "/css/alchemists/theme.css",
+    "/js/pages/knapsack.js": "/js/pages/knapsack.js",
     "/js/vendor.js": "/js/vendor.js"
 }

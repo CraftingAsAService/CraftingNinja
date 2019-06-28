@@ -15,7 +15,7 @@ class KnapsackController extends Controller
 		$ninjaCart = $this->parseCookie();
 		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->fromUser()->get();
 
-		return view('game.knapsack', compact('ninjaCart', 'ninjaCartSum', 'listings'));
+		return view('game.knapsack', compact('ninjaCart', 'listings'));
 	}
 
 	private function parseCookie()
@@ -26,9 +26,12 @@ class KnapsackController extends Controller
 
 		foreach ($ninjaCart as &$entry)
 		{
-			if ($entry['t'] == 'item')
-				// TODO ADD setQuantity FUNCTION
-				$entry = Item::whereId($entry['i'])->first()->setQuantity($entry['q']);
+			$quantity = $entry->q;
+
+			if ($entry->t == 'item')
+				$entry = Item::whereId($entry->i)->first();
+
+			$entry->quantity = $quantity;
 		}
 
 		return collect($ninjaCart);
