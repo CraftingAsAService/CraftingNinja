@@ -52,6 +52,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -61,25 +65,48 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.$eventBus.$on('addToCart', this.addToCart);
+    this.$eventBus.$on('removeFromCart', this.removeFromCart);
   },
   beforeDestroy: function beforeDestroy() {
     this.$eventBus.$off('addToCart');
+    this.$eventBus.$off('removeFromCart');
   },
   mounted: function mounted() {
     this.loadFromCookie();
+  },
+  computed: {
+    reverseContents: function reverseContents() {
+      return this.contents.slice().reverse();
+    }
   },
   methods: {
     addToCart: function addToCart(id, type, quantity, img, el) {
       this.addToCartAnimation(img, el);
       this.addToCookie(id, type, quantity, img);
     },
+    removeFromCart: function removeFromCart(id, type) {
+      if (type == 'index') this.removeFromCartByIndex(id);else this.removeFromCartByType(id, type);
+      this.saveToCookie();
+      this.recount();
+    },
+    removeFromCartByIndex: function removeFromCartByIndex(index) {
+      this.contents.splice(index, 1);
+    },
+    removeFromCartByType: function removeFromCartByType(id, type) {
+      for (var index in this.contents) {
+        if (this.contents[index].t == type && this.contents[index].i == id) {
+          this.removeFromCartByIndex(index);
+          break;
+        }
+      }
+    },
     addToCookie: function addToCookie(id, type, quantity, img) {
       // Look for an existing entry
       var hasExistingEntry = false;
 
-      for (var entry in this.contents) {
-        if (this.contents[entry].t == type && this.contents[entry].i == id) {
-          this.contents[entry].q += quantity;
+      for (var index in this.contents) {
+        if (this.contents[index].t == type && this.contents[index].i == id) {
+          this.contents[index].q += quantity;
           hasExistingEntry = true;
           break;
         }
@@ -840,28 +867,55 @@ var render = function() {
           "ul",
           { staticClass: "header-cart header-cart--inventory" },
           [
-            _vm._m(0),
-            _vm._v(" "),
-            _vm._l(_vm.contents, function(entry) {
-              return _c("li", { staticClass: "header-cart__item" }, [
-                _c("figure", { staticClass: "header-cart__product-thumb" }, [
-                  _c("img", { attrs: { src: entry.p, alt: "" } })
-                ]),
+            _c(
+              "li",
+              { staticClass: "header-cart__item header-cart__item--title" },
+              [
+                _vm.contents.length > 9
+                  ? _c("small", { staticClass: "float-right" }, [
+                      _vm._v("Recent entries")
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
-                _c("div", { staticClass: "header-cart__badges" }, [
-                  entry.q > 1
-                    ? _c("span", {
-                        staticClass: "badge badge-primary",
-                        domProps: { innerHTML: _vm._s(entry.q) }
-                      })
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm._m(1, true)
-                ])
-              ])
+                _c("h5", [_vm._v("Knapsack")])
+              ]
+            ),
+            _vm._v(" "),
+            _vm._l(_vm.reverseContents, function(entry, index) {
+              return index < 9
+                ? _c("li", { staticClass: "header-cart__item" }, [
+                    _c(
+                      "figure",
+                      { staticClass: "header-cart__product-thumb" },
+                      [_c("img", { attrs: { src: entry.p, alt: "" } })]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header-cart__badges" }, [
+                      entry.q > 1
+                        ? _c("span", {
+                            staticClass: "badge badge-primary",
+                            domProps: { innerHTML: _vm._s(entry.q) }
+                          })
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        {
+                          staticClass: "badge badge-default badge-close",
+                          on: {
+                            click: function($event) {
+                              return _vm.removeFromCart(index, "index")
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fa fa-times -desize" })]
+                      )
+                    ])
+                  ])
+                : _vm._e()
             }),
             _vm._v(" "),
-            _vm._m(2)
+            _vm._m(0)
           ],
           2
         )
@@ -876,31 +930,25 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "li",
-      { staticClass: "header-cart__item header-cart__item--title" },
-      [_c("h5", [_vm._v("Knapsack")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "badge badge-default badge-close" }, [
-      _c("i", { staticClass: "fa fa-times" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "li",
       { staticClass: "header-cart__item header-cart__item--action" },
       [
         _c(
           "a",
           {
+            staticClass: "btn btn-primary-inverse btn-block",
+            attrs: { href: "/knapsack" }
+          },
+          [
+            _c("i", { staticClass: "fas fa-th-list" }),
+            _vm._v("\n\t\t\t\t\tManage Knapsack\n\t\t\t\t")
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
             staticClass: "btn btn-primary btn-block",
-            attrs: { href: "/crafting/list" }
+            attrs: { href: "/crafting/knapsack" }
           },
           [
             _c("i", { staticClass: "fas fa-magic" }),

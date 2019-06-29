@@ -17,20 +17,24 @@
 			<!-- Dropdown Shopping Cart -->
 			<ul class='header-cart header-cart--inventory'>
 				<li class='header-cart__item header-cart__item--title'>
+					<small class='float-right' v-if='contents.length > 9'>Recent entries</small>
 					<h5>Knapsack</h5>
 				</li>
-				<li class='header-cart__item' v-for='entry in contents'>
+				<li class='header-cart__item' v-for='(entry, index) in reverseContents' v-if='index < 9'>
 					<figure class='header-cart__product-thumb'>
 						<img :src='entry.p' alt=''>
 					</figure>
 					<div class='header-cart__badges'>
 						<span class='badge badge-primary' v-if='entry.q > 1' v-html='entry.q'></span>
-						<span class='badge badge-default badge-close'><i class='fa fa-times'></i></span>
+						<span class='badge badge-default badge-close' @click='removeFromCart(index, "index")'><i class='fa fa-times -desize'></i></span>
 					</div>
 				</li>
-
 				<li class='header-cart__item header-cart__item--action'>
-					<a href='/crafting/list' class='btn btn-primary btn-block'>
+					<a href='/knapsack' class='btn btn-primary-inverse btn-block'>
+						<i class='fas fa-th-list'></i>
+						Manage Knapsack
+					</a>
+					<a href='/crafting/knapsack' class='btn btn-primary btn-block'>
 						<i class='fas fa-magic'></i>
 						Craft
 					</a>
@@ -51,26 +55,53 @@
 		},
 		created:function() {
 			this.$eventBus.$on('addToCart', this.addToCart);
+			this.$eventBus.$on('removeFromCart', this.removeFromCart);
 		},
 		beforeDestroy:function() {
 			this.$eventBus.$off('addToCart');
+			this.$eventBus.$off('removeFromCart');
 		},
 		mounted:function() {
 			this.loadFromCookie();
+		},
+		computed: {
+			reverseContents() {
+				return this.contents.slice().reverse();
+			}
 		},
 		methods: {
 			addToCart:function(id, type, quantity, img, el) {
 				this.addToCartAnimation(img, el);
 				this.addToCookie(id, type, quantity, img);
 			},
+			removeFromCart:function(id, type) {
+				if (type == 'index')
+					this.removeFromCartByIndex(id);
+				else
+					this.removeFromCartByType(id, type);
+
+				this.saveToCookie();
+				this.recount();
+			},
+			removeFromCartByIndex:function(index) {
+				this.contents.splice(index, 1);
+			},
+			removeFromCartByType:function(id, type) {
+				for (var index in this.contents) {
+					if (this.contents[index].t == type && this.contents[index].i == id) {
+						this.removeFromCartByIndex(index);
+						break;
+					}
+				}
+			},
 			addToCookie:function(id, type, quantity, img) {
 				// Look for an existing entry
 				var hasExistingEntry = false;
-				for (var entry in this.contents)
+				for (var index in this.contents)
 				{
-					if (this.contents[entry].t == type && this.contents[entry].i == id)
+					if (this.contents[index].t == type && this.contents[index].i == id)
 					{
-						this.contents[entry].q += quantity;
+						this.contents[index].q += quantity;
 						hasExistingEntry = true;
 						break;
 					}

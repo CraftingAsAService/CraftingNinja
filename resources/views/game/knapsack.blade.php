@@ -42,13 +42,13 @@
 					<div class='al-inventory__side'>
 						<div class='card__content-inner'>
 							<ul class='alc-inventory__list list-unstyled'>
-								<li class='alc-inventory__item' v-for='entry in contents'>
+								<li class='alc-inventory__item' v-for='(entry, index) in contents'>
 									<figure class='alc-inventory__item-thumb'>
 										<img :src='"/assets/{{ config('game.slug') }}/item/" + entry.icon + ".png"' alt=''>
 									</figure>
 									<div class='alc-inventory__item-badges'>
 										<span class='badge badge-primary' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
-										<span class='badge badge-default badge-close' @click='removeFromCart(entry)'><i class='fa fa-times -desize'></i></span>
+										<span class='badge badge-default badge-close' @click='removeFromCart(index)'><i class='fa fa-times -desize'></i></span>
 									</div>
 									<div class='alc-product-wishlist__body text-center mt-1'>
 										<h5 :class='"alc-product-wishlist__title rarity-" + entry.rarity' v-html='entry.name'></h5>
@@ -68,7 +68,7 @@
 						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a> --}}
 					</div>
 					<div class='col-sm-3 offset-sm-3 col-lg-2 offset-lg-6'>
-						<a href='/craft/sack' class='btn btn-primary btn-sm btn-block'>Start Crafting</a>
+						<a href='/craft/knapsack' class='btn btn-primary btn-sm btn-block'>Start Crafting</a>
 					</div>
 				</div>
 			</div>

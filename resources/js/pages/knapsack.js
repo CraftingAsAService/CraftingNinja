@@ -10,8 +10,9 @@ const knapsack = new Vue({
 		contents: ninjaCartContents
 	},
 	methods: {
-		removeFromCart:function(entry) {
-			console.log(entry);
+		removeFromCart:function(index) {
+			this.contents.splice(index, 1);
+			this.$eventBus.$emit('removeFromCart', index, 'index');
 		}
 	}
 });
