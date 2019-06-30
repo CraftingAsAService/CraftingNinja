@@ -26,16 +26,10 @@
 @section('content')
 
 	<div id='knapsack'>
-		@if ($ninjaCart->isEmpty())
-			<div id='no-results' class='jumbotron'>
-				<h1 class='display-4'>Nothing in your Knapsack!</h1>
-				<p class='lead mt-4 mb-0'>Head over to the <a href='/compendium'>Compendium</a> to add stuff.</p>
-			</div>
-		@else
-		<div class='card card--no-paddings alc'>
+		<div class='card card--no-paddings alc' v-if='contents.length'>
 			<div class='card__header card__header--has-btn'>
 				<h4>Your Knapsack</h4>
-				<a class='btn btn-default btn-xs card-header__button' href='#'>Clear</a>
+				<button class='btn btn-default btn-xs card-header__button' @click='clearCart()'>Clear</button>
 			</div>
 			<div class='card__content pt-3'>
 				<div class='alc-inventory'>
@@ -47,7 +41,11 @@
 										<img :src='"/assets/{{ config('game.slug') }}/item/" + entry.icon + ".png"' alt=''>
 									</figure>
 									<div class='alc-inventory__item-badges'>
-										<span class='badge badge-primary' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
+										{{-- TODO changing quantity?
+										<span class='badge badge-primary' role='button'><i class='fa fa-minus -desize'></i></span>
+										<span class='badge badge-primary' role='button'><i class='fa fa-plus -desize'></i></span>
+										--}}
+										<span class='badge badge-primary' role='info' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
 										<span class='badge badge-default badge-close' @click='removeFromCart(index)'><i class='fa fa-times -desize'></i></span>
 									</div>
 									<div class='alc-product-wishlist__body text-center mt-1'>
@@ -73,7 +71,12 @@
 				</div>
 			</div>
 		</div>
-		@endif
+		<div v-else>
+			<div id='no-results' class='jumbotron'>
+				<h1 class='display-4'>Nothing in your Knapsack!</h1>
+				<p class='lead mt-4 mb-0'>Head over to the <a href='/compendium'>Compendium</a> to add stuff.</p>
+			</div>
+		</div>
 	</div>
 
 {{--

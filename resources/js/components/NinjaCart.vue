@@ -56,17 +56,19 @@
 		created:function() {
 			this.$eventBus.$on('addToCart', this.addToCart);
 			this.$eventBus.$on('removeFromCart', this.removeFromCart);
+			this.$eventBus.$on('clearCart', this.clearCart);
 		},
 		beforeDestroy:function() {
 			this.$eventBus.$off('addToCart');
 			this.$eventBus.$off('removeFromCart');
+			this.$eventBus.$off('clearCart');
 		},
 		mounted:function() {
 			this.loadFromCookie();
 		},
 		computed: {
 			reverseContents() {
-				return this.contents.slice().reverse();
+				return this.contents.length ? this.contents.slice().reverse() : [];
 			}
 		},
 		methods: {
@@ -93,6 +95,11 @@
 						break;
 					}
 				}
+			},
+			clearCart:function() {
+				this.contents = [];
+				this.saveToCookie();
+				this.recount();
 			},
 			addToCookie:function(id, type, quantity, img) {
 				// Look for an existing entry

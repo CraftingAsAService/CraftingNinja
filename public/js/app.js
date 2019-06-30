@@ -66,17 +66,19 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.$eventBus.$on('addToCart', this.addToCart);
     this.$eventBus.$on('removeFromCart', this.removeFromCart);
+    this.$eventBus.$on('clearCart', this.clearCart);
   },
   beforeDestroy: function beforeDestroy() {
     this.$eventBus.$off('addToCart');
     this.$eventBus.$off('removeFromCart');
+    this.$eventBus.$off('clearCart');
   },
   mounted: function mounted() {
     this.loadFromCookie();
   },
   computed: {
     reverseContents: function reverseContents() {
-      return this.contents.slice().reverse();
+      return this.contents.length ? this.contents.slice().reverse() : [];
     }
   },
   methods: {
@@ -99,6 +101,11 @@ __webpack_require__.r(__webpack_exports__);
           break;
         }
       }
+    },
+    clearCart: function clearCart() {
+      this.contents = [];
+      this.saveToCookie();
+      this.recount();
     },
     addToCookie: function addToCookie(id, type, quantity, img) {
       // Look for an existing entry

@@ -52,6 +52,14 @@
   font-size: 14px;
 }
 
+.badge[role=button] {
+  cursor: pointer;
+}
+
+.badge[role=info] {
+  cursor: default;
+}
+
 .card figure.-icon {
   height: 66%;
   text-align: center;

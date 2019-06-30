@@ -1,0 +1,8 @@
+.badge {
+	&[role=button] {
+		cursor: pointer;
+	}
+	&[role=info] {
+		cursor: default;
+	}
+}

@@ -7,12 +7,16 @@
 const knapsack = new Vue({
 	el: '#knapsack',
 	data: {
-		contents: ninjaCartContents
+		contents: ninjaCartContents || []
 	},
 	methods: {
 		removeFromCart:function(index) {
 			this.contents.splice(index, 1);
 			this.$eventBus.$emit('removeFromCart', index, 'index');
+		},
+		clearCart:function() {
+			this.contents = [];
+			this.$eventBus.$emit('clearCart');
 		}
 	}
 });
