@@ -67,11 +67,13 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventBus.$on('addToCart', this.addToCart);
     this.$eventBus.$on('removeFromCart', this.removeFromCart);
     this.$eventBus.$on('clearCart', this.clearCart);
+    this.$eventBus.$on('updateCart', this.updateCart);
   },
   beforeDestroy: function beforeDestroy() {
     this.$eventBus.$off('addToCart');
     this.$eventBus.$off('removeFromCart');
     this.$eventBus.$off('clearCart');
+    this.$eventBus.$off('updateCart');
   },
   mounted: function mounted() {
     this.loadFromCookie();
@@ -82,6 +84,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    updateCart: function updateCart(id, type, quantity) {
+      for (var index in this.contents) {
+        if (this.contents[index].t == type && this.contents[index].i == id) this.contents[index].q = quantity;
+      }
+
+      this.saveToCookie();
+    },
     addToCart: function addToCart(id, type, quantity, img, el) {
       this.addToCartAnimation(img, el);
       this.addToCookie(id, type, quantity, img);
@@ -128,6 +137,7 @@ __webpack_require__.r(__webpack_exports__);
       this.saveToCookie();
     },
     addToCartAnimation: function addToCartAnimation(img, el) {
+      if (!el) return;
       var fromPosition = $(el).offset(),
           bagIconEl = $(this.$refs.bagIcon),
           toPosition = bagIconEl.offset(),

@@ -26,12 +26,13 @@ class KnapsackController extends Controller
 
 		foreach ($ninjaCart as &$entry)
 		{
-			$quantity = $entry->q;
+			$original = $entry;
 
 			if ($entry->t == 'item')
 				$entry = Item::with('translations')->whereId($entry->i)->first()->toArray();
 
-			$entry['quantity'] = $quantity;
+			$entry['type'] = $original->t;
+			$entry['quantity'] = $original->q;
 		}
 
 		return collect($ninjaCart);

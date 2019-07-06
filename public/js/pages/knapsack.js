@@ -16,9 +16,23 @@
 var knapsack = new Vue({
   el: '#knapsack',
   data: {
-    contents: ninjaCartContents || []
+    contents: ninjaCartContents || [],
+    active: null
+  },
+  watch: {
+    active: {
+      handler: function handler() {
+        this.$eventBus.$emit('updateCart', this.active.id, this.active.type, this.active.quantity);
+      },
+      deep: true
+    }
   },
   methods: {
+    updateCart: function updateCart() {
+      console.log('updateCartPre');
+      this.$eventBus.$emit('updateCart', this.contents);
+      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton);
+    },
     removeFromCart: function removeFromCart(index) {
       this.contents.splice(index, 1);
       this.$eventBus.$emit('removeFromCart', index, 'index');
@@ -26,6 +40,9 @@ var knapsack = new Vue({
     clearCart: function clearCart() {
       this.contents = [];
       this.$eventBus.$emit('clearCart');
+    },
+    activate: function activate(index) {
+      this.active = ninjaCartContents[index];
     }
   }
 });

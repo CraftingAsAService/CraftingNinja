@@ -32,41 +32,47 @@
 				<button class='btn btn-default btn-xs card-header__button' @click='clearCart()'>Clear</button>
 			</div>
 			<div class='card__content pt-3'>
-				<div class='alc-inventory'>
-					<div class='al-inventory__side'>
+				<div class='alc-inventory row'>
+					<div :class='"col-sm-" + (active === null ? 12 : 9)'>
 						<div class='card__content-inner'>
 							<ul class='alc-inventory__list list-unstyled'>
-								<li class='alc-inventory__item' v-for='(entry, index) in contents'>
+								<li :class='"alc-inventory__item" + (active === entry ? " alc-inventory__item--active" : "")' v-for='(entry, index) in contents' @click='activate(index)'>
 									<figure class='alc-inventory__item-thumb'>
 										<img :src='"/assets/{{ config('game.slug') }}/item/" + entry.icon + ".png"' alt=''>
 									</figure>
 									<div class='alc-inventory__item-badges'>
-										{{-- TODO changing quantity?
-										<span class='badge badge-primary' role='button'><i class='fa fa-minus -desize'></i></span>
-										<span class='badge badge-primary' role='button'><i class='fa fa-plus -desize'></i></span>
-										--}}
 										<span class='badge badge-primary' role='info' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
 										<span class='badge badge-default badge-close' @click='removeFromCart(index)'><i class='fa fa-times -desize'></i></span>
-									</div>
-									<div class='alc-product-wishlist__body text-center mt-1'>
-										<h5 :class='"alc-product-wishlist__title rarity-" + entry.rarity' v-html='entry.name'></h5>
 									</div>
 								</li>
 							</ul>
 						</div>
 					</div>
+					<div v-if='active !== null' class='col-sm-3' style='border-left: 1px solid #4b3b60;'>
+						<div class='card__content-inner text-center'>
+							<h4 :class='"rarity-" + active.rarity' v-html='active.name'></h4>
+
+							<div class='alc-inventory__main-quantity'>
+								<input type='number' class='form-control product-quantity-control' min='1' v-model='active.quantity'>
+							</div>
+
+							<footer class='alc-inventory__main-footer'>
+								<a href='#' class='btn btn-default btn-sm btn-icon' @click='removeFromCart("active")'><i class='fa fa-times'></i> Remove</a>
+							</footer>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class='card__content-inner'>
+			<div class='card__content p-3 mt-2'>
 				<div class='row'>
-					<div class='col-sm-3 col-lg-2'>
+					<div class='col-sm-3'>
 						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a> --}}
 					</div>
-					<div class='col-sm-3 col-lg-2'>
-						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a> --}}
+					<div class='col-sm-6 text-center'>
+						<a href='/craft/knapsack' class='btn btn-primary btn-lg'>Start Crafting</a>
 					</div>
-					<div class='col-sm-3 offset-sm-3 col-lg-2 offset-lg-6'>
-						<a href='/craft/knapsack' class='btn btn-primary btn-sm btn-block'>Start Crafting</a>
+					<div class='col-sm-3'>
+						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a> --}}
 					</div>
 				</div>
 			</div>
