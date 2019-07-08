@@ -4,6 +4,10 @@
  *
  */
 
+body {
+  --color-dark-lighten-2: #4b3b60;
+}
+
 .rarity-1 {
   color: var(--rarity1);
 }

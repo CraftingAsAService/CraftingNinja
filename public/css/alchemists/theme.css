@@ -5,6 +5,10 @@
  */
 
 body {
+  --color-dark-lighten-2: #4b3b60;
+}
+
+body {
   display: none;
 }
 
@@ -23940,9 +23944,8 @@ td.team-leader__avg {
 }
 
 .alc-inventory__item--active .alc-inventory__item-thumb {
-  border-width: 4px;
-  border: 4px solid #ff4040;
-  border-radius: 12px;
+  border: 2px solid #1bd75e;
+  border-radius: 9px;
 }
 
 .alc-inventory__item-thumb {

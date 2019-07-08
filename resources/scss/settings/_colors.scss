@@ -33,3 +33,7 @@ $color-primary-darken: darken($lobster, 10%);
 $post-category-1: darken($alchemy-dark, 10%); // Alchemy Theme Dark Green, even darker
 $color-3: $alchemy;
 $color-3-darken: $alchemy-dark;
+
+body {
+	--color-dark-lighten-2: #4b3b60;
+}

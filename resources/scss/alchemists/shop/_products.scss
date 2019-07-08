@@ -1771,9 +1771,10 @@
 				border: none;
 
 				.alc-inventory__item-thumb {
-					border-width: 4px;
-					border: 4px solid $color-primary;
-					border-radius: 12px;
+					// border-width: 4px;
+					// border: 4px solid $color-primary;
+					border: 2px solid $color-3-darken;
+					border-radius: 9px;
 				}
 			}
 

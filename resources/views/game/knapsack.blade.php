@@ -48,7 +48,7 @@
 							</ul>
 						</div>
 					</div>
-					<div v-if='active !== null' class='col-sm-3' style='border-left: 1px solid #4b3b60;'>
+					<div v-if='active !== null' class='col-sm-3' style='border-left: 1px solid var(--color-dark-lighten-2);'>
 						<div class='card__content-inner text-center'>
 							<h4 :class='"rarity-" + active.rarity' v-html='active.name'></h4>
 
