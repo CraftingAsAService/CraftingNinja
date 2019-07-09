@@ -207,6 +207,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     saveToCookie: function saveToCookie() {
       this.$cookies.set('NinjaCart', JSON.stringify(this.contents));
+      this.$eventBus.$emit('cartChanged', this.contents);
     },
     recount: function recount() {
       var count = 0;

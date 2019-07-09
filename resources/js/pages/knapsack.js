@@ -13,27 +13,55 @@ const knapsack = new Vue({
 	watch: {
 		active: {
 			handler:function() {
-				this.$eventBus.$emit('updateCart', this.active.id, this.active.type, this.active.quantity);
+				if (this.active)
+					this.$eventBus.$emit('updateCart', this.active.id, this.active.type, this.active.quantity);
 			},
 			deep: true
 		}
 	},
+	created:function() {
+		this.$eventBus.$on('cartChanged', this.cartChanged);
+	},
+	beforeDestroy:function() {
+		this.$eventBus.$off('cartChanged');
+	},
 	methods: {
+		cartChanged:function(cartContents) {
+			// Align local cart data with the actual cart contents
+			var newContents = [],
+				oldContents = this.contents;
+
+			for (var index in oldContents)
+			{
+				var cIndex = cartContents.findIndex(function(entry) {
+					return entry.i == oldContents[index].id;
+				});
+
+				if (cIndex !== -1) {
+					oldContents[index].quantity = cartContents[cIndex].q;
+					newContents.push(oldContents[index]);
+				}
+			}
+
+			this.contents = newContents;
+		},
 		updateCart:function() {
-			console.log('updateCartPre');
 			this.$eventBus.$emit('updateCart', this.contents);
 			this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton);
 		},
-		removeFromCart:function(index) {
-			this.contents.splice(index, 1);
-			this.$eventBus.$emit('removeFromCart', index, 'index');
+		removeFromCart:function(id, type) {
+			this.deactivate();
+			this.$eventBus.$emit('removeFromCart', id, type);
 		},
 		clearCart:function() {
-			this.contents = [];
+			this.deactivate();
 			this.$eventBus.$emit('clearCart');
 		},
 		activate:function(index) {
-			this.active = ninjaCartContents[index];
+			this.active = this.contents[index];
+		},
+		deactivate:function() {
+			this.active = null;
 		}
 	}
 });

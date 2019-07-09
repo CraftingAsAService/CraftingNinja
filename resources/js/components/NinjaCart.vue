@@ -211,6 +211,7 @@
 			},
 			saveToCookie:function() {
 				this.$cookies.set('NinjaCart', JSON.stringify(this.contents));
+				this.$eventBus.$emit('cartChanged', this.contents);
 			},
 			recount:function() {
 				let count = 0;

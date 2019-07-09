@@ -42,7 +42,7 @@
 									</figure>
 									<div class='alc-inventory__item-badges'>
 										<span class='badge badge-primary' role='info' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
-										<span class='badge badge-default badge-close' @click='removeFromCart(index)'><i class='fa fa-times -desize'></i></span>
+										<span class='badge badge-default badge-close' @click.stop='removeFromCart(index, "index")'><i class='fa fa-times -desize'></i></span>
 									</div>
 								</li>
 							</ul>
@@ -57,7 +57,7 @@
 							</div>
 
 							<footer class='alc-inventory__main-footer'>
-								<a href='#' class='btn btn-default btn-sm btn-icon' @click='removeFromCart("active")'><i class='fa fa-times'></i> Remove</a>
+								<a href='#' class='btn btn-default btn-sm btn-icon' @click='removeFromCart(active.id, active.type)'><i class='fa fa-times'></i> Remove</a>
 							</footer>
 						</div>
 					</div>
