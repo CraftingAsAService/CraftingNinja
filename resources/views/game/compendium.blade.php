@@ -19,13 +19,10 @@
 	</script>
 @endsection
 
-@section('topContent')
-	<div class='minor-media mb-3' hidden>
-		<img src='/assets/{{ config('game.slug') }}/cover.jpg' alt='{{ config('game.data.name') }}'>
-		<div class='text'>
-			<h1>Compendium</h1>
-		</div>
-	</div>
+@section('heading')
+	@if ($wasReferred)
+	@include('game.partials.heading')
+	@endif
 @endsection
 
 @section('content')
@@ -38,6 +35,9 @@
 							Chapter
 						</label>
 						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
+							{{--
+							<option value='blueprints'>Blueprints</option>
+							--}}
 							<option value='recipe'>Recipes</option>
 							{{--
 							<option value='equipment'>Equipment</option>

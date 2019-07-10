@@ -42,6 +42,8 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	Route::get('compendium', 'CompendiumController@index');
 	Route::post('compendium', 'CompendiumController@index');
 
+	Route::get('crafting', 'CraftingController@index');
+
 	Route::get('knapsack', 'KnapsackController@index');
 	Route::post('knapsack', 'KnapsackController@addActiveEntry');
 	Route::put('knapsack', 'KnapsackController@updateActiveEntry');

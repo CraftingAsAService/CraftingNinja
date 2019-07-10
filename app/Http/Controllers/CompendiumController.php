@@ -15,6 +15,12 @@ class CompendiumController extends Controller
 
 	public function index(Request $request)
 	{
+		$wasReferred = $request->server->get('HTTP_REFERER')
+			? parse_url($request->server->get('HTTP_REFERER'))['host'] != $request->server->get('HTTP_HOST')
+			: true;
+
+		$searchTerm = $request->input('search');
+
 		// TODO Cache this
 		$jobs = Job::byTypeAndTier();
 		$max = [
@@ -23,9 +29,7 @@ class CompendiumController extends Controller
 			'rlvl' => Recipe::max('level'),
 		];
 
-		$searchTerm = $request->input('search');
-
-		return view('game.compendium', compact('jobs', 'max', 'searchTerm'));
+		return view('game.compendium', compact('wasReferred', 'jobs', 'max', 'searchTerm'));
 	}
 
 }

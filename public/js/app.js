@@ -213,7 +213,7 @@ __webpack_require__.r(__webpack_exports__);
       var count = 0;
 
       for (var entry in this.contents) {
-        count += this.contents[entry].q;
+        count += parseInt(this.contents[entry].q);
       }
 
       this.count = count;

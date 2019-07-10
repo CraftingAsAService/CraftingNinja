@@ -72,7 +72,7 @@
 				</div>
 			</div>
 		</div>
-		<div class='post-grid__item col-sm-6 col-lg-4'>
+		{{-- <div class='post-grid__item col-sm-6 col-lg-4'>
 			<div class='posts__item card'>
 				<figure class='posts__thumb -icon -gradient-4'>
 					<a href='/crafting'><i class='fas fa-magic'></i></a>
@@ -84,7 +84,7 @@
 					</ul>
 				</div>
 			</div>
-		</div>
+		</div> --}}
 		<div class='post-grid__item col-sm-6 col-lg-4'>
 			<div class='posts__item card'>
 				<figure class='posts__thumb -icon -gradient-1'>

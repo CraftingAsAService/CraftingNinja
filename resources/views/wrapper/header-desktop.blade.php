@@ -70,9 +70,9 @@
 								@else
 									@php
 										$navigation = [
-											'Crafting'	 => '/crafting',
 											'Compendium' => '/compendium',
-											'Equipment'	 => '/equipment',
+											'Equipment'  => '/equipment',
+											'Quests'     => '/quests',
 										];
 									@endphp
 									@foreach ($navigation as $section => $url)

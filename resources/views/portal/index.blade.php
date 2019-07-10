@@ -34,12 +34,12 @@
 								<div class='post-grid__item col-sm-6'>
 									<div class='posts__item posts__item--tile posts__item--category-{{ $loop->index % 4 + 1 }} card'>
 										<figure class='posts__thumb'>
-											<a href="https://{{ $game->slug }}.{{ config('app.base_url') }}"><img src='/assets/{{ $game->slug }}/cover.jpg' alt='{{ $game->name }}'></a>
+											<a href="https://{{ $game->slug }}.{{ config('app.base_url') }}/compendium"><img src='/assets/{{ $game->slug }}/cover.jpg' alt='{{ $game->name }}'></a>
 											<div class='posts__inner'>
 												<h6 class='posts__title posts__title--color-hover'><a href='https://{{ $game->slug }}.{{ config('app.base_url') }}'>{{ $game->name }}</a></h6>
 											</div>
 										</figure>
-										<a href="https://{{ $game->slug }}.{{ config('app.base_url') }}" class="posts__cta"></a>
+										<a href="https://{{ $game->slug }}.{{ config('app.base_url') }}/compendium" class="posts__cta"></a>
 									</div>
 								</div>
 							@endforeach
