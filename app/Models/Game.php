@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Translations\GameTranslation;
-use Dimsav\Translatable\Translatable;
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Watson\Rememberable\Rememberable;
 

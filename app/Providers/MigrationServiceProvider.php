@@ -20,7 +20,7 @@ class MigrationServiceProvider extends ServiceProvider
 			$this->foreign($columnName ?? str_singular($tableName) . '_id')->references('id')->on($tableName)->onDelete('cascade');
 		});
 
-		// A quick way to create the basic necessities of dimsav/laravel-translatable fields
+		// A quick way to create the basic necessities of astrotomic/laravel-translatable fields
 		//  Don't forget, you still need to add in relevant fields, like name, afterwards
 		Blueprint::macro('translatable', function() {
 			// Strip "_translations" (13 char length) off the table name for the singular version of the table

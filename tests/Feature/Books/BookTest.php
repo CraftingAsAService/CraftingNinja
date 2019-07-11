@@ -10,6 +10,11 @@ use Tests\GameTestCase;
 class BookTest extends GameTestCase
 {
 
+	public function getCartCookie()
+	{
+		return '[{"i":10590,"t":"item","q":1,"p":"/assets/ffxiv/item/6074.png"},{"i":10627,"t":"item","q":"2","p":"/assets/ffxiv/item/6111.png"},{"i":1608,"t":"item","q":1,"p":"/assets/ffxiv/item/87.png"}]';
+	}
+
 	/** @test */
 	function user_can_view_recipe_books()
 	{
@@ -43,6 +48,20 @@ class BookTest extends GameTestCase
 
 		$response->assertSee('Alpha Book');
 	}
+
+	/** @test */
+	function user_can_create_book_from_knapsack_contents()
+	{
+
+
+	}
+
+
+
+
+
+
+
 
 	/** @test */
 	function users_can_publish_their_own_listings()

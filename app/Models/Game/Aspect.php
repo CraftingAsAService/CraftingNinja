@@ -3,7 +3,7 @@
 namespace App\Models\Game;
 
 use App\Models\Game\Entity;
-use Dimsav\Translatable\Translatable;
+use Astrotomic\Translatable\Translatable;
 
 /**
  * Common aspects of a game share the same basic setup

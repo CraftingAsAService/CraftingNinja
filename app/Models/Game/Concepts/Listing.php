@@ -13,7 +13,7 @@ use App\Models\Game\Concepts\Report;
 use App\Models\Translations\ListingTranslation;
 use App\Models\User;
 use Carbon\Carbon;
-use Dimsav\Translatable\Translatable;
+use Astrotomic\Translatable\Translatable;
 
 class Listing extends Concept
 {

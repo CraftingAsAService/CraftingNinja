@@ -54,6 +54,8 @@
 			}
 		},
 		created:function() {
+			this.$cookies.config('31d');
+
 			this.$eventBus.$on('addToCart', this.addToCart);
 			this.$eventBus.$on('removeFromCart', this.removeFromCart);
 			this.$eventBus.$on('clearCart', this.clearCart);

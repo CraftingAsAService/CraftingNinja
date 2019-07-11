@@ -7,7 +7,7 @@ use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Listing\Vote;
 use Illuminate\Http\Request;
 
-class BooksController extends Controller
+class BookController extends Controller
 {
 	//
 

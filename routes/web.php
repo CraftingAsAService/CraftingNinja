@@ -35,6 +35,8 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 
 	Route::get('books', 'BookController@index');
 	Route::get('books/{id}', 'BookController@show');
+	// Route::get('books/create', 'BookController@create');
+	// Route::post('books', 'BookController@store');
 	Route::post('books/{id}/add', 'BookController@addAllEntriesToKnapsack');
 	Route::post('books/{id}/vote', 'BookController@vote');
 	Route::post('books/{id}/publish', 'BookController@publish');
