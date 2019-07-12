@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Knapsack;
 use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
@@ -12,30 +11,10 @@ class KnapsackController extends Controller
 
 	public function index()
 	{
-		$ninjaCart = $this->parseCookie();
+		$ninjaCart = Knapsack::parseCookie();
 		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->fromUser()->get();
 
 		return view('game.knapsack', compact('ninjaCart', 'listings'));
-	}
-
-	private function parseCookie()
-	{
-		$ninjaCart = isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart']
-			? json_decode($_COOKIE['NinjaCart'])
-			: [];
-
-		foreach ($ninjaCart as &$entry)
-		{
-			$original = $entry;
-
-			if ($entry->t == 'item')
-				$entry = Item::with('translations')->whereId($entry->i)->first()->toArray();
-
-			$entry['type'] = $original->t;
-			$entry['quantity'] = $original->q;
-		}
-
-		return collect($ninjaCart);
 	}
 
 	public function addActiveEntry(Request $request)

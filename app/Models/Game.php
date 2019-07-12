@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\Translations\GameTranslation;
 use Astrotomic\Translatable\Translatable;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Watson\Rememberable\Rememberable;
 
-class Game extends Model
+class Game extends Model implements TranslatableContract
 {
 
 	protected $connection = 'caas';

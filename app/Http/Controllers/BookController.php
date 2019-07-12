@@ -9,7 +9,18 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-	//
+
+	public function create()
+	{
+		$ninjaCart = Knapsack::parseCookie();
+
+		if ($ninjaCart->isEmpty())
+			return redirect()->back();
+
+
+
+
+	}
 
 	/**
 	 * Book Index

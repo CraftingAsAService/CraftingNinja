@@ -4,33 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc0121a74eba8d25283d8529d522dc0b",
+    "content-hash": "82535d3ff54d4966bf9d0ee4dfce2e01",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
-            "version": "2.0.3",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "899ed38246f25da38b40a2eabaa6c9aa41903023"
+                "reference": "411e67ab0575cc589a719ef6ad05cbd2086b6aac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/899ed38246f25da38b40a2eabaa6c9aa41903023",
-                "reference": "899ed38246f25da38b40a2eabaa6c9aa41903023",
+                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/411e67ab0575cc589a719ef6ad05cbd2086b6aac",
+                "reference": "411e67ab0575cc589a719ef6ad05cbd2086b6aac",
                 "shasum": ""
             },
             "require": {
                 "appstract/lush-http": "^0.5",
-                "illuminate/console": ">=5.5",
-                "illuminate/filesystem": ">=5.5",
-                "illuminate/routing": ">=5.5",
-                "illuminate/support": ">=5.5",
-                "php": ">=5.6"
+                "illuminate/console": ">=5.8",
+                "illuminate/filesystem": ">=5.8",
+                "illuminate/routing": ">=5.8",
+                "illuminate/support": ">=5.8",
+                "php": "^7.1.3"
             },
             "require-dev": {
-                "orchestra/testbench": "^3.3",
-                "phpunit/phpunit": "5.*"
+                "orchestra/testbench": "^3.8",
+                "phpunit/phpunit": "^7.5"
             },
             "type": "library",
             "extra": {
@@ -65,7 +65,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2019-06-17T19:35:57+00:00"
+            "time": "2019-06-22T21:56:09+00:00"
         },
         {
             "name": "appstract/lush-http",
@@ -759,20 +759,20 @@
         },
         {
             "name": "itsgoingd/clockwork",
-            "version": "v2.3",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/itsgoingd/clockwork.git",
-                "reference": "33215e18d30819feeae2bfa39896327ffbd9da83"
+                "reference": "6992e5925cff6d990298fbace2fec9aaabb65a4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/33215e18d30819feeae2bfa39896327ffbd9da83",
-                "reference": "33215e18d30819feeae2bfa39896327ffbd9da83",
+                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/6992e5925cff6d990298fbace2fec9aaabb65a4c",
+                "reference": "6992e5925cff6d990298fbace2fec9aaabb65a4c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
+                "php": ">=5.5",
                 "psr/log": "1.*"
             },
             "type": "library",
@@ -813,7 +813,7 @@
                 "profiling",
                 "slim"
             ],
-            "time": "2018-07-30T22:46:04+00:00"
+            "time": "2019-07-11T16:11:06+00:00"
         },
         {
             "name": "laracasts/flash",
@@ -1018,34 +1018,35 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v3.3.0",
+            "version": "v4.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "79316f36641f1916a50ab14d368acdf1d97e46de"
+                "reference": "f92e15a8ba4dfd730cddc775a7c1ca2251f30cff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/79316f36641f1916a50ab14d368acdf1d97e46de",
-                "reference": "79316f36641f1916a50ab14d368acdf1d97e46de",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/f92e15a8ba4dfd730cddc775a7c1ca2251f30cff",
+                "reference": "f92e15a8ba4dfd730cddc775a7c1ca2251f30cff",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "guzzlehttp/guzzle": "~6.0",
-                "illuminate/contracts": "~5.4",
-                "illuminate/http": "~5.4",
-                "illuminate/support": "~5.4",
+                "illuminate/http": "~5.7.0|~5.8.0|~5.9.0",
+                "illuminate/support": "~5.7.0|~5.8.0|~5.9.0",
                 "league/oauth1-client": "~1.0",
-                "php": ">=5.6.4"
+                "php": "^7.1.3"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0|~5.0"
+                "illuminate/contracts": "~5.7.0|~5.8.0|~5.9.0",
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "4.0-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -1077,7 +1078,7 @@
                 "laravel",
                 "oauth"
             ],
-            "time": "2018-12-21T14:06:32+00:00"
+            "time": "2019-04-02T17:06:04+00:00"
         },
         {
             "name": "league/flysystem",
@@ -3449,26 +3450,22 @@
         },
         {
             "name": "watson/rememberable",
-            "version": "2.0.4",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dwightwatson/rememberable.git",
-                "reference": "8718614835370f67f58d86387a26bfc315fa9a8b"
+                "reference": "f3451ed6c4f9b902e1d1b3817dc62508c6b16d90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dwightwatson/rememberable/zipball/8718614835370f67f58d86387a26bfc315fa9a8b",
-                "reference": "8718614835370f67f58d86387a26bfc315fa9a8b",
+                "url": "https://api.github.com/repos/dwightwatson/rememberable/zipball/f3451ed6c4f9b902e1d1b3817dc62508c6b16d90",
+                "reference": "f3451ed6c4f9b902e1d1b3817dc62508c6b16d90",
                 "shasum": ""
             },
             "require": {
                 "illuminate/database": "~5.0",
                 "illuminate/support": "~5.0",
                 "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "4.2.*"
             },
             "type": "library",
             "autoload": {
@@ -3493,7 +3490,7 @@
                 "laravel",
                 "remember"
             ],
-            "time": "2017-12-21T01:09:18+00:00"
+            "time": "2019-02-27T03:32:43+00:00"
         }
     ],
     "packages-dev": [

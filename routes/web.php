@@ -33,28 +33,33 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 
 	Route::get('/', 'GameController@index');
 
-	Route::get('books', 'BookController@index');
-	Route::get('books/{id}', 'BookController@show');
-	// Route::get('books/create', 'BookController@create');
+	// Route::get('books', 'BookController@index');
+	// Route::get('books/{id}', 'BookController@show');
 	// Route::post('books', 'BookController@store');
-	Route::post('books/{id}/add', 'BookController@addAllEntriesToKnapsack');
-	Route::post('books/{id}/vote', 'BookController@vote');
-	Route::post('books/{id}/publish', 'BookController@publish');
+	// Route::post('books/{id}/add', 'BookController@addAllEntriesToKnapsack');
+	// Route::post('books/{id}/vote', 'BookController@vote');
+	// Route::post('books/{id}/publish', 'BookController@publish');
 
 	Route::get('compendium', 'CompendiumController@index');
 	Route::post('compendium', 'CompendiumController@index');
 
-	Route::get('crafting', 'CraftingController@index');
+	// Route::get('crafting', 'CraftingController@index');
 
 	Route::get('knapsack', 'KnapsackController@index');
-	Route::post('knapsack', 'KnapsackController@addActiveEntry');
-	Route::put('knapsack', 'KnapsackController@updateActiveEntry');
-	Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
-	Route::delete('knapsack/all', 'KnapsackController@removeAllActiveEntries');
+	// Route::post('knapsack', 'KnapsackController@addActiveEntry');
+	// Route::put('knapsack', 'KnapsackController@updateActiveEntry');
+	// Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
+	// Route::delete('knapsack/all', 'KnapsackController@removeAllActiveEntries');
 
-	Route::post('listing/{id}/publish', 'ListingController@publish');
-	Route::delete('listing/{id}', 'ListingController@delete');
+	// Route::post('listing/{id}/publish', 'ListingController@publish');
+	// Route::delete('listing/{id}', 'ListingController@delete');
 
-	Route::post('report', 'ReportController@create');
+	// Route::post('report', 'ReportController@create');
+
+	Route::middleware('auth')->group(function() {
+
+		Route::get('books/create', 'BookController@create');
+
+	});
 
 });

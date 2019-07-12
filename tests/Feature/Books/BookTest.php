@@ -10,9 +10,16 @@ use Tests\GameTestCase;
 class BookTest extends GameTestCase
 {
 
-	public function getCartCookie()
+	public function addItemToNinjaCartCookie($item, $quantity = 1)
 	{
-		return '[{"i":10590,"t":"item","q":1,"p":"/assets/ffxiv/item/6074.png"},{"i":10627,"t":"item","q":"2","p":"/assets/ffxiv/item/6111.png"},{"i":1608,"t":"item","q":1,"p":"/assets/ffxiv/item/87.png"}]';
+		static $items = [];
+		$items[] = $item;
+
+		// Assume the user added these things manually
+		$_COOKIE['NinjaCart'] = '[';
+		foreach ($items as $key => $i)
+			$_COOKIE['NinjaCart'] .= '{"i":' . $item->id . ',"t":"item","q":' . $quantity . ',"p":""}' . ($key != count($items) - 1 ? ',' : '');
+		$_COOKIE['NinjaCart'] .= ']';
 	}
 
 	/** @test */
@@ -50,10 +57,30 @@ class BookTest extends GameTestCase
 	}
 
 	/** @test */
-	function user_can_create_book_from_knapsack_contents()
+	function user_can_access_creation_form_with_cart_contents()
 	{
+		$this->setUser();
 
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
 
+		$this->addItemToNinjaCartCookie($item);
+
+		$response = $this->call('GET', $this->gamePath . '/books/create');
+
+		$response->assertStatus(200);
+	}
+
+	/** @test */
+	function user_cannot_access_creation_form_with_cart_contents()
+	{
+		$this->setUser();
+		// Note: Not setting NinjaCart cookie
+
+		$response = $this->call('GET', $this->gamePath . '/books/create');
+
+		$response->assertStatus(302);
 	}
 
 

@@ -14,8 +14,9 @@ use App\Models\Translations\ListingTranslation;
 use App\Models\User;
 use Carbon\Carbon;
 use Astrotomic\Translatable\Translatable;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class Listing extends Concept
+class Listing extends Concept implements TranslatableContract
 {
 
 	use Translatable;

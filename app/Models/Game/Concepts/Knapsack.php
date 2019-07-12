@@ -17,6 +17,26 @@ class Knapsack {
 		$this->get();
 	}
 
+	static public function parseCookie()
+	{
+		$ninjaCart = isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart']
+			? json_decode($_COOKIE['NinjaCart'])
+			: [];
+
+		foreach ($ninjaCart as &$entry)
+		{
+			$original = $entry;
+
+			if ($entry->t == 'item')
+				$entry = Item::with('translations')->whereId($entry->i)->first()->toArray();
+
+			$entry['type'] = $original->t;
+			$entry['quantity'] = $original->q;
+		}
+
+		return collect($ninjaCart);
+	}
+
 	public function get()
 	{
 		// Get the active list, create one if it does not exist
