@@ -59,6 +59,7 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	Route::middleware('auth')->group(function() {
 
 		Route::get('books/create', 'BookController@create');
+		Route::post('books', 'BookController@store');
 
 	});
 

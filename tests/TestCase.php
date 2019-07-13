@@ -10,6 +10,8 @@ abstract class TestCase extends BaseTestCase
 {
 	use CreatesApplication;
 
+	public $user = null;
+
 	/**
 	 * Initialise classes to test against.
 	 *
@@ -24,16 +26,11 @@ abstract class TestCase extends BaseTestCase
 
 	public function setUser()
 	{
-		$user = new User([
+		$this->user = factory(User::class)->create([
 			'name' => 'Yeet McGee'
 		]);
 
-		$this->be($user);
-	}
-
-	public function showErrors()
-	{
-		$this->withoutExceptionHandling();
+		$this->be($this->user);
 	}
 
 }

@@ -294,7 +294,7 @@ class KnapsackTest extends GameTestCase
 	/** @test */
 	function user_can_delete_unpublished_listing()
 	{
-		$this->showErrors();
+		$this->withoutExceptionHandling();
 
 		$listing = factory(Listing::class)->state('unpublished')->create();
 

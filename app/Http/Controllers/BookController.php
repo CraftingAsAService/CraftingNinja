@@ -15,12 +15,49 @@ class BookController extends Controller
 		$ninjaCart = Knapsack::parseCookie();
 
 		if ($ninjaCart->isEmpty())
-			return redirect()->back();
+			return redirect('/knapsack');
 
-
-
-
+		return view('game.books.create', compact('ninjaCart'));
 	}
+
+	public function store(Request $request)
+	{
+		$ninjaCart = Knapsack::parseCookie();
+
+		if ($ninjaCart->isEmpty())
+			return redirect('/knapsack');
+
+		$validator = \Validator::make($request->all(), [
+			'name' => 'required',
+			'job_id' => 'numeric',
+			'min_level' => 'numeric|lte:max_level',
+			'max_level' => 'numeric|gte:min_level',
+		]);
+
+		if ($validator->fails())
+			return redirect()->back()->withErrors();
+
+		$job_id = $request->has('job_id');
+
+		if ($job_id)
+			Job::findOrFail($job_id);
+
+		$listing = Listing::create([
+			'user_id'        => auth()->user()->id,
+			'name:en'        => $request->input('name'),
+			'description:en' => $request->input('description'),
+			'job_id'         => $request->input('job_id'),
+			'min_level'      => $request->input('min_level'),
+			'max_level'      => $request->input('max_level'),
+			'published_at'   => now(),
+		]);
+
+		return redirect('/compendium?chapter=books&filter=yours');
+	}
+
+
+
+
 
 	/**
 	 * Book Index
