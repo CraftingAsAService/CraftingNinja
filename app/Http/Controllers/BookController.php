@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game\Aspects\Job;
 use App\Models\Game\Concepts\Knapsack;
 use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Listing\Vote;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
@@ -29,18 +31,18 @@ class BookController extends Controller
 
 		$validator = \Validator::make($request->all(), [
 			'name' => 'required',
-			'job_id' => 'numeric',
+			'job_id' => [
+				'numeric',
+				Rule::in(Job::pluck('id')->toArray()),
+			],
 			'min_level' => 'numeric|lte:max_level',
 			'max_level' => 'numeric|gte:min_level',
 		]);
 
 		if ($validator->fails())
-			return redirect()->back()->withErrors();
-
-		$job_id = $request->has('job_id');
-
-		if ($job_id)
-			Job::findOrFail($job_id);
+			return redirect()->back()
+					->withErrors($validator)
+					->withInput();
 
 		$listing = Listing::create([
 			'user_id'        => auth()->user()->id,

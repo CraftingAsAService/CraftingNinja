@@ -10,7 +10,7 @@ abstract class TestCase extends BaseTestCase
 {
 	use CreatesApplication;
 
-	public $user = null;
+	protected $user = null;
 
 	/**
 	 * Initialise classes to test against.
@@ -22,15 +22,6 @@ abstract class TestCase extends BaseTestCase
 		parent::setUp();
 
 		$this->artisan('migrate');
-	}
-
-	public function setUser()
-	{
-		$this->user = factory(User::class)->create([
-			'name' => 'Yeet McGee'
-		]);
-
-		$this->be($this->user);
 	}
 
 }

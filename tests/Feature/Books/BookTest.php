@@ -5,22 +5,10 @@ namespace Feature\Books;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\GameTestCase;
+use Tests\BookTestCase;
 
-class BookTest extends GameTestCase
+class BookTest extends BookTestCase
 {
-
-	public function addItemToNinjaCartCookie($item, $quantity = 1)
-	{
-		static $items = [];
-		$items[] = $item;
-
-		// Assume the user added these things manually
-		$_COOKIE['NinjaCart'] = '[';
-		foreach ($items as $key => $i)
-			$_COOKIE['NinjaCart'] .= '{"i":' . $item->id . ',"t":"item","q":' . $quantity . ',"p":""}' . ($key != count($items) - 1 ? ',' : '');
-		$_COOKIE['NinjaCart'] .= ']';
-	}
 
 	/** @test */
 	function user_can_view_recipe_books()
@@ -56,98 +44,6 @@ class BookTest extends GameTestCase
 		$response->assertSee('Alpha Book');
 	}
 
-	/** @test */
-	function user_can_access_creation_form_with_cart_contents()
-	{
-		$this->setUser();
-
-		$item = factory(Item::class)->create([
-			'name:en' => 'Beta Item',
-		]);
-
-		$this->addItemToNinjaCartCookie($item);
-
-		$response = $this->call('GET', $this->gamePath . '/books/create');
-
-		$response->assertOk();
-		$response->assertSee('Beta Item');
-	}
-
-	/** @test */
-	function user_cannot_access_creation_form_without_cart_contents()
-	{
-		// Note: Not setting NinjaCart cookie
-		$this->setUser();
-
-		$response = $this->call('GET', $this->gamePath . '/books/create');
-
-		$response->assertRedirect('/knapsack');
-	}
-
-	/** @test */
-	function guests_cannot_access_creation_form()
-	{
-		// Note: Not setting User
-		$item = factory(Item::class)->create([
-			'name:en' => 'Beta Item',
-		]);
-
-		$this->addItemToNinjaCartCookie($item);
-
-		$response = $this->call('GET', $this->gamePath . '/books/create');
-
-		$response->assertRedirect('/login');
-	}
-
-	/** @test */
-	function users_can_submit_listing_creation()
-	{
-		$this->withoutExceptionHandling();
-		$this->setUser();
-
-		$item = factory(Item::class)->create([
-			'name:en' => 'Beta Item',
-		]);
-
-		$this->addItemToNinjaCartCookie($item);
-
-		$response = $this->call('POST', $this->gamePath . '/books', [
-			'name'        => 'Awesome Book',
-			'description' => 'Use this book to level up',
-			'job_id'      => 17,
-			'min_level'   => 1,
-			'max_level'   => 255,
-		]);
-
-		$listing = Listing::first();
-
-		$this->assertEquals($this->user->name, $listing->user->name);
-		$this->assertEquals('Awesome Book', $listing->name);
-		$this->assertEquals('Use this book to level up', $listing->description);
-		$this->assertEquals(17, $listing->job_id);
-		$this->assertEquals(1, $listing->min_level);
-		$this->assertEquals(255, $listing->max_level);
-
-		$response->assertRedirect('/compendium?chapter=books&filter=yours');
-	}
-
-	/** @test */
-	function invalid_names_will_not_create_a_listing()
-	{
-
-	}
-
-	/** @test */
-	function invalid_job_ids_will_not_create_a_listing()
-	{
-
-	}
-
-	/** @test */
-	function invalid_levels_will_not_create_a_listing()
-	{
-
-	}
 
 
 

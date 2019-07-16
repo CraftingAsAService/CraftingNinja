@@ -11,7 +11,8 @@ class Refresh extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'refresh';
+	protected $signature = 'refresh
+							{--clear : Will not re-cache Configs and Routes}';
 
 	/**
 	 * The console command description.
@@ -21,16 +22,6 @@ class Refresh extends Command
 	protected $description = 'Full Cache Refresh';
 
 	/**
-	 * Create a new command instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
-	/**
 	 * Execute the console command.
 	 *
 	 * @return mixed
@@ -38,10 +29,13 @@ class Refresh extends Command
 	public function handle()
 	{
 		// Clear various laravel caches
-		$this->call('opcache:clear');
-		$this->call('config:cache');
-		$this->call('route:cache');
+		if ( ! is_file(storage_path('framework/down')))
+			$this->call('opcache:clear');
+		$this->call('config:' . ($this->option('clear') ? 'clear': 'cache'));
+		$this->call('route:' . ($this->option('clear') ? 'clear': 'cache'));
 		$this->call('cache:clear');
 		$this->call('view:clear');
+		$this->call('queue:restart');
 	}
+
 }
