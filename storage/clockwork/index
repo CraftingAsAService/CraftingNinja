@@ -1,4 +1,0 @@
-1562858911-3547-22479256,1562858909.6816,GET,/compendium,"App\Http\Controllers\CompendiumController@index",200,1736.1180782318
-1562858915-8852-1725146476,1562858915.5603,POST,/api/items,"App\Http\Controllers\Api\ItemsController@index",200,346.82607650757
-1562900724-3265-933174955,1562900722.803,GET,/books/create,"App\Http\Controllers\BookController@create",302,1574.0039348602
-1562900725-0183-427680661,1562900724.4127,GET,/login,"App\Http\Controllers\Auth\LoginController@showLoginForm",500,625.43201446533
