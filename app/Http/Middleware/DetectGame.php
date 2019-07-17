@@ -27,6 +27,8 @@ class DetectGame
 		{
 			\DB::setDefaultConnection($gameSlug);
 
+			// config(['app.url' => str_replace('//', '//' . $gameSlug . '.', config('app.url'))]);
+
 			config(['game' => array_merge(
 				[
 					'slug' => $gameSlug,

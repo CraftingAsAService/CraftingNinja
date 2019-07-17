@@ -43,6 +43,8 @@ abstract class GameTestCase extends TestCase
 			'description:en' => 'A Test Game',
 		]);
 
+		// config(['app.url' => str_replace('//', '//' . $this->gameSlug . '.', config('app.url'))]);
+
 		config([
 			'game' => [
 				'slug' => $this->gameSlug,

@@ -22,8 +22,10 @@ class IsGame
 			return redirect('/');
 		}
 
-		// If it is a game, fuhgeddaboudit
-		$request->route()->forgetParameter('game');
+		// No longer looking for {game}! Letting DetectGame take the lead on it
+		// Route::domain('{game}.' . config('app.base_url'))->
+		// // If it is a game, fuhgeddaboudit
+		// $request->route()->forgetParameter('game');
 
 		return $next($request);
 	}

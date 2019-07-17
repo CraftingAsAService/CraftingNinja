@@ -17,7 +17,7 @@ class BookController extends Controller
 		$ninjaCart = Knapsack::parseCookie();
 
 		if ($ninjaCart->isEmpty())
-			return redirect('/knapsack');
+			return redirect()->route('knapsack');
 
 		return view('game.books.create', compact('ninjaCart'));
 	}
@@ -27,7 +27,7 @@ class BookController extends Controller
 		$ninjaCart = Knapsack::parseCookie();
 
 		if ($ninjaCart->isEmpty())
-			return redirect('/knapsack');
+			return redirect()->route('knapsack');
 
 		$validator = \Validator::make($request->all(), [
 			'name' => 'required',
@@ -54,7 +54,10 @@ class BookController extends Controller
 			'published_at'   => now(),
 		]);
 
-		return redirect('/compendium?chapter=books&filter=yours');
+		return redirect()->route('compendium', [
+			'chapter' => 'books',
+			'filter'  => 'mine',
+		]);
 	}
 
 

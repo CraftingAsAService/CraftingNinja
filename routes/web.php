@@ -25,13 +25,13 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::domain(config('app.base_url'))->group(function() {
 
-	Route::get('/', 'PortalController@index');
+	Route::get('/', 'PortalController@index')->name('portal');
 
 });
 
-Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(function() {
+Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->group(function() {
 
-	Route::get('/', 'GameController@index');
+	Route::get('/', 'GameController@index')->name('home');
 
 	// Route::get('books', 'BookController@index');
 	// Route::get('books/{id}', 'BookController@show');
@@ -40,12 +40,12 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 	// Route::post('books/{id}/vote', 'BookController@vote');
 	// Route::post('books/{id}/publish', 'BookController@publish');
 
-	Route::get('compendium', 'CompendiumController@index');
-	Route::post('compendium', 'CompendiumController@index');
+	Route::get('compendium', 'CompendiumController@index')->name('compendium');
+	Route::post('compendium', 'CompendiumController@index')->name('compendium.search');
 
 	// Route::get('crafting', 'CraftingController@index');
 
-	Route::get('knapsack', 'KnapsackController@index');
+	Route::get('knapsack', 'KnapsackController@index')->name('knapsack');
 	// Route::post('knapsack', 'KnapsackController@addActiveEntry');
 	// Route::put('knapsack', 'KnapsackController@updateActiveEntry');
 	// Route::delete('knapsack', 'KnapsackController@removeActiveEntry');
@@ -58,8 +58,8 @@ Route::domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(
 
 	Route::middleware('auth')->group(function() {
 
-		Route::get('books/create', 'BookController@create');
-		Route::post('books', 'BookController@store');
+		Route::get('books/create', 'BookController@create')->name('books.create');
+		Route::post('books', 'BookController@store')->name('books.store');
 
 	});
 

@@ -33,7 +33,7 @@ class CreateBookTest extends BookTestCase
 		]);
 		$this->addItemToNinjaCartCookie($item);
 
-		$response = $this->be($user)->call('POST', $this->gamePath . '/books', [
+		$response = $this->be($user)->call('POST', '/books', [
 			'name'        => 'Awesome Book',
 			'description' => 'Use this book to level up',
 			'job_id'      => 17,
@@ -50,7 +50,10 @@ class CreateBookTest extends BookTestCase
 		$this->assertEquals(1, $listing->min_level);
 		$this->assertEquals(255, $listing->max_level);
 
-		$response->assertRedirect('/compendium?chapter=books&filter=yours');
+		$response->assertRedirect(route('compendium', [
+			'chapter' => 'books',
+			'filter'  => 'mine',
+		]));
 	}
 
 	/** @test */
@@ -64,12 +67,12 @@ class CreateBookTest extends BookTestCase
 		$this->addItemToNinjaCartCookie($item);
 
 		$response = $this->be($user)
-			->from($this->gamePath . '/books/create')
-			->call('POST', $this->gamePath . '/books', $this->validParams([
+			->from('/books/create')
+			->call('POST', '/books', $this->validParams([
 				'name' => '',
 			]));
 
-		$response->assertRedirect($this->gamePath . '/books/create');
+		$response->assertRedirect('/books/create');
 		$response->assertSessionHasErrors('name');
 		$this->assertEquals(0, Listing::count());
 	}
@@ -84,12 +87,12 @@ class CreateBookTest extends BookTestCase
 		$this->addItemToNinjaCartCookie($item);
 
 		$response = $this->be($user)
-			->from($this->gamePath . '/books/create')
-			->call('POST', $this->gamePath . '/books', $this->validParams([
+			->from('/books/create')
+			->call('POST', '/books', $this->validParams([
 				'job_id' => 999,
 			]));
 
-		$response->assertRedirect($this->gamePath . '/books/create');
+		$response->assertRedirect('/books/create');
 		$response->assertSessionHasErrors('job_id');
 		$this->assertEquals(0, Listing::count());
 	}
@@ -104,13 +107,13 @@ class CreateBookTest extends BookTestCase
 		$this->addItemToNinjaCartCookie($item);
 
 		$response = $this->be($user)
-			->from($this->gamePath . '/books/create')
-			->call('POST', $this->gamePath . '/books', $this->validParams([
+			->from('/books/create')
+			->call('POST', '/books', $this->validParams([
 				'min_level' => 999,
 				'max_level' => 1,
 			]));
 
-		$response->assertRedirect($this->gamePath . '/books/create');
+		$response->assertRedirect('/books/create');
 		$response->assertSessionHasErrors('min_level');
 		$response->assertSessionHasErrors('max_level');
 		$this->assertEquals(0, Listing::count());
@@ -125,9 +128,9 @@ class CreateBookTest extends BookTestCase
 		]);
 		// Not setting NinjaCart cookie
 
-		$response = $this->be($user)->call('POST', $this->gamePath . '/books', $this->validParams());
+		$response = $this->be($user)->call('POST', '/books', $this->validParams());
 
-		$response->assertRedirect($this->gamePath . '/knapsack');
+		$response->assertRedirect('/knapsack');
 		$this->assertEquals(0, Listing::count());
 	}
 
