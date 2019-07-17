@@ -17,12 +17,4 @@ abstract class BookTestCase extends GameTestCase
 		$_COOKIE['NinjaCart'] .= ']';
 	}
 
-	public function validParams($overrides = [])
-	{
-		return array_merge([
-			'name'        => 'Awesome Book',
-			'description' => 'Use this book to level up',
-		], $overrides);
-	}
-
 }

@@ -11,6 +11,14 @@ use Tests\BookTestCase;
 class CreateBookTest extends BookTestCase
 {
 
+	public function validParams($overrides = [])
+	{
+		return array_merge([
+			'name'        => 'Awesome Book',
+			'description' => 'Use this book to level up',
+		], $overrides);
+	}
+
 	/** @test */
 	function users_can_submit_listing_creation()
 	{
@@ -105,6 +113,21 @@ class CreateBookTest extends BookTestCase
 		$response->assertRedirect($this->gamePath . '/books/create');
 		$response->assertSessionHasErrors('min_level');
 		$response->assertSessionHasErrors('max_level');
+		$this->assertEquals(0, Listing::count());
+	}
+
+	/** @test */
+	function empty_carts_will_not_create_a_listing()
+	{
+		$user = factory(User::class)->create();
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+		// Not setting NinjaCart cookie
+
+		$response = $this->be($user)->call('POST', $this->gamePath . '/books', $this->validParams());
+
+		$response->assertRedirect($this->gamePath . '/knapsack');
 		$this->assertEquals(0, Listing::count());
 	}
 
