@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<div class='card__content p-3 mt-2'>
-				<div class='row'>
+				<div class='row align-items-center'>
 					<div class='col-sm-3'>
 						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a> --}}
 					</div>
@@ -72,7 +72,7 @@
 						<a href='/craft/knapsack' class='btn btn-primary btn-lg'>Start Crafting</a>
 					</div>
 					<div class='col-sm-3'>
-						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Publish List</a> --}}
+						<a href='/books/create' class='btn btn-secondary btn-sm btn-block'>Create Book</a>
 					</div>
 				</div>
 			</div>

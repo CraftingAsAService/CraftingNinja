@@ -40,7 +40,7 @@
 								<li class='nav-account__item'><a href='/account'>Your Account</a></li>
 								<li class='nav-account__item nav-account__item--logout'><a href='/logout'>Sign out</a></li>
 							@else
-								<li class='nav-account__item nav-account__item--logout'><a href='/login/google'>Sign in</a></li>
+								<li class='nav-account__item nav-account__item--logout'><a href='/login'>Sign in</a></li>
 							@endif
 						</ul>
 						<!-- Account Navigation / End -->
