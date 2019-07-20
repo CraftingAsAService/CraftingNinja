@@ -14,6 +14,12 @@ use Tests\GameTestCase;
 class KnapsackTest extends GameTestCase
 {
 
+	//
+	//
+	// TODO I think this entire test suite is invalid...
+	//
+	//
+
 	/** @test */
 	function users_with_an_empty_knapsack_are_given_a_200()
 	{

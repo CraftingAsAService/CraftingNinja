@@ -13,10 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::namespace('Api')->domain('{game}.' . config('app.base_url'))->middleware('is-game')->group(function() {
+Route::namespace('Api')->/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->group(function() {
 
 	Route::post('items', 'ItemsController@index');
-	Route::resource('books', 'BooksController', ['only' => ['index']]);
+	Route::post('books', 'BooksController@index');
 
 	Route::get('users/{user}/lists', 'UsersController@lists');
 

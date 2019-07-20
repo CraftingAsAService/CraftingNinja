@@ -1,14 +1,11 @@
 <?php
 
-namespace Feature;
+namespace Feature\Compendium;
 
-use App\Models\Game\Aspects\Category;
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Aspects\Recipe;
-use App\Models\Game\Concepts\Equipment;
 use Tests\GameTestCase;
 
-class BookTest extends GameTestCase
+class ApiItemTest extends GameTestCase
 {
 
 	/** @test */
@@ -20,16 +17,12 @@ class BookTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->call('POST', $this->gamePath . '/api/items');
+		$response = $this->call('POST', '/api/items');
 
 		// Assert
 		$response->assertStatus(200);
 
 		$response->assertSee('Beta Item');
 	}
-
-
-	// $this->withoutExceptionHandling();
-
 
 }
