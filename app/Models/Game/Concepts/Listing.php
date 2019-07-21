@@ -27,7 +27,7 @@ class Listing extends Concept implements TranslatableContract
 	public $timestamps = true;
 
 	protected $dates = [
-		'published_at',
+
 	];
 
 	public static $polymorphicRelationships = [
@@ -67,16 +67,6 @@ class Listing extends Concept implements TranslatableContract
 	public function scopeFromUser($query, $userId = null)
 	{
 		return $query->where('user_id', $userId ?? auth()->user()->id ?? null);
-	}
-
-	public function scopePublished($query)
-	{
-		return $query->whereNotNull('published_at');
-	}
-
-	public function scopeUnpublished($query)
-	{
-		return $query->whereNull('published_at');
 	}
 
 	public function scopeActive($query, $userId = null)
@@ -131,31 +121,6 @@ class Listing extends Concept implements TranslatableContract
 	public function reports()
 	{
 		return $this->morphMany(Report::class, 'reportable');
-	}
-
-	/**
-	 * Functions
-	 */
-
-	public function isPublished()
-	{
-		return $this->published_at !== null;
-	}
-
-	public function publish($publish = true)
-	{
-		if ($this->user_id == auth()->user()->id)
-		{
-			$this->published_at = $publish ? Carbon::now() : null;
-			$this->save();
-		}
-
-		return $this;
-	}
-
-	public function unpublish()
-	{
-		return $this->publish(false);
 	}
 
 }

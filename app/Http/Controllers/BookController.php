@@ -19,7 +19,9 @@ class BookController extends Controller
 		if ($ninjaCart->isEmpty())
 			return redirect()->route('knapsack');
 
-		return view('game.books.create', compact('ninjaCart'));
+		$jobs = Job::all();
+
+		return view('game.books.create', compact('ninjaCart', 'jobs'));
 	}
 
 	public function store(Request $request)
@@ -51,7 +53,6 @@ class BookController extends Controller
 			'job_id'         => $request->input('job_id'),
 			'min_level'      => $request->input('min_level'),
 			'max_level'      => $request->input('max_level'),
-			'published_at'   => now(),
 		]);
 
 		return redirect()->route('compendium', [

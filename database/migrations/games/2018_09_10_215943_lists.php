@@ -20,8 +20,6 @@ class Lists extends Migration
 			$table->unsignedInteger('job_id')->nullable(); // FK `jobs`
 			$table->unsignedSmallInteger('min_level')->nullable();
 			$table->unsignedSmallInteger('max_level')->nullable();
-
-			$table->datetime('published_at')->nullable(); // Searchable as a Book if true
 			$table->timestamps();
 
 			// Indexes
@@ -29,7 +27,6 @@ class Lists extends Migration
 			$table->index('job_id');
 			$table->index('min_level');
 			$table->index('max_level');
-			$table->index('published_at');
 			// $table->cascadeDeleteForeign('users'); // Cannot include; Users exists on different schema
 			$table->cascadeDeleteForeign('jobs');
 		});

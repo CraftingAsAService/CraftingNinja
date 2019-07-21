@@ -20,7 +20,6 @@ class CreateBookTest extends BookTestCase
 		$this->addItemToNinjaCartCookie($item);
 
 		$response = $this->be($user)->call('GET', '/books/create');
-		dd($response);
 
 		$response->assertOk();
 		$response->assertSee('Beta Item');

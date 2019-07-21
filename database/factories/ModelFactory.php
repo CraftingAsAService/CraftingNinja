@@ -61,18 +61,6 @@ $factory->define(Listing::class, function(Faker\Generator $faker) {
 	];
 });
 
-$factory->state(Listing::class, 'published', function (Faker\Generator $faker) {
-	return [
-		'published_at' => Carbon\Carbon::parse('-1 week'),
-	];
-});
-
-$factory->state(Listing::class, 'unpublished', function (Faker\Generator $faker) {
-	return [
-		'published_at' => null,
-	];
-});
-
 $factory->define(Recipe::class, function(Faker\Generator $faker) {
 	return [
 
