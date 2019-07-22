@@ -13,9 +13,12 @@
 				</div>
 				<div class='card__content'>
 					<div class='alc-inventory'>
+						<div class='form-group'>
+							<label for='name'>Your Book's Inventory</label>
+						</div>
 						<ul class='alc-inventory__list list-unstyled'>
 							@foreach ($ninjaCart as $entity)
-							<li class='alc-inventory__item'>
+							<li class='alc-inventory__item -small'>
 								<figure class='alc-inventory__item-thumb'>
 									<img src='/assets/{{ config('game.slug') }}/item/{{ $entity['icon'] }}.png' alt=''>
 								</figure>

@@ -23367,6 +23367,11 @@ td.team-leader__avg {
   }
 }
 
+.alc-inventory__item.-small {
+  width: 60px;
+  height: 60px;
+}
+
 .alc-inventory__item--active {
   border: none;
 }

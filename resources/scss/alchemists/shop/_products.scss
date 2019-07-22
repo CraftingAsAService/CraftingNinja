@@ -1766,6 +1766,11 @@
 					width: 72px;
 					height: 72px;
 				}
+
+				&.-small {
+					width: 60px;
+					height: 60px;
+				}
 			}
 			.alc-inventory__item--active {
 				border: none;

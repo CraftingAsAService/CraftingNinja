@@ -1,5 +1,5 @@
 # Crafting Ninja
 
-- https://craftingasaservice.com
-- https://reddit.com/r/craftingasaservice
+- https://crafting.ninja
+- https://reddit.com/r/CraftingNinja
 - https://www.patreon.com/craftingasaservice
