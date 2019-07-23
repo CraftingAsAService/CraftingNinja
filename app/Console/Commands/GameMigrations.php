@@ -59,7 +59,7 @@ class GameMigrations extends Command
 
 		Artisan::call('db:seed', [
 			'--database' => 'caas',
-			'--class' => 'GameDataSeeder',
+			'--class' => 'GameTableSeeder',
 		]);
 	}
 }

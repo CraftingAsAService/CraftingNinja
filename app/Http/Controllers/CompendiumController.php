@@ -20,16 +20,28 @@ class CompendiumController extends Controller
 			: true;
 
 		$searchTerm = $request->input('search');
+		$chapterStart = $request->input('chapter', 'recipe');
+		$filters = $request->input('filters');
 
-		// TODO Cache this
-		$jobs = Job::byTypeAndTier();
-		$max = [
-			'ilvl' => Item::max('ilvl'),
-			'elvl' => Equipment::max('level'),
-			'rlvl' => Recipe::max('level'),
-		];
+		$this->shareStaticGameDataWithView();
 
-		return view('game.compendium', compact('wasReferred', 'jobs', 'max', 'searchTerm'));
+		return view('game.compendium', compact('wasReferred', 'searchTerm', 'chapterStart', 'filters'));
+	}
+
+	private function shareStaticGameDataWithView()
+	{
+		list($jobs, $max) = Cache::rememberForever(config('game.slug') . 'gameJobsAndMaxLevels', function() {
+			return [
+				Job::byTypeAndTier(),
+				[
+					'ilvl' => Item::max('ilvl'),
+					'elvl' => Equipment::max('level'),
+					'rlvl' => Recipe::max('level'),
+				]
+			];
+		});
+
+		view()->share(compact('jobs', 'max'));
 	}
 
 }
