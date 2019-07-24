@@ -12,7 +12,7 @@ const compendium = new Vue({
 	data: {
 		firstLoad: true,
 		loading: false,
-		chapter: 'recipe',
+		chapter: chapterStart || 'recipe',
 		noResults: true,
 		results: {
 			data: [],
@@ -48,6 +48,8 @@ const compendium = new Vue({
 	mounted:function() {
 		this.initializeDropdowns();
 
+		this.parseInitialFilters();
+
 		if (this.filters.name != '')
 			this.search();
 	},
@@ -55,6 +57,9 @@ const compendium = new Vue({
 		this.debouncedSearch = _.debounce(this.search, 250);
 	},
 	methods: {
+		parseInitialFilters:function() {
+			console.log(filterStart);
+		},
 		initializeDropdowns:function() {
 			var thisObject = this;
 

@@ -4,7 +4,7 @@
 $filters = [
 	'name' => [
 		'key'	   => 'name',
-		'for'      => ['item', 'recipe', 'equipment', 'quest', 'mob'],
+		'for'      => ['books', 'item', 'recipe', 'equipment', 'quest', 'mob'],
 		'type'     => 'string',
 		'icon'     => 'fa-search',
 		'title'    => 'Search',
@@ -47,12 +47,26 @@ $filters = [
 		'icon'   => 'fa-medal',
 		'title'  => 'Equipment Level',
 	],
+	'blvl' => [
+		'key'	 => 'blvl',
+		'for'    => ['books'],
+		'type'   => 'range',
+		'icon'   => 'fa-medal',
+		'title'  => 'Level',
+	],
 	'eclass' => [
 		'key'	 => 'eclass',
 		'for'    => ['equipment'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-chess-rook',
 		'title'  => 'Equipment Class',
+	],
+	'bclass' => [
+		'key'	 => 'eclass',
+		'for'    => ['books'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-chess-rook',
+		'title'  => 'Class',
 	],
 	'slot' => [
 		'key'	 => 'slot',
@@ -75,14 +89,23 @@ $filters = [
 		'icon'   => 'fa-registered',
 		'title'  => 'Rarity',
 	],
+	'badditional' => [
+		'key'	 => 'additional',
+		'for'    => ['books'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-star',
+		'title'  => 'Filter',
+	],
 ];
 
 return [
 	'all' => $filters,
 
-	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', ])),
+	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bclass', 'badditional', ])),
 
 	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
+
+	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', ])),
 
 	'equipment' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'elvl', 'eclass', 'slot', 'sockets', ])),
 

@@ -483,7 +483,7 @@ var compendium = new Vue({
   data: {
     firstLoad: true,
     loading: false,
-    chapter: 'recipe',
+    chapter: chapterStart || 'recipe',
     noResults: true,
     results: {
       data: [],
@@ -517,12 +517,16 @@ var compendium = new Vue({
   },
   mounted: function mounted() {
     this.initializeDropdowns();
+    this.parseInitialFilters();
     if (this.filters.name != '') this.search();
   },
   created: function created() {
     this.debouncedSearch = _.debounce(this.search, 250);
   },
   methods: {
+    parseInitialFilters: function parseInitialFilters() {
+      console.log(filterStart);
+    },
     initializeDropdowns: function initializeDropdowns() {
       var thisObject = this;
       $('#compendium').find('select.cs-select').each(function () {

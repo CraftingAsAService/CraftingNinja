@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Cache;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
@@ -20,12 +21,12 @@ class CompendiumController extends Controller
 			: true;
 
 		$searchTerm = $request->input('search');
-		$chapterStart = $request->input('chapter', 'recipe');
-		$filters = $request->input('filters');
+		$chapterStart = $request->input('chapter');
+		$filterStart = $request->input('filter');
 
 		$this->shareStaticGameDataWithView();
 
-		return view('game.compendium', compact('wasReferred', 'searchTerm', 'chapterStart', 'filters'));
+		return view('game.compendium', compact('wasReferred', 'searchTerm', 'chapterStart', 'filterStart'));
 	}
 
 	private function shareStaticGameDataWithView()

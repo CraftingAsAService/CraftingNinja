@@ -10,12 +10,14 @@
 
 @section('head')
 	<script>
-		var searchTerm = '{{ $searchTerm }}',
-			itemFilters = @json(array_values(config('crafting.filters.item'))),
-			recipeFilters = @json(array_values(config('crafting.filters.recipe'))),
+		var searchTerm       = '{{ $searchTerm }}',
+			chapterStart     = '{{ $chapterStart }}',
+			filterStart      = '{{ $filterStart }}',
+			itemFilters      = @json(array_values(config('crafting.filters.item'))),
+			recipeFilters    = @json(array_values(config('crafting.filters.recipe'))),
 			equipmentFilters = @json(array_values(config('crafting.filters.equipment'))),
-			sortingFilters = @json(array_values(config('crafting.filters.sorting'))),
-			perPageFilters = @json(array_values(config('crafting.filters.perPage')));
+			sortingFilters   = @json(array_values(config('crafting.filters.sorting'))),
+			perPageFilters   = @json(array_values(config('crafting.filters.perPage')));
 	</script>
 @endsection
 
@@ -35,9 +37,7 @@
 							Chapter
 						</label>
 						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
-							{{--
-							<option value='blueprints'>Blueprints</option>
-							--}}
+							<option value='books'>Books</option>
 							<option value='recipe'>Recipes</option>
 							{{--
 							<option value='equipment'>Equipment</option>
@@ -168,154 +168,20 @@
 				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
 
 					{{-- Filter Widgets --}}
-					{{--
-					@component('game.compendium.widget', config('crafting.filters.all')['name'])
-						<input type='text' class='form-control' v-model='filters.name' v-on:input='debouncedSearch' :placeholder='"Find your " + chapter'>
-					@endcomponent --}}
 
-					@component('game.compendium.widget', config('crafting.filters.all')['ilvl'])
-						<div class='row'>
-							<div class='col'>
-								<input type='number' class='form-control min' v-model='filters.ilvlMin' min='1' max='{{ $max['ilvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-							<div class='col-auto'>
-								<i class='fas fa-exchange-alt mt-3'></i>
-							</div>
-							<div class='col'>
-								<input type='number' class='form-control max' v-model='filters.ilvlMax' min='1' max='{{ $max['ilvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-						</div>
-					@endcomponent
+					@include('game.compendium.filters.blvl')
+					@include('game.compendium.filters.bclass')
+					@include('game.compendium.filters.badditional')
+					@include('game.compendium.filters.ilvl')
+					@include('game.compendium.filters.rclass')
+					@include('game.compendium.filters.rlvl')
+					@include('game.compendium.filters.rdifficulty')
+					@include('game.compendium.filters.elvl')
+					@include('game.compendium.filters.eclass')
+					@include('game.compendium.filters.slot')
+					@include('game.compendium.filters.sockets')
+					@include('game.compendium.filters.rarity')
 
-					@component('game.compendium.widget', config('crafting.filters.all')['rclass'])
-						<div class='checkbox-table'>
-							@foreach ($jobs['crafting'] as $jobTier => $jobSet)
-							@foreach ($jobSet->sortBy('id') as $job)
-								<label class='checkbox checkbox--cell' data-toggle='tooltip' title='{{ $job->name }}' for='rclassId{{ $job->id }}'>
-									<input type='checkbox' id='rclassId{{ $job->id }}' v-on:input='toggleFilter("rclass", "{{ $job->id }}")' hidden>
-									<span class='checkbox-indicator'><img src='/assets/{{ config('game.slug') }}/jobs/crafting-{{ $job->abbreviation }}.png' alt='{{ $job->abbreviation }}'></span>
-								</label>
-							@endforeach
-							@endforeach
-						</ul>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['rlvl'])
-						<div class='row'>
-							<div class='col'>
-								<input type='number' class='form-control min' v-model='filters.rlvlMin' min='1' max='{{ $max['rlvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-							<div class='col-auto'>
-								<i class='fas fa-exchange-alt mt-3'></i>
-							</div>
-							<div class='col'>
-								<input type='number' class='form-control max' v-model='filters.rlvlMax' min='1' max='{{ $max['rlvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-						</div>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['rdifficulty'])
-						<div class='row'>
-							@foreach (range(0, config('game.maxDifficulty')) as $sublevel)
-								<div class='col-md-{{ $sublevel == 0 ? 12 : 6 }}'>
-									<div class='form-group form-group--xs mb-2'>
-										<label class='checkbox checkbox-inline'>
-											<input type='checkbox' id='sublevel-{{ $sublevel }}' v-on:input='toggleFilter("sublevel", "{{ $sublevel }}")'>
-											<span class='checkbox-indicator'></span>
-											@if ($sublevel == 0)
-												Base Difficulty
-											@else
-												@foreach (range(1, $sublevel) as $star)
-												<span class='sublevel-icon'></span>
-												@endforeach
-											@endif
-										</label>
-									</div>
-								</div>
-							@endforeach
-						</div>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['elvl'])
-						<div class='row'>
-							<div class='col'>
-								<input type='number' class='form-control min' v-model='filters.elvlMin' min='1' max='{{ $max['elvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-							<div class='col-auto'>
-								<i class='fas fa-exchange-alt mt-3'></i>
-							</div>
-							<div class='col'>
-								<input type='number' class='form-control max' v-model='filters.elvlMax' min='1' max='{{ $max['elvl'] }}' v-on:input='debouncedSearch'>
-							</div>
-						</div>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['eclass'])
-						<ul class='filter-color'>
-							@foreach ($jobs as $jobType => $jobTiers)
-							@foreach ($jobTiers as $jobTier => $jobSet)
-							@foreach ($jobSet->sortBy('id') as $job)
-								<li class='filter-color__item {{ $jobType }}-job'>
-									<label class='checkbox' data-toggle='tooltip' title='{{ $job->name }}' for='eclassId{{ $job->id }}'>
-										<input type='checkbox' id='eclassId{{ $job->id }}' v-on:input='toggleFilter("eclass", "{{ $job->id }}")' hidden>
-										<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->abbreviation }}.png' class='checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
-									</label>
-								</li>
-							@endforeach
-							@endforeach
-							@endforeach
-						</ul>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['slot'])
-						<ul class='filter-color'>
-							@foreach (collect(config('game.equipmentLayout'))->unique() as $name => $key)
-								<li class='filter-color__item'>
-									<label class='checkbox' data-toggle='tooltip' title='{{ $name }}' for='slotId{{ $key }}'>
-										<input type='checkbox' id='slotId{{ $key }}' v-on:input='toggleFilter("slot", "{{ $key }}")' hidden>
-										<img src='/assets/{{ config('game.slug') }}/slots/{{ $key }}.png' alt='{{ $name }}' class='checkbox-indicator' width='24' height='24'>
-									</label>
-								</li>
-							@endforeach
-						</ul>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['sockets'])
-						<div class='row'>
-							@foreach (range(0, config('game.maxSockets')) as $sockets)
-								<div class='col-md-6'>
-									<div class='form-group form-group--xs mb-2'>
-										<label class='checkbox checkbox-inline'>
-											<input type='checkbox' id='sockets-{{ $sockets }}' v-on:input='toggleFilter("sockets", "{{ $sockets }}")' checked>
-											<span class='checkbox-indicator'></span>
-											@if ($sockets == 0)
-												Socketless
-											@else
-												@foreach (range(1, $sockets) as $gem)
-												<span class='fas fa-gem' style='font-size: 13px;'></span>
-												@endforeach
-											@endif
-										</label>
-									</div>
-								</div>
-							@endforeach
-						</div>
-					@endcomponent
-
-					@component('game.compendium.widget', config('crafting.filters.all')['rarity'])
-						<div class='row'>
-							@foreach (config('game.rarity') as $rarityKey => $rarity)
-								<div class='col-md-{{ $loop->first ? 12 : 6 }}'>
-									<div class='form-group form-group--xs mb-2'>
-										<label class='checkbox checkbox-inline' style='color: var(--rarity{{ $rarityKey }});'>
-											<input type='checkbox' id='rarity-{{ $rarityKey }}' v-on:input='toggleFilter("rarity", "{{ $rarityKey }}")'> {{ $rarity }}
-											<span class='checkbox-indicator'></span>
-										</label>
-									</div>
-								</div>
-							@endforeach
-						</div>
-					@endcomponent
 				</div>
 			</div>
 		</div>
