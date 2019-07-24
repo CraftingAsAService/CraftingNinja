@@ -497,7 +497,9 @@ var compendium = new Vue({
       rclass: [],
       sublevel: [],
       rarity: [],
-      eclass: []
+      eclass: [],
+      badditional: [],
+      bclass: []
     },
     collapsed: recipeFilters.filter(function (record) {
       return !record.expanded;
@@ -508,6 +510,7 @@ var compendium = new Vue({
     perPage: 15,
     // Setting to pass off to Ninja Dropdown
     ninjaFilters: {
+      books: booksFilters,
       item: itemFilters,
       recipe: recipeFilters,
       equipment: equipmentFilters,
@@ -525,7 +528,7 @@ var compendium = new Vue({
   },
   methods: {
     parseInitialFilters: function parseInitialFilters() {
-      console.log(filterStart);
+      if (chapterStart == 'books' && filterStart == 'mine') this.toggleFilter('badditional', 'mine');
     },
     initializeDropdowns: function initializeDropdowns() {
       var thisObject = this;
@@ -560,10 +563,7 @@ var compendium = new Vue({
     search: function search() {
       var _this = this;
 
-      var call = 'items'; // TODO need 128x128 imagery
-
-      if (this.chapter == 'quest') call = 'quests';else if (this.chapter == 'mob') call = 'mobs'; // Clear data of any vue/observer interference
-
+      // Clear data of any vue/observer interference
       var data = JSON.parse(JSON.stringify(Object.assign({}, this.filters))); // Remove any values that don't match what the chapter expects
       //  And remove anything collapsed sections
 
@@ -588,7 +588,7 @@ var compendium = new Vue({
       data.perPage = this.perPage;
       data.page = this.filters.page;
       this.loading = true;
-      axios.post('/api/' + call, data).then(function (response) {
+      axios.post('/api/' + this.chapter, data).then(function (response) {
         _this.results = response.data;
         _this.loading = _this.firstLoad = false;
       })["catch"](function (error) {

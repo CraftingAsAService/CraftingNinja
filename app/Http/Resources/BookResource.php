@@ -16,9 +16,23 @@ class BookResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$user = $this->user ? [
+			'id'   => $this->user->id,
+			'name' => $this->user->name,
+		] : null;
+		$job = $this->job ? [
+			'id'   => $this->job->id,
+			'icon' => $this->job->icon,
+		] : null;
+
 		return [
-			'id' => $this->id,
-			'name' => $this->name,
+			'id'          => $this->id,
+			'name'        => $this->name,
+			'description' => $this->description,
+			'user'        => $user,
+			'job'         => $job,
+			'min_level'   => $this->min_level,
+			'max_level'   => $this->max_level,
 		];
 	}
 }

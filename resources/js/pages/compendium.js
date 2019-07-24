@@ -27,6 +27,8 @@ const compendium = new Vue({
 			sublevel: [],
 			rarity: [],
 			eclass: [],
+			badditional: [],
+			bclass: [],
 		},
 		collapsed: recipeFilters
 					.filter(function(record) {
@@ -38,6 +40,7 @@ const compendium = new Vue({
 		perPage: 15,
 		// Setting to pass off to Ninja Dropdown
 		ninjaFilters: {
+			books: booksFilters,
 			item: itemFilters,
 			recipe: recipeFilters,
 			equipment: equipmentFilters,
@@ -58,7 +61,8 @@ const compendium = new Vue({
 	},
 	methods: {
 		parseInitialFilters:function() {
-			console.log(filterStart);
+			if (chapterStart == 'books' && filterStart == 'mine')
+				this.toggleFilter('badditional', 'mine');
 		},
 		initializeDropdowns:function() {
 			var thisObject = this;
@@ -102,15 +106,6 @@ const compendium = new Vue({
 			this.search();
 		},
 		search:function() {
-			var call = 'items';
-
-			// TODO need 128x128 imagery
-
-			if (this.chapter == 'quest')
-				call = 'quests';
-			else if (this.chapter == 'mob')
-				call = 'mobs';
-
 			// Clear data of any vue/observer interference
 			var data = JSON.parse(JSON.stringify(Object.assign({}, this.filters)));
 
@@ -143,7 +138,7 @@ const compendium = new Vue({
 
 			this.loading = true;
 			axios
-				.post('/api/' + call, data)
+				.post('/api/' + this.chapter, data)
 				.then(response => {
 					this.results = response.data;
 					this.loading = this.firstLoad = false;

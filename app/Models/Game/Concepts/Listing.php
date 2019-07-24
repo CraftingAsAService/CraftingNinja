@@ -54,12 +54,17 @@ class Listing extends Concept implements TranslatableContract
 
 	public function scopeFilter($query, $filters)
 	{
-		if (isset($filters['class']))
-			$query->whereIn('job_id', is_array($filters['class']) ? $filters['class'] : explode(',', $filters['class']));
+		if (isset($filters['badditional']) && in_array('mine', $filters['badditional']))
+			$query->where('user_id', auth()->user()->id);
 
-		if (isset($filters['level']))
-			$query->where('min_level', '<=', $filters['level'])
-					->where('max_level', '>=', $filters['level']);
+		if (isset($filters['bclass']))
+			$query->whereIn('job_id', is_array($filters['bclass']) ? $filters['bclass'] : explode(',', $filters['bclass']));
+
+		if (isset($filters['min_level']))
+			$query->where('min_level', '<=', $filters['min_level']);
+
+		if (isset($filters['max_level']))
+			$query->where('max_level', '>=', $filters['max_level']);
 
 		return $query;
 	}

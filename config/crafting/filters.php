@@ -62,7 +62,7 @@ $filters = [
 		'title'  => 'Equipment Class',
 	],
 	'bclass' => [
-		'key'	 => 'eclass',
+		'key'	 => 'bclass',
 		'for'    => ['books'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-chess-rook',
@@ -90,7 +90,7 @@ $filters = [
 		'title'  => 'Rarity',
 	],
 	'badditional' => [
-		'key'	 => 'additional',
+		'key'	 => 'badditional',
 		'for'    => ['books'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-star',
