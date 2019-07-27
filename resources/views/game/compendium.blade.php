@@ -80,14 +80,11 @@
 					<div class='card card--clean'>
 						{{-- Results --}}
 						<div class='card__content'>
-							<div id='pre-results' class='jumbotron' v-if='results.data.length == 0 && firstLoad'>
-								<h1 class='display-4'>What are you looking for?</h1>
-								<p class='lead mt-4 mb-0'>Select a <i class='fas fa-bookmark'></i> chapter and start <i class='fas fa-filter'></i> filtering!</p>
+							<div v-if='results.data.length == 0 && firstLoad'>
+								@include('game.compendium.results._pre-results')
 							</div>
-
-							<div id='no-results' class='jumbotron' v-if='results.data.length == 0 && ! firstLoad'>
-								<h1 class='display-4'>No results!</h1>
-								<p class='lead mt-4 mb-0'>Tweak those <i class='fas fa-filter'></i> filters!</p>
+							<div v-else-if='results.data.length == 0 && ! firstLoad'>
+								@include('game.compendium.results._no-results')
 							</div>
 
 							{{-- Results --}}
