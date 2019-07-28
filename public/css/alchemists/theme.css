@@ -22672,6 +22672,20 @@ td.team-leader__avg {
 }
 
 @media (min-width: 768px) {
+  .products--grid.products--grid-2 .product__item {
+    flex-basis: calc(100% - 16px);
+    max-width: calc(100% - 16px);
+  }
+}
+
+@media (min-width: 992px) {
+  .products--grid.products--grid-2 .product__item {
+    flex-basis: calc(50% - 16px);
+    max-width: calc(50% - 16px);
+  }
+}
+
+@media (min-width: 768px) {
   .products--grid.products--grid-4 .product__item {
     flex-basis: calc(50% - 16px);
     max-width: calc(50% - 16px);

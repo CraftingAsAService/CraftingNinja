@@ -26,13 +26,15 @@ class BookResource extends JsonResource
 		] : null;
 
 		return [
-			'id'          => $this->id,
-			'name'        => $this->name,
-			'description' => $this->description,
-			'user'        => $user,
-			'job'         => $job,
-			'min_level'   => $this->min_level,
-			'max_level'   => $this->max_level,
+			'id'           => $this->id,
+			'name'         => $this->name,
+			'description'  => $this->description,
+			'user'         => $user,
+			'job'          => $job,
+			'min_level'    => $this->min_level,
+			'max_level'    => $this->max_level,
+			'updated_at'   => $this->updated_at,
+			'last_updated' => $this->updated_at->diffForHumans(),
 		];
 	}
 }
