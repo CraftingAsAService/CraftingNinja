@@ -33,6 +33,7 @@ class BookController extends Controller
 
 		$validator = \Validator::make($request->all(), [
 			'name' => 'required',
+			'description' => 'max:140',
 			'job_id' => [
 				'numeric',
 				Rule::in(Job::pluck('id')->toArray()),

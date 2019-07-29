@@ -78,6 +78,27 @@ class CreateBookTest extends BookTestCase
 	}
 
 	/** @test */
+	function invalid_description_will_not_create_a_listing()
+	{
+		$user = factory(User::class)->create();
+		$item = factory(Item::class)->create([
+			'name:en' => 'Beta Item',
+		]);
+		$job = factory(Job::class)->create();
+		$this->addItemToNinjaCartCookie($item);
+
+		$response = $this->be($user)
+			->from('/books/create')
+			->call('POST', '/books', $this->validParams([
+				'description' => 'This description is more than 140 characters. This description is more than 140 characters. This description is more than 140 characters. This description is more than 140 characters.',
+			]));
+
+		$response->assertRedirect('/books/create');
+		$response->assertSessionHasErrors('description');
+		$this->assertEquals(0, Listing::count());
+	}
+
+	/** @test */
 	function invalid_job_ids_will_not_create_a_listing()
 	{
 		$user = factory(User::class)->create();

@@ -46,7 +46,8 @@ const compendium = new Vue({
 			equipment: equipmentFilters,
 			sorting: sortingFilters,
 			perPage: perPageFilters
-		}
+		},
+		expanded: null
 	},
 	mounted:function() {
 		this.initializeDropdowns();
@@ -144,6 +145,8 @@ const compendium = new Vue({
 					this.loading = this.firstLoad = false;
 				})
 				.catch(error => console.log(error));
+
+			this.expanded = null;
 		},
 		previousPage:function() {
 			this.filters.page = this.results.meta.current_page - 1;
@@ -161,8 +164,10 @@ const compendium = new Vue({
 
 			this.search();
 		},
-		addToBag:function() {
-
+		toggleExpanded:function(index, assert) {
+			if (typeof assert === 'undefined')
+				assert = this.expanded != index;
+			this.expanded = assert ? index : null;
 		}
 	}
 });
