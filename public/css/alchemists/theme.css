@@ -23547,10 +23547,10 @@ td.team-leader__avg {
 
 .filter-color__item {
   display: inline-block;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   overflow: hidden;
-  margin: 0 3px 12px 3px;
+  margin: 0 1px 4px 1px;
 }
 
 .filter-color__item label {
@@ -23558,8 +23558,8 @@ td.team-leader__avg {
 }
 
 .filter-color__item [class*=indicator] {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   background-color: transparent;
   border-color: #4b3b60;
   border-radius: 50%;

@@ -664,16 +664,28 @@ var compendium = new Vue({
 
 /***/ }),
 
+/***/ "./resources/scss/themes/ffxiv.scss":
+/*!******************************************!*\
+  !*** ./resources/scss/themes/ffxiv.scss ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ 0:
-/*!***********************************************************************************************************************************************************************************************!*\
-  !*** multi ./resources/js/pages/compendium.js ./resources/scss/pages/compendium.scss ./resources/scss/pages/game-index.scss ./resources/scss/app.scss ./resources/scss/alchemists/theme.scss ***!
-  \***********************************************************************************************************************************************************************************************/
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** multi ./resources/js/pages/compendium.js ./resources/scss/pages/compendium.scss ./resources/scss/pages/game-index.scss ./resources/scss/themes/ffxiv.scss ./resources/scss/app.scss ./resources/scss/alchemists/theme.scss ***!
+  \**********************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/js/pages/compendium.js */"./resources/js/pages/compendium.js");
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/compendium.scss */"./resources/scss/pages/compendium.scss");
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/pages/game-index.scss */"./resources/scss/pages/game-index.scss");
+__webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/themes/ffxiv.scss */"./resources/scss/themes/ffxiv.scss");
 __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/app.scss */"./resources/scss/app.scss");
 module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/craftingasaservice/crafting.ninja/resources/scss/alchemists/theme.scss */"./resources/scss/alchemists/theme.scss");
 

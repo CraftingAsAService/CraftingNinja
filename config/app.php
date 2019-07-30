@@ -151,10 +151,8 @@ return [
 		/*
 		 * Package Service Providers...
 		 */
-		Clockwork\Support\Laravel\ClockworkServiceProvider::class,
 		Laravel\Socialite\SocialiteServiceProvider::class,
 		// SocialiteProviders\Manager\ServiceProvider::class,
-		hedronium\SpacelessBlade\SpacelessBladeProvider::class,
 
 		/*
 		 * Application Service Providers...

@@ -16,4 +16,17 @@ body.ffxiv {
 	// 		content: "★";
 	// 	}
 	// }
+	//
+	.battle-job .job-icon {
+		// filter: hue-rotate(45deg);
+	}
+	.gathering-job .job-icon {
+		// filter: hue-rotate(-45deg);
+	}
+	.crafting-job .job-icon {
+		// filter: hue-rotate(135deg);
+	}
+	.hero-job .job-icon {
+		// filter: hue-rotate(-135deg);
+	}
 }
