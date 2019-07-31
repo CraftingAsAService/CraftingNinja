@@ -33,6 +33,8 @@ class BookResource extends JsonResource
 			'job'          => $job,
 			'min_level'    => $this->min_level,
 			'max_level'    => $this->max_level,
+			'my_vote'      => $this->myVote ? true : false,
+			'votes'        => $this->votes_count ?? 0,
 			'updated_at'   => $this->updated_at,
 			'last_updated' => $this->updated_at->diffForHumans(),
 		];

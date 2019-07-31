@@ -14,6 +14,9 @@
 					<span v-if='data.min_level > 0 && data.max_level > 0'>&rarr;</span>
 					<span v-if='data.max_level > 0' v-html='data.max_level'></span>
 				</span>
+				<span class='label posts__cat-label posts__cat-label--category-6 mt-1 mb-0'>
+					<i class='far fa-heart' v-if=' ! data.my_vote'></i> <i class='fas fa-heart' v-if='data.my_vote'></i> <span v-html='data.votes'></span>
+				</span>
 			</div>
 			<p class='small m-0'>
 				<span class='text-muted'>Authored</span>

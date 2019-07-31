@@ -26,10 +26,6 @@ class Listing extends Concept implements TranslatableContract
 
 	public $timestamps = true;
 
-	protected $dates = [
-
-	];
-
 	public static $polymorphicRelationships = [
 		'i' => 'items',
 		'o' => 'objectives',
@@ -71,12 +67,10 @@ class Listing extends Concept implements TranslatableContract
 
 	public function scopeFromUser($query, $userId = null)
 	{
-		return $query->where('user_id', $userId ?? auth()->user()->id ?? null);
-	}
+		if ( ! $userId && ! auth()->check())
+			return $query;
 
-	public function scopeActive($query, $userId = null)
-	{
-		return $query->fromUser($userId)->unpublished();
+		return $query->where('user_id', $userId ?? auth()->user()->id);
 	}
 
 	/**
@@ -91,6 +85,11 @@ class Listing extends Concept implements TranslatableContract
 	public function votes()
 	{
 		return $this->hasMany(Vote::class);
+	}
+
+	public function myVote()
+	{
+		return $this->hasMany(Vote::class)->fromUser();
 	}
 
 	public function user()

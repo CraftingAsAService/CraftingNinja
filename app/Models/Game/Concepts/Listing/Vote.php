@@ -15,6 +15,14 @@ class Vote extends Concept
 	 * Scopes
 	 */
 
+	public function scopeFromUser($query, $userId = null)
+	{
+		if ( ! $userId && ! auth()->check())
+			return $query;
+
+		return $query->where('user_id', $userId ?? auth()->user()->id);
+	}
+
 	/**
 	 * Relationships
 	 */
