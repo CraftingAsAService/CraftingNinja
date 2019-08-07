@@ -103,7 +103,7 @@ body {
   bottom: 0;
   left: 0;
   opacity: 0;
-  content: "";
+  content: '';
   transition: all 250ms ease-in-out;
 }
 

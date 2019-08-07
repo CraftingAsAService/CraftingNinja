@@ -24,7 +24,11 @@ getFiles('resources/scss/themes').forEach(function (filepath) {
 });
 
 mix.sass('resources/scss/app.scss', 'public/css');
-mix.sass('resources/scss/alchemists/theme.scss', 'public/css/alchemists');
+
+/**
+ * DO NOT parse alchemists with webpack, it is slow, see gulpfile.js
+ * mix.sass('resources/scss/alchemists/theme.scss', 'public/css/alchemists');
+ */
 
 mix.js('resources/js/app.js', 'public/js')
 	.extract(['vue']);
