@@ -1,5 +1,5 @@
 <ul class='products products--grid products--grid-5 products--grid-simple'>
-	<li class='product__item' v-for='(data, index) in results.data'>
+	<li class='product__item -item' v-for='(data, index) in results.data'>
 		<div class='product__img'>
 			<div class='product__thumb'>
 				<img v-bind:src='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"' v-bind:alt='"Image of " + data.id'>

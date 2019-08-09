@@ -157,6 +157,32 @@ body {
   text-overflow: ellipsis;
 }
 
+.product__item.-book .posts__cat {
+  overflow: initial;
+}
+
+.product__item.-book .posts__cat-label {
+  font-size: .7rem;
+}
+
+.product__item.-book .posts__cat-label.-heart i {
+  font-size: .6rem;
+}
+
+.product__item.-book .author-block {
+  font-size: .8rem;
+  line-height: 1.25rem;
+}
+
+.product__item.-book .btn.-heart {
+  padding: 12px 24px;
+}
+
+.product__item.-book .btn.-heart i {
+  position: relative;
+  top: 1px;
+}
+
 body {
   --rarity1: #ffffff;
   --rarity2: #7bd512;
