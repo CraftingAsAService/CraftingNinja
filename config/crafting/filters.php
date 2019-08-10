@@ -61,12 +61,26 @@ $filters = [
 		'icon'   => 'fa-chess-rook',
 		'title'  => 'Equipment Class',
 	],
-	'bclass' => [
+	'bcrafting' => [
+		'key'	 => 'bclass',
+		'for'    => ['books'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-tools',
+		'title'  => 'Crafting Class',
+	],
+	'bgathering' => [
+		'key'	 => 'bclass',
+		'for'    => ['books'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-feather-alt',
+		'title'  => 'Gathering Class',
+	],
+	'bbattle' => [
 		'key'	 => 'bclass',
 		'for'    => ['books'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-chess-rook',
-		'title'  => 'Class',
+		'title'  => 'Battle Class',
 	],
 	'slot' => [
 		'key'	 => 'slot',
@@ -101,7 +115,7 @@ $filters = [
 return [
 	'all' => $filters,
 
-	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bclass', 'badditional', ])),
+	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bcrafting', 'bgathering', 'bbattle', 'badditional', ])),
 
 	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
 
