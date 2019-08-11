@@ -37,6 +37,12 @@ class BookResource extends JsonResource
 			'votes'        => $this->votes_count ?? 0,
 			'updated_at'   => $this->updated_at,
 			'last_updated' => $this->updated_at->diffForHumans(),
+			'entities'     => [
+				'items'      => $this->items,
+				'objectives' => $this->objectives,
+				'recipes'    => $this->recipes,
+				'nodes'      => $this->nodes,
+			]
 		];
 	}
 }

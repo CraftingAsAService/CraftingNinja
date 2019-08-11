@@ -37,6 +37,11 @@ class Knapsack {
 		return collect($ninjaCart);
 	}
 
+	static public function unsetCookie()
+	{
+		setcookie('NinjaCart', '', time() - 3600);
+	}
+
 	public function get()
 	{
 		// Get the active list, create one if it does not exist

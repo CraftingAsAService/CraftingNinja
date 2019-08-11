@@ -51,8 +51,14 @@
 									<label for='job'>Tag a Job and Level Range (optional)</label>
 									<select name='job_id' id='job' class='form-control'>
 										<option value=''>All Jobs</option>
-										@foreach ($jobs as $job)
-										<option value='{{ $job->id }}'>{{ $job->name }}</option>
+										@foreach (['crafting', 'gathering', 'battle'] as $jobType)
+											<optgroup label='{{ ucwords($jobType) }}'>
+												@foreach ($jobs[$jobType] as $jobTier => $jobSet)
+												@foreach ($jobSet->sortBy('id') as $job)
+													<option value='{{ $job->id }}'>{{ $job->name }}</option>
+												@endforeach
+												@endforeach
+											</optgroup>
 										@endforeach
 									</select>
 								</div>

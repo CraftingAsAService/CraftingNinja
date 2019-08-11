@@ -8,6 +8,7 @@ use App\Models\Game\Concepts\Listing;
 use App\Models\Game\Concepts\Listing\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -19,7 +20,7 @@ class BookController extends Controller
 		if ($ninjaCart->isEmpty())
 			return redirect()->route('knapsack');
 
-		$jobs = Job::all();
+		$jobs = Job::byTypeAndTier();
 
 		return view('game.books.create', compact('ninjaCart', 'jobs'));
 	}
@@ -55,6 +56,19 @@ class BookController extends Controller
 			'min_level'      => $request->input('min_level'),
 			'max_level'      => $request->input('max_level'),
 		]);
+
+		foreach (Listing::$polymorphicRelationships as $listingType)
+		{
+			$entities = $ninjaCart->filter(function($entity) use ($listingType) {
+				return $entity['type'] == Str::singular($listingType);
+			});
+			$model = 'App\\Models\\Game\\Aspects\\' . ucwords(Str::singular($listingType));
+
+			foreach ($entities as $entity)
+				$listing->$listingType()->attach($model::find($entity['id']), ['quantity' => $entity['quantity']]);
+		}
+
+		Knapsack::unsetCookie();
 
 		return redirect()->route('compendium', [
 			'chapter' => 'books',

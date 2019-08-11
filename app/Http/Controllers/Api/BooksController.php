@@ -19,7 +19,7 @@ class BooksController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$books = Listing::withTranslation()->withCount('votes')->with('myVote', 'job', 'user')
+		$books = Listing::withTranslation()->withCount('votes')->with('myVote', 'job', 'user', 'items', 'objectives', 'recipes', 'nodes')
 			->filter($request->all())
 			->simplePaginate();
 

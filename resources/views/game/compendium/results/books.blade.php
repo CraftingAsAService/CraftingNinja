@@ -30,7 +30,12 @@
 				</div>
 			</div>
 			<div class='mt-3' v-if='expanded == index'>
-				Items!
+				<div v-for='(entities, key) in data.entities'>
+					<div v-for='(entity, index) in entities'>
+						<span v-html='entity.name'></span>
+						<span v-html='entity.quantity'></span>
+					</div>
+				</div>
 			</div>
 			<div class='mt-3' v-if='expanded == index'>
 				<div class='row'>
