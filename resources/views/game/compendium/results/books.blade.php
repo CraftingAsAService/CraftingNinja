@@ -1,11 +1,11 @@
 <ul class='products products--grid products--grid-2 products--grid-simple'>
 	<li class='product__item -book posts__item card p-3' v-for='(data, index) in results.data'>
 		<div class='posts__inner'>
-			<a href='#' class='float-right' @click.prevent='toggleExpanded(index)'><i :class='"fas fa-chevron-" + (expanded == index ? "up" : "down")'></i></a>
+			<a href='#' class='float-right' @click.prevent='openBook(index)'><i class='fas fa-book'></i></a>
 			<h4 class='posts__title posts__title--color-hover mb-1'>
-				<a href='#' v-html='data.name' @click.prevent='toggleExpanded(index)'></a>
+				<a href='#' v-html='data.name' @click.prevent='openBook(index)'></a>
 			</h4>
-			<p :class='"description mt-1 mb-2" + (expanded == index ? "" : " truncate-text")' v-html='data.description'></p>
+			<p class='description mt-1 mb-2 truncate-text' v-html='data.description'></p>
 			<div class='row'>
 				<div class='col'>
 					<p class='author-block m-0'>
@@ -29,7 +29,7 @@
 					</div>
 				</div>
 			</div>
-			<div class='mt-3' v-if='expanded == index'>
+			{{-- <div class='mt-3' v-if='expanded == index'>
 				<div v-for='(entities, key) in data.entities'>
 					<div v-for='(entity, index) in entities'>
 						<span v-html='entity.name'></span>
@@ -46,7 +46,7 @@
 						<button type='button' class='btn btn-primary -heart'><i class='far fa-heart' v-if=' ! data.my_vote'></i> <i class='fas fa-heart' v-if='data.my_vote'></i></button>
 					</div>
 				</div>
-			</div>
+			</div> --}}
 		</div>
 	</li>
 </ul>
