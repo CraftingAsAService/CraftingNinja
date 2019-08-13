@@ -528,7 +528,7 @@ var compendium = new Vue({
   },
   methods: {
     parseInitialFilters: function parseInitialFilters() {
-      if (chapterStart == 'books' && filterStart == 'mine') this.toggleFilter('badditional', 'mine');
+      if (chapterStart == 'books' && filterStart.match(/author:\d+/)) this.toggleFilter('badditional', 'mine');
     },
     initializeDropdowns: function initializeDropdowns() {
       var thisObject = this;

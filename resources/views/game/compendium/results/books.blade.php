@@ -1,7 +1,11 @@
 <ul class='products products--grid products--grid-2 products--grid-simple'>
 	<li class='product__item -book posts__item card p-3' v-for='(data, index) in results.data'>
 		<div class='posts__inner'>
-			<a href='#' class='float-right' @click.prevent='openBook(index)'><i class='fas fa-book'></i></a>
+			{{-- <a href='#' class='float-right' @click.prevent='openBook(index)'><i class='fas fa-book'></i></a> --}}
+			{{-- <div class='posts__item--card'> --}}
+			{{-- </div> --}}
+			<a href='#' class='float-right' @click.prevent='openBook(index)'><i class='fas fa-cart-plus'></i></a>
+
 			<h4 class='posts__title posts__title--color-hover mb-1'>
 				<a href='#' v-html='data.name' @click.prevent='openBook(index)'></a>
 			</h4>
