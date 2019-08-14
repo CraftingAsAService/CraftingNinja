@@ -72,7 +72,7 @@ class BookController extends Controller
 
 		return redirect()->route('compendium', [
 			'chapter' => 'books',
-			'filter'  => 'author:' . auth()->user()->id,
+			'author'  => auth()->user()->encodedId(),
 		]);
 	}
 

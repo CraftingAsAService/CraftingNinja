@@ -12,7 +12,7 @@
 	<script>
 		var searchTerm       = '{{ $searchTerm }}',
 			chapterStart     = '{{ $chapterStart }}',
-			filterStart      = '{{ $filterStart }}',
+			filterStart      = @json($filterStart),
 			booksFilters     = @json(array_values(config('crafting.filters.books'))),
 			itemFilters      = @json(array_values(config('crafting.filters.item'))),
 			recipeFilters    = @json(array_values(config('crafting.filters.recipe'))),

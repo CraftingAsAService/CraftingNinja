@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Cache;
-
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Recipe;
-
 use App\Models\Game\Concepts\Equipment;
+use App\Models\User;
+use Cache;
+use Illuminate\Http\Request;
 
 class CompendiumController extends Controller
 {
@@ -22,7 +21,9 @@ class CompendiumController extends Controller
 
 		$searchTerm = $request->input('search');
 		$chapterStart = $request->input('chapter');
-		$filterStart = $request->input('filter');
+		$filterStart = [];
+		if ($request->has('author'))
+			$filterStart['author'] = $request->input('author');
 
 		$this->shareStaticGameDataWithView();
 

@@ -493,6 +493,7 @@ var compendium = new Vue({
     // These are submitted as parameters
     filters: {
       name: searchTerm,
+      author: typeof filterStart.author !== 'undefined' ? filterStart.author : false,
       // Arrays need pre-defined as arrays
       rclass: [],
       sublevel: [],
@@ -520,16 +521,12 @@ var compendium = new Vue({
   },
   mounted: function mounted() {
     this.initializeDropdowns();
-    this.parseInitialFilters();
     if (this.filters.name != '') this.search();
   },
   created: function created() {
     this.debouncedSearch = _.debounce(this.search, 250);
   },
   methods: {
-    parseInitialFilters: function parseInitialFilters() {
-      if (chapterStart == 'books' && filterStart.match(/author:\d+/)) this.toggleFilter('badditional', 'mine');
-    },
     initializeDropdowns: function initializeDropdowns() {
       var thisObject = this;
       $('#compendium').find('select.cs-select').each(function () {

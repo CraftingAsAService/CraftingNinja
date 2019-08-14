@@ -30,7 +30,7 @@ class ListsController extends Controller
 		// 	]);
 
 		// //
-		// // Lists::fromUser($user->id);
+		// // Lists::authoredByUser($user->id);
 		// dd($user->id);
 	}
 

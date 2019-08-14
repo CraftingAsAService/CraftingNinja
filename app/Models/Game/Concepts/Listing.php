@@ -50,7 +50,7 @@ class Listing extends Concept implements TranslatableContract
 
 	public function scopeFilter($query, $filters)
 	{
-		if (isset($filters['badditional']) && preg_match('/author:\d+/', $filters['badditional'], $authorMatch))
+		if (isset($filters['badditional']) && preg_match('/author:(\d+)/', $filters['badditional'], $authorMatch))
 			$query->where('user_id', $authorMatch[1]);
 
 		if (isset($filters['bclass']))
@@ -65,7 +65,7 @@ class Listing extends Concept implements TranslatableContract
 		return $query;
 	}
 
-	public function scopeFromUser($query, $userId = null)
+	public function scopeAuthoredByUser($query, $userId = null)
 	{
 		if ( ! $userId && ! auth()->check())
 			return $query;
@@ -89,10 +89,10 @@ class Listing extends Concept implements TranslatableContract
 
 	public function myVote()
 	{
-		return $this->hasMany(Vote::class)->fromUser();
+		return $this->hasMany(Vote::class)->byUser();
 	}
 
-	public function user()
+	public function author()
 	{
 		return $this->belongsTo(User::class);
 	}

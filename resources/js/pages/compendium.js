@@ -22,6 +22,7 @@ const compendium = new Vue({
 		// These are submitted as parameters
 		filters: {
 			name: searchTerm,
+			author: typeof filterStart.author !== 'undefined' ? filterStart.author : false,
 			// Arrays need pre-defined as arrays
 			rclass: [],
 			sublevel: [],
@@ -51,8 +52,6 @@ const compendium = new Vue({
 	mounted:function() {
 		this.initializeDropdowns();
 
-		this.parseInitialFilters();
-
 		if (this.filters.name != '')
 			this.search();
 	},
@@ -60,10 +59,6 @@ const compendium = new Vue({
 		this.debouncedSearch = _.debounce(this.search, 250);
 	},
 	methods: {
-		parseInitialFilters:function() {
-			if (chapterStart == 'books' && filterStart.match(/author:\d+/))
-				this.toggleFilter('badditional', 'mine');
-		},
 		initializeDropdowns:function() {
 			var thisObject = this;
 

@@ -12,7 +12,7 @@ class KnapsackController extends Controller
 	public function index()
 	{
 		$ninjaCart = Knapsack::parseCookie();
-		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->fromUser()->get();
+		$listings = Listing::with('job', 'votes', 'items', 'recipes', 'recipes.product', 'objectives')->authoredByUser()->get();
 
 		return view('game.knapsack', compact('ninjaCart', 'listings'));
 	}

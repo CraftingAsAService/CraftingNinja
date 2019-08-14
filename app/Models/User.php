@@ -7,6 +7,7 @@ use App\Models\Game\Concepts\Listing\Vote;
 use App\Models\Game\Concepts\Lists;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Hashids\Hashids;
 
 class User extends Authenticatable
 {
@@ -51,6 +52,32 @@ class User extends Authenticatable
 	public function votes()
 	{
 		return $this->hasMany(Vote::class);
+	}
+
+	/**
+	 * Methods
+	 */
+
+	static public function configureHashids()
+	{
+		return new Hashids('AuthorID', 5, implode('', range('a', 'z')));
+	}
+
+	static public function encodeId($userId)
+	{
+		$hashids = self::configureHashids();
+		return $hashids->encode($userId);
+	}
+
+	public function encodedId()
+	{
+		return self::encodeId($this->id);
+	}
+
+	static public function decodeId($encodedID)
+	{
+		$hashids = self::configureHashids();
+		return $hashids->decode($encodedID);
 	}
 
 }

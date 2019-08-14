@@ -34,7 +34,7 @@ class UsersController extends Controller
 				'error' => 'No User Detected, Log In'
 			]);
 
-		$lists = Lists::fromUser($user->id)->publicOnly( ! $userIsMe)->matchLocale()->get();
+		$lists = Lists::authoredByUser($user->id)->publicOnly( ! $userIsMe)->matchLocale()->get();
 
 		return new ListsCollection($lists);
 	}

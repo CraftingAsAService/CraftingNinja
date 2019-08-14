@@ -9,6 +9,7 @@
 		"appstract/laravel-opcache": "^3.0",
 		"astrotomic/laravel-translatable": "11.*",
 		"fideloper/proxy": "^4.0",
+		"hashids/hashids": "^4.0",
 		"itsgoingd/clockwork": "4.*",
 		"laracasts/flash": "^3.0",
 		"laravel/framework": "5.8.*",
