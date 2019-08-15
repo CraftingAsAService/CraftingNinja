@@ -1,5 +1,7 @@
 ## Research
 
+### Logo Thoughts
+
 Logo Credit, altered
 
 https://thenounproject.com/search/?q=ninja&i=2336759
@@ -14,3 +16,7 @@ Secondary Yellow/Accents if needed #daeb4e #f0dc50
 Other purples, if needed #6441a4 #8c379e
 Attempting to mimic logo with theme I paid for ("Primary Color Border" thing I like most)
 Doesn't have to use the words "Crafting Ninja". No words is okay. "CN" lapel would be neat. Open to interpretation here.
+
+### Other Notes
+
+- Mid-mysql8 transition on computer, Sketched instead
