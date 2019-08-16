@@ -599,7 +599,7 @@ $pushy-panel-bg-dark: $color-dark-lighten !default;
 //- ----------------------------------------------
 $page-heading-padding-lg: 45px 0 40px 0 !default;
 $page-heading-bg-color: $color-dark !default;
-$page-heading-bg-image-url: url("/images/esports/samples/page-heading.jpg") !default;
+$page-heading-bg-image-url: url() !default;//url("/images/esports/samples/page-heading.jpg") !default;
 $page-heading-bg-pattern-url: repeating-radial-gradient(at 50% 50%, #000, #000 1px, transparent 1px, transparent 4px) !default;
 $page-heading-bg-pattern-size: 5px 5px !default;
 $page-heading-bg-pattern-repeat: repeat !default;

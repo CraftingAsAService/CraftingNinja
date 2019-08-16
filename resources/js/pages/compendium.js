@@ -22,13 +22,12 @@ const compendium = new Vue({
 		// These are submitted as parameters
 		filters: {
 			name: searchTerm,
-			author: typeof filterStart.author !== 'undefined' ? filterStart.author : false,
+			bauthor: typeof filterStart.author !== 'undefined' ? filterStart.author : '',
 			// Arrays need pre-defined as arrays
 			rclass: [],
 			sublevel: [],
 			rarity: [],
 			eclass: [],
-			badditional: [],
 			bclass: [],
 		},
 		collapsed: recipeFilters
@@ -52,7 +51,7 @@ const compendium = new Vue({
 	mounted:function() {
 		this.initializeDropdowns();
 
-		if (this.filters.name != '')
+		if (this.filters.name != '' || this.filters.bauthor != '')
 			this.search();
 	},
 	created:function() {

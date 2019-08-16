@@ -110,7 +110,7 @@
 					@include('game.compendium.filters.bclass', [ 'jobType' => 'crafting'  ])
 					@include('game.compendium.filters.bclass', [ 'jobType' => 'gathering' ])
 					@include('game.compendium.filters.bclass', [ 'jobType' => 'battle'    ])
-					@include('game.compendium.filters.badditional')
+					@include('game.compendium.filters.bauthor')
 					@include('game.compendium.filters.ilvl')
 					@include('game.compendium.filters.rclass')
 					@include('game.compendium.filters.rlvl')

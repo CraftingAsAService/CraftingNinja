@@ -50,8 +50,8 @@ class Listing extends Concept implements TranslatableContract
 
 	public function scopeFilter($query, $filters)
 	{
-		if (isset($filters['badditional']) && preg_match('/author:(\d+)/', $filters['badditional'], $authorMatch))
-			$query->where('user_id', $authorMatch[1]);
+		if (isset($filters['bauthor']) && preg_match('/author:(\d+)/', $filters['bauthor'], $authorMatch))
+			$query->where('user_id', User::decodeId($authorMatch[1]));
 
 		if (isset($filters['bclass']))
 			$query->whereIn('job_id', is_array($filters['bclass']) ? $filters['bclass'] : explode(',', $filters['bclass']));

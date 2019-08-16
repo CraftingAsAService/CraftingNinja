@@ -103,19 +103,19 @@ $filters = [
 		'icon'   => 'fa-registered',
 		'title'  => 'Rarity',
 	],
-	'badditional' => [
-		'key'	 => 'badditional',
+	'bauthor' => [
+		'key'	 => 'bauthor',
 		'for'    => ['books'],
 		'type'   => 'multiple',
-		'icon'   => 'fa-star',
-		'title'  => 'Filter',
+		'icon'   => 'fa-user-ninja',
+		'title'  => 'Author',
 	],
 ];
 
 return [
 	'all' => $filters,
 
-	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bcrafting', 'bgathering', 'bbattle', 'badditional', ])),
+	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bcrafting', 'bgathering', 'bbattle', 'bauthor', ])),
 
 	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
 
