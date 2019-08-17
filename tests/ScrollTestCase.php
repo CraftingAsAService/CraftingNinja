@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-abstract class BookTestCase extends GameTestCase
+abstract class ScrollTestCase extends GameTestCase
 {
 
 	public function addItemToNinjaCartCookie($item, $quantity = 1)

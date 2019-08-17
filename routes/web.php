@@ -33,9 +33,9 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::get('/', 'GameController@index')->name('home');
 
-	// Route::post('books/{id}/add', 'BookController@addAllEntriesToKnapsack');
-	// Route::post('books/{id}/vote', 'BookController@vote');
-	// Route::post('books/{id}/publish', 'BookController@publish');
+	// Route::post('scrolls/{id}/add', 'ScrollController@addAllEntriesToKnapsack');
+	// Route::post('scrolls/{id}/vote', 'ScrollController@vote');
+	// Route::post('scrolls/{id}/publish', 'ScrollController@publish');
 
 	Route::get('compendium', 'CompendiumController@index')->name('compendium');
 	Route::post('compendium', 'CompendiumController@index')->name('compendium.search');
@@ -48,8 +48,8 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::middleware('auth')->group(function() {
 
-		Route::get('books/create', 'BookController@create')->name('books.create');
-		Route::post('books', 'BookController@store')->name('books.store');
+		Route::get('scrolls/create', 'ScrollController@create')->name('scrolls.create');
+		Route::post('scrolls', 'ScrollController@store')->name('scrolls.store');
 
 	});
 

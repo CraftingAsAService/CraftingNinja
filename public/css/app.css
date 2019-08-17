@@ -157,28 +157,28 @@ body {
   text-overflow: ellipsis;
 }
 
-.product__item.-book .posts__cat {
+.product__item.-scroll .posts__cat {
   overflow: initial;
 }
 
-.product__item.-book .posts__cat-label {
+.product__item.-scroll .posts__cat-label {
   font-size: .7rem;
 }
 
-.product__item.-book .posts__cat-label.-heart i {
+.product__item.-scroll .posts__cat-label.-heart i {
   font-size: .6rem;
 }
 
-.product__item.-book .author-block {
+.product__item.-scroll .author-block {
   font-size: .8rem;
   line-height: 1.25rem;
 }
 
-.product__item.-book .btn.-heart {
+.product__item.-scroll .btn.-heart {
   padding: 12px 24px;
 }
 
-.product__item.-book .btn.-heart i {
+.product__item.-scroll .btn.-heart i {
   position: relative;
   top: 1px;
 }

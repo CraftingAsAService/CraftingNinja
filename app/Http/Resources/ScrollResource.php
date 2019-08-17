@@ -4,9 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-// a make:resource BookResource
-
-class BookResource extends JsonResource
+class ScrollResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -20,6 +18,7 @@ class BookResource extends JsonResource
 			'id'   => $this->user->id,
 			'name' => $this->user->name,
 		] : null;
+
 		$job = $this->job ? [
 			'id'   => $this->job->id,
 			'icon' => $this->job->icon,

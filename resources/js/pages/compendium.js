@@ -40,7 +40,7 @@ const compendium = new Vue({
 		perPage: 15,
 		// Setting to pass off to Ninja Dropdown
 		ninjaFilters: {
-			books: booksFilters,
+			scrolls: scrollsFilters,
 			item: itemFilters,
 			recipe: recipeFilters,
 			equipment: equipmentFilters,
@@ -155,7 +155,7 @@ const compendium = new Vue({
 
 			this.search();
 		},
-		openBook:function(index) {
+		openScroll:function(index) {
 			// TODO, open the relevant modal
 		}
 	}

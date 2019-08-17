@@ -20,3 +20,9 @@ Doesn't have to use the words "Crafting Ninja". No words is okay. "CN" lapel wou
 ### Other Notes
 
 - Mid-mysql8 transition on computer, Sketched instead
+
+### TODOs
+
+- [ ] Rename Listing to Scroll
+- [x] Rename Book to Scroll
+- [ ] Rename Knapsack to Sling

@@ -1,6 +1,6 @@
 <?php
 
-namespace Feature\Books;
+namespace Feature\Scrolls;
 
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
@@ -10,16 +10,16 @@ class VotingTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_upvote_published_book()
+	function users_can_upvote_published_scroll()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->state('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
 
@@ -30,19 +30,19 @@ class VotingTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_who_upvote_a_book_twice_are_only_counted_once()
+	function users_who_upvote_a_scroll_twice_are_only_counted_once()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->state('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$firstResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$firstResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
-		$secondResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$secondResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
 
@@ -56,19 +56,19 @@ class VotingTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_can_remove_their_upvote_from_a_book()
+	function users_can_remove_their_upvote_from_a_scroll()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->state('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$firstResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$firstResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
-		$secondResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$secondResponse = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 0
 		]);
 
@@ -82,16 +82,16 @@ class VotingTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_cannot_vote_on_unpublished_books()
+	function users_cannot_vote_on_unpublished_scrolls()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->state('unpublished')->create([
-			'name:en' => 'Private Book',
+			'name:en' => 'Private scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
 
@@ -100,13 +100,13 @@ class VotingTest extends GameTestCase
 	}
 
 	/** @test */
-	function guests_cannot_upvote_books()
+	function guests_cannot_upvote_scrolls()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->state('published')->create();
 
 		// Act
-		$response = $this->call('POST', $this->gamePath . '/books/' . $listing->id . '/vote', [
+		$response = $this->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/vote', [
 			'dir' => 1
 		]);
 

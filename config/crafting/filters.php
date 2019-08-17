@@ -4,7 +4,7 @@
 $filters = [
 	'name' => [
 		'key'	   => 'name',
-		'for'      => ['books', 'item', 'recipe', 'equipment', 'quest', 'mob'],
+		'for'      => ['scrolls', 'item', 'recipe', 'equipment', 'quest', 'mob'],
 		'type'     => 'string',
 		'icon'     => 'fa-search',
 		'title'    => 'Search',
@@ -49,7 +49,7 @@ $filters = [
 	],
 	'blvl' => [
 		'key'	 => 'blvl',
-		'for'    => ['books'],
+		'for'    => ['scrolls'],
 		'type'   => 'range',
 		'icon'   => 'fa-medal',
 		'title'  => 'Level',
@@ -63,21 +63,21 @@ $filters = [
 	],
 	'bcrafting' => [
 		'key'	 => 'bclass',
-		'for'    => ['books'],
+		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-tools',
 		'title'  => 'Crafting Class',
 	],
 	'bgathering' => [
 		'key'	 => 'bclass',
-		'for'    => ['books'],
+		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-feather-alt',
 		'title'  => 'Gathering Class',
 	],
 	'bbattle' => [
 		'key'	 => 'bclass',
-		'for'    => ['books'],
+		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-chess-rook',
 		'title'  => 'Battle Class',
@@ -105,7 +105,7 @@ $filters = [
 	],
 	'bauthor' => [
 		'key'	 => 'bauthor',
-		'for'    => ['books'],
+		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-user-ninja',
 		'title'  => 'Author',
@@ -115,7 +115,7 @@ $filters = [
 return [
 	'all' => $filters,
 
-	'books' => array_intersect_key($filters, array_flip(['name', 'blvl', 'bcrafting', 'bgathering', 'bbattle', 'bauthor', ])),
+	'scrolls' => array_intersect_key($filters, array_flip(['name', 'slvl', 'scrafting', 'sgathering', 'sbattle', 'sauthor', ])),
 
 	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
 

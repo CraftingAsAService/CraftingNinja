@@ -1,47 +1,47 @@
 <?php
 
-namespace Feature\Books;
+namespace Feature\Scrolls;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\BookTestCase;
+use Tests\ScrollTestCase;
 
-class BookTest extends BookTestCase
+class ScrollTest extends ScrollTestCase
 {
 
 	/** @test */
-	function user_can_view_recipe_books()
+	function user_can_view_recipe_scrolls()
 	{
 		// Arrange
 		factory(Listing::class)->states('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 
 		// Act
-		$response = $this->call('GET', $this->gamePath . '/books');
+		$response = $this->call('GET', $this->gamePath . '/scrolls');
 
 		// Assert
 		$response->assertStatus(200);
 
-		$response->assertSee('Alpha Book');
+		$response->assertSee('Alpha Scroll');
 	}
 
 	/** @test */
-	function users_can_make_ajax_call_for_books()
+	function users_can_make_ajax_call_for_scrolls()
 	{
 		// Arrange
 		factory(Listing::class)->states('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 
 		// Act
-		$response = $this->call('GET', $this->gamePath . '/api/books');
+		$response = $this->call('GET', $this->gamePath . '/api/scrolls');
 
 		// Assert
 		$response->assertStatus(200);
 
-		$response->assertSee('Alpha Book');
+		$response->assertSee('Alpha Scroll');
 	}
 
 
@@ -61,7 +61,7 @@ class BookTest extends BookTestCase
 		$listing = factory(Listing::class)->states('unpublished')->create();
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/publish', [
+		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
 			'dir' => 1
 		]);
 
@@ -72,15 +72,15 @@ class BookTest extends BookTestCase
 	}
 
 	/** @test */
-	function users_can_unpublish_their_own_book()
+	function users_can_unpublish_their_own_scroll()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->states('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/publish', [
+		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
 			'dir' => -1
 		]);
 
@@ -98,7 +98,7 @@ class BookTest extends BookTestCase
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/publish', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
 			'dir' => 1
 		]);
 
@@ -109,16 +109,16 @@ class BookTest extends BookTestCase
 	}
 
 	/** @test */
-	function users_cannot_unpublish_anothers_book()
+	function users_cannot_unpublish_anothers_scroll()
 	{
 		// Arrange
 		$listing = factory(Listing::class)->states('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/books/' . $listing->id . '/publish', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
 			'dir' => -1
 		]);
 
@@ -129,7 +129,7 @@ class BookTest extends BookTestCase
 	}
 
 	/** @test */
-	function user_can_view_book_contents()
+	function user_can_view_scroll_contents()
 	{
 		// Arrange
 		$item = factory(Item::class)->create([
@@ -138,17 +138,17 @@ class BookTest extends BookTestCase
 
 		// Create the listing and attach the item with a quantity of 999
 		$listing = factory(Listing::class)->state('published')->create([
-			'name:en' => 'Alpha Book',
+			'name:en' => 'Alpha Scroll',
 		]);
 		$listing->items()->save($item, [ 'quantity' => 999 ]);
 
 		// Act
-		$response = $this->call('GET', $this->gamePath . '/books/' . $listing->id);
+		$response = $this->call('GET', $this->gamePath . '/scrolls/' . $listing->id);
 
 		// Assert
 		$response->assertStatus(200);
 
-		$response->assertSee('Alpha Book');
+		$response->assertSee('Alpha Scroll');
 		$response->assertSee('Beta Item');
 		$response->assertSee('999');
 	}

@@ -72,7 +72,7 @@
 						<a href='/craft/knapsack' class='btn btn-primary btn-lg'>Start Crafting</a>
 					</div>
 					<div class='col-sm-3'>
-						<a href='/books/create' class='btn btn-secondary btn-sm btn-block'>Create Book</a>
+						<a href='/scrolls/create' class='btn btn-secondary btn-sm btn-block'>Scribe Scroll</a>
 					</div>
 				</div>
 			</div>

@@ -8,13 +8,13 @@
 			<div class='card'>
 				<div class='card__header'>
 					<h4>
-						{{ __('PUBLISH YOUR BOOK') }}
+						{{ __('PUBLISH YOUR SCROLL') }}
 					</h4>
 				</div>
 				<div class='card__content'>
 					<div class='alc-inventory'>
 						<div class='form-group'>
-							<label for='name'>Your Book's Inventory</label>
+							<label for='name'>Your Scroll's Inventory</label>
 						</div>
 						<ul class='alc-inventory__list list-unstyled'>
 							@foreach ($ninjaCart as $entity)
@@ -33,16 +33,16 @@
 					</div>
 				</div>
 				<div class='card__content'>
-					<form method='post' action='/books'>
+					<form method='post' action='/scrolls'>
 						@csrf
 						<div class='form-group'>
-							<label for='name'>Your Book's Title <span class='required'>*</span></label>
+							<label for='name'>Your Scroll's Title <span class='required'>*</span></label>
 							<input type='text' name='name' id='name' class='form-control' placeholder='Archer&#39;s Equipment, Levels 5-10...'>
 						</div>
 						<div class='row'>
 							<div class='col-6'>
 								<div class='form-group'>
-									<label for='description'>Book Description</label>
+									<label for='description'>Scroll Description</label>
 									<textarea name='description' rows='5' class='form-control' placeholder='Enter a description here...'></textarea>
 								</div>
 							</div>
@@ -75,7 +75,7 @@
 
 						<div class='form-group form-group--submit text-right'>
 							<a href='/knapsack' class='btn btn-default mr-3'>Wait, Go Back</a>
-							<button type='submit' class='btn btn-primary-inverse'>Publish Your Book</button>
+							<button type='submit' class='btn btn-primary-inverse'>Publish Your Scroll</button>
 						</div>
 					</form>
 				</div>

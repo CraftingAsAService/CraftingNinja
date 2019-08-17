@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BookResource;
+use App\Http\Resources\ScrollResource;
 use App\Models\Game\Concepts\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Validator;
 
 
-class BooksController extends Controller
+class ScrollsController extends Controller
 {
 
 	public function index(Request $request)
@@ -19,11 +19,11 @@ class BooksController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$books = Listing::withTranslation()->withCount('votes')->with('myVote', 'job', 'author', 'items', 'objectives', 'recipes', 'nodes')
+		$scrolls = Listing::withTranslation()->withCount('votes')->with('myVote', 'job', 'author', 'items', 'objectives', 'recipes', 'nodes')
 			->filter($request->all())
 			->simplePaginate();
 
-		return BookResource::collection($books);
+		return ScrollResource::collection($scrolls);
 	}
 
 	private function validator($data)

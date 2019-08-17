@@ -1,13 +1,13 @@
 <?php
 
-namespace Feature\Books;
+namespace Feature\Scrolls;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Listing;
 use App\Models\User;
-use Tests\BookTestCase;
+use Tests\ScrollTestCase;
 
-class CreateBookTest extends BookTestCase
+class CreateScrollTest extends ScrollTestCase
 {
 
 	/** @test */
@@ -19,7 +19,7 @@ class CreateBookTest extends BookTestCase
 		]);
 		$this->addItemToNinjaCartCookie($item);
 
-		$response = $this->be($user)->call('GET', '/books/create');
+		$response = $this->be($user)->call('GET', '/scrolls/create');
 
 		$response->assertOk();
 		$response->assertSee('Beta Item');
@@ -31,7 +31,7 @@ class CreateBookTest extends BookTestCase
 		$user = factory(User::class)->create();
 		// Not setting NinjaCart cookie
 
-		$response = $this->be($user)->call('GET', '/books/create');
+		$response = $this->be($user)->call('GET', '/scrolls/create');
 
 		$response->assertRedirect(route('knapsack'));
 	}
@@ -45,7 +45,7 @@ class CreateBookTest extends BookTestCase
 		]);
 		$this->addItemToNinjaCartCookie($item);
 
-		$response = $this->call('GET', '/books/create');
+		$response = $this->call('GET', '/scrolls/create');
 
 		$response->assertRedirect(route('login'));
 	}
