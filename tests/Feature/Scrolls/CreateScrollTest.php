@@ -3,7 +3,6 @@
 namespace Feature\Scrolls;
 
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Listing;
 use App\Models\User;
 use Tests\ScrollTestCase;
 

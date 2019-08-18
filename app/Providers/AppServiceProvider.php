@@ -10,7 +10,7 @@ use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Shop;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Niche;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -44,16 +44,16 @@ class AppServiceProvider extends ServiceProvider
 		});
 
 		Relation::morphMap([
-			'job' => Job::class,
-			'niche' => Niche::class,
-			'category' => Category::class,
-			'shop' => Shop::class,
-			'npc' => Npc::class,
-			'recipe' => Recipe::class,
+			'job'       => Job::class,
+			'niche'     => Niche::class,
+			'category'  => Category::class,
+			'shop'      => Shop::class,
+			'npc'       => Npc::class,
+			'recipe'    => Recipe::class,
 			'objective' => Objective::class,
-			'item' => Item::class,
-			'node' => Node::class,
-			'listing' => Listing::class,
+			'item'      => Item::class,
+			'node'      => Node::class,
+			'scroll'    => Scroll::class,
 		]);
 	}
 

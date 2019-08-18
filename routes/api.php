@@ -18,6 +18,4 @@ Route::namespace('Api')->/*domain('{game}.' . config('app.base_url'))->*/middlew
 	Route::post('items', 'ItemsController@index');
 	Route::post('scrolls', 'ScrollsController@index');
 
-	Route::get('users/{user}/lists', 'UsersController@lists');
-
 });

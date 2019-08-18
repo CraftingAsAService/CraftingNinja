@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 
 use App\Models\Game;
-use App\Http\Resources\Game as GameResource;
 
 use Cache;
 

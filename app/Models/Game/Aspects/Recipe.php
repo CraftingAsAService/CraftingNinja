@@ -6,7 +6,7 @@ use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\Translations\RecipeTranslation;
 
 class Recipe extends Aspect
@@ -91,9 +91,9 @@ class Recipe extends Aspect
 		return $this->morphOne(Detail::class, 'detailable');
 	}
 
-	public function listings()
+	public function scrolls()
 	{
-		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
+		return $this->morphToMany(Scroll::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 }

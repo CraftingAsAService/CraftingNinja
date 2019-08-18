@@ -23,6 +23,8 @@ Doesn't have to use the words "Crafting Ninja". No words is okay. "CN" lapel wou
 
 ### TODOs
 
-- [ ] Rename Listing to Scroll
+- [x] Rename Listing to Scroll (listing|lists|list)
 - [x] Rename Book to Scroll
-- [ ] Rename Knapsack to Sling
+- [ ] ReRun tests
+- [ ] Rename Knapsack to Sling (?)
+- [ ] ReRun tests

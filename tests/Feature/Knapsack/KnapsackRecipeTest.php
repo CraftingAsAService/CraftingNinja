@@ -4,7 +4,7 @@ namespace Feature\Knapsack;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Recipe;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
@@ -23,11 +23,11 @@ class KnapsackRecipeTest extends GameTestCase
 			'item_id' => $item->id,
 		]);
 
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->recipes()->save($recipe, [ 'quantity' => 888 ]);
+		$scroll = factory(Scroll::class)->state('unpublished')->create();
+		$scroll->recipes()->save($recipe, [ 'quantity' => 888 ]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
 
 		// Assert
 		$response->assertStatus(200);
@@ -56,8 +56,8 @@ class KnapsackRecipeTest extends GameTestCase
 			'type' => 'recipe',
 		]);
 
-		// Pull back the active listing
-		$listing = Listing::with('recipes')->active($user->id)->firstOrFail();
+		// Pull back the active scroll
+		$scroll = Scroll::with('recipes')->active($user->id)->firstOrFail();
 
 		// Assert
 		$response->assertStatus(200);
@@ -65,7 +65,7 @@ class KnapsackRecipeTest extends GameTestCase
 			'success' => true
 		]);
 
-		$this->assertEquals(1, $listing->recipes()->count());
+		$this->assertEquals(1, $scroll->recipes()->count());
 	}
 
 }

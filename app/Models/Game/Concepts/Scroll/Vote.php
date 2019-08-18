@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\Game\Concepts\Listing;
+namespace App\Models\Game\Concepts\Scroll;
 
 use App\Models\Game\Concept;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 
 class Vote extends Concept
@@ -27,9 +27,9 @@ class Vote extends Concept
 	 * Relationships
 	 */
 
-	public function listing()
+	public function scroll()
 	{
-		return $this->belongsTo(Listing::class)->withTranslation();
+		return $this->belongsTo(Scroll::class)->withTranslation();
 	}
 
 	public function user()

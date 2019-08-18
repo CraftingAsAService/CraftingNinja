@@ -31,8 +31,8 @@ class Report extends Concept
 			throw new NotMorphableException;
 
 		// Additional protections based on type
-		if ($type == 'listing')
-			Listing::published()->findOrFail($id);
+		if ($type == 'scroll')
+			Scroll::findOrFail($id);
 
 		// Users can only report once
 		return Report::updateOrCreate([

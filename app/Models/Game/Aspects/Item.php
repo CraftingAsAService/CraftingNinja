@@ -12,7 +12,7 @@ use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
 use App\Models\Game\Concepts\Equipment;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Price;
 use App\Models\Translations\ItemTranslation;
 
@@ -345,9 +345,9 @@ class Item extends Aspect
 		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
-	public function listings()
+	public function scrolls()
 	{
-		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
+		return $this->morphToMany(Scroll::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 	/**

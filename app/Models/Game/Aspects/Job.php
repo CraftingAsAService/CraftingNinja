@@ -5,7 +5,7 @@ namespace App\Models\Game\Aspects;
 use App\Models\Game\Aspect;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Niche;
 use App\Models\Translations\JobTranslation;
 
@@ -41,9 +41,9 @@ class Job extends Aspect
 	 * Relationships
 	 */
 
-	public function listings()
+	public function scrolls()
 	{
-		return $this->hasMany(Listing::class)->withTranslation();
+		return $this->hasMany(Scroll::class)->withTranslation();
 	}
 
 	public function niches()

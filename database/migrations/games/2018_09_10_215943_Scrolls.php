@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Lists extends Migration
+class Scrolls extends Migration
 {
 	/**
 	 * Run the migrations.
@@ -13,7 +13,7 @@ class Lists extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('listings', function (Blueprint $table) {
+		Schema::create('scrolls', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
 			$table->unsignedInteger('user_id'); // FK `users` in Primary DB
@@ -31,7 +31,7 @@ class Lists extends Migration
 			$table->cascadeDeleteForeign('jobs');
 		});
 
-		Schema::create('listing_translations', function (Blueprint $table) {
+		Schema::create('scroll_translations', function (Blueprint $table) {
 			// Build the basics of the table
 			$table->translatable();
 
@@ -43,7 +43,7 @@ class Lists extends Migration
 		Schema::create('jottings', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			$table->unsignedInteger('listing_id'); // FK to objectives
+			$table->unsignedInteger('scroll_id'); // FK to objectives
 
 			// Polymorphic table
 			$table->unsignedInteger('jotting_id');
@@ -53,23 +53,23 @@ class Lists extends Migration
 
 			// Indexes
 			$table->index(['jotting_id', 'jotting_type']);
-			$table->index('listing_id');
-			$table->cascadeDeleteForeign('listings');
+			$table->index('scroll_id');
+			$table->cascadeDeleteForeign('scrolls');
 		});
 
 		Schema::create('votes', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			$table->unsignedInteger('listing_id'); // FK to objectives
+			$table->unsignedInteger('scroll_id'); // FK to objectives
 			$table->unsignedInteger('user_id'); // FK to users
 
 			$table->timestamps();
 
 			// Indexes
 			$table->index('user_id');
-			$table->index('listing_id');
+			$table->index('scroll_id');
 			// $table->cascadeDeleteForeign('users'); // Cannot include; Users exist on different schema
-			$table->cascadeDeleteForeign('listings');
+			$table->cascadeDeleteForeign('scrolls');
 		});
 	}
 
@@ -82,7 +82,7 @@ class Lists extends Migration
 	{
 		Schema::dropIfExists('votes');
 		Schema::dropIfExists('jottings');
-		Schema::dropIfExists('listing_translations');
-		Schema::dropIfExists('listings');
+		Schema::dropIfExists('scroll_translations');
+		Schema::dropIfExists('scrolls');
 	}
 }

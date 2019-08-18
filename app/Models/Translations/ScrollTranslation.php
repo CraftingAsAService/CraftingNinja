@@ -4,7 +4,7 @@ namespace App\Models\Translations;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ListingTranslation extends Model
+class ScrollTranslation extends Model
 {
 
 	public $timestamps = false;

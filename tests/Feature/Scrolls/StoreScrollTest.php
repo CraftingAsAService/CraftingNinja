@@ -4,11 +4,11 @@ namespace Feature\Scrolls;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\ScrollTestCase;
 
-class CreateScrollTest extends ScrollTestCase
+class StoreScrollTest extends ScrollTestCase
 {
 
 	public function validParams($overrides = [])
@@ -20,7 +20,7 @@ class CreateScrollTest extends ScrollTestCase
 	}
 
 	/** @test */
-	function users_can_submit_listing_creation()
+	function users_can_submit_scroll_creation()
 	{
 		$user = factory(User::class)->create([
 			'name' => 'Yeet McGee',
@@ -41,14 +41,14 @@ class CreateScrollTest extends ScrollTestCase
 			'max_level'   => 255,
 		]);
 
-		$listing = Listing::first();
+		$scroll = Scroll::first();
 
-		$this->assertEquals('Yeet McGee', $listing->user->name);
-		$this->assertEquals('Awesome Scroll', $listing->name);
-		$this->assertEquals('Use this scroll to level up', $listing->description);
-		$this->assertEquals(17, $listing->job_id);
-		$this->assertEquals(1, $listing->min_level);
-		$this->assertEquals(255, $listing->max_level);
+		$this->assertEquals('Yeet McGee', $scroll->user->name);
+		$this->assertEquals('Awesome Scroll', $scroll->name);
+		$this->assertEquals('Use this scroll to level up', $scroll->description);
+		$this->assertEquals(17, $scroll->job_id);
+		$this->assertEquals(1, $scroll->min_level);
+		$this->assertEquals(255, $scroll->max_level);
 
 		$response->assertRedirect(route('compendium', [
 			'chapter' => 'scrolls',
@@ -57,7 +57,7 @@ class CreateScrollTest extends ScrollTestCase
 	}
 
 	/** @test */
-	function invalid_names_will_not_create_a_listing()
+	function invalid_names_will_not_create_a_scroll()
 	{
 		$user = factory(User::class)->create();
 		$item = factory(Item::class)->create([
@@ -74,11 +74,11 @@ class CreateScrollTest extends ScrollTestCase
 
 		$response->assertRedirect('/scrolls/create');
 		$response->assertSessionHasErrors('name');
-		$this->assertEquals(0, Listing::count());
+		$this->assertEquals(0, Scroll::count());
 	}
 
 	/** @test */
-	function invalid_description_will_not_create_a_listing()
+	function invalid_description_will_not_create_a_scroll()
 	{
 		$user = factory(User::class)->create();
 		$item = factory(Item::class)->create([
@@ -95,11 +95,11 @@ class CreateScrollTest extends ScrollTestCase
 
 		$response->assertRedirect('/scrolls/create');
 		$response->assertSessionHasErrors('description');
-		$this->assertEquals(0, Listing::count());
+		$this->assertEquals(0, Scroll::count());
 	}
 
 	/** @test */
-	function invalid_job_ids_will_not_create_a_listing()
+	function invalid_job_ids_will_not_create_a_scroll()
 	{
 		$user = factory(User::class)->create();
 		$item = factory(Item::class)->create([
@@ -115,11 +115,11 @@ class CreateScrollTest extends ScrollTestCase
 
 		$response->assertRedirect('/scrolls/create');
 		$response->assertSessionHasErrors('job_id');
-		$this->assertEquals(0, Listing::count());
+		$this->assertEquals(0, Scroll::count());
 	}
 
 	/** @test */
-	function invalid_levels_will_not_create_a_listing()
+	function invalid_levels_will_not_create_a_scroll()
 	{
 		$user = factory(User::class)->create();
 		$item = factory(Item::class)->create([
@@ -137,11 +137,11 @@ class CreateScrollTest extends ScrollTestCase
 		$response->assertRedirect('/scrolls/create');
 		$response->assertSessionHasErrors('min_level');
 		$response->assertSessionHasErrors('max_level');
-		$this->assertEquals(0, Listing::count());
+		$this->assertEquals(0, Scroll::count());
 	}
 
 	/** @test */
-	function empty_carts_will_not_create_a_listing()
+	function empty_carts_will_not_create_a_scroll()
 	{
 		$user = factory(User::class)->create();
 		$item = factory(Item::class)->create([
@@ -152,7 +152,7 @@ class CreateScrollTest extends ScrollTestCase
 		$response = $this->be($user)->call('POST', '/scrolls', $this->validParams());
 
 		$response->assertRedirect('/knapsack');
-		$this->assertEquals(0, Listing::count());
+		$this->assertEquals(0, Scroll::count());
 	}
 
 }

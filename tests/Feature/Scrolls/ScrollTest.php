@@ -3,7 +3,7 @@
 namespace Feature\Scrolls;
 
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\ScrollTestCase;
 
@@ -14,7 +14,7 @@ class ScrollTest extends ScrollTestCase
 	function user_can_view_recipe_scrolls()
 	{
 		// Arrange
-		factory(Listing::class)->states('published')->create([
+		factory(Scroll::class)->states('published')->create([
 			'name:en' => 'Alpha Scroll',
 		]);
 
@@ -31,7 +31,7 @@ class ScrollTest extends ScrollTestCase
 	function users_can_make_ajax_call_for_scrolls()
 	{
 		// Arrange
-		factory(Listing::class)->states('published')->create([
+		factory(Scroll::class)->states('published')->create([
 			'name:en' => 'Alpha Scroll',
 		]);
 
@@ -55,13 +55,13 @@ class ScrollTest extends ScrollTestCase
 
 
 	/** @test */
-	function users_can_publish_their_own_listings()
+	function users_can_publish_their_own_scrolls()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('unpublished')->create();
+		$scroll = factory(Scroll::class)->states('unpublished')->create();
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
+		$response = $this->actingAs($scroll->user)->call('POST', $this->gamePath . '/scrolls/' . $scroll->id . '/publish', [
 			'dir' => 1
 		]);
 
@@ -75,12 +75,12 @@ class ScrollTest extends ScrollTestCase
 	function users_can_unpublish_their_own_scroll()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('published')->create([
+		$scroll = factory(Scroll::class)->states('published')->create([
 			'name:en' => 'Alpha Scroll',
 		]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
+		$response = $this->actingAs($scroll->user)->call('POST', $this->gamePath . '/scrolls/' . $scroll->id . '/publish', [
 			'dir' => -1
 		]);
 
@@ -91,14 +91,14 @@ class ScrollTest extends ScrollTestCase
 	}
 
 	/** @test */
-	function users_cannot_publish_anothers_listing()
+	function users_cannot_publish_anothers_scroll()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('unpublished')->create();
+		$scroll = factory(Scroll::class)->states('unpublished')->create();
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $scroll->id . '/publish', [
 			'dir' => 1
 		]);
 
@@ -112,13 +112,13 @@ class ScrollTest extends ScrollTestCase
 	function users_cannot_unpublish_anothers_scroll()
 	{
 		// Arrange
-		$listing = factory(Listing::class)->states('published')->create([
+		$scroll = factory(Scroll::class)->states('published')->create([
 			'name:en' => 'Alpha Scroll',
 		]);
 		$user = factory(User::class)->create();
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $listing->id . '/publish', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/scrolls/' . $scroll->id . '/publish', [
 			'dir' => -1
 		]);
 
@@ -136,14 +136,14 @@ class ScrollTest extends ScrollTestCase
 			'name:en' => 'Beta Item',
 		]);
 
-		// Create the listing and attach the item with a quantity of 999
-		$listing = factory(Listing::class)->state('published')->create([
+		// Create the scroll and attach the item with a quantity of 999
+		$scroll = factory(Scroll::class)->state('published')->create([
 			'name:en' => 'Alpha Scroll',
 		]);
-		$listing->items()->save($item, [ 'quantity' => 999 ]);
+		$scroll->items()->save($item, [ 'quantity' => 999 ]);
 
 		// Act
-		$response = $this->call('GET', $this->gamePath . '/scrolls/' . $listing->id);
+		$response = $this->call('GET', $this->gamePath . '/scrolls/' . $scroll->id);
 
 		// Assert
 		$response->assertStatus(200);

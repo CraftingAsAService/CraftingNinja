@@ -3,7 +3,7 @@
 namespace Feature\Knapsack;
 
 use App\Models\Game\Aspects\Item;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
@@ -18,11 +18,11 @@ class KnapsackItemTest extends GameTestCase
 			'name:en' => 'Beta Item',
 		]);
 
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->items()->save($item, [ 'quantity' => 999 ]);
+		$scroll = factory(Scroll::class)->state('unpublished')->create();
+		$scroll->items()->save($item, [ 'quantity' => 999 ]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
 
 		// Assert
 		$response->assertStatus(200);
@@ -47,8 +47,8 @@ class KnapsackItemTest extends GameTestCase
 			'type' => 'item',
 		]);
 
-		// Pull back the active listing
-		$listing = Listing::with('items')->active($user->id)->firstOrFail();
+		// Pull back the active scroll
+		$scroll = Scroll::with('items')->active($user->id)->firstOrFail();
 
 		// Assert
 		$response->assertStatus(200);
@@ -56,7 +56,7 @@ class KnapsackItemTest extends GameTestCase
 			'success' => true
 		]);
 
-		$this->assertEquals(1, $listing->items()->count());
+		$this->assertEquals(1, $scroll->items()->count());
 	}
 
 }

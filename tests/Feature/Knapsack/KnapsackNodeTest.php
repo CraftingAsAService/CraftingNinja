@@ -3,7 +3,7 @@
 namespace Feature\Knapsack;
 
 use App\Models\Game\Aspects\Node;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
@@ -18,11 +18,11 @@ class KnapsackNodeTest extends GameTestCase
 			'name:en' => 'Rock Formation',
 		]);
 
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->nodes()->save($node, [ 'quantity' => 777 ]);
+		$scroll = factory(Scroll::class)->state('unpublished')->create();
+		$scroll->nodes()->save($node, [ 'quantity' => 777 ]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
 
 		// Assert
 		$response->assertStatus(200);
@@ -48,8 +48,8 @@ class KnapsackNodeTest extends GameTestCase
 			'type' => 'node',
 		]);
 
-		// Pull back the active listing
-		$listing = Listing::with('nodes')->active($user->id)->firstOrFail();
+		// Pull back the active scroll
+		$scroll = Scroll::with('nodes')->active($user->id)->firstOrFail();
 
 		// Assert
 		$response->assertStatus(200);
@@ -57,7 +57,7 @@ class KnapsackNodeTest extends GameTestCase
 			'success' => true
 		]);
 
-		$this->assertEquals(1, $listing->nodes()->count());
+		$this->assertEquals(1, $scroll->nodes()->count());
 	}
 
 }

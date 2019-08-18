@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Game\Concepts\Listing;
-use App\Models\Game\Concepts\Listing\Vote;
-use App\Models\Game\Concepts\Lists;
+use App\Models\Game\Concepts\Scroll;
+use App\Models\Game\Concepts\Scroll\Vote;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Hashids\Hashids;
@@ -44,9 +43,9 @@ class User extends Authenticatable
 	 * Relationships
 	 */
 
-	public function listings()
+	public function scrolls()
 	{
-		return $this->hasMany(Listing::class)->withTranslation();
+		return $this->hasMany(Scroll::class)->withTranslation();
 	}
 
 	public function votes()

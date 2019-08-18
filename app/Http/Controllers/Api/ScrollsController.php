@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ScrollResource;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Validator;
@@ -19,7 +19,7 @@ class ScrollsController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$scrolls = Listing::withTranslation()->withCount('votes')->with('myVote', 'job', 'author', 'items', 'objectives', 'recipes', 'nodes')
+		$scrolls = Scroll::withTranslation()->withCount('votes')->with('myVote', 'job', 'author', 'items', 'objectives', 'recipes', 'nodes')
 			->filter($request->all())
 			->simplePaginate();
 

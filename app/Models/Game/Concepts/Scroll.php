@@ -8,20 +8,20 @@ use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concept;
-use App\Models\Game\Concepts\Listing\Vote;
+use App\Models\Game\Concepts\Scroll\Vote;
 use App\Models\Game\Concepts\Report;
-use App\Models\Translations\ListingTranslation;
+use App\Models\Translations\ScrollTranslation;
 use App\Models\User;
 use Carbon\Carbon;
 use Astrotomic\Translatable\Translatable;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class Listing extends Concept implements TranslatableContract
+class Scroll extends Concept implements TranslatableContract
 {
 
 	use Translatable;
 
-	public $translationModel = ListingTranslation::class;
+	public $translationModel = ScrollTranslation::class;
 	public $translatedAttributes = [ 'name', 'description' ];
 
 	public $timestamps = true;

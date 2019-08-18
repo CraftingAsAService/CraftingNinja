@@ -3,7 +3,7 @@
 namespace Feature\Knapsack;
 
 use App\Models\Game\Aspects\Objective;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
@@ -18,11 +18,11 @@ class KnapsackObjectiveTest extends GameTestCase
 			'name:en' => 'Battle Royale',
 		]);
 
-		$listing = factory(Listing::class)->state('unpublished')->create();
-		$listing->objectives()->save($objective, [ 'quantity' => 666 ]);
+		$scroll = factory(Scroll::class)->state('unpublished')->create();
+		$scroll->objectives()->save($objective, [ 'quantity' => 666 ]);
 
 		// Act
-		$response = $this->actingAs($listing->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
 
 		// Assert
 		$response->assertStatus(200);
@@ -47,8 +47,8 @@ class KnapsackObjectiveTest extends GameTestCase
 			'type' => 'objective',
 		]);
 
-		// Pull back the active listing
-		$listing = Listing::with('objectives')->active($user->id)->firstOrFail();
+		// Pull back the active scroll
+		$scroll = Scroll::with('objectives')->active($user->id)->firstOrFail();
 
 		// Assert
 		$response->assertStatus(200);
@@ -56,7 +56,7 @@ class KnapsackObjectiveTest extends GameTestCase
 			'success' => true
 		]);
 
-		$this->assertEquals(1, $listing->objectives()->count());
+		$this->assertEquals(1, $scroll->objectives()->count());
 	}
 
 }

@@ -6,11 +6,11 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 
 class Knapsack {
 
-	protected $listing;
+	protected $scroll;
 
 	public function __construct()
 	{
@@ -44,14 +44,14 @@ class Knapsack {
 
 	public function get()
 	{
-		// Get the active list, create one if it does not exist
-		$this->listing = Listing::active()->firstOrCreate([
+		// Get the active scroll, create one if it does not exist
+		$this->scroll = Scroll::active()->firstOrCreate([
 			'user_id' => auth()->user()->id,
 		]);
 	}
 
 	/**
-	 * Change User's Active Listing
+	 * Change User's Active Scroll
 	 * @param  integer $id       ID of the Entity
 	 * @param  string $type     Type of the Entity, Singular word expected
 	 * @param  integer $quantity Amount to add, subtract; false will delete
@@ -69,22 +69,22 @@ class Knapsack {
 
 		// Quantity is set to false: Delete
 		if ($quantity === false)
-			return $this->listing->$relation()->detach($entity);
+			return $this->scroll->$relation()->detach($entity);
 
 		// Attach or update the entity
-		if ( ! $this->listing->$relation->contains($entity))
+		if ( ! $this->scroll->$relation->contains($entity))
 			// Entry does not yet exist: Create
-			return $this->listing->$relation()->attach($entity, [ 'quantity' => $quantity ]);
+			return $this->scroll->$relation()->attach($entity, [ 'quantity' => $quantity ]);
 
 		// Entry already exists
-		$updatedQuantity = $this->listing->$relation->find($entity->id)->pivot->quantity + $quantity;
+		$updatedQuantity = $this->scroll->$relation->find($entity->id)->pivot->quantity + $quantity;
 
 		// New quantity is not valid: Delete
 		if ($updatedQuantity <= 0)
-			return $this->listing->$relation()->detach($entity);
+			return $this->scroll->$relation()->detach($entity);
 
 		// New quantity is valid: Update
-		return $this->listing->$relation()->updateExistingPivot($entity, [
+		return $this->scroll->$relation()->updateExistingPivot($entity, [
 			'quantity' => $updatedQuantity
 		]);
 	}
@@ -96,24 +96,24 @@ class Knapsack {
 
 	public function truncate()
 	{
-		foreach (Listing::$polymorphicRelationships as $relation)
-			foreach ($this->listing->$relation as $entity)
+		foreach (Scroll::$polymorphicRelationships as $relation)
+			foreach ($this->scroll->$relation as $entity)
 				$this->remove($entity->id, $entity->pivot->jotting_type);
 	}
 
 	public function compressToString()
 	{
-		$this->listing->fresh();
+		$this->scroll->fresh();
 
 		$shorthand = [];
 
-		foreach (Listing::$polymorphicRelationships as $letter => $rel)
+		foreach (Scroll::$polymorphicRelationships as $letter => $rel)
 		{
-			if ($this->listing->$rel->count() == 0)
+			if ($this->scroll->$rel->count() == 0)
 				continue;
 
 			$entries = [];
-			foreach ($this->listing->$rel as $entry)
+			foreach ($this->scroll->$rel as $entry)
 				$entries[] = $entry->id . ($entry->pivot->quantity > 1 ? 'x' . $entry->pivot->quantity : '');
 
 			$shorthand[] = $letter . ':' . implode(',', $entries);
@@ -138,7 +138,7 @@ class Knapsack {
 				if (preg_match('/x/', $id))
 					list($id, $qty) = explode('x', $id);
 
-				self::change($id, str_singular(Listing::$polymorphicRelationships[$letter]), $qty);
+				self::change($id, str_singular(Scroll::$polymorphicRelationships[$letter]), $qty);
 			}
 		}
 	}

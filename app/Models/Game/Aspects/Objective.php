@@ -8,7 +8,7 @@ use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Detail;
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Niche;
 use App\Models\Translations\ObjectiveTranslation;
 
@@ -32,9 +32,9 @@ class Objective extends Aspect
 		return $this->morphToMany(Zone::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
-	public function listings()
+	public function scrolls()
 	{
-		return $this->morphToMany(Listing::class, 'jotting')->withTranslation()->withPivot('quantity');
+		return $this->morphToMany(Scroll::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 	public function rewards()

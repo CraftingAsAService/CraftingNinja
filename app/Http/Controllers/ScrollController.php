@@ -48,7 +48,7 @@ class ScrollController extends Controller
 					->withErrors($validator)
 					->withInput();
 
-		$listing = Listing::create([
+		$scroll = Scroll::create([
 			'user_id'        => auth()->user()->id,
 			'name:en'        => $request->input('name'),
 			'description:en' => $request->input('description'),
@@ -57,15 +57,15 @@ class ScrollController extends Controller
 			'max_level'      => $request->input('max_level'),
 		]);
 
-		foreach (Listing::$polymorphicRelationships as $listingType)
+		foreach (Scroll::$polymorphicRelationships as $scrollType)
 		{
-			$entities = $ninjaCart->filter(function($entity) use ($listingType) {
-				return $entity['type'] == Str::singular($listingType);
+			$entities = $ninjaCart->filter(function($entity) use ($scrollType) {
+				return $entity['type'] == Str::singular($scrollType);
 			});
-			$model = 'App\\Models\\Game\\Aspects\\' . ucwords(Str::singular($listingType));
+			$model = 'App\\Models\\Game\\Aspects\\' . ucwords(Str::singular($scrollType));
 
 			foreach ($entities as $entity)
-				$listing->$listingType()->attach($model::find($entity['id']), ['quantity' => $entity['quantity']]);
+				$scroll->$scrollType()->attach($model::find($entity['id']), ['quantity' => $entity['quantity']]);
 		}
 
 		Knapsack::unsetCookie();
@@ -86,9 +86,9 @@ class ScrollController extends Controller
 	 */
 	public function index()
 	{
-		$listings = Listing::published()->get();
+		$scrolls = Scroll::published()->get();
 
-		return view('game.scrolls', compact('listings'));
+		return view('game.scrolls', compact('scrolls'));
 	}
 
 	/**
@@ -99,10 +99,10 @@ class ScrollController extends Controller
 	 */
 	public function show($scrollId)
 	{
-		$listingPolymorphicRelationships = Listing::$polymorphicRelationships;
-		$listing = Listing::with('items')->findOrFail($scrollId);
+		$scrollPolymorphicRelationships = Scroll::$polymorphicRelationships;
+		$scroll = Scroll::with('items')->findOrFail($scrollId);
 
-		return view('game.scrolls.show', compact('listing', 'listingPolymorphicRelationships'));
+		return view('game.scrolls.show', compact('scroll', 'scrollPolymorphicRelationships'));
 	}
 
 	/**
@@ -123,7 +123,7 @@ class ScrollController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$scroll = Listing::with('votes')->published()->findOrFail($scrollId);
+		$scroll = Scroll::with('votes')->published()->findOrFail($scrollId);
 
 		$existingVote = $scroll->votes()->where('user_id', auth()->user()->id)->first();
 
@@ -146,10 +146,10 @@ class ScrollController extends Controller
 		if ( ! auth()->check())
 			return $this->respondWithError(401, 'Unauthenticated');
 
-		$scroll = Listing::with(array_values(Listing::$polymorphicRelationships))->findOrFail($scrollId);
+		$scroll = Scroll::with(array_values(Scroll::$polymorphicRelationships))->findOrFail($scrollId);
 		$knapsack = new Knapsack;
 
-		foreach (Listing::$polymorphicRelationships as $relation)
+		foreach (Scroll::$polymorphicRelationships as $relation)
 			foreach ($scroll->$relation as $entity)
 				$knapsack->change($entity->id, str_singular($relation), $entity->pivot->quantity);
 	}

@@ -2,7 +2,7 @@
 
 namespace Feature\Compendium;
 
-use App\Models\Game\Concepts\Listing;
+use App\Models\Game\Concepts\Scroll;
 use Tests\GameTestCase;
 
 class ApiScrollTest extends GameTestCase
@@ -12,7 +12,7 @@ class ApiScrollTest extends GameTestCase
 	public function user_can_make_ajax_call_for_scrolls()
 	{
 		// Arrange
-		factory(Listing::class)->create([
+		factory(Scroll::class)->create([
 			'name' => 'Beta Scroll',
 		]);
 
