@@ -846,7 +846,7 @@ var render = function() {
           "a",
           {
             staticClass: "info-block__link-wrapper",
-            attrs: { href: "/knapsack" }
+            attrs: { href: "/sling" }
           },
           [
             _c(
@@ -896,7 +896,7 @@ var render = function() {
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                _c("h5", [_vm._v("Knapsack")])
+                _c("h5", [_vm._v("Sling")])
               ]
             ),
             _vm._v(" "),
@@ -955,11 +955,11 @@ var staticRenderFns = [
           "a",
           {
             staticClass: "btn btn-primary-inverse btn-block",
-            attrs: { href: "/knapsack" }
+            attrs: { href: "/sling" }
           },
           [
             _c("i", { staticClass: "fas fa-th-list" }),
-            _vm._v("\n\t\t\t\t\tManage Knapsack\n\t\t\t\t")
+            _vm._v("\n\t\t\t\t\tManage Sling\n\t\t\t\t")
           ]
         ),
         _vm._v(" "),
@@ -967,7 +967,7 @@ var staticRenderFns = [
           "a",
           {
             staticClass: "btn btn-primary btn-block",
-            attrs: { href: "/crafting/knapsack" }
+            attrs: { href: "/craft/sling" }
           },
           [
             _c("i", { staticClass: "fas fa-magic" }),

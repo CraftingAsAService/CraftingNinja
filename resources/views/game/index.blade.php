@@ -49,10 +49,10 @@
 		<div class='post-grid__item col-sm-6 col-lg-4'>
 			<div class='posts__item card'>
 				<figure class='posts__thumb -icon -gradient-2'>
-					<a href='/knapsack'><i class='fas fa-th'></i></a>
+					<a href='/sling'><i class='fas fa-th'></i></a>
 				</figure>
 				<div class='posts__inner card__content'>
-					<h6 class='posts__title posts__title--color-hover'><a href='/knapsack'>Open Your Knapsack</a></h6>
+					<h6 class='posts__title posts__title--color-hover'><a href='/sling'>Open Your Sling</a></h6>
 					<ul class='post__meta meta'>
 						<li class='meta__item'>Manage the things you need.</li>
 					</ul>

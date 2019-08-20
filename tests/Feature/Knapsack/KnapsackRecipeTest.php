@@ -1,6 +1,6 @@
 <?php
 
-namespace Feature\Knapsack;
+namespace Feature\Sling;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Recipe;
@@ -8,11 +8,11 @@ use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
-class KnapsackRecipeTest extends GameTestCase
+class SlingRecipeTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_see_recipes_in_their_knapsack()
+	function users_can_see_recipes_in_their_sling()
 	{
 		// Arrange
 		$item = factory(Item::class)->create([
@@ -27,7 +27,7 @@ class KnapsackRecipeTest extends GameTestCase
 		$scroll->recipes()->save($recipe, [ 'quantity' => 888 ]);
 
 		// Act
-		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/sling');
 
 		// Assert
 		$response->assertStatus(200);
@@ -38,7 +38,7 @@ class KnapsackRecipeTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_can_add_recipes_to_their_knapsack()
+	function users_can_add_recipes_to_their_sling()
 	{
 		// Arrange
 		$user = factory(User::class)->create();
@@ -51,7 +51,7 @@ class KnapsackRecipeTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/sling', [
 			'id' => $recipe->id,
 			'type' => 'recipe',
 		]);

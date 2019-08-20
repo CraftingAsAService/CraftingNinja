@@ -151,7 +151,7 @@ class StoreScrollTest extends ScrollTestCase
 
 		$response = $this->be($user)->call('POST', '/scrolls', $this->validParams());
 
-		$response->assertRedirect('/knapsack');
+		$response->assertRedirect('/sling');
 		$this->assertEquals(0, Scroll::count());
 	}
 

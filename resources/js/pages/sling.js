@@ -1,11 +1,11 @@
 /**
- * Knapsack Page
+ * Sling Page
  */
 
 'use strict';
 
-const knapsack = new Vue({
-	el: '#knapsack',
+const sling = new Vue({
+	el: '#sling',
 	data: {
 		contents: ninjaCartContents || [],
 		active: null

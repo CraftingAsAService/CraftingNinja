@@ -32,7 +32,7 @@ class CreateScrollTest extends ScrollTestCase
 
 		$response = $this->be($user)->call('GET', '/scrolls/create');
 
-		$response->assertRedirect(route('knapsack'));
+		$response->assertRedirect(route('sling'));
 	}
 
 	/** @test */

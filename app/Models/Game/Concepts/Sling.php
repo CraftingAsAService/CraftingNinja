@@ -8,7 +8,7 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Scroll;
 
-class Knapsack {
+class Sling {
 
 	protected $scroll;
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game\Aspects\Job;
-use App\Models\Game\Concepts\Knapsack;
+use App\Models\Game\Concepts\Sling;
 use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Scroll\Vote;
 use Illuminate\Http\Request;
@@ -15,10 +15,10 @@ class ScrollController extends Controller
 
 	public function create()
 	{
-		$ninjaCart = Knapsack::parseCookie();
+		$ninjaCart = Sling::parseCookie();
 
 		if ($ninjaCart->isEmpty())
-			return redirect()->route('knapsack');
+			return redirect()->route('sling');
 
 		$jobs = Job::byTypeAndTier();
 
@@ -27,10 +27,10 @@ class ScrollController extends Controller
 
 	public function store(Request $request)
 	{
-		$ninjaCart = Knapsack::parseCookie();
+		$ninjaCart = Sling::parseCookie();
 
 		if ($ninjaCart->isEmpty())
-			return redirect()->route('knapsack');
+			return redirect()->route('sling');
 
 		$validator = \Validator::make($request->all(), [
 			'name' => 'required',
@@ -68,7 +68,7 @@ class ScrollController extends Controller
 				$scroll->$scrollType()->attach($model::find($entity['id']), ['quantity' => $entity['quantity']]);
 		}
 
-		Knapsack::unsetCookie();
+		Sling::unsetCookie();
 
 		return redirect()->route('compendium', [
 			'chapter' => 'scrolls',
@@ -139,19 +139,19 @@ class ScrollController extends Controller
 	}
 
 	/**
-	 * All all of this scroll's entries to the user's active knapsack
+	 * All all of this scroll's entries to the user's active sling
 	 */
-	public function addAllEntriesToKnapsack(Request $request, $scrollId)
+	public function addAllEntriesToSling(Request $request, $scrollId)
 	{
 		if ( ! auth()->check())
 			return $this->respondWithError(401, 'Unauthenticated');
 
 		$scroll = Scroll::with(array_values(Scroll::$polymorphicRelationships))->findOrFail($scrollId);
-		$knapsack = new Knapsack;
+		$sling = new Sling;
 
 		foreach (Scroll::$polymorphicRelationships as $relation)
 			foreach ($scroll->$relation as $entity)
-				$knapsack->change($entity->id, str_singular($relation), $entity->pivot->quantity);
+				$sling->change($entity->id, str_singular($relation), $entity->pivot->quantity);
 	}
 
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace Feature\Knapsack;
+namespace Feature\Sling;
 
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
-class KnapsackObjectiveTest extends GameTestCase
+class SlingObjectiveTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_see_objectives_in_their_knapsack()
+	function users_can_see_objectives_in_their_sling()
 	{
 		// Arrange
 		$objective = factory(Objective::class)->create([
@@ -22,7 +22,7 @@ class KnapsackObjectiveTest extends GameTestCase
 		$scroll->objectives()->save($objective, [ 'quantity' => 666 ]);
 
 		// Act
-		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/sling');
 
 		// Assert
 		$response->assertStatus(200);
@@ -33,7 +33,7 @@ class KnapsackObjectiveTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_can_add_objectives_to_their_knapsack()
+	function users_can_add_objectives_to_their_sling()
 	{
 		// Arrange
 		$user = factory(User::class)->create();
@@ -42,7 +42,7 @@ class KnapsackObjectiveTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/sling', [
 			'id' => $objective->id,
 			'type' => 'objective',
 		]);

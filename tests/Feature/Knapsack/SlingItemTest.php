@@ -1,17 +1,17 @@
 <?php
 
-namespace Feature\Knapsack;
+namespace Feature\Sling;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
-class KnapsackItemTest extends GameTestCase
+class SlingItemTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_see_items_in_their_knapsack()
+	function users_can_see_items_in_their_sling()
 	{
 		// Arrange
 		$item = factory(Item::class)->create([
@@ -22,7 +22,7 @@ class KnapsackItemTest extends GameTestCase
 		$scroll->items()->save($item, [ 'quantity' => 999 ]);
 
 		// Act
-		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/sling');
 
 		// Assert
 		$response->assertStatus(200);
@@ -33,7 +33,7 @@ class KnapsackItemTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_can_add_items_to_their_knapsack()
+	function users_can_add_items_to_their_sling()
 	{
 		// Arrange
 		$user = factory(User::class)->create();
@@ -42,7 +42,7 @@ class KnapsackItemTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/sling', [
 			'id' => $item->id,
 			'type' => 'item',
 		]);

@@ -1,11 +1,11 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/js/manifest.js": "/js/manifest.js",
-    "/js/pages/compendium.js": "/js/pages/compendium.js",
-    "/css/pages/compendium.css": "/css/pages/compendium.css",
-    "/css/pages/game-index.css": "/css/pages/game-index.css",
-    "/css/themes/ffxiv.css": "/css/themes/ffxiv.css",
-    "/css/app.css": "/css/app.css",
-    "/js/pages/knapsack.js": "/js/pages/knapsack.js",
-    "/js/vendor.js": "/js/vendor.js"
+	"/js/app.js": "/js/app.js",
+	"/js/manifest.js": "/js/manifest.js",
+	"/js/pages/compendium.js": "/js/pages/compendium.js",
+	"/css/pages/compendium.css": "/css/pages/compendium.css",
+	"/css/pages/game-index.css": "/css/pages/game-index.css",
+	"/css/themes/ffxiv.css": "/css/themes/ffxiv.css",
+	"/css/app.css": "/css/app.css",
+	"/js/pages/sling.js": "/js/pages/sling.js",
+	"/js/vendor.js": "/js/vendor.js"
 }

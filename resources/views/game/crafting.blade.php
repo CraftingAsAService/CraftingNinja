@@ -1,10 +1,10 @@
 @extends('app', [
 	'active' => '/crafting',
 	'css' => [
-		// 'pages/knapsack',
+		// 'pages/sling',
 	],
 	'js' => [
-		// 'pages/knapsack',
+		// 'pages/sling',
 	]
 ])
 

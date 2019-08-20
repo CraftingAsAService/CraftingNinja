@@ -1,17 +1,17 @@
 <?php
 
-namespace Feature\Knapsack;
+namespace Feature\Sling;
 
 use App\Models\Game\Aspects\Node;
 use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\GameTestCase;
 
-class KnapsackNodeTest extends GameTestCase
+class SlingNodeTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_see_nodes_in_their_knapsack()
+	function users_can_see_nodes_in_their_sling()
 	{
 		// Arrange
 		$node = factory(Node::class)->create([
@@ -22,7 +22,7 @@ class KnapsackNodeTest extends GameTestCase
 		$scroll->nodes()->save($node, [ 'quantity' => 777 ]);
 
 		// Act
-		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/knapsack');
+		$response = $this->actingAs($scroll->user)->call('GET', $this->gamePath . '/sling');
 
 		// Assert
 		$response->assertStatus(200);
@@ -33,7 +33,7 @@ class KnapsackNodeTest extends GameTestCase
 	}
 
 	/** @test */
-	function users_can_add_nodes_to_their_knapsack()
+	function users_can_add_nodes_to_their_sling()
 	{
 		// Arrange
 		$user = factory(User::class)->create();
@@ -43,7 +43,7 @@ class KnapsackNodeTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/knapsack', [
+		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/sling', [
 			'id' => $node->id,
 			'type' => 'node',
 		]);

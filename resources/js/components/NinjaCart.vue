@@ -1,7 +1,7 @@
 <template>
 	<ul class='info-block info-block--header ninja-cart'>
 		<li :class='"info-block__item info-block__item--shopping-cart" + (count ? " js-info-block__item--onclick" : "")'>
-			<a href='/knapsack' class='info-block__link-wrapper'>
+			<a href='/sling' class='info-block__link-wrapper'>
 				<svg ref='bagIcon' role='img' class='df-icon df-icon--shopping-cart'>
 					<use xlink:href='/alchemists/images/esports/icons-esports.svg#cart'/>
 				</svg>
@@ -18,7 +18,7 @@
 			<ul class='header-cart header-cart--inventory'>
 				<li class='header-cart__item header-cart__item--title'>
 					<small class='float-right' v-if='contents.length > 9'>Recent entries</small>
-					<h5>Knapsack</h5>
+					<h5>Sling</h5>
 				</li>
 				<li class='header-cart__item' v-for='(entry, index) in reverseContents' v-if='index < 9'>
 					<figure class='header-cart__product-thumb'>
@@ -30,11 +30,11 @@
 					</div>
 				</li>
 				<li class='header-cart__item header-cart__item--action'>
-					<a href='/knapsack' class='btn btn-primary-inverse btn-block'>
+					<a href='/sling' class='btn btn-primary-inverse btn-block'>
 						<i class='fas fa-th-list'></i>
-						Manage Knapsack
+						Manage Sling
 					</a>
-					<a href='/crafting/knapsack' class='btn btn-primary btn-block'>
+					<a href='/craft/sling' class='btn btn-primary btn-block'>
 						<i class='fas fa-magic'></i>
 						Craft
 					</a>

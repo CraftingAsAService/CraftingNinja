@@ -1,10 +1,10 @@
 @extends('app', [
-	'active' => '/knapsack',
+	'active' => '/sling',
 	'css' => [
-		// 'pages/knapsack',
+		// 'pages/sling',
 	],
 	'js' => [
-		'pages/knapsack',
+		'pages/sling',
 	]
 ])
 
@@ -18,17 +18,17 @@
 	<div class='minor-media mb-3' hidden>
 		<img src='/assets/{{ config('game.slug') }}/cover.jpg' alt='{{ config('game.data.name') }}'>
 		<div class='text'>
-			<h1>Knapsack</h1>
+			<h1>Sling</h1>
 		</div>
 	</div>
 @endsection
 
 @section('content')
 
-	<div id='knapsack'>
+	<div id='sling'>
 		<div class='card card--no-paddings alc' v-if='contents.length'>
 			<div class='card__header card__header--has-btn'>
-				<h4>Your Knapsack</h4>
+				<h4>Your Sling</h4>
 				<button class='btn btn-default btn-xs card-header__button' @click='clearCart()'>Clear</button>
 			</div>
 			<div class='card__content pt-3'>
@@ -69,7 +69,7 @@
 						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a> --}}
 					</div>
 					<div class='col-sm-6 text-center'>
-						<a href='/craft/knapsack' class='btn btn-primary btn-lg'>Start Crafting</a>
+						<a href='/craft/sling' class='btn btn-primary btn-lg'>Start Crafting</a>
 					</div>
 					<div class='col-sm-3'>
 						<a href='/scrolls/create' class='btn btn-secondary btn-sm btn-block'>Scribe Scroll</a>
@@ -79,7 +79,7 @@
 		</div>
 		<div v-else>
 			<div id='no-results' class='jumbotron'>
-				<h1 class='display-4'>Nothing in your Knapsack!</h1>
+				<h1 class='display-4'>Nothing in your Sling!</h1>
 				<p class='lead mt-4 mb-0'>Head over to the <a href='/compendium'>Compendium</a> to add stuff.</p>
 			</div>
 		</div>

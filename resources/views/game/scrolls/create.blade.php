@@ -74,7 +74,7 @@
 						</div>
 
 						<div class='form-group form-group--submit text-right'>
-							<a href='/knapsack' class='btn btn-default mr-3'>Wait, Go Back</a>
+							<a href='/sling' class='btn btn-default mr-3'>Wait, Go Back</a>
 							<button type='submit' class='btn btn-primary-inverse'>Publish Your Scroll</button>
 						</div>
 					</form>

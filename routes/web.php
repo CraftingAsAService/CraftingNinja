@@ -33,7 +33,7 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::get('/', 'GameController@index')->name('home');
 
-	// Route::post('scrolls/{id}/add', 'ScrollController@addAllEntriesToKnapsack');
+	// Route::post('scrolls/{id}/add', 'ScrollController@addAllEntriesToSling');
 	// Route::post('scrolls/{id}/vote', 'ScrollController@vote');
 	// Route::post('scrolls/{id}/publish', 'ScrollController@publish');
 
@@ -42,7 +42,7 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	// Route::get('crafting', 'CraftingController@index');
 
-	Route::get('knapsack', 'KnapsackController@index')->name('knapsack');
+	Route::get('sling', 'SlingController@index')->name('sling');
 
 	// Route::post('report', 'ReportController@create');
 
