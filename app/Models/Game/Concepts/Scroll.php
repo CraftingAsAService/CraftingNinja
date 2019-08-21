@@ -50,11 +50,11 @@ class Scroll extends Concept implements TranslatableContract
 
 	public function scopeFilter($query, $filters)
 	{
-		if (isset($filters['bauthor']) && preg_match('/author:(\d+)/', $filters['bauthor'], $authorMatch))
+		if (isset($filters['sauthor']) && preg_match('/author:(\d+)/', $filters['sauthor'], $authorMatch))
 			$query->where('user_id', User::decodeId($authorMatch[1]));
 
-		if (isset($filters['bclass']))
-			$query->whereIn('job_id', is_array($filters['bclass']) ? $filters['bclass'] : explode(',', $filters['bclass']));
+		if (isset($filters['sclass']))
+			$query->whereIn('job_id', is_array($filters['sclass']) ? $filters['sclass'] : explode(',', $filters['sclass']));
 
 		if (isset($filters['min_level']))
 			$query->where('min_level', '<=', $filters['min_level']);

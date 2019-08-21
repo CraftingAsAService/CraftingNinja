@@ -17,7 +17,7 @@ class CreateScrollTest extends ScrollTestCase
 			'name:en' => 'Beta Item',
 		]);
 		$this->addItemToNinjaCartCookie($item);
-
+$this->withoutExceptionHandling();
 		$response = $this->be($user)->call('GET', '/scrolls/create');
 
 		$response->assertOk();

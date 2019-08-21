@@ -41,28 +41,6 @@ class ItemTest extends GameTestCase
 		return $this; // For chaining
 	}
 
-	private function withRecipes($onlyGoodItem = false)
-	{
-		$this->goodJob = $this->goodJob ?? factory(Job::class)->create();
-
-		factory(Recipe::class)->create([
-			'item_id' => $this->goodItem->id,
-			'sublevel' => 27,
-			'job_id' => $this->goodJob->id,
-		]);
-
-		if ( ! $onlyGoodItem)
-		{
-			$job = factory(Job::class)->create();
-
-			factory(Recipe::class)->create([
-				'item_id' => $this->badItem->id,
-				'sublevel' => 100,
-				'job_id' => $job->id,
-			]);
-		}
-	}
-
 	private function withEquipment($onlyGoodItem = false)
 	{
 		$this->goodJob = $this->goodJob ?? factory(Job::class)->create();
@@ -145,36 +123,6 @@ class ItemTest extends GameTestCase
 
 		$this->assertOnlyGoodItemFilter([
 			'category_id' => $category->id,
-		]);
-	}
-
-	/** @test */
-	function items_can_be_filtered_by_recipes_only()
-	{
-		$this->commonItems()->withRecipes(true);
-
-		$this->assertOnlyGoodItemFilter([
-			'recipes' => 1,
-		]);
-	}
-
-	/** @test */
-	function items_can_be_filtered_by_recipe_sublevel()
-	{
-		$this->commonItems()->withRecipes();
-
-		$this->assertOnlyGoodItemFilter([
-			'sublevel' => 27,
-		]);
-	}
-
-	/** @test */
-	function items_can_be_filtered_by_recipe_class()
-	{
-		$this->commonItems()->withRecipes();
-
-		$this->assertOnlyGoodItemFilter([
-			'rclass' => [ $this->goodJob->id, ],
 		]);
 	}
 

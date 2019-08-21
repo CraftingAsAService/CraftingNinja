@@ -15,7 +15,7 @@ class ReportTest extends GameTestCase
 	function users_can_report_scrolls()
 	{
 		// Arrange
-		$scroll = factory(Scroll::class)->state('published')->create();
+		$scroll = factory(Scroll::class)->create();
 		$user = factory(User::class)->create();
 
 		// Act
@@ -31,25 +31,5 @@ class ReportTest extends GameTestCase
 		$response->assertStatus(200);
 		$this->assertEquals(1, $scroll->reports->count());
 	}
-
-	/** @test */
-	function users_cannot_report_unpublished_scrolls()
-	{
-		// Arrange
-		$scroll = factory(Scroll::class)->state('unpublished')->create();
-		$user = factory(User::class)->create();
-
-		// Act
-		$response = $this->actingAs($user)->call('POST', $this->gamePath . '/report', [
-			'id' => $scroll->id,
-			'type' => 'scroll',
-			'reason' => 'Inaccurate',
-		]);
-
-		$response->assertStatus(404);
-		$this->assertEquals(0, $scroll->reports->count());
-	}
-
-	// $this->withoutExceptionHandling();
 
 }

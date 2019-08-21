@@ -44,7 +44,7 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::get('sling', 'SlingController@index')->name('sling');
 
-	// Route::post('report', 'ReportController@create');
+	Route::post('report', 'ReportController@create');
 
 	Route::middleware('auth')->group(function() {
 

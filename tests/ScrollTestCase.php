@@ -5,7 +5,7 @@ namespace Tests;
 abstract class ScrollTestCase extends GameTestCase
 {
 
-	public function addItemToNinjaCartCookie($item, $quantity = 1)
+	protected function addItemToNinjaCartCookie($item, $quantity = 1)
 	{
 		static $items = [];
 		$items[] = $item;
