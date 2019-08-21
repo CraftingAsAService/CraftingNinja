@@ -22,7 +22,7 @@ class StoreScrollTest extends ScrollTestCase
 	/** @test */
 	function users_can_submit_scroll_creation()
 	{
-		$user = factory(User::class)->create([
+		$author = factory(User::class)->create([
 			'name' => 'Yeet McGee',
 		]);
 		$item = factory(Item::class)->create([
@@ -33,7 +33,7 @@ class StoreScrollTest extends ScrollTestCase
 		]);
 		$this->addItemToNinjaCartCookie($item);
 
-		$response = $this->be($user)->call('POST', '/scrolls', [
+		$response = $this->be($author)->call('POST', '/scrolls', [
 			'name'        => 'Awesome Scroll',
 			'description' => 'Use this scroll to level up',
 			'job_id'      => 17,
@@ -41,9 +41,9 @@ class StoreScrollTest extends ScrollTestCase
 			'max_level'   => 255,
 		]);
 
-		$scroll = Scroll::first();
+		$scroll = Scroll::with('author')->first();
 
-		$this->assertEquals('Yeet McGee', $scroll->user->name);
+		$this->assertEquals('Yeet McGee', $scroll->author->name);
 		$this->assertEquals('Awesome Scroll', $scroll->name);
 		$this->assertEquals('Use this scroll to level up', $scroll->description);
 		$this->assertEquals(17, $scroll->job_id);
@@ -52,7 +52,7 @@ class StoreScrollTest extends ScrollTestCase
 
 		$response->assertRedirect(route('compendium', [
 			'chapter' => 'scrolls',
-			'filter'  => 'mine',
+			'author'  => $author->encodedId(),
 		]));
 	}
 
@@ -143,13 +143,13 @@ class StoreScrollTest extends ScrollTestCase
 	/** @test */
 	function empty_carts_will_not_create_a_scroll()
 	{
-		$user = factory(User::class)->create();
+		$author = factory(User::class)->create();
 		$item = factory(Item::class)->create([
 			'name:en' => 'Beta Item',
 		]);
-		// Not setting NinjaCart cookie
+		$this->emptyNinjaCartCookie();
 
-		$response = $this->be($user)->call('POST', '/scrolls', $this->validParams());
+		$response = $this->be($author)->call('POST', '/scrolls', $this->validParams());
 
 		$response->assertRedirect('/sling');
 		$this->assertEquals(0, Scroll::count());

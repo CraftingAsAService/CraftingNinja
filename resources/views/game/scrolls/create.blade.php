@@ -18,7 +18,7 @@
 						</div>
 						<ul class='alc-inventory__list list-unstyled'>
 							@foreach ($ninjaCart as $entity)
-							<li class='alc-inventory__item -small'>
+							<li class='alc-inventory__item -small' data-title='{{ $entity['name'] }}'>
 								<figure class='alc-inventory__item-thumb'>
 									<img src='/assets/{{ config('game.slug') }}/item/{{ $entity['icon'] }}.png' alt=''>
 								</figure>
@@ -47,6 +47,7 @@
 								</div>
 							</div>
 							<div class='col-6'>
+								@if ($jobs->count())
 								<div class='form-group'>
 									<label for='job'>Tag a Job and Level Range (optional)</label>
 									<select name='job_id' id='job' class='form-control'>
@@ -62,6 +63,7 @@
 										@endforeach
 									</select>
 								</div>
+								@endif
 								<div class='row'>
 									<div class='col-6'>
 										<input type='number' name='min_level' id='min_level' class='form-control' placeholder='Min Level' min='1'>

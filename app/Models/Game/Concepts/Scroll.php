@@ -94,7 +94,7 @@ class Scroll extends Concept implements TranslatableContract
 
 	public function author()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
 	public function jottings()

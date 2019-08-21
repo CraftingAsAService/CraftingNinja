@@ -33,9 +33,6 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::get('/', 'GameController@index')->name('home');
 
-	// Route::post('scrolls/{id}/add', 'ScrollController@addAllEntriesToSling');
-	// Route::post('scrolls/{id}/vote', 'ScrollController@vote');
-	// Route::post('scrolls/{id}/publish', 'ScrollController@publish');
 
 	Route::get('compendium', 'CompendiumController@index')->name('compendium');
 	Route::post('compendium', 'CompendiumController@index')->name('compendium.search');
@@ -50,6 +47,7 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 		Route::get('scrolls/create', 'ScrollController@create')->name('scrolls.create');
 		Route::post('scrolls', 'ScrollController@store')->name('scrolls.store');
+		Route::post('scrolls/{id}/vote', 'ScrollController@vote')->name('scrolls.vote');
 
 	});
 

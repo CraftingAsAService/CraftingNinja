@@ -17,7 +17,7 @@ class CreateScrollTest extends ScrollTestCase
 			'name:en' => 'Beta Item',
 		]);
 		$this->addItemToNinjaCartCookie($item);
-$this->withoutExceptionHandling();
+
 		$response = $this->be($user)->call('GET', '/scrolls/create');
 
 		$response->assertOk();
@@ -28,7 +28,7 @@ $this->withoutExceptionHandling();
 	function user_cannot_access_creation_form_without_cart_contents()
 	{
 		$user = factory(User::class)->create();
-		// Not setting NinjaCart cookie
+		$this->emptyNinjaCartCookie();
 
 		$response = $this->be($user)->call('GET', '/scrolls/create');
 

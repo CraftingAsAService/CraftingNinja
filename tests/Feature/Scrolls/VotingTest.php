@@ -10,7 +10,7 @@ class VotingTest extends GameTestCase
 {
 
 	/** @test */
-	function users_can_upvote_published_scroll()
+	function users_can_upvote_scroll()
 	{
 		// Arrange
 		$scroll = factory(Scroll::class)->create([
@@ -84,17 +84,13 @@ class VotingTest extends GameTestCase
 	/** @test */
 	function guests_cannot_upvote_scrolls()
 	{
-		// Arrange
 		$scroll = factory(Scroll::class)->create();
 
-		// Act
 		$response = $this->call('POST', $this->gamePath . '/scrolls/' . $scroll->id . '/vote', [
 			'dir' => 1
 		]);
 
-		// Assert
-		// Expecting a 401, no user set
-		$response->assertStatus(401);
+		$response->assertRedirect('/login');
 	}
 
 }

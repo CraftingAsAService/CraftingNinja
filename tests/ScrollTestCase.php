@@ -17,4 +17,9 @@ abstract class ScrollTestCase extends GameTestCase
 		$_COOKIE['NinjaCart'] .= ']';
 	}
 
+	protected function emptyNinjaCartCookie()
+	{
+		unset($_COOKIE['NinjaCart']);
+	}
+
 }

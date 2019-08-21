@@ -32,7 +32,7 @@ class Job extends Aspect
 
 	public function scopeByTypeAndTier()
 	{
-		return self::withTranslation()->whereNotIn('id', config('game.ignoreJobs'))->orderBy('tier')->get()->groupBy('type')->transform(function($item, $k) {
+		return self::withTranslation()->whereNotIn('id', config('game.ignoreJobs') ?? [])->orderBy('tier')->get()->groupBy('type')->transform(function($item, $k) {
 			return $item->groupBy('tier');
 		});
 	}

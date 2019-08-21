@@ -123,7 +123,7 @@ class ScrollController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$scroll = Scroll::with('votes')->published()->findOrFail($scrollId);
+		$scroll = Scroll::with('votes')->findOrFail($scrollId);
 
 		$existingVote = $scroll->votes()->where('user_id', auth()->user()->id)->first();
 
