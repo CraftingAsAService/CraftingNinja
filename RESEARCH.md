@@ -1,5 +1,13 @@
 ## Research
 
+### Generic Remaining TODOs
+- [ ] Compendium - Scrolls
+- [ ] Compendium - Recipes
+- [ ] Compendium - Items
+- [ ] Compendium - Equipment
+- [ ] Compendium - Objectives
+- [ ] Compendium - NPCs
+
 ### Logo Thoughts
 
 Logo Credit, altered
@@ -21,9 +29,3 @@ Doesn't have to use the words "Crafting Ninja". No words is okay. "CN" lapel wou
 
 - Mid-mysql8 transition on computer, Sketched instead
 
-### TODOs
-
-- [x] Rename Listing to Scroll (listing|lists|list)
-- [x] Rename Book to Scroll
-- [x] Rename Knapsack to Sling (?)
-- [ ] ReRun tests
