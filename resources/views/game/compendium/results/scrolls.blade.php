@@ -14,7 +14,7 @@
 				<div class='col'>
 					<p class='author-block m-0'>
 						<span class='text-muted'>by</span>
-						<span v-html='data.user.name'></span>,
+						<span v-html='data.author.name'></span>,
 						<time :datetime='data.updated_at' v-html='data.last_updated'></time>
 					</p>
 				</div>

@@ -106,11 +106,11 @@
 
 					{{-- Filter Widgets --}}
 
-					@include('game.compendium.filters.blvl')
-					@include('game.compendium.filters.bclass', [ 'jobType' => 'crafting'  ])
-					@include('game.compendium.filters.bclass', [ 'jobType' => 'gathering' ])
-					@include('game.compendium.filters.bclass', [ 'jobType' => 'battle'    ])
-					@include('game.compendium.filters.bauthor')
+					@include('game.compendium.filters.slvl')
+					@include('game.compendium.filters.sclass', [ 'jobType' => 'crafting'  ])
+					@include('game.compendium.filters.sclass', [ 'jobType' => 'gathering' ])
+					@include('game.compendium.filters.sclass', [ 'jobType' => 'battle'    ])
+					@include('game.compendium.filters.sauthor')
 					@include('game.compendium.filters.ilvl')
 					@include('game.compendium.filters.rclass')
 					@include('game.compendium.filters.rlvl')

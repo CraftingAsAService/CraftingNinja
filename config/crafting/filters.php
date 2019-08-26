@@ -47,8 +47,8 @@ $filters = [
 		'icon'   => 'fa-medal',
 		'title'  => 'Equipment Level',
 	],
-	'blvl' => [
-		'key'	 => 'blvl',
+	'slvl' => [
+		'key'	 => 'slvl',
 		'for'    => ['scrolls'],
 		'type'   => 'range',
 		'icon'   => 'fa-medal',
@@ -61,22 +61,22 @@ $filters = [
 		'icon'   => 'fa-chess-rook',
 		'title'  => 'Equipment Class',
 	],
-	'bcrafting' => [
-		'key'	 => 'bclass',
+	'scrafting' => [
+		'key'	 => 'sclass',
 		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-tools',
 		'title'  => 'Crafting Class',
 	],
-	'bgathering' => [
-		'key'	 => 'bclass',
+	'sgathering' => [
+		'key'	 => 'sclass',
 		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-feather-alt',
 		'title'  => 'Gathering Class',
 	],
-	'bbattle' => [
-		'key'	 => 'bclass',
+	'sbattle' => [
+		'key'	 => 'sclass',
 		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-chess-rook',
@@ -103,8 +103,8 @@ $filters = [
 		'icon'   => 'fa-registered',
 		'title'  => 'Rarity',
 	],
-	'bauthor' => [
-		'key'	 => 'bauthor',
+	'sauthor' => [
+		'key'	 => 'sauthor',
 		'for'    => ['scrolls'],
 		'type'   => 'multiple',
 		'icon'   => 'fa-user-ninja',

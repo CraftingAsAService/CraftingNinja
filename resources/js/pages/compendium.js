@@ -22,7 +22,7 @@ const compendium = new Vue({
 		// These are submitted as parameters
 		filters: {
 			name: searchTerm,
-			bauthor: typeof filterStart.author !== 'undefined' ? filterStart.author : '',
+			sauthor: typeof filterStart.author !== 'undefined' ? filterStart.author : '',
 			// Arrays need pre-defined as arrays
 			rclass: [],
 			sublevel: [],
@@ -51,7 +51,7 @@ const compendium = new Vue({
 	mounted:function() {
 		this.initializeDropdowns();
 
-		if (this.filters.name != '' || this.filters.bauthor != '')
+		if (this.filters.name != '' || this.filters.sauthor != '')
 			this.search();
 	},
 	created:function() {

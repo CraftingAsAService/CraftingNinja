@@ -14,9 +14,9 @@ class ScrollResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$user = $this->user ? [
-			'id'   => $this->user->id,
-			'name' => $this->user->name,
+		$author = $this->author ? [
+			'id'   => $this->author->id,
+			'name' => $this->author->name,
 		] : null;
 
 		$job = $this->job ? [
@@ -28,7 +28,7 @@ class ScrollResource extends JsonResource
 			'id'           => $this->id,
 			'name'         => $this->name,
 			'description'  => $this->description,
-			'user'         => $user,
+			'author'       => $author,
 			'job'          => $job,
 			'min_level'    => $this->min_level,
 			'max_level'    => $this->max_level,
