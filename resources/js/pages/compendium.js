@@ -46,7 +46,8 @@ const compendium = new Vue({
 			equipment: equipmentFilters,
 			sorting: sortingFilters,
 			perPage: perPageFilters
-		}
+		},
+		expanded: null
 	},
 	mounted:function() {
 		this.initializeDropdowns();
@@ -155,8 +156,11 @@ const compendium = new Vue({
 
 			this.search();
 		},
-		openScroll:function(index) {
-			// TODO, open the relevant modal
+		toggleScroll:function(index) {
+			if (this.expanded == index)
+				this.expanded = null;
+			else
+				this.expanded = index;
 		}
 	}
 });

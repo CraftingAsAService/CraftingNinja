@@ -1052,10 +1052,24 @@
 			max-width: calc(100% - 16px);
 		}
 
-		@media (min-width: 992px) {
-			flex-basis: calc(50% - 16px);
-			max-width: calc(50% - 16px);
+		&:not(.-expanded) {
+			@media (min-width: 992px) {
+				flex-basis: calc(50% - 16px);
+				max-width: calc(50% - 16px);
+			}
 		}
+		&.-expanded {
+			@media (min-width: 992px) {
+				position: absolute;
+				z-index: 3;
+				top: -8px;
+				right: -8px;
+				left: -8px;
+				max-width: calc(100% + 16px);
+				flex-basis: calc(100% + 16px);
+			}
+		}
+
 	}
 
 	// 4 columns
