@@ -34,15 +34,22 @@
 				</div>
 			</div>
 			<div class='mt-3' v-if='expanded == index'>
-				<div v-for='(entities, key) in data.entities'>
-					<div v-for='(entity, index) in entities'>
-						<span v-html='entity.name'></span>
-						<span v-html='entity.quantity'></span>
-					</div>
-				</div>
+				<ul class='alc-inventory__list list-unstyled' v-for='(entities, key) in data.entities'>
+					<li class='alc-inventory__item -small' v-for='(entity, index) in entities'>
+						<figure class='alc-inventory__item-thumb'>
+							<img :src='"/assets/{{ config('game.slug') }}/item/" + entity.icon + ".png"' :alt='entity.name'>
+						</figure>
+						<div class='alc-inventory__item-badges' v-if='entity.pivot.quantity > 1'>
+							<span class='badge badge-primary' role='info' v-html='entity.pivot.quantity'></span>
+						</div>
+					</li>
+				</ul>
 			</div>
 			<div class='mt-3' v-if='expanded == index'>
 				<div class='row'>
+					<div class='col'>
+
+					</div>
 					<div class='col'>
 						<ninja-bag-button text='Add to bag' icon='icon-bag' :type='chapter' :id='data.id' :img='"/assets/{{ config('game.slug') }}/" + chapter + "/" + data.icon + ".png"'></ninja-bag-button>
 					</div>

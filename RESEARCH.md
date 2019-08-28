@@ -2,6 +2,7 @@
 
 ### Generic Remaining TODOs
 - [ ] Compendium - Scrolls
+	- [ ] Junk data seeder, need 100+, at least 16 of one class type, level range, etc
 - [ ] Compendium - Recipes
 - [ ] Compendium - Items
 - [ ] Compendium - Equipment

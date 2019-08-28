@@ -38,9 +38,9 @@ class ScrollResource extends JsonResource
 			'last_updated' => $this->updated_at->diffForHumans(),
 			'entities'     => [
 				'items'      => $this->items,
-				'objectives' => $this->objectives,
-				'recipes'    => $this->recipes,
-				'nodes'      => $this->nodes,
+				// 'objectives' => $this->objectives,
+				// 'recipes'    => $this->recipes,
+				// 'nodes'      => $this->nodes,
 			]
 		];
 	}
