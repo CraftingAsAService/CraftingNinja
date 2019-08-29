@@ -15,10 +15,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['text', 'icon', 'type', 'id', 'img'],
+  props: ['text', 'icon', 'type', 'id', 'img', 'list'],
   methods: {
     add: function add() {
-      this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton);
+      if (typeof this.list !== 'undefined') {
+        for (var chapter in this.list) {
+          if (this.list.hasOwnProperty(chapter)) {
+            for (var index in this.list[chapter]) {
+              if (this.list[chapter].hasOwnProperty(index)) {
+                var entity = this.list[chapter][index],
+                    type = chapter.replace(/s$/, ''),
+                    img = "/assets/" + game.slug + "/" + type + "/" + entity.icon + ".png";
+                this.$eventBus.$emit('addToCart', entity.id, type, entity.pivot.quantity, img, this.$refs.ninjaBagButton);
+              }
+            }
+          }
+        }
+      } else this.$eventBus.$emit('addToCart', this.id, this.type, 1, this.img, this.$refs.ninjaBagButton);
     }
   }
 });
@@ -99,7 +112,11 @@ var render = function() {
     "a",
     {
       ref: "ninjaBagButton",
-      staticClass: "btn btn-primary-inverse btn-block btn-icon",
+      class:
+        "btn btn-icon" +
+        (typeof _vm.text !== "undefined"
+          ? " btn-primary-inverse btn-block"
+          : ""),
       attrs: { href: "#" },
       on: {
         click: function($event) {
@@ -111,7 +128,9 @@ var render = function() {
     [
       _c("i", { class: _vm.icon }),
       _vm._v(" "),
-      _c("span", { domProps: { innerHTML: _vm._s(_vm.text) } })
+      typeof _vm.text !== "undefined"
+        ? _c("span", { domProps: { innerHTML: _vm._s(_vm.text) } })
+        : _vm._e()
     ]
   )
 }

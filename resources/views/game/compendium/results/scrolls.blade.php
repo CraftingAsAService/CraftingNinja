@@ -4,7 +4,10 @@
 			{{-- <a href='#' class='float-right' @click.prevent='toggleScroll(index)'><i class='fas fa-book'></i></a> --}}
 			{{-- <div class='posts__item--card'> --}}
 			{{-- </div> --}}
-			<a href='#' class='float-right' @click.prevent='toggleScroll(index)'><i class='fas fa-cart-plus'></i></a>
+			{{-- <a href='#' class='float-right'><i class='fas fa-cart-plus'></i></a> --}}
+			<div class='float-right'>
+				<ninja-bag-button icon='cart-plus' :list='data.entities'></ninja-bag-button>
+			</div>
 
 			<h4 class='posts__title posts__title--color-hover mb-1'>
 				<a href='#' v-html='data.name' @click.prevent='toggleScroll(index)'></a>
@@ -51,7 +54,7 @@
 
 					</div>
 					<div class='col'>
-						<ninja-bag-button text='Add to bag' icon='icon-bag' :type='chapter' :id='data.id' :img='"/assets/{{ config('game.slug') }}/" + chapter + "/" + data.icon + ".png"'></ninja-bag-button>
+						<ninja-bag-button text='Add to bag' icon='icon-bag' :list='data.entities'></ninja-bag-button>
 					</div>
 					<div class='col-auto'>
 						<button type='button' class='btn btn-primary -heart'><i class='far fa-heart' v-if=' ! data.my_vote'></i> <i class='fas fa-heart' v-if='data.my_vote'></i></button>
