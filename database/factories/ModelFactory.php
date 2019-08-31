@@ -11,6 +11,8 @@ use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Equipment;
 use App\Models\Game\Concepts\Niche;
 use App\Models\Game\Concepts\Scroll;
+use App\Models\Game\Concepts\Scroll\Vote;
+use App\Models\Translations\ItemTranslation;
 use App\Models\Translations\ScrollTranslation;
 use App\Models\User;
 use Faker\Generator as Faker;
@@ -44,7 +46,20 @@ $factory->define(Game::class, function(Faker $faker) {
 
 $factory->define(Item::class, function(Faker $faker) {
 	return [
-		'name' => $faker->name,
+		'ilvl'   => $faker->numberBetween(1, 50),
+		'icon'   => $faker->numberBetween(1, 100),
+		'rarity' => $faker->numberBetween(1, 7),
+	];
+});
+
+$factory->define(ItemTranslation::class, function(Faker $faker) {
+	return [
+		'item_id'   => function() {
+			return factory(Item::class)->create()->id;
+		},
+		'locale'      => 'en',
+		'name'        => ucwords($faker->sentence(rand(1,4))),
+		'description' => $faker->text,
 	];
 });
 
@@ -76,6 +91,19 @@ $factory->define(ScrollTranslation::class, function(Faker $faker) {
 		'locale'      => 'en',
 		'name'        => $faker->catchPhrase,
 		'description' => $faker->text,
+	];
+});
+
+$factory->define(Vote::class, function(Faker $faker) {
+	return [
+		'scroll_id'   => Scroll::inRandomOrder()->first()->id ?? function() {
+			return factory(Scroll::class)->create()->id;
+		},
+		'user_id'     => User::inRandomOrder()->first()->id ?? function() {
+			return factory(User::class)->create()->id;
+		},
+		'created_at' => $faker->dateTimeBetween('-5 weeks', 'now'),
+		'updated_at' => $faker->dateTimeBetween('-5 weeks', 'now'),
 	];
 });
 
