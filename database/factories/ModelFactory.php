@@ -9,8 +9,9 @@ use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Equipment;
-use App\Models\Game\Concepts\Scroll;
 use App\Models\Game\Concepts\Niche;
+use App\Models\Game\Concepts\Scroll;
+use App\Models\Translations\ScrollTranslation;
 use App\Models\User;
 use Faker\Generator as Faker;
 
@@ -27,7 +28,7 @@ use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker) {
 	return [
-		'name' => $faker->name,
+		'name' => $faker->userName,
 		'email' => $faker->unique()->safeEmail,
 		'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
 		'remember_token' => str_random(10),
@@ -54,10 +55,27 @@ $factory->define(Category::class, function(Faker $faker) {
 });
 
 $factory->define(Scroll::class, function(Faker $faker) {
+	$min = $faker->numberBetween(1, 25);
 	return [
-		'user_id' => function () {
+		'user_id'    => User::inRandomOrder()->first()->id ?? function() {
 			return factory(User::class)->create()->id;
 		},
+		'job_id'     => rand(1, 2) == 1 ? null : Job::inRandomOrder()->first()->id,
+		'min_level'  => rand(1, 2) == 1 ? null : $min,
+		'max_level'  => rand(1, 2) == 1 ? null : $faker->numberBetween($min, 50),
+		'created_at' => $faker->dateTimeBetween('-10 weeks', 'now'),
+		'updated_at' => $faker->dateTimeBetween('-10 weeks', 'now'),
+	];
+});
+
+$factory->define(ScrollTranslation::class, function(Faker $faker) {
+	return [
+		'scroll_id'   => function() {
+			return factory(Scroll::class)->create()->id;
+		},
+		'locale'      => 'en',
+		'name'        => $faker->catchPhrase,
+		'description' => $faker->text,
 	];
 });
 

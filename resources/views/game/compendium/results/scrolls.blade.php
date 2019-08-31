@@ -23,7 +23,7 @@
 				</div>
 				<div class='col-auto'>
 					<div class='posts__cat p-0 m-0'>
-						<span class='label posts__cat-label -job posts__cat-label--category-2' v-if='data.job.icon' v-html='data.job.icon'></span>
+						<span class='label posts__cat-label -job posts__cat-label--category-2' v-if='data.job && data.job.icon' v-html='data.job.icon'></span>
 						<span class='label posts__cat-label -level posts__cat-label--category-5' v-if='data.min_level || data.max_level'>
 							Lv
 							<span v-if='data.min_level > 0' v-html='data.min_level'></span>
