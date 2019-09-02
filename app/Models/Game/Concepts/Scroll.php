@@ -53,14 +53,20 @@ class Scroll extends Concept implements TranslatableContract
 		if (isset($filters['sauthor']) && preg_match('/author:(\d+)/', $filters['sauthor'], $authorMatch))
 			$query->where('user_id', User::decodeId($authorMatch[1]));
 
-		if (isset($filters['sclass']))
+		$filters['sclass'] = array_merge(
+			$filters['scrafting'] ?? [],
+			$filters['sgathering'] ?? [],
+			$filters['sbattle'] ?? []
+		);
+
+		if ($filters['sclass'])
 			$query->whereIn('job_id', is_array($filters['sclass']) ? $filters['sclass'] : explode(',', $filters['sclass']));
 
-		if (isset($filters['min_level']))
-			$query->where('min_level', '<=', $filters['min_level']);
+		if (isset($filters['slvlMin']))
+			$query->where('min_level', '>=', $filters['slvlMin']);
 
-		if (isset($filters['max_level']))
-			$query->where('max_level', '>=', $filters['max_level']);
+		if (isset($filters['slvlMax']))
+			$query->where('max_level', '<=', $filters['slvlMax']);
 
 		return $query;
 	}

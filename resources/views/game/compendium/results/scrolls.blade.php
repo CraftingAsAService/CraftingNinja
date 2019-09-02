@@ -12,7 +12,7 @@
 			<h4 class='posts__title posts__title--color-hover mb-1'>
 				<a href='#' v-html='data.name' @click.prevent='toggleScroll(index)'></a>
 			</h4>
-			<p :class='"description mt-1 mb-2" + (expanded == index ? " truncate-text" : "")' v-html='data.description'></p>
+			<p :class='"description mt-1 mb-2" + (expanded == index ? "" : " truncate-text")' v-html='data.description'></p>
 			<div class='row'>
 				<div class='col'>
 					<p class='author-block m-0'>
@@ -23,14 +23,14 @@
 				</div>
 				<div class='col-auto'>
 					<div class='posts__cat p-0 m-0'>
-						<span class='label posts__cat-label -job posts__cat-label--category-2' v-if='data.job && data.job.icon' v-html='data.job.icon'></span>
+						<span class='label posts__cat-label -job posts__cat-label--category-4' v-if='data.job && data.job.icon' v-html='data.job.icon'></span>
 						<span class='label posts__cat-label -level posts__cat-label--category-5' v-if='data.min_level || data.max_level'>
 							Lv
 							<span v-if='data.min_level > 0' v-html='data.min_level'></span>
 							<span v-if='data.min_level > 0 && data.max_level > 0'>&rarr;</span>
 							<span v-if='data.max_level > 0' v-html='data.max_level'></span>
 						</span>
-						<span class='label posts__cat-label -heart posts__cat-label--category-4'>
+						<span class='label posts__cat-label -heart posts__cat-label--category-6'>
 							<i class='far fa-heart' v-if=' ! data.my_vote'></i> <i class='fas fa-heart' v-if='data.my_vote'></i> <span v-html='data.votes'></span>
 						</span>
 					</div>

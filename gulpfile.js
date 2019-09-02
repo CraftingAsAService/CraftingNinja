@@ -42,7 +42,7 @@ gulp.task('alchemists', function(done) {
 			return !/\/_/.test(file.path) || !/^_/.test(file.relative);
 		}))
 		// filter out unchanged scss files, only works when watching
-		.pipe(plugins.if(global.isWatching, plugins.cached('sass')))
+		// .pipe(plugins.if(global.isWatching, plugins.cached('sass')))
 		// Run SASS and AutoPrefix it
 		.pipe(plugins.sass({ outputStyle: 'compressed' }).on('error', plugins.sass.logError))
 		.pipe(plugins.autoprefixer())

@@ -28,7 +28,9 @@ const compendium = new Vue({
 			sublevel: [],
 			rarity: [],
 			eclass: [],
-			bclass: [],
+			scrafting: [],
+			sgathering: [],
+			sbattle: [],
 		},
 		collapsed: recipeFilters
 					.filter(function(record) {

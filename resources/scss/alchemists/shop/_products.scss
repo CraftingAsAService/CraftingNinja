@@ -1052,21 +1052,23 @@
 			max-width: calc(100% - 16px);
 		}
 
-		&:not(.-expanded) {
 			@media (min-width: 992px) {
 				flex-basis: calc(50% - 16px);
 				max-width: calc(50% - 16px);
 			}
+		&:not(.-expanded) {
+			align-self: flex-start;
 		}
 		&.-expanded {
 			@media (min-width: 992px) {
-				position: absolute;
-				z-index: 3;
-				top: -8px;
-				right: -8px;
-				left: -8px;
-				max-width: calc(100% + 16px);
-				flex-basis: calc(100% + 16px);
+				// position: fixed;
+				// z-index: 3;
+				// // top: 20rem;
+				// right: 20rem;
+				// left: 20rem;
+				// bottom: 20rem;
+				// max-width: calc(100% + 16px);
+				// flex-basis: calc(100% + 16px);
 			}
 		}
 
