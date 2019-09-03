@@ -17,7 +17,7 @@ class ApiItemTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->call('POST', '/api/items');
+		$response = $this->call('POST', '/api/item');
 
 		// Assert
 		$response->assertStatus(200);

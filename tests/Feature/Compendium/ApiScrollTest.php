@@ -17,7 +17,7 @@ class ApiScrollTest extends GameTestCase
 		]);
 
 		// Act
-		$response = $this->call('POST', '/api/scrolls');
+		$response = $this->call('POST', '/api/scroll');
 
 		// Assert
 		$response->assertStatus(200);

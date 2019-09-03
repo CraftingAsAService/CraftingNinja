@@ -13,7 +13,7 @@
 		var searchTerm       = '{{ $searchTerm }}',
 			chapterStart     = '{{ $chapterStart }}',
 			filterStart      = @json($filterStart),
-			scrollsFilters     = @json(array_values(config('crafting.filters.scrolls'))),
+			scrollFilters    = @json(array_values(config('crafting.filters.scroll'))),
 			itemFilters      = @json(array_values(config('crafting.filters.item'))),
 			recipeFilters    = @json(array_values(config('crafting.filters.recipe'))),
 			equipmentFilters = @json(array_values(config('crafting.filters.equipment'))),
@@ -38,7 +38,7 @@
 							Chapter
 						</label>
 						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
-							<option value='scrolls'>Scrolls</option>
+							<option value='scroll'>Scrolls</option>
 							<option value='recipe'>Recipes</option>
 							{{--
 							<option value='equipment'>Equipment</option>
@@ -88,11 +88,14 @@
 							</div>
 
 							{{-- Results --}}
-							<div v-if='chapter == "scrolls"'>
+							<div v-if='chapter == "scroll"'>
 								@include('game.compendium.results.scrolls')
 							</div>
 							<div v-else-if='chapter == "item"'>
 								@include('game.compendium.results.items')
+							</div>
+							<div v-else-if='chapter == "recipe"'>
+								@include('game.compendium.results.recipes')
 							</div>
 						</div>
 					</div>

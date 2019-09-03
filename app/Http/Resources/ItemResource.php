@@ -15,26 +15,26 @@ class ItemResource extends JsonResource
 	public function toArray($request)
 	{
 		$item = [
-			'id' => $this->id,
-			'name' => $this->name,
-			'icon' => $this->icon,
-			'rarity' => $this->rarity,
-			'ilvl' => $this->ilvl,
+			'id'       => $this->id,
+			'name'     => $this->name,
+			'icon'     => $this->icon,
+			'rarity'   => $this->rarity,
+			'ilvl'     => $this->ilvl,
 			'category' => $this->category ? $this->category->name : '',
 		];
 
 		if ($this->recipes->count())
 			$item['recipes'] = $this->recipes->map(function($recipe) {
 				$job = $recipe->job ? [
-					'id' => $recipe->job->id,
+					'id'   => $recipe->job->id,
 					'icon' => $recipe->job->icon
 				] : null;
 
 				return [
-					'id' => $recipe->id,
-					'level' => $recipe->level,
+					'id'       => $recipe->id,
+					'level'    => $recipe->level,
 					'sublevel' => $recipe->sublevel,
-					'job' => $job,
+					'job'      => $job,
 				];
 			});
 
@@ -42,17 +42,17 @@ class ItemResource extends JsonResource
 		{
 			$jobs = $this->equipment->niche && $this->equipment->niche->jobs ? $this->equipment->niche->jobs->map(function($job) {
 					return [
-						'id' => $job->id,
+						'id'   => $job->id,
 						'icon' => $job->icon
 					];
 				}) : null;
 
 			$item['equipment'] = [
-				'id' => $this->equipment->id,
-				'level' => $this->equipment->level,
-				'slot' => $this->equipment->slot,
+				'id'      => $this->equipment->id,
+				'level'   => $this->equipment->level,
+				'slot'    => $this->equipment->slot,
 				'sockets' => $this->equipment->sockets,
-				'jobs' => $jobs,
+				'jobs'    => $jobs,
 			];
 		}
 

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ItemResource;
-use App\Models\Game\Aspects\Item;
+use App\Http\Resources\ScrollResource;
+use App\Models\Game\Concepts\Scroll;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Validator;
 
-class ItemsController extends Controller
+class ScrollController extends Controller
 {
 
 	public function index(Request $request)
@@ -18,24 +18,21 @@ class ItemsController extends Controller
 		if ($validator->fails())
 			return $this->respondWithError(422, $validator->errors());
 
-		$items = Item::withTranslation()->with('category', 'recipes', 'equipment', 'equipment.niche.jobs', 'recipes.job')
+		$scrolls = Scroll::withTranslation()->withCount('votes')->with('myVote', 'job', 'author', 'items', 'objectives', 'recipes', 'nodes')
 			->filter($request->all())
-			->simplePaginate($request->get('perPage'));
+			->simplePaginate();
 
-		return ItemResource::collection($items);
+		return ScrollResource::collection($scrolls);
 	}
 
 	private function validator($data)
 	{
 		return Validator::make($data, [
 			'sorting' => [
-				Rule::in(['name', 'ilvl'])
+				Rule::in(['name'])
 			],
 			'ordering' => [
 				Rule::in(['asc', 'desc'])
-			],
-			'perPage' => [
-				Rule::in(['', 15, 30, 45])
 			],
 		]);
 	}

@@ -42,12 +42,12 @@ const compendium = new Vue({
 		perPage: 15,
 		// Setting to pass off to Ninja Dropdown
 		ninjaFilters: {
-			scrolls: scrollsFilters,
-			item: itemFilters,
-			recipe: recipeFilters,
+			scroll   : scrollFilters,
+			item     : itemFilters,
+			recipe   : recipeFilters,
 			equipment: equipmentFilters,
-			sorting: sortingFilters,
-			perPage: perPageFilters
+			sorting  : sortingFilters,
+			perPage  : perPageFilters
 		},
 		expanded: null
 	},
