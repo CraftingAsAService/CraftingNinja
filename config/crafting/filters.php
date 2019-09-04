@@ -8,7 +8,6 @@ $filters = [
 		'type'     => 'string',
 		'icon'     => 'fa-search',
 		'title'    => 'Search',
-		'expanded' => true,
 	],
 	'ilvl' => [
 		'key'	   => 'ilvl',
@@ -16,7 +15,6 @@ $filters = [
 		'type'     => 'range',
 		'icon'     => 'fa-info',
 		'title'    => 'Item Level',
-		'expanded' => true,
 	],
 	'rclass' => [
 		'key'	   => 'rclass',
@@ -24,7 +22,6 @@ $filters = [
 		'type'     => 'multiple',
 		'icon'     => 'fa-chess-bishop',
 		'title'    => 'Recipe Class',
-		'expanded' => true,
 	],
 	'rlvl' => [
 		'key'	 => 'rlvl',

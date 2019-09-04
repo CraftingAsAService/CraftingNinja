@@ -20,7 +20,7 @@ class RecipeResource extends JsonResource
 			'ilvl'        => $this->product->ilvl,
 			'icon'        => $this->product->icon,
 			'rarity'      => $this->product->rarity,
-			'category'    => $this->product->category,
+			'category'    => $this->product->category ? $this->product->category->name : '',
 			'level'       => $this->level,
 			'sublevel'    => $this->sublevel,
 			'yield'       => $this->yield,

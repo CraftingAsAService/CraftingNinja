@@ -21,7 +21,7 @@
 		<div class='jobs'>
 			<span class='rjobs' v-if='data.job'>
 				<span class='few-classes'>
-					<img width='24' height='24' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + job.icon + ".png"' v-tooltip:bottom='job.icon'>
+					<img width='24' height='24' v-bind:src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + data.job.icon + ".png"' v-tooltip:bottom='data.job.icon'>
 				</span>
 			</span>
 		</div>

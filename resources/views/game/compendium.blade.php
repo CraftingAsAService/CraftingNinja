@@ -30,6 +30,58 @@
 
 @section('content')
 		<div id='compendium'>
+
+			<nav class='content-filter content-filter--highlight-side content-filter--label-left mb-3'>
+				<div class='content-filter__inner'>
+					<a href='#' class='content-filter__toggle'></a>
+					<ul class='content-filter__list'>
+						{{-- content-filter__item--active --}}
+						<li class='content-filter__item content-filter__item--active'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>&nbsp;</small> --}}
+								<i class='fas fa-scroll mr-1'></i>
+								Scrolls
+							</a>
+						</li>
+						<li class='content-filter__item'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>&nbsp;</small> --}}
+								<i class='fas fa-cogs mr-1'></i>
+								Recipes
+							</a>
+						</li>
+						<li class='content-filter__item'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>&nbsp;</small> --}}
+								<i class='fas fa-box mr-1'></i>
+								Items
+							</a>
+						</li>
+						<li class='content-filter__item'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>Coming Soon</small> --}}
+								<i class='fas fa-shield-alt mr-1'></i>
+								Equipment
+							</a>
+						</li>
+						<li class='content-filter__item'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>Coming Soon</small> --}}
+								<i class='fas fa-bullseye mr-1'></i>
+								Objectives
+							</a>
+						</li>
+						<li class='content-filter__item'>
+							<a href='#' class='content-filter__link'>
+								{{-- <small>Coming Soon</small> --}}
+								<i class='fas fa-bug mr-1'></i>
+								NPCs
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
 			<div class='post-filter post-filter--boxed mb-3'>
 				<form action='#' class='post-filter__form'>
 					<div class='post-filter__select'>

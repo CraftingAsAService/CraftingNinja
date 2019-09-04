@@ -57,7 +57,7 @@ class Recipe extends Aspect
 
 		// Filter by Recipe pieces
 		if (isset($filters['rclass']))
-			$query->filterByJobs(explode(',', $filters['rclass']));
+			$query->filterByJobs(is_array($filters['rclass']) ? $filters['rclass'] : explode(',', $filters['rclass']));
 
 		return $query;
 	}
