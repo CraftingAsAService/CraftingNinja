@@ -541,26 +541,12 @@ var compendium = new Vue({
     expanded: null
   },
   mounted: function mounted() {
-    this.initializeDropdowns();
     if (this.filters.name != '' || this.filters.sauthor != '') this.search();
   },
   created: function created() {
     this.debouncedSearch = _.debounce(this.search, 250);
   },
   methods: {
-    initializeDropdowns: function initializeDropdowns() {
-      var thisObject = this;
-      $('#compendium').find('select.cs-select').each(function () {
-        var compendiumVar = $(this).data('compendium-var');
-        new SelectFx(this, {
-          onChange: function onChange(val) {
-            compendium[compendiumVar] = val;
-          }
-        }); // Set initial value
-
-        thisObject[compendiumVar] = $(this).val();
-      });
-    },
     nameUpdated: function nameUpdated() {
       // Reset the page if name is altered
       this.filters.page = 1;

@@ -52,8 +52,6 @@ const compendium = new Vue({
 		expanded: null
 	},
 	mounted:function() {
-		this.initializeDropdowns();
-
 		if (this.filters.name != '' || this.filters.sauthor != '')
 			this.search();
 	},
@@ -61,21 +59,6 @@ const compendium = new Vue({
 		this.debouncedSearch = _.debounce(this.search, 250);
 	},
 	methods: {
-		initializeDropdowns:function() {
-			var thisObject = this;
-
-			$('#compendium').find('select.cs-select').each(function() {
-				var compendiumVar = $(this).data('compendium-var');
-				new SelectFx(this, {
-					onChange:function(val) {
-						compendium[compendiumVar] = val;
-					}
-				});
-
-				// Set initial value
-				thisObject[compendiumVar] = $(this).val();
-			});
-		},
 		nameUpdated:function() {
 			// Reset the page if name is altered
 			this.filters.page = 1;

@@ -360,6 +360,9 @@ select.form-control--clean {
 
 	.checkbox--cell {
 		margin: 0 0 -1px -1px;
+		&.-radio .checkbox-indicator {
+			border-radius: 50%;
+		}
 	}
 }
 

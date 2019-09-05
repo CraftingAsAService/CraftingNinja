@@ -8,5 +8,5 @@
 			</label>
 		@endforeach
 		@endforeach
-	</ul>
+	</div>
 @endcomponent

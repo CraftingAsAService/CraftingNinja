@@ -36,42 +36,42 @@
 					<a href='#' class='content-filter__toggle'></a>
 					<ul class='content-filter__list'>
 						{{-- content-filter__item--active --}}
-						<li class='content-filter__item content-filter__item--active'>
+						<li :class='"content-filter__item" + (chapter == "scroll" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-scroll mr-1'></i>
 								Scrolls
 							</a>
 						</li>
-						<li class='content-filter__item'>
+						<li :class='"content-filter__item" + (chapter == "recipe" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-cogs mr-1'></i>
 								Recipes
 							</a>
 						</li>
-						<li class='content-filter__item'>
+						<li :class='"content-filter__item" + (chapter == "item" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-box mr-1'></i>
 								Items
 							</a>
 						</li>
-						<li class='content-filter__item'>
+						<li :class='"content-filter__item" + (chapter == "equipment" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-shield-alt mr-1'></i>
 								Equipment
 							</a>
 						</li>
-						<li class='content-filter__item'>
+						<li :class='"content-filter__item" + (chapter == "objective" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-bullseye mr-1'></i>
 								Objectives
 							</a>
 						</li>
-						<li class='content-filter__item'>
+						<li :class='"content-filter__item" + (chapter == "npc" ? " content-filter__item--active" : "")'>
 							<a href='#' class='content-filter__link'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-bug mr-1'></i>
@@ -81,51 +81,6 @@
 					</ul>
 				</div>
 			</nav>
-
-			<div class='post-filter post-filter--boxed mb-3'>
-				<form action='#' class='post-filter__form'>
-					<div class='post-filter__select'>
-						<label class='post-filter__label'>
-							<i class='fas fa-bookmark mr-1'></i>
-							Chapter
-						</label>
-						<select class='cs-select cs-skin-border' data-compendium-var='chapter'>
-							<option value='scroll'>Scrolls</option>
-							<option value='recipe'>Recipes</option>
-							{{--
-							<option value='equipment'>Equipment</option>
-							<option value='item'>All Items</option>
-							<option value='quest'>Quests</option>
-							<option value='mob'>Enemies</option>
-							--}}
-						</select>
-					</div>
-					<div class='post-filter__select -search'>
-						<label class='post-filter__label'>
-							<i class='fas fa-search mr-1'></i>
-							Search
-						</label>
-						<input type='text' class='form-control' v-model='filters.name' v-on:input='nameUpdated'>
-					</div>
-					{{--
-					<ninja-dropdown v-if='chapter == "items"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.item' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-
-					<ninja-dropdown v-if='chapter == "recipes"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.recipe' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-
-					<ninja-dropdown v-if='chapter == "equipment"' title='Filter By' icon='fas fa-filter' placeholder='Add Filter' option='filter' :options='ninjaFilters.equipment' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-					--}}
-					<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-
-					<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-
-					{{-- <div class='post-filter__submit'>
-						<button type='button' class='btn btn-primary btn-block' @click='applyFilters()'>
-							<i class='fas fa-check-square mr-1'></i>
-							Apply Filters
-						</button>
-					</div> --}}
-				</form>
-			</div>
 
 			<div class='row'>
 				<div class='col-md-9 order-md-2'>
@@ -160,7 +115,7 @@
 				<div class='sidebar sidebar--shop col-md-3 order-md-1'>
 
 					{{-- Filter Widgets --}}
-
+					@include('game.compendium.filters.name')
 					@include('game.compendium.filters.slvl')
 					@include('game.compendium.filters.sclass', [ 'jobType' => 'crafting'  ])
 					@include('game.compendium.filters.sclass', [ 'jobType' => 'gathering' ])
@@ -175,6 +130,19 @@
 					@include('game.compendium.filters.slot')
 					@include('game.compendium.filters.sockets')
 					@include('game.compendium.filters.rarity')
+					@include('game.compendium.filters.refine')
+
+					{{-- <div class='post-filter post-filter--boxed mb-3'>
+						<form action='#' class='post-filter__form'>
+							<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
+						</form>
+					</div>
+
+					<div class='post-filter post-filter--boxed mb-3'>
+						<form action='#' class='post-filter__form'>
+							<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
+						</form>
+					</div> --}}
 
 				</div>
 			</div>

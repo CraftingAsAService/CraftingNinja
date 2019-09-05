@@ -4,10 +4,11 @@
 $filters = [
 	'name' => [
 		'key'	   => 'name',
-		'for'      => ['scroll', 'item', 'recipe', 'equipment', 'quest', 'mob'],
+		'for'      => ['scroll', 'item', 'recipe', 'equipment', 'objective', 'npc'],
 		'type'     => 'string',
 		'icon'     => 'fa-search',
 		'title'    => 'Search',
+		'expanded' => true,
 	],
 	'ilvl' => [
 		'key'	   => 'ilvl',
@@ -15,6 +16,7 @@ $filters = [
 		'type'     => 'range',
 		'icon'     => 'fa-info',
 		'title'    => 'Item Level',
+		'expanded' => true,
 	],
 	'rclass' => [
 		'key'	   => 'rclass',
@@ -22,6 +24,7 @@ $filters = [
 		'type'     => 'multiple',
 		'icon'     => 'fa-chess-bishop',
 		'title'    => 'Recipe Class',
+		'expanded' => true,
 	],
 	'rlvl' => [
 		'key'	 => 'rlvl',
@@ -64,6 +67,7 @@ $filters = [
 		'type'   => 'multiple',
 		'icon'   => 'fa-tools',
 		'title'  => 'Crafting Class',
+		'expanded' => true,
 	],
 	'sgathering' => [
 		'key'	 => 'sgathering',
@@ -106,19 +110,28 @@ $filters = [
 		'type'   => 'multiple',
 		'icon'   => 'fa-user-ninja',
 		'title'  => 'Author',
+		'expanded' => true,
+	],
+	'refine' => [
+		'key'	 => 'refine',
+		'for'    => ['scroll', 'item', 'recipe', 'equipment', 'objective', 'npc'],
+		'type'   => 'multiple',
+		'icon'   => 'fa-cog',
+		'title'  => 'Refine Results',
+		'expanded' => true,
 	],
 ];
 
 return [
 	'all' => $filters,
 
-	'scroll' => array_intersect_key($filters, array_flip(['name', 'slvl', 'scrafting', 'sgathering', 'sbattle', 'sauthor', ])),
+	'scroll' => array_intersect_key($filters, array_flip(['name', 'slvl', 'scrafting', 'sgathering', 'sbattle', 'sauthor', 'refine', ])),
 
-	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', ])),
+	'recipe' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rclass', 'rlvl', 'rdifficulty', 'rarity', 'refine', ])),
 
-	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', ])),
+	'item' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'refine', ])),
 
-	'equipment' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'elvl', 'eclass', 'slot', 'sockets', ])),
+	'equipment' => array_intersect_key($filters, array_flip(['name', 'ilvl', 'rarity', 'elvl', 'eclass', 'slot', 'sockets', 'refine', ])),
 
 	'sorting' => [
 		'name:asc' => [
