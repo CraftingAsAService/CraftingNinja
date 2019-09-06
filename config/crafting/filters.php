@@ -9,6 +9,7 @@ $filters = [
 		'icon'     => 'fa-search',
 		'title'    => 'Search',
 		'expanded' => true,
+		'headless' => true,
 	],
 	'ilvl' => [
 		'key'	   => 'ilvl',
@@ -171,6 +172,11 @@ return [
 			'key'   => '45',
 			'icon'  => 'fa-battery-three-quarters',
 			'title' => 'Show 45 per page',
+		],
+		'60' => [
+			'key'   => '60',
+			'icon'  => 'fa-battery-full',
+			'title' => 'Show 60 per page',
 		],
 	],
 

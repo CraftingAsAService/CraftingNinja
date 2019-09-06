@@ -35,7 +35,7 @@ class RecipeController extends Controller
 				Rule::in(['asc', 'desc'])
 			],
 			'perPage' => [
-				Rule::in(['', 15, 30, 45])
+				Rule::in(['', 15, 30, 45, 60])
 			],
 		]);
 	}

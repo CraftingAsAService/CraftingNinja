@@ -34,6 +34,9 @@ class ScrollController extends Controller
 			'ordering' => [
 				Rule::in(['asc', 'desc'])
 			],
+			'perPage' => [
+				Rule::in(['', 15, 30, 45, 60])
+			],
 		]);
 	}
 

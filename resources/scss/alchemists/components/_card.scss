@@ -196,6 +196,23 @@
 
 		.widget.-filter & {
 			padding: 10px;
+			&.-leftbar {
+				padding-left: 16px;
+			}
+		}
+		&.-leftbar {
+			padding-left: 16px;
+			&::before {
+				content:"";
+				display: block;
+				position: absolute;
+				width: 6px;
+				left: 0;
+				top: 0;
+				bottom: -1px;
+				background-color: $color-primary;
+				border-radius: 3px 0 0 3px;
+			}
 		}
 	}
 	.card__content-inner {

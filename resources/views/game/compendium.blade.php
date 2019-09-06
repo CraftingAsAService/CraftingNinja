@@ -37,42 +37,42 @@
 					<ul class='content-filter__list'>
 						{{-- content-filter__item--active --}}
 						<li :class='"content-filter__item" + (chapter == "scroll" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "scroll"'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-scroll mr-1'></i>
 								Scrolls
 							</a>
 						</li>
 						<li :class='"content-filter__item" + (chapter == "recipe" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "recipe"'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-cogs mr-1'></i>
 								Recipes
 							</a>
 						</li>
 						<li :class='"content-filter__item" + (chapter == "item" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "item"'>
 								{{-- <small>&nbsp;</small> --}}
 								<i class='fas fa-box mr-1'></i>
 								Items
 							</a>
 						</li>
 						<li :class='"content-filter__item" + (chapter == "equipment" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "equipment"'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-shield-alt mr-1'></i>
 								Equipment
 							</a>
 						</li>
 						<li :class='"content-filter__item" + (chapter == "objective" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "objective"'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-bullseye mr-1'></i>
 								Objectives
 							</a>
 						</li>
 						<li :class='"content-filter__item" + (chapter == "npc" ? " content-filter__item--active" : "")'>
-							<a href='#' class='content-filter__link'>
+							<a href='#' class='content-filter__link' @click.preventDefault='chapter = "npc"'>
 								{{-- <small>Coming Soon</small> --}}
 								<i class='fas fa-bug mr-1'></i>
 								NPCs
@@ -121,8 +121,8 @@
 					@include('game.compendium.filters.sclass', [ 'jobType' => 'gathering' ])
 					@include('game.compendium.filters.sclass', [ 'jobType' => 'battle'    ])
 					@include('game.compendium.filters.sauthor')
-					@include('game.compendium.filters.ilvl')
 					@include('game.compendium.filters.rclass')
+					@include('game.compendium.filters.ilvl')
 					@include('game.compendium.filters.rlvl')
 					@include('game.compendium.filters.rdifficulty')
 					@include('game.compendium.filters.elvl')
@@ -131,18 +131,6 @@
 					@include('game.compendium.filters.sockets')
 					@include('game.compendium.filters.rarity')
 					@include('game.compendium.filters.refine')
-
-					{{-- <div class='post-filter post-filter--boxed mb-3'>
-						<form action='#' class='post-filter__form'>
-							<ninja-dropdown title='Sorting' icon='fas fa-sort' placeholder='' option='sorting' :options='ninjaFilters.sorting' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-						</form>
-					</div>
-
-					<div class='post-filter post-filter--boxed mb-3'>
-						<form action='#' class='post-filter__form'>
-							<ninja-dropdown title='Per Page' icon='fas fa-sticky-note' placeholder='' option='perPage' :options='ninjaFilters.perPage' @clicked='ninjaDropdownUpdated'></ninja-dropdown>
-						</form>
-					</div> --}}
 
 				</div>
 			</div>
