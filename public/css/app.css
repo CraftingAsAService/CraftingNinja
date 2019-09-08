@@ -64,6 +64,16 @@ body {
   cursor: default;
 }
 
+.badge-recipe {
+  background-color: var(--color-recipes);
+}
+
+.badge-recipe > img {
+  width: 22px;
+  position: absolute;
+  left: 0;
+}
+
 .card figure.-icon {
   height: 66%;
   text-align: center;

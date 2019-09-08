@@ -41,6 +41,7 @@
 										<img :src='"/assets/{{ config('game.slug') }}/item/" + entry.icon + ".png"' alt=''>
 									</figure>
 									<div class='alc-inventory__item-badges'>
+										<span class='badge badge-recipe' role='info' v-if='entry.type == "recipe"'><img :src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + entry.job.icon + ".png"' :alt='entry.job.name'></span>
 										<span class='badge badge-primary' role='info' v-if='entry.quantity > 1' v-html='entry.quantity'></span>
 										<span class='badge badge-default badge-close' @click.stop='removeFromCart(index, "index")'><i class='fa fa-times -desize'></i></span>
 									</div>

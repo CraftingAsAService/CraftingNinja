@@ -7,7 +7,7 @@
 			<li class='filter-color__item {{ $jobType }}-job'>
 				<label class='checkbox' data-toggle='tooltip' title='{{ $job->name }}' for='sclassId{{ $job->id }}'>
 					<input type='checkbox' id='sclassId{{ $job->id }}' v-on:input='toggleFilter("s{{ $jobType }}", "{{ $job->id }}")' hidden>
-					<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->abbreviation }}.png' class='job-icon checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
+					<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->icon }}.png' class='job-icon checkbox-indicator' alt='{{ $job->abbreviation }}' width='24' height='24'>
 				</label>
 			</li>
 		@endforeach

@@ -6,3 +6,12 @@
 		cursor: default;
 	}
 }
+
+.badge-recipe {
+	background-color: var(--color-recipes);
+	> img {
+		width: 22px;
+		position: absolute;
+		left: 0;
+	}
+}
