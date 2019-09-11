@@ -50,6 +50,15 @@ class Scroll extends Concept implements TranslatableContract
 
 	public function scopeFilter($query, $filters)
 	{
+		$sorting = $filters['sorting'] ?? null;
+		$ordering = $filters['ordering'] ?? null;
+
+		// Filter by the name
+		if (isset($filters['name']))
+			$query->join('scroll_translations as t', 't.scroll_id', '=', 'scrolls.id')
+				->where('locale', config('app.locale'))
+				->where('t.name', 'like', '%' . str_replace(' ', '%', $filters['name']) . '%');
+
 		if (isset($filters['sauthor']) && preg_match('/author:(\d+)/', $filters['sauthor'], $authorMatch))
 			$query->where('user_id', User::decodeId($authorMatch[1]));
 
@@ -67,6 +76,12 @@ class Scroll extends Concept implements TranslatableContract
 
 		if (isset($filters['slvlMax']))
 			$query->where('max_level', '<=', $filters['slvlMax']);
+
+		// Sort by name, or ilvl then name
+		if ($sorting == 'name')
+			$query->orderBy('t.name', $ordering);
+		else if ($sorting == 'ilvl')
+			$query->orderBy('min_level', $ordering)->orderBy('max_level', $ordering)->orderBy('t.name');
 
 		return $query;
 	}

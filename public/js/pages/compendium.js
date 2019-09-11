@@ -495,6 +495,11 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+var resultsTemplate = {
+  data: [],
+  links: {},
+  meta: {}
+};
 Vue.component('ninja-dropdown', __webpack_require__(/*! ../components/NinjaDropdown.vue */ "./resources/js/components/NinjaDropdown.vue")["default"]);
 Vue.component('ninja-bag-button', __webpack_require__(/*! ../components/NinjaBagButton.vue */ "./resources/js/components/NinjaBagButton.vue")["default"]);
 var compendium = new Vue({
@@ -503,12 +508,7 @@ var compendium = new Vue({
     firstLoad: true,
     loading: false,
     chapter: chapterStart || 'recipe',
-    noResults: true,
-    results: {
-      data: [],
-      links: {},
-      meta: {}
-    },
+    results: resultsTemplate,
     // These are submitted as parameters
     filters: {
       name: searchTerm,
@@ -520,7 +520,9 @@ var compendium = new Vue({
       eclass: [],
       scrafting: [],
       sgathering: [],
-      sbattle: []
+      sbattle: [],
+      sorting: sortingFilters[0].key,
+      perPage: perPageFilters[0].key
     },
     collapsed: recipeFilters.filter(function (record) {
       return !record.expanded;
@@ -546,11 +548,23 @@ var compendium = new Vue({
   created: function created() {
     this.debouncedSearch = _.debounce(this.search, 250);
   },
+  // watch: {
+  // 	filters: {
+  // 		handler:function(val) {
+  // 			console.log(this, val);
+  // 		},
+  // 		deep: true
+  // 	}
+  // },
   methods: {
-    nameUpdated: function nameUpdated() {
-      // Reset the page if name is altered
+    refinementUpdated: function refinementUpdated() {
+      console.log(this.filters.perPage, this.filters.sorting); // Reset the page if name is altered
+
       this.filters.page = 1;
       this.debouncedSearch();
+    },
+    nameUpdated: function nameUpdated() {
+      this.refinementUpdated();
     },
     toggleFilter: function toggleFilter(filter, value) {
       if (this.filters[filter].includes(value)) this.filters[filter] = this.filters[filter].filter(function (filterValue) {
@@ -615,6 +629,11 @@ var compendium = new Vue({
     },
     toggleScroll: function toggleScroll(index) {
       if (this.expanded == index) this.expanded = null;else this.expanded = index;
+    },
+    switchChapter: function switchChapter(chapter) {
+      this.results = resultsTemplate;
+      this.chapter = chapter;
+      this.search();
     }
   }
 });

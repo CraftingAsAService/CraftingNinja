@@ -4,6 +4,12 @@
 
 'use strict';
 
+const resultsTemplate = {
+	data: [],
+	links: {},
+	meta: {},
+};
+
 Vue.component('ninja-dropdown', require('../components/NinjaDropdown.vue').default);
 Vue.component('ninja-bag-button', require('../components/NinjaBagButton.vue').default);
 
@@ -13,12 +19,7 @@ const compendium = new Vue({
 		firstLoad: true,
 		loading: false,
 		chapter: chapterStart || 'recipe',
-		noResults: true,
-		results: {
-			data: [],
-			links: {},
-			meta: {},
-		},
+		results: resultsTemplate,
 		// These are submitted as parameters
 		filters: {
 			name: searchTerm,
@@ -31,6 +32,8 @@ const compendium = new Vue({
 			scrafting: [],
 			sgathering: [],
 			sbattle: [],
+			sorting: sortingFilters[0].key,
+			perPage: perPageFilters[0].key
 		},
 		collapsed: recipeFilters
 					.filter(function(record) {
@@ -58,12 +61,24 @@ const compendium = new Vue({
 	created:function() {
 		this.debouncedSearch = _.debounce(this.search, 250);
 	},
+	// watch: {
+	// 	filters: {
+	// 		handler:function(val) {
+	// 			console.log(this, val);
+	// 		},
+	// 		deep: true
+	// 	}
+	// },
 	methods: {
-		nameUpdated:function() {
+		refinementUpdated:function() {
+			console.log(this.filters.perPage, this.filters.sorting);
 			// Reset the page if name is altered
 			this.filters.page = 1;
 
 			this.debouncedSearch();
+		},
+		nameUpdated:function() {
+			this.refinementUpdated();
 		},
 		toggleFilter:function(filter, value) {
 			if (this.filters[filter].includes(value))
@@ -146,6 +161,11 @@ const compendium = new Vue({
 				this.expanded = null;
 			else
 				this.expanded = index;
+		},
+		switchChapter:function(chapter) {
+			this.results = resultsTemplate;
+			this.chapter = chapter;
+			this.search();
 		}
 	}
 });

@@ -314,7 +314,7 @@ select.form-control--clean {
 		font-size: 10px;
 	}
 
-	input[type="checkbox"] {
+	input[type="checkbox"], input[type="radio"] {
 		display: none;
 
 		&:checked + .checkbox-indicator {
@@ -374,7 +374,7 @@ select.form-control--clean {
 	height: 44px;
 	position: relative;
 
-	input[type="checkbox"] {
+	input[type="checkbox"], input[type="radio"] {
 
 		&:checked + .checkbox-indicator {
 			background-image: none !important;
