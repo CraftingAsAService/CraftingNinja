@@ -20,4 +20,4 @@
 - Discord Setup! 2019-08-23 20:50
 - CN Server configurations, custom discord.crafting.ninja subdomain 2019-08-24 22:05
 - Community Management/Updates 2019-09-06 20:05
-- Idea draft session for Crafting page 2019-09-12 22:00
+- Idea draft session for Crafting page 2019-09-12 & 13
