@@ -967,7 +967,7 @@ var staticRenderFns = [
           "a",
           {
             staticClass: "btn btn-primary btn-block",
-            attrs: { href: "/craft/sling" }
+            attrs: { href: "/craft" }
           },
           [
             _c("i", { staticClass: "fas fa-magic" }),

@@ -34,7 +34,7 @@
 						<i class='fas fa-th-list'></i>
 						Manage Sling
 					</a>
-					<a href='/craft/sling' class='btn btn-primary btn-block'>
+					<a href='/craft' class='btn btn-primary btn-block'>
 						<i class='fas fa-magic'></i>
 						Craft
 					</a>

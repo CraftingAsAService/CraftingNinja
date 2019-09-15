@@ -37,8 +37,7 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 	Route::get('compendium', 'CompendiumController@index')->name('compendium');
 	Route::post('compendium', 'CompendiumController@index')->name('compendium.search');
 
-	// Route::get('crafting', 'CraftingController@index');
-
+	Route::get('craft', 'CraftController@index')->name('craft');
 	Route::get('sling', 'SlingController@index')->name('sling');
 
 	Route::post('report', 'ReportController@create');

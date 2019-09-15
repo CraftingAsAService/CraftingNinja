@@ -75,10 +75,10 @@
 		{{-- <div class='post-grid__item col-sm-6 col-lg-4'>
 			<div class='posts__item card'>
 				<figure class='posts__thumb -icon -gradient-4'>
-					<a href='/crafting'><i class='fas fa-magic'></i></a>
+					<a href='/craft'><i class='fas fa-magic'></i></a>
 				</figure>
 				<div class='posts__inner card__content'>
-					<h6 class='posts__title posts__title--color-hover'><a href='/crafting'>Work your Magic</a></h6>
+					<h6 class='posts__title posts__title--color-hover'><a href='/craft'>Work your Magic</a></h6>
 					<ul class='post__meta meta'>
 						<li class='meta__item'>Craft the things you need.</li>
 					</ul>

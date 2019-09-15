@@ -70,7 +70,7 @@
 						{{-- <a href='#' class='btn btn-secondary btn-sm btn-block'>Share List</a> --}}
 					</div>
 					<div class='col-sm-6 text-center'>
-						<a href='/craft/sling' class='btn btn-primary btn-lg'>Start Crafting</a>
+						<a href='/craft' class='btn btn-primary btn-lg'>Start Crafting</a>
 					</div>
 					<div class='col-sm-3'>
 						<a href='/scrolls/create' class='btn btn-secondary btn-sm btn-block'>Scribe Scroll</a>

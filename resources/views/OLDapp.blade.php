@@ -65,7 +65,7 @@
 						@php
 							$navigation = [
 								'Equipment'	 => '/equipment',
-								'Crafting'   => '/crafting',
+								// 'Crafting'   => '/crafting',
 								'Compendium' => '/compendium',
 								'Sling'      => '/sling',
 							];
