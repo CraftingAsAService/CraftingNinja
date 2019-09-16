@@ -56,7 +56,7 @@
 
 						<!-- Header Logo -->
 						<div class='header-logo'>
-							<a href='/'><img src='/images/logo.png' srcset='/images/logo@2x.png 2x' alt='Alchemists' class='header-logo__img'></a>
+							<a href='/'><img src='/images/logo.svg' alt='Crafting Ninja' class='header-logo__img' width='104'></a>
 							{{-- /images/favicon@2x.png --}}
 						</div>
 						<!-- Header Logo / End -->
