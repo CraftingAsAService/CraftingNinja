@@ -31,7 +31,13 @@
 
 			<div class='card'>
 				<div class='card__header'>
-					Central Shroud - Bentbranch
+					<h4><i class='fa fa-map -desize mr-2'></i>Unknown Locations</h4>
+				</div>
+				<div class='card__content'>
+					...
+				</div>
+				<div class='card__header'>
+					<h4><i class='fas fa-map-marked -desize mr-2'></i>Central Shroud - Bentbranch</h4>
 				</div>
 				<div class='card__content'>
 					<div class='row'>
@@ -39,20 +45,25 @@
 							<div class='item'>
 								<div class='info'>
 									<div class='form-group tally float-right'>
-										<big>
+										<i class='fas fa-cogs ml-2 mr-2'></i>
+										<input type='number' placeholder='0' min='0' max='7'><big><code> / </code>7</big>
+										{{-- <big>
 											<small class='text-muted'>x</small>7
-										</big>
-										<label class='checkbox' style='width: 24px;'>
+										</big> --}}
+										{{-- <div class='input-group' style='width: 120px;'>
+											<input type='number' class='form-control' placeholder='0'>
+											<div class='input-group-append'>
+												<span class='input-group-text' id='basic-addon2'></span>
+											</div>
+										</div> --}}
+										<label class='checkbox ml-2' style='width: 24px;'>
 											<input type='checkbox' value='option1' checked='checked'>
 											<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
 										</label>
 									</div>
 									<div class='title'>
-										[Image]
+										<img src='/assets/{{ config('game.slug') }}/item/1234.png' alt='' width='32' height='32' class='mr-1'>
 										<big class='mr-2'>Elm Log</big>
-										<i class='fas fa-mountain text-muted' data-toggle='tooltip' title='Available Elsewhere'></i>
-										<i class='fas fa-piggy-bank text-muted' data-toggle='tooltip' title='Available Elsewhere'></i>
-										<i class='fas fa-ellipsis-v ml-2'></i>
 									</div>
 								</div>
 								<div class='sources'>
@@ -62,18 +73,29 @@
 									<div class=''>
 										<i class='fas fa-skull-crossbones'></i> <code>8,13</code> Dragon - <code>60%</code>
 									</div>
+									<div class='text-muted small'>
+										<i class='fas fa-mountain'></i>
+										<i class='fas fa-piggy-bank mr-1'></i>
+										available elsewhere
+									</div>
 								</div>
 							</div>
 							<div class='item'>
 								<div class='info'>
-									<div class='tally float-right'>
-										7 [x]
+									<div class='form-group tally float-right'>
+										<i class='far fa-dot-circle text-muted' data-toggle='tooltip' title='Location Options Limited'></i>
+										<i class='fas fa-cogs ml-2 mr-2'></i>
+										<big>
+											<small class='text-muted'>x</small>22
+										</big>
+										<label class='checkbox ml-2' style='width: 24px;'>
+											<input type='checkbox' value='option1' checked='checked'>
+											<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
+										</label>
 									</div>
 									<div class='title'>
-										[Image]
+										<img src='/assets/{{ config('game.slug') }}/item/2211.png' alt='' width='32' height='32' class='mr-1'>
 										<big class='mr-2'>Feather</big>
-										<i class='far fa-dot-circle text-muted' data-toggle='tooltip' title='Location Options Limited'></i>
-										<i class='fas fa-ellipsis-v ml-2'></i>
 									</div>
 								</div>
 								<div class='sources'>
