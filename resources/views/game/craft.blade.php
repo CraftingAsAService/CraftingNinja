@@ -23,15 +23,9 @@
 
 			<h4>Collect</h4>
 
-			<style>
-				.sources {
-					margin-left: 40px;
-				}
-			</style>
-
 			<div class='card'>
 				<div class='card__header'>
-					<h4><i class='fa fa-map -desize mr-2'></i>Unknown Locations</h4>
+					<h4><i class='far fa-map -desize mr-2'></i>Unknown Locations</h4>
 				</div>
 				<div class='card__content'>
 					...
@@ -42,6 +36,64 @@
 				<div class='card__content'>
 					<div class='row'>
 						<div class='col'>
+							<div class='row item'>
+								<div class='col-auto'>
+									<img src='/assets/{{ config('game.slug') }}/item/999.png' alt='' width='48' height='48'>
+								</div>
+								<div class='col info'>
+									<big class='rarity-2'>Elm Log</big>
+									<div class='sources'>
+										<span class=''>
+											<i class='fas fa-tree'></i>
+											<i class='fas fa-skull-crossbones'></i>
+										</span>
+										<span class='text-muted small'>
+											<i class='fas fa-mountain -desize'></i>
+											<i class='fas fa-piggy-bank -desize mr-1'></i>
+										</span>
+									</div>
+								</div>
+								<div class='col-auto'>
+									<div class='form-group tally'>
+										<big><small class='text-muted'>x</small>7</big>
+										<label class='checkbox ml-2' style='width: 24px;'>
+											<input type='checkbox' value='option1' checked='checked'>
+											<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class='row item'>
+								<div class='col-auto'>
+									<img src='/assets/{{ config('game.slug') }}/item/999.png' alt='' width='48' height='48'>
+								</div>
+								<div class='col info'>
+									<big class='rarity-2'>Elm Log</big>
+									<div class='sources card p-2 mt-2'>
+										<div>
+											<i class='fas fa-tree'></i> <code>20,20</code> Mature Tree - <code>55%</code>
+										</div>
+										<div>
+											<i class='fas fa-skull-crossbones'></i> <code>8,13</code> Dragon - <code>60%</code>
+										</div>
+										<div class='text-muted small'>
+											<i class='fas fa-mountain'></i>
+											<i class='fas fa-piggy-bank mr-1'></i>
+											available elsewhere
+										</div>
+									</div>
+								</div>
+								<div class='col-auto'>
+									<div class='form-group tally'>
+										<big><small class='text-muted'>x</small>7</big>
+										<label class='checkbox ml-2' style='width: 24px;'>
+											<input type='checkbox' value='option1' checked='checked'>
+											<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<hr>
 							<div class='item'>
 								<div class='info'>
 									<div class='form-group tally float-right'>
@@ -109,7 +161,9 @@
 							</div>
 						</div>
 						<div class='col'>
-							Map!
+							<div class=''>
+								<img src='/assets/{{ config('game.slug') }}/maps/g3f2.00.jpg' class='img-responsive' alt=''>
+							</div>
 						</div>
 					</div>
 				</div>
