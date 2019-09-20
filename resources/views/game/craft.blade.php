@@ -21,21 +21,26 @@
 
 		<div id='craft'>
 
-			<h4>Collect</h4>
+			<h3>
+				Collect
+			</h3>
 
-			<div class='card'>
-				<div class='card__header'>
-					<h4><i class='far fa-map -desize mr-2'></i>Unknown Locations</h4>
-				</div>
-				<div class='card__content'>
-					...
-				</div>
-				<div class='card__header'>
-					<h4><i class='fas fa-map-marked -desize mr-2'></i>Central Shroud - Bentbranch</h4>
-				</div>
-				<div class='card__content'>
-					<div class='row'>
-						<div class='col'>
+			<div class='row'>
+				<div class='col'>
+					<div class='card'>
+						<div class='card__content'>
+							<div>
+								<h5>
+									<i class='far fa-map -desize mr-2'></i>Unknown Locations
+								</h5>
+							</div>
+							&hellip;
+							<div>
+								<h5 class='mt-3'>
+								<i class='fas fa-map-pin -desize float-right'></i>
+									<i class='fas fa-map-marked -desize mr-2'></i>Central Shroud - Bentbranch
+								</h5>
+							</div>
 							<div class='row item'>
 								<div class='col-auto'>
 									<img src='/assets/{{ config('game.slug') }}/item/999.png' alt='' width='48' height='48'>
@@ -43,6 +48,9 @@
 								<div class='col info'>
 									<big class='rarity-2'>Elm Log</big>
 									<div class='sources'>
+										<i class='fas fa-caret-square-down text-primary'></i>
+										{{-- <i class='fas fa-expand-arrows-alt text-primary'></i> --}}
+										{{-- <i class='fas fa-expand text-primary'></i> --}}
 										<span class=''>
 											<i class='fas fa-tree'></i>
 											<i class='fas fa-skull-crossbones'></i>
@@ -70,6 +78,9 @@
 								<div class='col info'>
 									<big class='rarity-2'>Elm Log</big>
 									<div class='sources card p-2 mt-2'>
+										<i class='fas fa-caret-square-up text-primary'></i>
+										{{-- <i class='fas fa-compress-arrows-alt text-primary'></i> --}}
+										{{-- <i class='fas fa-compress text-primary'></i> --}}
 										<div>
 											<i class='fas fa-tree'></i> <code>20,20</code> Mature Tree - <code>55%</code>
 										</div>
@@ -93,7 +104,6 @@
 									</div>
 								</div>
 							</div>
-							<hr>
 							<div class='item'>
 								<div class='info'>
 									<div class='form-group tally float-right'>
@@ -159,20 +169,12 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class='col'>
-							<div class=''>
-								<img src='/assets/{{ config('game.slug') }}/maps/g3f2.00.jpg' class='img-responsive' alt=''>
+							&hellip;
+							<div>
+								<h5 class='mt-3'>
+									<i class='fas fa-map-marked -desize mr-2'></i>Area B - Region Y
+								</h5>
 							</div>
-						</div>
-					</div>
-				</div>
-				<div class='card__header'>
-					Area B - Region Y
-				</div>
-				<div class='card__content'>
-					<div class='row'>
-						<div class='col'>
 							<div class='item'>
 								<div class='info'>
 									<div class='tally float-right'>
@@ -192,29 +194,64 @@
 							<div class='item'>
 								& others hidden
 							</div>
-						</div>
-						<div class='col'>
-							Map!
+							<div>
+								<h5 class='mt-3'>
+									<i class='fas fa-ban -desize mr-2'></i>Ignored Items
+								</h5>
+							</div>
+							[Image] [Image]
 						</div>
 					</div>
 				</div>
-				<div class='card__header'>
-					Ignored Items&hellip;
-				</div>
-				<div class='card__content'>
-					[Image] [Image]
+				<div class='col'>
+					<div class='map-that-scrolls-with-you'>
+						{{-- ?? https://travishorn.com/interactive-maps-with-vue-leaflet-5430527353c8 --}}
+						<style>
+							.enemy-node {
+								position: absolute;
+								top: 10%;
+								left: 20%;
+							}
+							.npc-node {
+								position: absolute;
+								top: 20%;
+								left: 50%;
+							}
+							.object-node {
+								position: absolute;
+								top: 40%;
+								left: 30%;
+							}
+							.gathering-node {
+								position: absolute;
+								top: 40%;
+								left: 40%;
+							}
+							.treasure-node {
+								position: absolute;
+								top: 50%;
+								left: 50%;
+							}
+						</style>
+						<img src='/assets/{{ config('game.slug') }}/mappy/enemy_2x.png' width='10' height='10' class='img-responsive enemy-node' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/mappy/npc_2x.png' width='10' height='10' class='img-responsive npc-node' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/mappy/object_2x.png' width='10' height='10' class='img-responsive object-node' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/mappy/gathering_2x.png' width='20' height='20' class='img-responsive gathering-node' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/mappy/chest1.png' width='32' height='32' class='img-responsive treasure-node' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/maps/g3f2.00.jpg' class='img-responsive' alt=''>
+					</div>
 				</div>
 			</div>
 
+			<h3>
+				Craft
+			</h3>
 
-
-
-
-
-
-
-
-
+			<div class='card'>
+				<div class='card__content'>
+					&hellip;
+				</div>
+			</div>
 		</div>
 
 @endsection
