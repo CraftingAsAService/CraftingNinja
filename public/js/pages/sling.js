@@ -75,7 +75,7 @@ var sling = new Vue({
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!*******************************************!*\
   !*** multi ./resources/js/pages/sling.js ***!
   \*******************************************/
@@ -87,4 +87,4 @@ module.exports = __webpack_require__(/*! /Users/nwright/Projects/Personal/crafti
 
 /***/ })
 
-},[[1,"/js/manifest"]]]);
+},[[2,"/js/manifest"]]]);

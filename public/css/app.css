@@ -113,7 +113,7 @@ body {
   bottom: 0;
   left: 0;
   opacity: 0;
-  content: '';
+  content: "";
   transition: all 250ms ease-in-out;
 }
 
@@ -172,15 +172,15 @@ body {
 }
 
 .product__item.-scroll .posts__cat-label {
-  font-size: .7rem;
+  font-size: 0.7rem;
 }
 
 .product__item.-scroll .posts__cat-label.-heart i {
-  font-size: .6rem;
+  font-size: 0.6rem;
 }
 
 .product__item.-scroll .author-block {
-  font-size: .8rem;
+  font-size: 0.8rem;
   line-height: 1.25rem;
 }
 

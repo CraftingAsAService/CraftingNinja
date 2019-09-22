@@ -38,5 +38,9 @@
 		"gulp-sass": "^4.0.1",
 		"gulp-sass-multi-inheritance": "^1.0.2",
 		"gulp-terser": "^1.0.1"
+	},
+	"dependencies": {
+		"leaflet": "^1.5.1",
+		"vue2-leaflet": "^2.2.1"
 	}
 }

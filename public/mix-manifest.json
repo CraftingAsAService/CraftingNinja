@@ -6,6 +6,7 @@
     "/css/pages/game-index.css": "/css/pages/game-index.css",
     "/css/themes/ffxiv.css": "/css/themes/ffxiv.css",
     "/css/app.css": "/css/app.css",
+    "/js/pages/craft.js": "/js/pages/craft.js",
     "/js/pages/sling.js": "/js/pages/sling.js",
     "/js/vendor.js": "/js/vendor.js"
 }
