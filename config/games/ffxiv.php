@@ -5,6 +5,14 @@ return [
 	'maxDifficulty' => 4,
 	'maxSockets' => 5,
 
+	'map' => [
+		// All given map coordinates exist on a scale from zero to these numbers
+		'coordinates' => [
+			'width' => 44, // == 100%
+			'height' => 44,
+		]
+	],
+
 	'equipmentLayout' => [
 		// Label -> Key
 		'Main Hand' => 'primary',

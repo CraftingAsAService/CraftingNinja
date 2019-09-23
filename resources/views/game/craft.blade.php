@@ -44,7 +44,13 @@
 								top: 45%;
 								left: 50%;
 							}
+
+							.leaflet-bottom {
+								display: none;
+							}
 						</style>
+
+						<li>COLOR CODE ICONS TO MATCH DOTS?</li>
 
 		<div id='craft'>
 
@@ -86,7 +92,6 @@
 											<i class='fas fa-mountain -desize'></i>
 											<i class='fas fa-piggy-bank -desize mr-1'></i>
 										</span>
-										COLOR CODE ICONS TO MATCH DOTS
 									</div>
 								</div>
 								<div class='col-auto'>
@@ -232,14 +237,20 @@
 					</div>
 				</div>
 				<div class='col'>
-					<div class='map-that-scrolls-with-you'>
+					<div class='map-that-scrolls-with-you' style='height: 577px;'>
 						{{-- ?? https://travishorn.com/interactive-maps-with-vue-leaflet-5430527353c8 --}}
-						<img src='/assets/{{ config('game.slug') }}/mappy/enemy_2x.png' width='10' height='10' class='img-responsive enemy-node' alt=''>
+						{{-- https://jsfiddle.net/Boumi/k04zpLx9/ --}}
+						{{-- https://korigan.github.io/Vue2Leaflet/#/quickstart?id=usage --}}
+						{{-- <img src='/assets/{{ config('game.slug') }}/mappy/enemy_2x.png' width='10' height='10' class='img-responsive enemy-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/npc_2x.png' width='10' height='10' class='img-responsive npc-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/object_2x.png' width='10' height='10' class='img-responsive object-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/gathering_2x.png' width='20' height='20' class='img-responsive gathering-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/chest1.png' width='32' height='32' class='img-responsive treasure-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/m/r2f1/r2f1.00.jpg' class='img-responsive' alt=''>
+						<img src='/assets/{{ config('game.slug') }}/m/r2f1/r2f1.00.jpg' class='img-responsive' alt=''> --}}
+						<l-map :min-zoom='minZoom' :max-zoom='maxZoom' :crs='crs' :center='center' :noWrap='noWrap'>
+							<l-image-overlay :url="url" :bounds="bounds" />
+							{{-- <l-marker :lat-lng='marker'></l-marker> --}}
+						</l-map>
 					</div>
 				</div>
 			</div>
