@@ -44,13 +44,7 @@
 								top: 45%;
 								left: 50%;
 							}
-
-							.leaflet-bottom {
-								display: none;
-							}
 						</style>
-
-						<li>COLOR CODE ICONS TO MATCH DOTS?</li>
 
 		<div id='craft'>
 
@@ -247,10 +241,14 @@
 						<img src='/assets/{{ config('game.slug') }}/mappy/gathering_2x.png' width='20' height='20' class='img-responsive gathering-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/chest1.png' width='32' height='32' class='img-responsive treasure-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/m/r2f1/r2f1.00.jpg' class='img-responsive' alt=''> --}}
-						<l-map :min-zoom='minZoom' :max-zoom='maxZoom' :crs='crs' :center='center' :noWrap='noWrap'>
+						<l-map :min-zoom='minZoom' :max-zoom='maxZoom' :crs='crs' :center='center' :noWrap='noWrap' :max-bounds="bounds" style=' background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;'>
 							<l-image-overlay :url="url" :bounds="bounds" />
 							{{-- <l-marker :lat-lng='marker'></l-marker> --}}
 						</l-map>
+						<ul>
+							<li>COLOR CODE ICONS TO MATCH DOTS?</li>
+							<li>Attributions: Bottom left - map name, bottom right, X/Y coordinates</li>
+						</ul>
 					</div>
 				</div>
 			</div>

@@ -183,4 +183,10 @@ return [
 		10826000
 	],
 
+	// Ignore these items if they're a part of a recipe
+	//  Useful for crystals and other BS ingredients
+	'reagentsToIgnore' => [
+
+	],
+
 ];
