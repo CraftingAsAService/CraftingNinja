@@ -1,5 +1,87 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/js/pages/craft"],{
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-leaflet */ "./node_modules/vue2-leaflet/dist/vue2-leaflet.es.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! leaflet/dist/leaflet.css */ "./node_modules/leaflet/dist/leaflet.css");
+/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'ninjamap',
+  props: ['size', 'mapName'],
+  components: {
+    LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
+    LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
+    LControlAttribution: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlAttribution"],
+    LControlZoom: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlZoom"],
+    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"]
+  },
+  data: function data() {
+    return {
+      mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
+      mapOptions: {
+        zoomControl: false,
+        attributionControl: false,
+        zoomSnap: true
+      },
+      bounds: [[0, 0], [this.size, this.size]],
+      center: [this.size / 2, this.size / 2],
+      minZoom: 0,
+      maxZoom: 3,
+      crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
+      noWrap: true,
+      zoomPosition: 'topleft',
+      attribution: '27.1, 35.2',
+      attributionPosition: 'bottomright',
+      attributionPrefix: this.mapName
+    };
+  },
+  mounted: function mounted() {
+    this.$nextTick(function () {// this.$refs.map.mapObject.setPrefix('');
+      // this.$refs.map.mapObject.attributionControl.options.prefix = '';
+      // console.log(this.$refs.map.mapObject);//.attributionControl.options);//.ANY_LEAFLET_MAP_METHOD();
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/leaflet/dist/leaflet.css":
 /*!*******************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--9-1!./node_modules/postcss-loader/src??ref--9-2!./node_modules/leaflet/dist/leaflet.css ***!
@@ -15204,6 +15286,175 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246& ***!
+  \***********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "l-map",
+    {
+      ref: "map",
+      staticStyle: {
+        "background-color": "#392d49",
+        "border-radius": "4px",
+        border: "1px solid #4b3b60"
+      },
+      attrs: {
+        options: _vm.mapOptions,
+        "min-zoom": _vm.minZoom,
+        "max-zoom": _vm.maxZoom,
+        crs: _vm.crs,
+        center: _vm.center,
+        noWrap: _vm.noWrap,
+        "max-bounds": _vm.bounds
+      }
+    },
+    [
+      _c("l-image-overlay", {
+        attrs: {
+          url: _vm.mapImage,
+          attribution: _vm.attribution,
+          bounds: _vm.bounds
+        }
+      }),
+      _vm._v(" "),
+      _c("l-control-zoom", { attrs: { position: _vm.zoomPosition } }),
+      _vm._v(" "),
+      _c("l-control-attribution", {
+        attrs: {
+          position: _vm.attributionPosition,
+          prefix: _vm.attributionPrefix
+        }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return normalizeComponent; });
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
+) {
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = 'data-v-' + scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
+  }
+
+  if (hook) {
+    if (options.functional) {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      var originalRender = options.render
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return originalRender(h, context)
+      }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    }
+  }
+
+  return {
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/vue2-leaflet/dist/components/LCircle.js":
 /*!**************************************************************!*\
   !*** ./node_modules/vue2-leaflet/dist/components/LCircle.js ***!
@@ -26372,47 +26623,94 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./resources/js/pages/craft.js":
-/*!*************************************!*\
-  !*** ./resources/js/pages/craft.js ***!
-  \*************************************/
-/*! no exports provided */
+/***/ "./resources/js/components/NinjaMap.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/NinjaMap.vue ***!
+  \**********************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-leaflet */ "./node_modules/vue2-leaflet/dist/vue2-leaflet.es.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! leaflet/dist/leaflet.css */ "./node_modules/leaflet/dist/leaflet.css");
-/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NinjaMap.vue?vue&type=template&id=70bf9246& */ "./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&");
+/* harmony import */ var _NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NinjaMap.vue?vue&type=script&lang=js& */ "./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/NinjaMap.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/NinjaMap.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaMap.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246& ***!
+  \*****************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaMap.vue?vue&type=template&id=70bf9246& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/craft.js":
+/*!*************************************!*\
+  !*** ./resources/js/pages/craft.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /**
  * Craft Page
  */
 
 
-
-
- // Map is presented as a square
-
-var size = 577;
+Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
 var compendium = new Vue({
   el: '#craft',
-  components: {
-    LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
-    LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
-    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"]
-  },
-  data: function data() {
-    return {
-      url: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
-      bounds: [[0, 0], [size, size]],
-      center: [size / 2, size / 2],
-      minZoom: 0,
-      maxZoom: 3,
-      crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
-      noWrap: true
-    };
+  data: {
+    size: 577,
+    mapName: 'Central Shroud - Bentbranch'
   }
 });
 
