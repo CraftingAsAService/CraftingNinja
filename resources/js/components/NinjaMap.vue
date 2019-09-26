@@ -6,7 +6,6 @@
 		:min-zoom='minZoom'
 		:max-zoom='maxZoom'
 		:crs='crs'
-		:center='center'
 		:noWrap='noWrap'
 		:max-bounds='bounds'
 	>
@@ -17,8 +16,12 @@
 		/>
 		<l-control-zoom :position='zoomPosition' />
 		<l-control-attribution
-			:position='attributionPosition'
+			position='bottomleft'
 			:prefix='attributionPrefix'
+		/>
+		<l-control-attribution
+			position='bottomright'
+			prefix='<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>'
 		/>
 	</l-map>
 </template>
@@ -36,29 +39,50 @@
 		},
 		data() {
 			return {
+				map: null,
 				mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
 				mapOptions: {
 					zoomControl: false,
 					attributionControl: false,
 					zoomSnap: true
 				},
-				bounds: [[0, 0], [this.size, this.size]],
-				center: [this.size / 2, this.size / 2],
+				bounds: [[-this.size, 0], [0, this.size]],
 				minZoom: 0,
 				maxZoom: 3,
 				crs: CRS.Simple,
 				noWrap: true,
 				zoomPosition: 'topleft',
-				attribution: '27.1, 35.2',
+				attribution: '',
 				attributionPosition: 'bottomright',
 				attributionPrefix: this.mapName
 			}
 		},
 		mounted () {
 			this.$nextTick(() => {
-				// this.$refs.map.mapObject.setPrefix('');
-				// this.$refs.map.mapObject.attributionControl.options.prefix = '';
-				// console.log(this.$refs.map.mapObject);//.attributionControl.options);//.ANY_LEAFLET_MAP_METHOD();
+				this.map = this.$refs.map.mapObject;
+
+				this.map.on('mousemove', (event) => {
+					var modifier = this.size / 21.5,
+						xy = this.map.project(event.latlng, 1),
+						xo = xy['x'],
+						yo = xy['y'],
+						xn = Number(((xo / modifier) + 1).toFixed(1)),
+						yn = Number(((yo / modifier) + 1).toFixed(1));
+
+					if (parseInt(xn) === xn)
+						xn = xn + ".0";
+					if (parseInt(yn) === yn)
+						yn = yn + ".0";
+
+					this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>' + xn + ', ' + yn + '<span class="text-muted">&gt;</span>';
+				});
+				// TODO TURN THIS ON, DISABLED FOR DEBUGGING
+				// this.map.on('contextmenu', (event) => {
+				// 	return false;
+				// });
+				this.map.on('mouseout', (event) => {
+					this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
+				});
 			})
 		}
 

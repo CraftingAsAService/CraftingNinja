@@ -39,6 +39,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -54,28 +57,50 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      map: null,
       mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
       mapOptions: {
         zoomControl: false,
         attributionControl: false,
         zoomSnap: true
       },
-      bounds: [[0, 0], [this.size, this.size]],
-      center: [this.size / 2, this.size / 2],
+      bounds: [[-this.size, 0], [0, this.size]],
       minZoom: 0,
       maxZoom: 3,
       crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
       noWrap: true,
       zoomPosition: 'topleft',
-      attribution: '27.1, 35.2',
+      attribution: '',
       attributionPosition: 'bottomright',
       attributionPrefix: this.mapName
     };
   },
   mounted: function mounted() {
-    this.$nextTick(function () {// this.$refs.map.mapObject.setPrefix('');
-      // this.$refs.map.mapObject.attributionControl.options.prefix = '';
-      // console.log(this.$refs.map.mapObject);//.attributionControl.options);//.ANY_LEAFLET_MAP_METHOD();
+    var _this = this;
+
+    this.$nextTick(function () {
+      _this.map = _this.$refs.map.mapObject;
+
+      _this.map.on('mousemove', function (event) {
+        var modifier = _this.size / 21.5,
+            xy = _this.map.project(event.latlng, 1),
+            xo = xy['x'],
+            yo = xy['y'],
+            xn = Number((xo / modifier + 1).toFixed(1)),
+            yn = Number((yo / modifier + 1).toFixed(1));
+
+        if (parseInt(xn) === xn) xn = xn + ".0";
+        if (parseInt(yn) === yn) yn = yn + ".0";
+        _this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>' + xn + ', ' + yn + '<span class="text-muted">&gt;</span>';
+      }); // TODO TURN THIS ON, DISABLED FOR DEBUGGING
+      // this.map.on('contextmenu', (event) => {
+      // 	return false;
+      // });
+
+
+      _this.map.on('mouseout', function (event) {
+        _this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
+      });
     });
   }
 });
@@ -15315,7 +15340,6 @@ var render = function() {
         "min-zoom": _vm.minZoom,
         "max-zoom": _vm.maxZoom,
         crs: _vm.crs,
-        center: _vm.center,
         noWrap: _vm.noWrap,
         "max-bounds": _vm.bounds
       }
@@ -15332,9 +15356,14 @@ var render = function() {
       _c("l-control-zoom", { attrs: { position: _vm.zoomPosition } }),
       _vm._v(" "),
       _c("l-control-attribution", {
+        attrs: { position: "bottomleft", prefix: _vm.attributionPrefix }
+      }),
+      _vm._v(" "),
+      _c("l-control-attribution", {
         attrs: {
-          position: _vm.attributionPosition,
-          prefix: _vm.attributionPrefix
+          position: "bottomright",
+          prefix:
+            '<span class="text-muted"><</span>0.0, 0.0<span class="text-muted">></span>'
         }
       })
     ],
