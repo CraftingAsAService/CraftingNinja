@@ -241,7 +241,7 @@
 						<img src='/assets/{{ config('game.slug') }}/mappy/gathering_2x.png' width='20' height='20' class='img-responsive gathering-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/mappy/chest1.png' width='32' height='32' class='img-responsive treasure-node' alt=''>
 						<img src='/assets/{{ config('game.slug') }}/m/r2f1/r2f1.00.jpg' class='img-responsive' alt=''> --}}
-						<ninja-map :size='size' :map-name='mapName' />
+						<ninja-map :size='size' :map-name='mapName' :markers='markers' />
 						<ul>
 							<li>COLOR CODE ICONS TO MATCH DOTS?</li>
 							<li>Attributions: Bottom left - map name, bottom right, X/Y coordinates</li>

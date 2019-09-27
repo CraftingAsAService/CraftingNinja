@@ -23,28 +23,46 @@
 			position='bottomright'
 			prefix='<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>'
 		/>
+		<l-marker
+			v-for='marker in this.markers'
+			:key='marker.id'
+			:lat-lng='marker.position'
+		>
+			<l-icon
+				:icon-size='[24, 24]'
+				:icon-anchor='[24 / 2, 0]'
+				:icon-url='"/assets/" + gameSlug + "/map/icons/" + marker.icon + ".png"'
+			/>
+			<l-popup
+				:content='marker.tooltip'
+				/>
+		</l-marker>
 	</l-map>
 </template>
 
 <script>
-	import { LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker } from 'vue2-leaflet'
+	import { LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker, LPopup, LIcon } from 'vue2-leaflet'
 	import { CRS, Icon } from 'leaflet'
 	import 'leaflet/dist/leaflet.css'
 
 	export default {
 		name: 'ninjamap',
-		props: [ 'size', 'mapName' ],
+		props: [ 'size', 'mapName', 'markers' ],
 		components: {
-			LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker
+			LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker, LPopup, LIcon
 		},
 		data() {
 			return {
 				map: null,
+				gameSlug: game.slug,
 				mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
 				mapOptions: {
 					zoomControl: false,
 					attributionControl: false,
-					zoomSnap: true
+					zoomSnap: true,
+					popperOptions: {
+						position: 'top'
+					}
 				},
 				bounds: [[-this.size, 0], [0, this.size]],
 				minZoom: 0,
@@ -83,8 +101,9 @@
 				this.map.on('mouseout', (event) => {
 					this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
 				});
+
+				console.log(this.markers);
 			})
 		}
-
 	}
 </script>

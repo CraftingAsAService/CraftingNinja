@@ -42,27 +42,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ninjamap',
-  props: ['size', 'mapName'],
+  props: ['size', 'mapName', 'markers'],
   components: {
     LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
     LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
     LControlAttribution: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlAttribution"],
     LControlZoom: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlZoom"],
-    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"]
+    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"],
+    LPopup: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LPopup"],
+    LIcon: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LIcon"]
   },
   data: function data() {
     return {
       map: null,
+      gameSlug: game.slug,
       mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
       mapOptions: {
         zoomControl: false,
         attributionControl: false,
-        zoomSnap: true
+        zoomSnap: true,
+        popperOptions: {
+          position: 'top'
+        }
       },
       bounds: [[-this.size, 0], [0, this.size]],
       minZoom: 0,
@@ -101,6 +121,8 @@ __webpack_require__.r(__webpack_exports__);
       _this.map.on('mouseout', function (event) {
         _this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
       });
+
+      console.log(_this.markers);
     });
   }
 });
@@ -15365,9 +15387,33 @@ var render = function() {
           prefix:
             '<span class="text-muted"><</span>0.0, 0.0<span class="text-muted">></span>'
         }
+      }),
+      _vm._v(" "),
+      _vm._l(this.markers, function(marker) {
+        return _c(
+          "l-marker",
+          { key: marker.id, attrs: { "lat-lng": marker.position } },
+          [
+            _c("l-icon", {
+              attrs: {
+                "icon-size": [24, 24],
+                "icon-anchor": [24 / 2, 0],
+                "icon-url":
+                  "/assets/" +
+                  _vm.gameSlug +
+                  "/map/icons/" +
+                  marker.icon +
+                  ".png"
+              }
+            }),
+            _vm._v(" "),
+            _c("l-popup", { attrs: { content: marker.tooltip } })
+          ],
+          1
+        )
       })
     ],
-    1
+    2
   )
 }
 var staticRenderFns = []
@@ -26739,7 +26785,18 @@ var compendium = new Vue({
   el: '#craft',
   data: {
     size: 577,
-    mapName: 'Central Shroud - Bentbranch'
+    mapName: 'Central Shroud - Bentbranch',
+    markers: [{
+      'id': 111,
+      'tooltip': 'Level 65 Rocky Outcrop',
+      // 'spawn': {},
+      // 'star': 0,
+      'position': {
+        lat: -200,
+        lng: 100
+      },
+      'icon': 'spearfishing'
+    }]
   }
 });
 
