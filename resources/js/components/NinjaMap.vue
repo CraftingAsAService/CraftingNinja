@@ -21,12 +21,12 @@
 		/>
 		<l-control-attribution
 			position='bottomright'
-			prefix='<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>'
+			:prefix='coordinateOutput'
 		/>
 		<l-marker
 			v-for='marker in this.markers'
 			:key='marker.id'
-			:lat-lng='marker.position'
+			:lat-lng='convertCoordinates(marker.x, marker.y)'
 		>
 			<l-icon
 				:icon-size='[24, 24]'
@@ -45,9 +45,11 @@
 	import { CRS, Icon } from 'leaflet'
 	import 'leaflet/dist/leaflet.css'
 
+	let size = 577; // TODO calculate magic number based on column width
+
 	export default {
 		name: 'ninjamap',
-		props: [ 'size', 'mapName', 'markers' ],
+		props: [ 'mapName', 'markers' ],
 		components: {
 			LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker, LPopup, LIcon
 		},
@@ -64,7 +66,8 @@
 						position: 'top'
 					}
 				},
-				bounds: [[-this.size, 0], [0, this.size]],
+				mapWidth: size,
+				bounds: [[-size, 0], [0, size]],
 				minZoom: 0,
 				maxZoom: 3,
 				crs: CRS.Simple,
@@ -72,15 +75,23 @@
 				zoomPosition: 'topleft',
 				attribution: '',
 				attributionPosition: 'bottomright',
-				attributionPrefix: this.mapName
+				attributionPrefix: this.mapName,
+				coordinateOutput: this.styleCoordinates(),
+				mapSizeModifier: null
 			}
 		},
-		mounted () {
+		beforeCreate() {
+
+		},
+		created() {
+			this.setModifier();
+		},
+		mounted() {
 			this.$nextTick(() => {
 				this.map = this.$refs.map.mapObject;
 
 				this.map.on('mousemove', (event) => {
-					var modifier = this.size / 21.5,
+					var modifier = this.mapSizeModifier,
 						xy = this.map.project(event.latlng, 1),
 						xo = xy['x'],
 						yo = xy['y'],
@@ -92,18 +103,31 @@
 					if (parseInt(yn) === yn)
 						yn = yn + ".0";
 
-					this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>' + xn + ', ' + yn + '<span class="text-muted">&gt;</span>';
+					this.coordinateOutput = this.styleCoordinates(xn, yn);
 				});
 				// TODO TURN THIS ON, DISABLED FOR DEBUGGING
 				// this.map.on('contextmenu', (event) => {
 				// 	return false;
 				// });
 				this.map.on('mouseout', (event) => {
-					this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
+					this.coordinateOutput = this.styleCoordinates();
 				});
-
-				console.log(this.markers);
 			})
+		},
+		methods: {
+			styleCoordinates:function(x, y) {
+				return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>'
+			},
+			convertCoordinates:function(x, y) {
+				return {
+					lat: (y / 2) * -this.mapSizeModifier,
+					lng: (x / 2) * this.mapSizeModifier
+				};
+			},
+			setModifier:function() {
+				// TODO different maps have different ratios
+				this.mapSizeModifier = this.mapWidth / 21.5;
+			}
 		}
 	}
 </script>

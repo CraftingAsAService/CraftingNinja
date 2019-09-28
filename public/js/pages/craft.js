@@ -59,9 +59,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var size = 577; // TODO calculate magic number based on column width
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ninjamap',
-  props: ['size', 'mapName', 'markers'],
+  props: ['mapName', 'markers'],
   components: {
     LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
     LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
@@ -84,7 +86,8 @@ __webpack_require__.r(__webpack_exports__);
           position: 'top'
         }
       },
-      bounds: [[-this.size, 0], [0, this.size]],
+      mapWidth: size,
+      bounds: [[-size, 0], [0, size]],
       minZoom: 0,
       maxZoom: 3,
       crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
@@ -92,8 +95,14 @@ __webpack_require__.r(__webpack_exports__);
       zoomPosition: 'topleft',
       attribution: '',
       attributionPosition: 'bottomright',
-      attributionPrefix: this.mapName
+      attributionPrefix: this.mapName,
+      coordinateOutput: this.styleCoordinates(),
+      mapSizeModifier: null
     };
+  },
+  beforeCreate: function beforeCreate() {},
+  created: function created() {
+    this.setModifier();
   },
   mounted: function mounted() {
     var _this = this;
@@ -102,7 +111,7 @@ __webpack_require__.r(__webpack_exports__);
       _this.map = _this.$refs.map.mapObject;
 
       _this.map.on('mousemove', function (event) {
-        var modifier = _this.size / 21.5,
+        var modifier = _this.mapSizeModifier,
             xy = _this.map.project(event.latlng, 1),
             xo = xy['x'],
             yo = xy['y'],
@@ -111,7 +120,7 @@ __webpack_require__.r(__webpack_exports__);
 
         if (parseInt(xn) === xn) xn = xn + ".0";
         if (parseInt(yn) === yn) yn = yn + ".0";
-        _this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>' + xn + ', ' + yn + '<span class="text-muted">&gt;</span>';
+        _this.coordinateOutput = _this.styleCoordinates(xn, yn);
       }); // TODO TURN THIS ON, DISABLED FOR DEBUGGING
       // this.map.on('contextmenu', (event) => {
       // 	return false;
@@ -119,11 +128,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
       _this.map.on('mouseout', function (event) {
-        _this.map.attributionControl.getContainer().innerHTML = '<span class="text-muted">&lt;</span>0.0, 0.0<span class="text-muted">&gt;</span>';
+        _this.coordinateOutput = _this.styleCoordinates();
       });
-
-      console.log(_this.markers);
     });
+  },
+  methods: {
+    styleCoordinates: function styleCoordinates(x, y) {
+      return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>';
+    },
+    convertCoordinates: function convertCoordinates(x, y) {
+      return {
+        lat: y / 2 * -this.mapSizeModifier,
+        lng: x / 2 * this.mapSizeModifier
+      };
+    },
+    setModifier: function setModifier() {
+      // TODO different maps have different ratios
+      this.mapSizeModifier = this.mapWidth / 21.5;
+    }
   }
 });
 
@@ -15382,17 +15404,16 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("l-control-attribution", {
-        attrs: {
-          position: "bottomright",
-          prefix:
-            '<span class="text-muted"><</span>0.0, 0.0<span class="text-muted">></span>'
-        }
+        attrs: { position: "bottomright", prefix: _vm.coordinateOutput }
       }),
       _vm._v(" "),
       _vm._l(this.markers, function(marker) {
         return _c(
           "l-marker",
-          { key: marker.id, attrs: { "lat-lng": marker.position } },
+          {
+            key: marker.id,
+            attrs: { "lat-lng": _vm.convertCoordinates(marker.x, marker.y) }
+          },
           [
             _c("l-icon", {
               attrs: {
@@ -26784,18 +26805,23 @@ Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */
 var compendium = new Vue({
   el: '#craft',
   data: {
-    size: 577,
     mapName: 'Central Shroud - Bentbranch',
     markers: [{
       'id': 111,
       'tooltip': 'Level 65 Rocky Outcrop',
       // 'spawn': {},
       // 'star': 0,
-      'position': {
-        lat: -200,
-        lng: 100
-      },
+      'x': 20.4,
+      'y': 33.3,
       'icon': 'spearfishing'
+    }, {
+      'id': 77,
+      'tooltip': 'Level 65 Rocky Outcrop',
+      // 'spawn': {},
+      // 'star': 0,
+      'x': 33.4,
+      'y': 15.3,
+      'icon': 'mining'
     }]
   }
 });
