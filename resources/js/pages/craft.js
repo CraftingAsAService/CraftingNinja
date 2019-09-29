@@ -10,25 +10,29 @@ const compendium = new Vue({
 	el: '#craft',
 	data: {
 		mapName: 'Central Shroud - Bentbranch',
+		mapSrc: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
+		// Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+		//  anything less than 1,1 is unreachable
+		//  44,44 itself is unreachable
+		mapBounds: [[1, 1], [44, 44]],
 		markers: [
 			{
 				'id': 111,
 				'tooltip': 'Level 65 Rocky Outcrop',
-				// 'spawn': {},
-				// 'star': 0,
 				'x': 20.4,
 				'y': 33.3,
-				'icon': 'spearfishing'
+				'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
 			},
 			{
 				'id': 77,
 				'tooltip': 'Level 65 Rocky Outcrop',
-				// 'spawn': {},
-				// 'star': 0,
 				'x': 33.4,
 				'y': 15.3,
-				'icon': 'mining'
+				'icon': '/assets/' + game.slug + '/map/icons/mining.png'
 			}
 		],
+	},
+	methods: {
+
 	}
 });

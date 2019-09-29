@@ -2,27 +2,29 @@
 	<l-map
 		style='background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;'
 		ref='map'
-		:options='mapOptions'
-		:min-zoom='minZoom'
-		:max-zoom='maxZoom'
-		:crs='crs'
-		:noWrap='noWrap'
-		:max-bounds='bounds'
+		:options='leaflet.options'
+		:min-zoom='leaflet.minZoom'
+		:max-zoom='leaflet.maxZoom'
+		:crs='leaflet.crs'
+		:noWrap='leaflet.noWrap'
+		:max-bounds='leaflet.bounds'
 	>
 		<l-image-overlay
-			:url='mapImage'
-			:attribution='attribution'
-			:bounds='bounds'
+			:url='this.mapSrc'
+			:bounds='leaflet.bounds'
+			attribution=''
 		/>
-		<l-control-zoom :position='zoomPosition' />
+
+		<l-control-zoom position='topleft' />
 		<l-control-attribution
 			position='bottomleft'
-			:prefix='attributionPrefix'
+			:prefix='this.mapName'
 		/>
 		<l-control-attribution
 			position='bottomright'
 			:prefix='coordinateOutput'
 		/>
+
 		<l-marker
 			v-for='marker in this.markers'
 			:key='marker.id'
@@ -31,7 +33,7 @@
 			<l-icon
 				:icon-size='[24, 24]'
 				:icon-anchor='[24 / 2, 0]'
-				:icon-url='"/assets/" + gameSlug + "/map/icons/" + marker.icon + ".png"'
+				:icon-url='marker.icon'
 			/>
 			<l-popup
 				:content='marker.tooltip'
@@ -48,43 +50,36 @@
 	let size = 577; // TODO calculate magic number based on column width
 
 	export default {
-		name: 'ninjamap',
-		props: [ 'mapName', 'markers' ],
+		props: [ 'mapName', 'mapSrc', 'mapBounds', 'markers' ],
 		components: {
 			LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker, LPopup, LIcon
 		},
 		data() {
 			return {
 				map: null,
-				gameSlug: game.slug,
-				mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
-				mapOptions: {
-					zoomControl: false,
-					attributionControl: false,
-					zoomSnap: true,
-					popperOptions: {
-						position: 'top'
+				leaflet: {
+					minZoom: 0,
+					maxZoom: 3,
+					crs: CRS.Simple,
+					noWrap: true,
+					bounds: null,
+					options: {
+						zoomControl: false,
+						attributionControl: false,
+						zoomSnap: true,
+						popperOptions: {
+							position: 'top'
+						}
 					}
 				},
-				mapWidth: size,
-				bounds: [[-size, 0], [0, size]],
-				minZoom: 0,
-				maxZoom: 3,
-				crs: CRS.Simple,
-				noWrap: true,
-				zoomPosition: 'topleft',
-				attribution: '',
-				attributionPosition: 'bottomright',
-				attributionPrefix: this.mapName,
-				coordinateOutput: this.styleCoordinates(),
+				gameSlug: game.slug,
+				coordinateOutput: '',
+				mapWidth: null,
 				mapSizeModifier: null
 			}
 		},
-		beforeCreate() {
-
-		},
 		created() {
-			this.setModifier();
+			this.setupNewMap();
 		},
 		mounted() {
 			this.$nextTick(() => {
@@ -110,11 +105,17 @@
 				// 	return false;
 				// });
 				this.map.on('mouseout', (event) => {
-					this.coordinateOutput = this.styleCoordinates();
+					this.coordinateOutput = '';//this.styleCoordinates();
 				});
 			})
 		},
 		methods: {
+			setupNewMap:function() {
+				this.mapWidth = document.getElementById('mapContainer').clientWidth;
+				this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
+				let mapRange = this.mapBounds[1][0] - this.mapBounds[0][0];
+				this.mapSizeModifier = this.mapWidth / mapRange / 2;
+			},
 			styleCoordinates:function(x, y) {
 				return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>'
 			},
@@ -123,10 +124,6 @@
 					lat: (y / 2) * -this.mapSizeModifier,
 					lng: (x / 2) * this.mapSizeModifier
 				};
-			},
-			setModifier:function() {
-				// TODO different maps have different ratios
-				this.mapSizeModifier = this.mapWidth / 21.5;
 			}
 		}
 	}

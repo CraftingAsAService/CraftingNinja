@@ -56,14 +56,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
 var size = 577; // TODO calculate magic number based on column width
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'ninjamap',
-  props: ['mapName', 'markers'],
+  props: ['mapName', 'mapSrc', 'mapBounds', 'markers'],
   components: {
     LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
     LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
@@ -76,33 +77,29 @@ var size = 577; // TODO calculate magic number based on column width
   data: function data() {
     return {
       map: null,
-      gameSlug: game.slug,
-      mapImage: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
-      mapOptions: {
-        zoomControl: false,
-        attributionControl: false,
-        zoomSnap: true,
-        popperOptions: {
-          position: 'top'
+      leaflet: {
+        minZoom: 0,
+        maxZoom: 3,
+        crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
+        noWrap: true,
+        bounds: null,
+        options: {
+          zoomControl: false,
+          attributionControl: false,
+          zoomSnap: true,
+          popperOptions: {
+            position: 'top'
+          }
         }
       },
-      mapWidth: size,
-      bounds: [[-size, 0], [0, size]],
-      minZoom: 0,
-      maxZoom: 3,
-      crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
-      noWrap: true,
-      zoomPosition: 'topleft',
-      attribution: '',
-      attributionPosition: 'bottomright',
-      attributionPrefix: this.mapName,
-      coordinateOutput: this.styleCoordinates(),
+      gameSlug: game.slug,
+      coordinateOutput: '',
+      mapWidth: null,
       mapSizeModifier: null
     };
   },
-  beforeCreate: function beforeCreate() {},
   created: function created() {
-    this.setModifier();
+    this.setupNewMap();
   },
   mounted: function mounted() {
     var _this = this;
@@ -128,11 +125,17 @@ var size = 577; // TODO calculate magic number based on column width
 
 
       _this.map.on('mouseout', function (event) {
-        _this.coordinateOutput = _this.styleCoordinates();
+        _this.coordinateOutput = ''; //this.styleCoordinates();
       });
     });
   },
   methods: {
+    setupNewMap: function setupNewMap() {
+      this.mapWidth = document.getElementById('mapContainer').clientWidth;
+      this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
+      var mapRange = this.mapBounds[1][0] - this.mapBounds[0][0];
+      this.mapSizeModifier = this.mapWidth / mapRange / 2;
+    },
     styleCoordinates: function styleCoordinates(x, y) {
       return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>';
     },
@@ -141,10 +144,6 @@ var size = 577; // TODO calculate magic number based on column width
         lat: y / 2 * -this.mapSizeModifier,
         lng: x / 2 * this.mapSizeModifier
       };
-    },
-    setModifier: function setModifier() {
-      // TODO different maps have different ratios
-      this.mapSizeModifier = this.mapWidth / 21.5;
     }
   }
 });
@@ -15380,27 +15379,23 @@ var render = function() {
         border: "1px solid #4b3b60"
       },
       attrs: {
-        options: _vm.mapOptions,
-        "min-zoom": _vm.minZoom,
-        "max-zoom": _vm.maxZoom,
-        crs: _vm.crs,
-        noWrap: _vm.noWrap,
-        "max-bounds": _vm.bounds
+        options: _vm.leaflet.options,
+        "min-zoom": _vm.leaflet.minZoom,
+        "max-zoom": _vm.leaflet.maxZoom,
+        crs: _vm.leaflet.crs,
+        noWrap: _vm.leaflet.noWrap,
+        "max-bounds": _vm.leaflet.bounds
       }
     },
     [
       _c("l-image-overlay", {
-        attrs: {
-          url: _vm.mapImage,
-          attribution: _vm.attribution,
-          bounds: _vm.bounds
-        }
+        attrs: { url: this.mapSrc, bounds: _vm.leaflet.bounds, attribution: "" }
       }),
       _vm._v(" "),
-      _c("l-control-zoom", { attrs: { position: _vm.zoomPosition } }),
+      _c("l-control-zoom", { attrs: { position: "topleft" } }),
       _vm._v(" "),
       _c("l-control-attribution", {
-        attrs: { position: "bottomleft", prefix: _vm.attributionPrefix }
+        attrs: { position: "bottomleft", prefix: this.mapName }
       }),
       _vm._v(" "),
       _c("l-control-attribution", {
@@ -15419,12 +15414,7 @@ var render = function() {
               attrs: {
                 "icon-size": [24, 24],
                 "icon-anchor": [24 / 2, 0],
-                "icon-url":
-                  "/assets/" +
-                  _vm.gameSlug +
-                  "/map/icons/" +
-                  marker.icon +
-                  ".png"
+                "icon-url": marker.icon
               }
             }),
             _vm._v(" "),
@@ -26806,24 +26796,26 @@ var compendium = new Vue({
   el: '#craft',
   data: {
     mapName: 'Central Shroud - Bentbranch',
+    mapSrc: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
+    // Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+    //  anything less than 1,1 is unreachable
+    //  44,44 itself is unreachable
+    mapBounds: [[1, 1], [44, 44]],
     markers: [{
       'id': 111,
       'tooltip': 'Level 65 Rocky Outcrop',
-      // 'spawn': {},
-      // 'star': 0,
       'x': 20.4,
       'y': 33.3,
-      'icon': 'spearfishing'
+      'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
     }, {
       'id': 77,
       'tooltip': 'Level 65 Rocky Outcrop',
-      // 'spawn': {},
-      // 'star': 0,
       'x': 33.4,
       'y': 15.3,
-      'icon': 'mining'
+      'icon': '/assets/' + game.slug + '/map/icons/mining.png'
     }]
-  }
+  },
+  methods: {}
 });
 
 /***/ }),

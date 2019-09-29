@@ -75,17 +75,35 @@
 								<div class='col info'>
 									<big class='rarity-2'>Elm Log</big>
 									<div class='sources'>
-										<i class='fas fa-caret-square-down text-primary'></i>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/spearfishing.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/fishing.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/fishing-unspoiled.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/mining.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/mining-unspoiled.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/quarrying.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/quarrying-unspoiled.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/logging.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/logging-unspoiled.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/harvesting.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/harvesting-unspoiled.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/vendor.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/battle.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/landmark.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/blue-outline.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/red-outline.png' alt=''>
+										<img src='/assets/{{ config('game.slug') }}/map/icons/aetheryte.png' alt=''>
+										{{-- <i class='fas fa-caret-square-down text-primary'></i> --}}
 										{{-- <i class='fas fa-expand-arrows-alt text-primary'></i> --}}
 										{{-- <i class='fas fa-expand text-primary'></i> --}}
-										<span class=''>
+
+										{{-- <span class=''>
 											<i class='fas fa-tree'></i>
 											<i class='fas fa-skull-crossbones'></i>
 										</span>
 										<span class='text-muted small'>
 											<i class='fas fa-mountain -desize'></i>
 											<i class='fas fa-piggy-bank -desize mr-1'></i>
-										</span>
+										</span> --}}
 									</div>
 								</div>
 								<div class='col-auto'>
@@ -231,22 +249,10 @@
 					</div>
 				</div>
 				<div class='col'>
-					<div class='map-that-scrolls-with-you' style='height: 577px;'>
-						{{-- ?? https://travishorn.com/interactive-maps-with-vue-leaflet-5430527353c8 --}}
-						{{-- https://jsfiddle.net/Boumi/k04zpLx9/ --}}
-						{{-- https://korigan.github.io/Vue2Leaflet/#/quickstart?id=usage --}}
-						{{-- <img src='/assets/{{ config('game.slug') }}/mappy/enemy_2x.png' width='10' height='10' class='img-responsive enemy-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/mappy/npc_2x.png' width='10' height='10' class='img-responsive npc-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/mappy/object_2x.png' width='10' height='10' class='img-responsive object-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/mappy/gathering_2x.png' width='20' height='20' class='img-responsive gathering-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/mappy/chest1.png' width='32' height='32' class='img-responsive treasure-node' alt=''>
-						<img src='/assets/{{ config('game.slug') }}/m/r2f1/r2f1.00.jpg' class='img-responsive' alt=''> --}}
-						<ninja-map :map-name='mapName' :markers='markers' />
-						<ul>
-							<li>COLOR CODE ICONS TO MATCH DOTS?</li>
-							<li>Attributions: Bottom left - map name, bottom right, X/Y coordinates</li>
-						</ul>
+					<div id='mapContainer' class='map-that-scrolls-with-you' style='height: 577px;'>
+						<ninja-map :map-name='mapName' :map-src='mapSrc' :map-bounds='mapBounds' :markers='markers' />
 					</div>
+
 				</div>
 			</div>
 
