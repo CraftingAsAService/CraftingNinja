@@ -1145,6 +1145,7 @@ Vue.prototype.$eventBus = new Vue(); // Global Event Bus
 
 Vue.component('ninja-cart', __webpack_require__(/*! ./components/NinjaCart.vue */ "./resources/js/components/NinjaCart.vue")["default"]);
 var header = new Vue({
+  name: 'Header',
   el: '#header'
 });
 

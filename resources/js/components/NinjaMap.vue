@@ -7,6 +7,7 @@
 		:max-zoom='leaflet.maxZoom'
 		:crs='leaflet.crs'
 		:noWrap='leaflet.noWrap'
+		:bounds='leaflet.bounds'
 		:max-bounds='leaflet.bounds'
 	>
 		<l-image-overlay
@@ -86,24 +87,18 @@
 				this.map = this.$refs.map.mapObject;
 
 				this.map.on('mousemove', (event) => {
-					var modifier = this.mapSizeModifier,
-						xy = this.map.project(event.latlng, 1),
-						xo = xy['x'],
-						yo = xy['y'],
-						xn = Number(((xo / modifier) + 1).toFixed(1)),
-						yn = Number(((yo / modifier) + 1).toFixed(1));
+					var xy = this.map.project(event.latlng, 1),
+						xCoord = ((xy['x'] / this.mapSizeModifier) + 1).toFixed(1),
+						yCoord = ((xy['y'] / this.mapSizeModifier) + 1).toFixed(1);
 
-					if (parseInt(xn) === xn)
-						xn = xn + ".0";
-					if (parseInt(yn) === yn)
-						yn = yn + ".0";
-
-					this.coordinateOutput = this.styleCoordinates(xn, yn);
+					this.coordinateOutput = this.styleCoordinates(xCoord, yCoord);
 				});
+
 				// TODO TURN THIS ON, DISABLED FOR DEBUGGING
 				// this.map.on('contextmenu', (event) => {
 				// 	return false;
 				// });
+
 				this.map.on('mouseout', (event) => {
 					this.coordinateOutput = '';//this.styleCoordinates();
 				});
@@ -113,8 +108,8 @@
 			setupNewMap:function() {
 				this.mapWidth = document.getElementById('mapContainer').clientWidth;
 				this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
-				let mapRange = this.mapBounds[1][0] - this.mapBounds[0][0];
-				this.mapSizeModifier = this.mapWidth / mapRange / 2;
+				let coordinateRange = this.mapBounds[1][0] - this.mapBounds[0][0];
+				this.mapSizeModifier = this.mapWidth / coordinateRange * 2;
 			},
 			styleCoordinates:function(x, y) {
 				return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>'

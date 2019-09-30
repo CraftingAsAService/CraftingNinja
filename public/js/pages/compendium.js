@@ -503,6 +503,7 @@ var resultsTemplate = {
 Vue.component('ninja-dropdown', __webpack_require__(/*! ../components/NinjaDropdown.vue */ "./resources/js/components/NinjaDropdown.vue")["default"]);
 Vue.component('ninja-bag-button', __webpack_require__(/*! ../components/NinjaBagButton.vue */ "./resources/js/components/NinjaBagButton.vue")["default"]);
 var compendium = new Vue({
+  name: 'Compendium',
   el: '#compendium',
   data: {
     firstLoad: true,

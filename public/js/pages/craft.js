@@ -58,6 +58,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -108,16 +109,11 @@ var size = 577; // TODO calculate magic number based on column width
       _this.map = _this.$refs.map.mapObject;
 
       _this.map.on('mousemove', function (event) {
-        var modifier = _this.mapSizeModifier,
-            xy = _this.map.project(event.latlng, 1),
-            xo = xy['x'],
-            yo = xy['y'],
-            xn = Number((xo / modifier + 1).toFixed(1)),
-            yn = Number((yo / modifier + 1).toFixed(1));
+        var xy = _this.map.project(event.latlng, 1),
+            xCoord = (xy['x'] / _this.mapSizeModifier + 1).toFixed(1),
+            yCoord = (xy['y'] / _this.mapSizeModifier + 1).toFixed(1);
 
-        if (parseInt(xn) === xn) xn = xn + ".0";
-        if (parseInt(yn) === yn) yn = yn + ".0";
-        _this.coordinateOutput = _this.styleCoordinates(xn, yn);
+        _this.coordinateOutput = _this.styleCoordinates(xCoord, yCoord);
       }); // TODO TURN THIS ON, DISABLED FOR DEBUGGING
       // this.map.on('contextmenu', (event) => {
       // 	return false;
@@ -133,8 +129,8 @@ var size = 577; // TODO calculate magic number based on column width
     setupNewMap: function setupNewMap() {
       this.mapWidth = document.getElementById('mapContainer').clientWidth;
       this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
-      var mapRange = this.mapBounds[1][0] - this.mapBounds[0][0];
-      this.mapSizeModifier = this.mapWidth / mapRange / 2;
+      var coordinateRange = this.mapBounds[1][0] - this.mapBounds[0][0];
+      this.mapSizeModifier = this.mapWidth / coordinateRange * 2;
     },
     styleCoordinates: function styleCoordinates(x, y) {
       return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>';
@@ -15384,6 +15380,7 @@ var render = function() {
         "max-zoom": _vm.leaflet.maxZoom,
         crs: _vm.leaflet.crs,
         noWrap: _vm.leaflet.noWrap,
+        bounds: _vm.leaflet.bounds,
         "max-bounds": _vm.leaflet.bounds
       }
     },
@@ -26792,28 +26789,42 @@ __webpack_require__.r(__webpack_exports__);
 
 
 Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
-var compendium = new Vue({
+var craft = new Vue({
+  name: 'Crafting',
   el: '#craft',
   data: {
-    mapName: 'Central Shroud - Bentbranch',
-    mapSrc: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
-    // Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
-    //  anything less than 1,1 is unreachable
-    //  44,44 itself is unreachable
-    mapBounds: [[1, 1], [44, 44]],
-    markers: [{
-      'id': 111,
-      'tooltip': 'Level 65 Rocky Outcrop',
-      'x': 20.4,
-      'y': 33.3,
-      'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
-    }, {
-      'id': 77,
-      'tooltip': 'Level 65 Rocky Outcrop',
-      'x': 33.4,
-      'y': 15.3,
-      'icon': '/assets/' + game.slug + '/map/icons/mining.png'
-    }]
+    maps: []
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$nextTick(function () {
+      // Fake a dynamic add
+      var markers = [{
+        'id': 111,
+        'tooltip': 'Level 65 Rocky Outcrop',
+        'x': 20.4,
+        'y': 33.3,
+        'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
+      }, {
+        'id': 77,
+        'tooltip': 'Level 65 Rocky Outcrop',
+        'x': 33.4,
+        'y': 15.3,
+        'icon': '/assets/' + game.slug + '/map/icons/mining.png'
+      }];
+
+      _this.maps.push({
+        id: 222,
+        name: 'Central Shroud - Bentbranch',
+        src: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
+        // Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+        //  anything less than 1,1 is unreachable
+        //  44,44 itself is unreachable
+        bounds: [[1, 1], [44, 44]],
+        markers: markers
+      });
+    });
   },
   methods: {}
 });

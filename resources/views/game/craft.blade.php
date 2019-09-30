@@ -63,6 +63,7 @@
 							</div>
 							&hellip;
 							<div>
+								<hr>
 								<h5 class='mt-3'>
 								<i class='fas fa-map-pin -desize float-right'></i>
 									<i class='fas fa-map-marked -desize mr-2'></i>Central Shroud - Bentbranch
@@ -249,8 +250,8 @@
 					</div>
 				</div>
 				<div class='col'>
-					<div id='mapContainer' class='map-that-scrolls-with-you' style='height: 577px;'>
-						<ninja-map :map-name='mapName' :map-src='mapSrc' :map-bounds='mapBounds' :markers='markers' />
+					<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
+						<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
 					</div>
 
 				</div>

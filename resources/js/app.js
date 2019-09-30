@@ -12,5 +12,6 @@ Vue.prototype.$eventBus = new Vue(); // Global Event Bus
 Vue.component('ninja-cart', require('./components/NinjaCart.vue').default);
 
 const header = new Vue({
+	name: 'Header',
 	el: '#header'
 })

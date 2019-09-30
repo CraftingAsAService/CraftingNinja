@@ -14,6 +14,7 @@ Vue.component('ninja-dropdown', require('../components/NinjaDropdown.vue').defau
 Vue.component('ninja-bag-button', require('../components/NinjaBagButton.vue').default);
 
 const compendium = new Vue({
+	name: 'Compendium',
 	el: '#compendium',
 	data: {
 		firstLoad: true,
