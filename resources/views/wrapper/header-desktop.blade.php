@@ -71,8 +71,8 @@
 									@php
 										$navigation = [
 											'Compendium' => '/compendium',
-											'Equipment'  => '/equipment',
-											'Quests'     => '/quests',
+											// 'Equipment'  => '/equipment',
+											// 'Quests'     => '/quests',
 										];
 									@endphp
 									@foreach ($navigation as $section => $url)

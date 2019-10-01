@@ -56,6 +56,9 @@
 				<div class='col'>
 					<div class='card'>
 						<div class='card__content'>
+							<p>
+								&hellip;7 of your crafting recipes can be purchased. _View_&hellip;
+							</p>
 							<div>
 								<h5>
 									<i class='far fa-map -desize mr-2'></i>Unknown Locations

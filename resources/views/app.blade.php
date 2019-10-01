@@ -17,8 +17,9 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<meta name='description' content='Crafting Information and Planning for your Favorite Game'>
-	<meta name='author' content='Nick Wright'>
+	<meta name='author' content='Tickthokk'>
 	<meta name='keywords' content='crafting video game planning efficient'>
+	<link rel='author' href='humans.txt'>
 
 	{{--
 		Favicons
