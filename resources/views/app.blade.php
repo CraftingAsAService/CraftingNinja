@@ -15,7 +15,7 @@
 	</title>
 	<meta charset='utf-8'>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<meta name="csrf-token" content='{{ csrf_token() }}'>
 	<meta name='description' content='Crafting Information and Planning for your Favorite Game'>
 	<meta name='author' content='Tickthokk'>
 	<meta name='keywords' content='crafting video game planning efficient'>
@@ -25,9 +25,13 @@
 		Favicons
 	--}}
 
-	<link href='/images/favicon@2x.png' rel='icon' type='image/png'>
-	{{-- <link rel='apple-touch-icon' sizes='120x120' href='/alchemists/images/esports/favicons/favicon-120.png'> --}}
-	{{-- <link rel='apple-touch-icon' sizes='152x152' href='/alchemists/images/esports/favicons/favicon-152.png'> --}}
+	<link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png'>
+	<link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png'>
+	<link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png'>
+	<link rel='manifest' href='/site.webmanifest'>
+	<link rel='mask-icon' href='/safari-pinned-tab.svg' color='#6441a4'>
+	<meta name='msapplication-TileColor' content='#603cba'>
+	<meta name='theme-color' content='#f7f7f7'>
 
 	{{--
 		Mobile Specific Metas
