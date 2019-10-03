@@ -52,8 +52,8 @@ class CraftController extends Controller
 	{
 		$items = Item::withTranslation()
 			->with(
-				'recipes',
-					'recipes.ingredients'/*,
+				'ingredientsOf',
+					'ingredientsOf.ingredients'/*,
 				'npcs',
 					'npcs.zones',
 				'nodes',
@@ -79,9 +79,9 @@ class CraftController extends Controller
 				$this->lineup['items'][$item->id] = $item;
 
 			$itemsToDiscover = [];
-			foreach ($item->recipes as $recipe)
+			foreach ($item->ingredientsOf as $recipe)
 			{
-				dd($recipe);
+				dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
 			}
 
 		}

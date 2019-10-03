@@ -16,6 +16,35 @@ class Recipe extends Aspect
 	public $translatedAttributes = [ 'name', 'description' ];
 
 	/**
+	 * Relationships
+	 */
+
+	public function product()
+	{
+		return $this->belongsTo(Item::class, 'item_id')->withTranslation();
+	}
+
+	public function ingredients()
+	{
+		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity');
+	}
+
+	public function job()
+	{
+		return $this->belongsTo(Job::class)->withTranslation();
+	}
+
+	public function detail()
+	{
+		return $this->morphOne(Detail::class, 'detailable');
+	}
+
+	public function scrolls()
+	{
+		return $this->morphToMany(Scroll::class, 'jotting')->withTranslation()->withPivot('quantity');
+	}
+
+	/**
 	 * Scopes
 	 */
 
@@ -65,35 +94,6 @@ class Recipe extends Aspect
 	public function scopeFilterByJobs($query, array $jobIds)
 	{
 		return $query->whereIn('job_id', $jobIds);
-	}
-
-	/**
-	 * Relationships
-	 */
-
-	public function product()
-	{
-		return $this->belongsTo(Item::class, 'item_id')->withTranslation();
-	}
-
-	public function ingredients()
-	{
-		return $this->belongsToMany(Item::class)->withTranslation()->withPivot('quantity');
-	}
-
-	public function job()
-	{
-		return $this->belongsTo(Job::class)->withTranslation();
-	}
-
-	public function detail()
-	{
-		return $this->morphOne(Detail::class, 'detailable');
-	}
-
-	public function scrolls()
-	{
-		return $this->morphToMany(Scroll::class, 'jotting')->withTranslation()->withPivot('quantity');
 	}
 
 }
