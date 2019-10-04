@@ -26,21 +26,24 @@ abstract class Aspir
 
 		$this->manualDataLocation = base_path('../data/' . $this->gameSlug);
 
-		$this->data = collect([]);
-		// $this->data = collect(config('aspir.dataTemplate'))->map(function($array) {
-		// 	return collect($array);
-		// });
-
-		$this->methodList = collect(get_class_methods($this))->diff(['__construct', 'run'])->filter(function($methodName) {
-			return (new \ReflectionMethod($this, $methodName))->isPublic();
+		$this->data = collect(config('aspir.dataTemplate'))->map(function($array) {
+			return collect($array);
 		});
 	}
 
 	public function run()
 	{
+		// Run every single `public` method available
+		//  Does not run __construct() or run()
+		$methodList = collect(get_class_methods($this))
+			->diff(['__construct', 'run'])
+			->filter(function($methodName) {
+				return (new \ReflectionMethod($this, $methodName))->isPublic();
+			});
+
 		$rowCounts = $this->getRowCounts(false);
 
-		foreach ($this->methodList as $function)
+		foreach ($methodList as $function)
 		{
 			$beginningRowCounts = $rowCounts;
 
@@ -102,6 +105,48 @@ abstract class Aspir
 
 		\Storage::put('app/game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
 		// file_put_contents(storage_path(''), json_encode($list, JSON_PRETTY_PRINT));
+	}
+
+	/**
+	 * File Retrieval Functions
+	 */
+
+	private function getCleanedJson($path, $debug = false)
+	{
+		$content = file_get_contents($path);
+
+		// http://stackoverflow.com/questions/17219916/json-decode-returns-json-error-syntax-but-online-formatter-says-the-json-is-ok
+		for ($i = 0; $i <= 31; ++$i)
+			$content = str_replace(chr($i), "", $content);
+
+		$content = str_replace(chr(127), "", $content);
+
+		// This is the most common part
+		$content = $this->binaryFix($content);
+
+		return json_decode($content);
+	}
+
+	private function binaryFix($string)
+	{
+		// Some file begins with 'efbbbf' to mark the beginning of the file. (binary level)
+		// here we detect it and we remove it, basically it's the first 3 characters
+		if (0 === strpos(bin2hex($string), 'efbbbf'))
+		   $string = substr($string, 3);
+
+		return $string;
+	}
+
+	private function readTSV($filename)
+	{
+		$tsv = array_map(function($l) { return str_getcsv($l, '	'); }, file($filename));
+
+		array_walk($tsv, function(&$a) use ($tsv) {
+			$a = array_combine($tsv[0], $a);
+		});
+		array_shift($tsv);
+
+		return collect($tsv);
 	}
 
 }

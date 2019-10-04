@@ -18,7 +18,8 @@
 		"nesbot/carbon": "2.*",
 		"predis/predis": "^1.1",
 		"socialiteproviders/patreon": "^2.0",
-		"watson/rememberable": "^3.0"
+		"watson/rememberable": "^3.0",
+		"xivapi/xivapi-php": "^1.6"
 	},
 	"require-dev": {
 		"filp/whoops": "^2.0",

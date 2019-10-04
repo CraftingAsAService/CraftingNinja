@@ -54,4 +54,9 @@ return [
 		'client_secret' => env('REDDIT_APP_SECRET'),
 	],
 
+	'xivapi' => [
+		'domain' => 'https://xivapi.com/',
+		'key' => env('XIVAPI_KEY'),
+	],
+
 ];

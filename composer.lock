@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89f49c71fb4d200ececefd3f95802002",
+    "content-hash": "f467da11b463105ad4642d6c3f929881",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -3568,6 +3568,55 @@
                 "remember"
             ],
             "time": "2019-02-27T03:32:43+00:00"
+        },
+        {
+            "name": "xivapi/xivapi-php",
+            "version": "1.6.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xivapi/xivapi-php.git",
+                "reference": "06ea5516e7098f9f0315f9a6ca4ff65f582ef88a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xivapi/xivapi-php/zipball/06ea5516e7098f9f0315f9a6ca4ff65f582ef88a",
+                "reference": "06ea5516e7098f9f0315f9a6ca4ff65f582ef88a",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "XIVAPI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Freeman",
+                    "email": "josh@viion.co.uk",
+                    "homepage": "http://xivapi.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP SDK for xivapi.com",
+            "homepage": "https://github.com/xivapi/xivapi-php",
+            "keywords": [
+                "api",
+                "ffxiv",
+                "php",
+                "sdk"
+            ],
+            "time": "2019-05-18T17:19:13+00:00"
         }
     ],
     "packages-dev": [
