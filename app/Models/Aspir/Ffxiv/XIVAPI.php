@@ -12,6 +12,8 @@ use Cache;
 trait XIVAPI
 {
 
+	public $xivapiLanguages = ['en', 'de', 'fr', 'ja'];
+
 	public $limit = null;
 	public $chunkLimit = null;
 
@@ -21,26 +23,89 @@ trait XIVAPI
 		$this->api->environment->key(config('services.xivapi.key'));
 	}
 
-	public function achievements()
+	public function objectives()
 	{
-		$this->loopEndpoint('achievement', [
+		// Achievement IDs range from 1 to less than 2400+; ALLOTMENT 1 to 20k
+		$this->achievements(0);
+		// Fate IDs range from 1 to 1500+; ALLOTMENT 20,001 to 40k
+		$this->fates(20000);
+		// Leve IDs range from 1 to 1500+; ALLOTMENT 40,001 to 60k
+		$this->leves(40000);
+		// Quest IDs range from 65500+ to ~70k
+		$this->quests(0);
+	}
+
+	protected function achievements($idAdditive)
+	{
+		$achievementTypeId = array_search('achievement', config('games.ffxiv.objectiveTypes'));
+
+		if ($achievementTypeId === false)
+			$this->error('Could not find Objective Type ID for "achievement"');
+
+		$apiFields = [
 			'ID',
-			'Name',
 			'ItemTargetID',
 			'IconID',
-		], function($data) {
-			dd($data);
+		];
+
+		foreach ($this->xivapiLanguages as $lang)
+		{
+			array_push($apiFields, 'Name_' . $lang);
+			array_push($apiFields, 'Description_' . $lang);
+		}
+
+		$this->loopEndpoint('achievement', $apiFields, function($data) use ($idAdditive, $achievementTypeId) {
 			// We only care about achievements that provide an item
 			if ( ! $data->ItemTargetID)
 				return;
 
-			$this->aspir->setData('achievement', [
-				'id'      => $data->ID,
-				'name'    => $data->Name,
-				'item_id' => $data->ItemTargetID,
-				'icon'    => $data->IconID,
+			$objectiveId = $data->ID + $idAdditive;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => null,
+				'issuer_id'  => null,
+				'target_id'  => null,
+				'type'       => $achievementTypeId,
+				'repeatable' => null,
+				'level'      => null,
+				'icon'       => $data->IconID,
 			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => $data->{'Description_' . $lang} ?? null,
+				]);
+
+			$this->setData('item_objective', [
+				'item_id'      => $data->ItemTargetID,
+				'objective_id' => $objectiveId,
+				'reward'       => 1,
+				'quantity'     => null,
+				'quality'      => null,
+				'rate'         => null,
+			]);
+
+			dd($this->data);
 		});
+	}
+
+	protected function fates($idAdditive)
+	{
+
+	}
+
+	protected function leves($idAdditive)
+	{
+
+	}
+
+	protected function quests($idAdditive)
+	{
+
 	}
 
 	/**

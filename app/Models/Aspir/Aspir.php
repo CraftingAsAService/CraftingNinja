@@ -26,9 +26,7 @@ abstract class Aspir
 
 		$this->manualDataLocation = base_path('../data/' . $this->gameSlug);
 
-		$this->data = collect(config('aspir.dataTemplate'))->map(function($array) {
-			return collect($array);
-		});
+		$this->data = config('aspir.dataTemplate');
 	}
 
 	public function run()
@@ -49,7 +47,7 @@ abstract class Aspir
 
 			$this->$function();
 
-			$rowCounts = $this->getRowCounts(false);
+			$rowCounts = $this->getRowCounts();
 
 			foreach ($rowCounts->diff($beginningRowCounts) as $dataPoint => $count)
 				$this->command->info($dataPoint . ' now has ' . $count . ' rows');
@@ -64,8 +62,8 @@ abstract class Aspir
 
 	protected function getRowCounts($reduce = true)
 	{
-		return $this->data->map(function($collection) {
-				return $collection->count();
+		return collect($this->data)->map(function($array) {
+				return count($array);
 			})->filter(function($amount) use ($reduce) {
 				return $reduce ? $amount > 0 : true;
 			});
@@ -104,7 +102,6 @@ abstract class Aspir
 			$this->command->info('Saving ' . count($list) . ' records to ' . $filename . '.json');
 
 		\Storage::put('app/game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
-		// file_put_contents(storage_path(''), json_encode($list, JSON_PRETTY_PRINT));
 	}
 
 	/**
@@ -147,6 +144,15 @@ abstract class Aspir
 		array_shift($tsv);
 
 		return collect($tsv);
+	}
+
+	/**
+	 * Helper Functions
+	 */
+
+	protected function error($message)
+	{
+		throw new \Exception($message);
 	}
 
 }

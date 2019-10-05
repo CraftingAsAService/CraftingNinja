@@ -30,6 +30,7 @@ class Objectives extends Migration
 			$table->boolean('repeatable')->nullable();
 			// Level requirement?
 			$table->unsignedTinyInteger('level')->nullable();
+			$table->string('icon')->nullable();
 
 			// Objectives can have Coordinates
 			// Objectives can have Details - plate, frame, areaicon, icon, etc etc

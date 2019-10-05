@@ -24,7 +24,7 @@ trait GarlandTools
 		return (int) ($mobId % 10000000000);
 	}
 
-	private function loopEndpoint($endpoint, $callback)
+	private function loopGarlandEndpoint($endpoint, $callback)
 	{
 		foreach ($this->getFileList($endpoint) as $file)
 			$callback($this->getJSONData($file, $endpoint));
