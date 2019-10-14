@@ -8,6 +8,7 @@
 - [ ] Compendium - Equipment
 - [ ] Compendium - Objectives
 - [ ] Compendium - NPCs
+- When Importing `_translations`, be sure to unique and truncate, or just prevent duplicates
 
 ### Other Notes
 

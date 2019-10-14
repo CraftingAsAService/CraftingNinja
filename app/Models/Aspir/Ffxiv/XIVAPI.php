@@ -48,11 +48,8 @@ trait XIVAPI
 			'IconID',
 		];
 
-		foreach ($this->xivapiLanguages as $lang)
-		{
-			array_push($apiFields, 'Name_' . $lang);
-			array_push($apiFields, 'Description_' . $lang);
-		}
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
 
 		$this->loopEndpoint('achievement', $apiFields, function($data) use ($idAdditive, $achievementTypeId) {
 			// We only care about achievements that provide an item
@@ -70,7 +67,7 @@ trait XIVAPI
 				'repeatable' => null,
 				'level'      => null,
 				'icon'       => $data->IconID,
-			], $data->ID);
+			], $objectiveId);
 
 			foreach ($this->xivapiLanguages as $lang)
 				$this->setData('objective_translations', [
@@ -89,18 +86,162 @@ trait XIVAPI
 				'rate'         => null,
 			]);
 
-			dd($this->data);
+			/**
+			 * Achievements don't have coordinates
+			 */
 		});
 	}
 
 	protected function fates($idAdditive)
 	{
-
+		/**
+		 * Ignoring
+		 * Fates don't offer any items of value
+		 */
 	}
 
 	protected function leves($idAdditive)
 	{
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 1000;
+		$this->chunkLimit = 10;
 
+		$apiFields = [
+			'ID',
+			'ClassJobCategory.ID',
+			'LeveClient.ID',
+			'LeveVfx.IconID',
+			'LeveVfxFrame.IconID',
+			'GilReward',
+			'ExpReward',
+			'ClassJobLevel',
+			'PlaceNameIssuedTargetID',
+			'PlaceNameStartZoneTargetID',
+			'IconIssuerID',
+			'CraftLeve.Item0TargetID',
+			'CraftLeve.ItemCount0',
+			'CraftLeve.Repeats',
+			// Inefficient catchall, but there are a large number of datapoints in there I need to sift through
+			'LeveRewardItem',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'LeveClient.Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
+
+		$this->loopEndpoint('leve', $apiFields, function($data) use ($idAdditive) { {
+			// No rewards? Don't bother.
+			if ($data->LeveRewardItem == null)
+				return;
+
+			$objectiveId = $data->ID + $idAdditive;
+			$targetId = $data->LeveClient->ID + $idAdditive;
+			$issuerId = $targetId;
+
+			// The issuer may be a Levemete, who is an NPC, but is treated more like a "place" than a "person"
+			//  Not sure how to handle this yet, for now, marking the issuer null seems like the best way
+			//  to indicate that something is up, and to use coordinates instead
+			if ($data->PlaceNameIssuedTargetID != $data->PlaceNameStartZoneTargetID)
+				$issuerId = null;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory->ID,
+				'issuer_id'  => $issuerId,
+				'target_id'  => $targetId,
+				'type'       => null, // Filled in later
+				'repeatable' => $data->CraftLeve->Repeats, // Only CraftLeves can repeat
+				'level'      => $data->ClassJobLevel,
+				'icon'       => 'leve',
+			], $objectiveId);
+
+			$this->setData('details', [
+				'detailable_id'   => $objectiveId,
+				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'xp'    => $data->ExpReward,
+					'gil'   => $data->GilReward,
+					'plate' => $data->LeveVfx->IconID,
+					'frame' => $data->LeveVfxFrame->IconID,
+				]
+			]);
+
+			$this->setData('coordinates', [
+				'zone_id'         => $data->PlaceNameIssuedTargetID,
+				'coordinate_id'   => $objectiveId,
+				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'x'               => null,
+				'y'               => null,
+				'z'               => null,
+				'radius'          => null,
+			]);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => $data->{'Description_' . $lang} ?? null,
+				]);
+
+			// Target NPC Creation
+			$this->setData('npcs', [
+				'id'    => $targetId,
+				'enemy' => 0,
+				'level' => null,
+			], $targetId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('npc_translations', [
+					'npc_id' => $targetId,
+					'locale' => $lang,
+					'name'   => $data->LeveClient->{'Name_' . $lang} ?? null,
+				]);
+
+			// Requirements
+			//  Up to slot 3 targets exist, however I couldn't find a use-case where a leve required more than one
+			if ($data->CraftLeve->Item0TargetID)
+				$this->setData('item_objective', [
+					'item_id'      => $data->CraftLeve->Item0TargetID,
+					'objective_id' => $objectiveId,
+					'reward'       => 0,
+					'quantity'     => $data->CraftLeve->ItemCount0,
+					'quality'      => null,
+					'rate'         => null,
+				]);
+
+			// Rewards
+			//  Come in 8 total "Groups"
+			//  Ignoring Crystals, there's too many to bother with, and it's not a particularly useful piece of information
+			foreach (range(0, 7) as $slot)
+			{
+				$probability = $data->LeveRewardItem->{'Probability%' . $slot};
+
+				if ( ! $probability)
+					continue;
+
+				$rewardGroup =& $data->LeveRewardItem->{'LeveRewardItemGroup' . $slot};
+
+				// Items could be of a higher quality
+				foreach (['Count' => 0, 'HQ' => 1] as $keyVerb => $quality)
+					// Up to 9 total items can be in a group
+					foreach (range(0, 8) as $itemSlot)
+						// Count0/HQ0 should be higher than 0, Item0Target should be set to "Item", and the item shouldn't be a crystal
+						//  Crystals are Category 59
+						if ($rewardGroup->{$keyVerb . $itemSlot} && $rewardGroup->{'Item' . $itemSlot . 'Target'} == 'Item' && $rewardGroup->{'Item' . $itemSlot . 'TargetID'} && $rewardGroup->{'Item' . $itemSlot}->ItemUICategory != 59)
+							$this->setData('item_objective', [
+								'item_id'      => $rewardGroup->{'Item' . $itemSlot . 'TargetID'},
+								'objective_id' => $objectiveId,
+								'reward'       => 1,
+								'quantity'     => $rewardGroup->{$keyVerb . $itemSlot},
+								'quality'      => $quality,
+								'rate'         => $probability,
+							]);
+			}
+		});
+
+		$this->chunkLimit = null;
+		$this->limit = null;
 	}
 
 	protected function quests($idAdditive)
@@ -111,6 +252,11 @@ trait XIVAPI
 	/**
 	 * Helper Functions
 	 */
+
+	private function addLanguageFields(&$array, $sprintfableString) {
+		foreach ($this->xivapiLanguages as $lang)
+			array_push($array, sprintf($sprintfableString, $lang));
+	}
 
 	/**
 	 * loopEndpoint - Loop around an XIVAPI Endpoint
