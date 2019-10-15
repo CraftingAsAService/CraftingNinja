@@ -50,7 +50,7 @@ abstract class Aspir
 			$rowCounts = $this->getRowCounts();
 
 			foreach ($rowCounts->diff($beginningRowCounts) as $dataPoint => $count)
-				$this->command->info($dataPoint . ' now has ' . $count . ' rows');
+				$this->command->info($dataPoint . ' now have ' . $count . ' rows');
 		}
 
 		$this->saveData();

@@ -9,6 +9,7 @@
 - [ ] Compendium - Objectives
 - [ ] Compendium - NPCs
 - When Importing `_translations`, be sure to unique and truncate, or just prevent duplicates
+	+ Actually, any relations table will probably be this way...
 
 ### Other Notes
 

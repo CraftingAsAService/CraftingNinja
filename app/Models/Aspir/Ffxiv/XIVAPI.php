@@ -102,6 +102,11 @@ trait XIVAPI
 
 	protected function leves($idAdditive)
 	{
+		$leveTypeId = array_search('leve', config('games.ffxiv.objectiveTypes'));
+
+		if ($leveTypeId === false)
+			$this->error('Could not find Objective Type ID for "leve"');
+
 		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
 		$this->limit = 1000;
 		$this->chunkLimit = 10;
@@ -129,7 +134,7 @@ trait XIVAPI
 		$this->addLanguageFields($apiFields, 'LeveClient.Name_%s');
 		$this->addLanguageFields($apiFields, 'Description_%s');
 
-		$this->loopEndpoint('leve', $apiFields, function($data) use ($idAdditive) { {
+		$this->loopEndpoint('leve', $apiFields, function($data) use ($idAdditive, $leveTypeId) {
 			// No rewards? Don't bother.
 			if ($data->LeveRewardItem == null)
 				return;
@@ -149,7 +154,7 @@ trait XIVAPI
 				'niche_id'   => $data->ClassJobCategory->ID,
 				'issuer_id'  => $issuerId,
 				'target_id'  => $targetId,
-				'type'       => null, // Filled in later
+				'type'       => $leveTypeId,
 				'repeatable' => $data->CraftLeve->Repeats, // Only CraftLeves can repeat
 				'level'      => $data->ClassJobLevel,
 				'icon'       => 'leve',
@@ -246,7 +251,108 @@ trait XIVAPI
 
 	protected function quests($idAdditive)
 	{
+		$questTypeId = array_search('quest', config('games.ffxiv.objectiveTypes'));
 
+		if ($questTypeId === false)
+			$this->error('Could not find Objective Type ID for "quest"');
+
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 400;
+
+		$apiFields = [
+			'ID',
+			'Name',
+			'ClassJobCategory0TargetID',
+			'ClassJobLevel0',
+			'SortKey',
+			'PlaceNameTargetID',
+			'IconID',
+			'IssuerStart',
+			'TargetEnd',
+			'JournalGenreTargetID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		// Required; There's like 40 of these, but I'm only going to go for 10
+		$this->addNumberedFields($apiFields, 'ScriptInstruction%d', range(0, 9));
+		$this->addNumberedFields($apiFields, 'ScriptArg%d', range(0, 9));
+		// Rewards; 00-05 are guaranteed. 10-14 are choices. Catalysts are likely guaranteed as well.
+		// 	Make sure the Target's are "Item"
+		$this->addNumberedFields($apiFields, 'ItemReward0%d', range(0, 5));
+		$this->addNumberedFields($apiFields, 'ItemCountReward0%d', range(0, 5));
+		$this->addNumberedFields($apiFields, 'ItemReward1%d', range(0, 4));
+		$this->addNumberedFields($apiFields, 'ItemCountReward1%d', range(0, 4));
+		// Ignoring Crystals (aka Catalysts), there's too many to bother with, and it's not a particularly useful piece of information
+		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTarget', range(0, 2));
+		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTargetID', range(0, 2));
+		// $this->addNumberedFields($apiFields, 'ItemCountCatalyst%d', range(0, 2));
+
+		$this->loopEndpoint('quest', $apiFields, function($data) use ($idAdditive, $questTypeId) {
+			// Skip empty names
+			if ($data->Name == '')
+				return;
+
+			$objectiveId = $data->ID + $idAdditive;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory0TargetID,
+				'issuer_id'  => $data->IssuerStart,
+				'target_id'  => $data->TargetEnd,
+				'type'       => $questTypeId,
+				'repeatable' => 0,
+				'level'      => $data->ClassJobLevel0,
+				'icon'       => $data->IconID,
+			], $objectiveId);
+
+			$this->setData('coordinates', [
+				'zone_id'         => $data->PlaceNameTargetID,
+				'coordinate_id'   => $objectiveId,
+				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'x'               => null,
+				'y'               => null,
+				'z'               => null,
+				'radius'          => null,
+			]);
+
+			// Required Items
+			foreach (range(0, 9) as $slot)
+				if (substr($data->{'ScriptInstruction' . $slot}, 0, 5) == 'RITEM')
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ScriptArg' . $slot},
+						'objective_id' => $objectiveId,
+						'reward'       => 0,
+						'quantity'     => 1,
+						'quality'      => null,
+						'rate'         => null,
+					]);
+
+			// Reward Items, Guaranteed, 00-05
+			foreach (range(0, 5) as $slot)
+				if ($data->{'ItemReward0' . $slot})
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ItemReward0' . $slot},
+						'objective_id' => $objectiveId,
+						'reward'       => 1,
+						'quantity'     => $data->{'ItemCountReward0' . $slot},
+						'quality'      => null,
+						'rate'         => null,
+					]);
+
+			// Reward Items, Optional, 10-14
+			foreach (range(0, 4) as $slot)
+				if ($data->{'ItemReward1' . $slot . 'TargetID'} ?? false && $data->{'ItemReward1' . $slot . 'Target'} == 'Item')
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ItemReward1' . $slot . 'TargetID'},
+						'objective_id' => $objectiveId,
+						'reward'       => 1,
+						'quantity'     => $data->{'ItemCountReward1' . $slot},
+						'quality'      => null,
+						'rate'         => null,
+					]);
+		});
+
+		$this->limit = null;
 	}
 
 	/**
@@ -256,6 +362,11 @@ trait XIVAPI
 	private function addLanguageFields(&$array, $sprintfableString) {
 		foreach ($this->xivapiLanguages as $lang)
 			array_push($array, sprintf($sprintfableString, $lang));
+	}
+
+	private function addNumberedFields(&$array, $sprintfableString, $numericalRange) {
+		foreach ($numericalRange as $number)
+			array_push($array, sprintf($sprintfableString, $number));
 	}
 
 	/**
