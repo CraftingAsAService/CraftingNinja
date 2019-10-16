@@ -45,6 +45,7 @@ abstract class Aspir
 		{
 			$beginningRowCounts = $rowCounts;
 
+			$this->command->line('Executing ' . $function . '()');
 			$this->$function();
 
 			$rowCounts = $this->getRowCounts();

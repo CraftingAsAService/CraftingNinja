@@ -305,6 +305,14 @@ trait XIVAPI
 				'icon'       => $data->IconID,
 			], $objectiveId);
 
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => null,
+				]);
+
 			$this->setData('coordinates', [
 				'zone_id'         => $data->PlaceNameTargetID,
 				'coordinate_id'   => $objectiveId,
@@ -353,6 +361,113 @@ trait XIVAPI
 		});
 
 		$this->limit = null;
+	}
+
+	public function zones()
+	{
+		$apiFields = [
+			'ID',
+			'Maps.0.PlaceNameRegionTargetID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('placename', $apiFields, function($data) {
+			// Skip empty english names
+			if ($data->Name_en == '')
+				return;
+
+			$this->setData('zones', [
+				'id'      => $data->ID,
+				'zone_id' => $data->Maps[0]->PlaceNameRegionTargetID ?? null, // Parent Zone
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('zone_translations', [
+					'zone_id' => $data->ID,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
+				]);
+		});
+	}
+
+	public function nodes()
+	{
+		$apiFields = [
+			'ID',
+			'GatheringType.ID',
+			'GatheringLevel',
+			'GameContentLinks.GatheringPoint.GatheringPointBase.0',
+		];
+
+		// Items go from Item0 to Item7
+		$this->addNumberedFields($apiFields, 'Item%d', range(0, 7));
+
+		// A note from Clorifex of Garland Tools
+		//  You must be looking at gathering items.  What you're looking for there is the GatheringPoint table, which has a PlaceName (i.e., Cedarwood) and a TerritoryType.  The TerritoryType then has the PlaceName you're looking for - Lower La Noscea.
+		//  Be warned that what I referred to as a 'node' is really a GatheringPointBase.  There are lots of gathering points with the same items because they appear in different places on the map.
+		$this->loopEndpoint('gatheringpointbase', $apiFields, function($data) {
+			if ($data->GameContentLinks->GatheringPoint->GatheringPointBase['0'] == null)
+				return;
+
+			// Loop through Item#
+			$gatheringItemIds = [];
+			foreach (range(0,7) as $i)
+				if ($data->{'Item' . $i})
+					$gatheringItemIds[] = $data->{'Item' . $i};
+
+			if (empty($gatheringItemIds))
+				return;
+
+			sort($gatheringItemIds);
+
+			$gi = $this->request('gatheringitem', [
+				'ids' => implode(',', $gatheringItemIds),
+				'columns' => [
+					'Item',
+				],
+			])->Results;
+
+			foreach ($gi as $gatheringItem)
+				if ($gatheringItem)
+					$this->setData('item_node', [
+						'item_id' => $gatheringItem->Item,
+						'node_id' => $data->ID,
+					]);
+
+			$gpColumns = ;
+
+			$gp = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], ['columns' => [
+				'PlaceName.ID',
+				// 'TerritoryType.PlaceName.ID',
+			]);
+
+			$this->setData('nodes', [
+				'id'          => $data->ID,
+				'type'        => $data->GatheringType->ID,
+				'level'       => $data->GatheringLevel,
+			], $data->ID);
+
+			$this->setData('coordinates', [
+				// If I got the zone_id wrong, try $gp->TerritoryType->PlaceName->ID instead
+				'zone_id'         => $gp->PlaceName->ID,
+				'coordinate_id'   => $data->ID,
+				'coordinate_type' => 'node', // See Relation::morphMap in AppServiceProvider
+				'x'               => null, // Filled in later
+				'y'               => null, // Filled in later
+				'z'               => null, // Filled in later
+				'radius'          => null, // Filled in later
+			]);
+
+			$this->setData('details', [
+				'detailable_id'   => $data->ID,
+				'detailable_type' => 'node', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					// Filled in later
+					//  Timer data, etc
+				]
+			]);
+		});
 	}
 
 	/**
