@@ -393,6 +393,14 @@ trait XIVAPI
 
 	public function nodes()
 	{
+		// Gathering Point Base IDs range from 1 to the mid 600s
+		$this->gatheringNodes();
+		// Fishing Spot IDs range from 1 to the mid 200s, add 10000 to fishing node IDs
+		$this->fishingNodes(10000);
+	}
+
+	private function gatheringNodes()
+	{
 		$apiFields = [
 			'ID',
 			'GatheringType.ID',
@@ -440,7 +448,7 @@ trait XIVAPI
 			$gp = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], ['columns' => [
 				'PlaceName.ID',
 				// 'TerritoryType.PlaceName.ID',
-			]);
+			]]);
 
 			$this->setData('nodes', [
 				'id'          => $data->ID,
@@ -466,6 +474,66 @@ trait XIVAPI
 					// Filled in later
 					//  Timer data, etc
 				]
+			]);
+		});
+	}
+
+	private function fishingNodes($idAdditive)
+	{
+		$apiFields = [
+			'ID',
+			'PlaceName.ID',
+			'PlaceName.Name',
+			'FishingSpotCategory',
+			'GatheringLevel',
+			'Radius',
+			'X',
+			'Z',
+			// 'TerritoryType.PlaceName.ID',
+		];
+
+		// Items go from Item0 to Item9
+		$this->addNumberedFields($apiFields, 'Item%dTargetID', range(0, 9));
+
+		$this->loopEndpoint('fishingspot', $apiFields, function($data) use ($idAdditive) {
+			// Skip empty names
+			if ($data->PlaceName->Name == '')
+				return;
+
+			$nodeId = $data->ID + $idAdditive;
+
+			// Loop through Item#
+			$hasItems = false;
+			foreach (range(0, 9) as $i)
+				if ($data->{'Item' . $i . 'TargetID'})
+				{
+					$hasItems = true;
+					$this->setData('item_node', [
+						'item_id' => $data->{'Item' . $i . 'TargetID'},
+						'node_id' => $data->ID,
+					]);
+				}
+
+			// Don't include the fishing node if there aren't any items attached
+			if ( ! $hasItems)
+				return;
+
+			$this->setData('nodes', [
+				'id'          => $nodeId,
+				// The variable comes back as "2", but it really correlates to "11"; 1 to 10, 3 to 12, etc
+				'type'        => config('games.ffxiv.nodeTypes')[$var + 9] ?? null,
+				'level'       => $data->GatheringLevel,
+			], $nodeId);
+
+			$this->setData('coordinates', [
+				// If I got the zone_id wrong, try $data->TerritoryType->PlaceName->ID instead
+				'zone_id'         => $data->PlaceName->ID,
+				'coordinate_id'   => $nodeId,
+				'coordinate_type' => 'node', // See Relation::morphMap in AppServiceProvider
+				'x'               => 1 + ($data->X / 50), // Translate a number like 1203 to something like 25.06,
+				'y'               => 1 + ($data->Z / 50),
+				'z'               => null,
+				'radius'          => $data->Radius,
 			]);
 		});
 	}

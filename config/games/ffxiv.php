@@ -92,7 +92,7 @@ return [
 		1 => 'Rocky Outcropping',
 		2 => 'Mature Tree',
 		3 => 'Lush Vegetation',
-		4 => 'Spearfishing',
+		4 => 'Spearfishing', // Spearfishing is a gathering type, not a fishing type
 		10 => 'Ocean Fishing',
 		11 => 'Freshwater Fishing',
 		12 => 'Dunefishing',
