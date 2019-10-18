@@ -365,6 +365,14 @@ trait XIVAPI
 
 	public function zones()
 	{
+		// placename IDs range from 1 to 3300+
+		$this->placenames();
+		// instance IDs range from 1 to 400+
+		$this->instances(10000);
+	}
+
+	private function placenames()
+	{
 		$apiFields = [
 			'ID',
 			'Maps.0.PlaceNameRegionTargetID',
@@ -389,6 +397,48 @@ trait XIVAPI
 					'name'    => $data->{'Name_' . $lang} ?? null,
 				]);
 		});
+	}
+
+	private function instances($idAdditive)
+	{
+		$apiFields = [
+			'ID',
+			'ContentType.ID',
+			'ContentFinderCondition.TerritoryType.PlaceName.ID',
+			'ContentFinderCondition.ImageID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('instancecontent', $apiFields, function($data) use ($idAdditive) {
+			// Skip empty names
+			if ($data->Name_en == '')
+				return;
+
+			$zoneId = $data->ID + $idAdditive;
+
+			$this->setData('zones', [
+				'id'      => $zoneId,
+				'zone_id' => $data->ContentFinderCondition->TerritoryType->PlaceName->ID ?? null, // Parent Zone
+			], $zoneId);
+
+			$this->setData('details', [
+				'detailable_id'   => $zoneId,
+				'detailable_type' => 'zone', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'type' => $data->ContentType->ID,
+					'icon' => $data->ContentFinderCondition->ImageID,
+				]
+			]);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('zone_translations', [
+					'zone_id' => $zoneId,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
+				]);
+		});
+
 	}
 
 	public function nodes()
@@ -535,6 +585,106 @@ trait XIVAPI
 				'z'               => null,
 				'radius'          => $data->Radius,
 			]);
+		});
+	}
+
+	public function npcs()
+	{
+		// enpcresident IDs start at 1000000
+		$this->npcs();
+		// bncpname IDs range from 1 to 9000+
+		$this->mobs();
+	}
+
+	public function npcs()
+	{
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 500;
+
+		$apiFields = [
+			'ID',
+			'GilShop.*.ID',
+			'SpecialShop.*.ID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'GilShop.*.Name_%s');
+		$this->addLanguageFields($apiFields, 'SpecialShop.*.Name_%s');
+
+		$this->loopEndpoint('enpcresident', $apiFields, function($data) {
+			// Skip empty names
+			if ($data->Name_en == '')
+				return;
+
+			$this->setData('npcs', [
+				'id'    => $data->ID,
+				'enemy' => 0,
+				'level' => null,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('npc_translations', [
+					'npc_id' => $data->ID,
+					'locale' => $lang,
+					'name'   => $data->{'Name_' . $lang} ?? null,
+				]);
+
+			foreach (['GilShop', 'SpecialShop'] as $shopType)
+				if ($data->$shopType)
+					foreach ($data->$shopType as $shop)
+						if ($shop->ID)
+						{
+							$this->setData('shops', [
+								'id' => $shop->ID,
+							], $shop->ID);
+
+							foreach ($this->xivapiLanguages as $lang)
+								$this->setData('shop_translations', [
+									'shop_id' => $shop->ID,
+									'locale'  => $lang,
+									'name'    => $shop->{'Name_' . $lang} ?? null,
+								], $shop->ID);
+
+							$this->setData('npc_shop', [
+								'shop_id' => $shop->ID,
+								'npc_id'  => $data->ID,
+							]);
+						}
+		}/* I believe this is fixed, holding onto legacy filter for now. *//*, [
+			'ids' => function($value, $key) {
+				// After ID 1028800, Quests, GilShop and SpecialShop all disappear, causing errors
+				return $value < 1028800;
+			}
+		]*/);
+
+		$this->limit = null;
+	}
+
+	private function mobs()
+	{
+		$apiFields = [
+			'ID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('bnpcname', $apiFields, function($data) {
+			// Skip empty names
+			if ($data->Name == '')
+				return;
+
+			$this->setData('npc', [
+				'id'    => $data->ID,
+				'enemy' => 1,
+				'level' => null, // Filled in later
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('npc_translations', [
+					'npc_id' => $data->ID,
+					'locale' => $lang,
+					'name'   => $data->{'Name_' . $lang} ?? null,
+				]);
 		});
 	}
 

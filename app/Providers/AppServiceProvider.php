@@ -54,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
 			'item'      => Item::class,
 			'node'      => Node::class,
 			'scroll'    => Scroll::class,
+			'zone'      => Zone::class,
 		]);
 	}
 
