@@ -688,6 +688,78 @@ trait XIVAPI
 		});
 	}
 
+	public function jobs()
+	{
+		$apiFields = [
+			'ID',
+			'ClassJobCategory.Name'
+			'StartingLevel',
+			'ItemSoulCrystalTargetID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'Abbreviation_%s');
+
+		$this->loopEndpoint('classjob', $apiFields, function($data) {
+			// 'battle', 'crafting', 'gathering'
+			$type = 'battle';
+			if (strpos($data->ClassJobCategory->Name, 'Hand') !== false)
+				$type = 'crafting';
+			elseif (strpos($data->ClassJobCategory->Name, 'Land') !== false)
+				$type = 'gathering';
+
+			// 0 = Classes, 1 = Jobs, 2 = Adv. Jobs
+			$tier = 0;
+			if ($data->StartingLevel > 1)
+				$tier = 2;
+			if ($type == 'battle' && $data->ItemSoulCrystalTargetID)
+				$tier = 1;
+
+			$this->setData('jobs', [
+				'id'   => $data->ID,
+				'type' => $type,
+				'tier' => $tier,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('job_translations', [
+					'job_id'       => $data->ID,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'abbreviation' => $data->{'Abbreviation_' . $lang} ?? null,
+				]);
+		});
+	}
+
+	public function jobCategories()
+	{
+		// classjobcategory has a datapoint for every job abbreviation;
+		//  use the translations we collected previously as a shortcut
+		$abbreviations = collect($this->data['job_translations'])->keyBy('job_id')->filter(function($entry) {
+			return $entry->locale == 'en';
+		})->map(function($entry) {
+			return $entry['abbreviation'];
+		});
+
+		// In addition to ID, also get ACN, ALC, NIN, SAM, etc
+		$apiFields = array_merge([
+			'ID',
+		], $abbreviations->toArray());
+
+		$this->loopEndpoint('classjobcategory', $apiFields, function($data) use ($abbreviations) {
+			$this->setData('niches', [
+				'id'   => $data->ID,
+			], $data->ID);
+
+			foreach ($abbreviations as $jobId => $abbreviation)
+				if ($data->$abbreviation == 1)
+					$this->setData('job_niche', [
+						'job_id'   => $jobId,
+						'niche_id' => $data->ID,
+					]);
+		});
+	}
+
 	/**
 	 * Helper Functions
 	 */
