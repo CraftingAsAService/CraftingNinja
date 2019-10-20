@@ -108,6 +108,7 @@ return [
 		1 => 'fate',
 		2 => 'leve',
 		3 => 'quest',
+		4 => 'venture',
 	],
 
 	'xp' => [

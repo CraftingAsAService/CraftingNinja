@@ -33,6 +33,8 @@ trait XIVAPI
 		$this->leves(40000);
 		// Quest IDs range from 65500+ to ~70k
 		$this->quests(0);
+		// Venture IDs range from 1 to ~900; ALLOTMENT 90,001 to 100k
+		$this->ventures(90000);
 	}
 
 	protected function achievements($idAdditive)
@@ -361,6 +363,93 @@ trait XIVAPI
 		});
 
 		$this->limit = null;
+	}
+
+	protected function ventures($idAdditive)
+	{
+		$ventureTypeId = array_search('venture', config('games.ffxiv.objectiveTypes'));
+
+		if ($ventureTypeId === false)
+			$this->error('Could not find Objective Type ID for "venture"');
+
+		$apiFields = [
+			'ID',
+			'ClassJobCategory.ID',
+			'RetainerLevel',
+			'MaxTimeMin',
+			'VentureCost',
+			'IsRandom',
+			'Task',
+		];
+
+		$this->addLanguageFields($apiFields, 'ClassJobCategory.Name_%s');
+
+		$nameFields = [];
+		$this->addLanguageFields($nameFields, 'Name_%s');
+
+		$this->loopEndpoint('retainertask', $apiFields, function($data) use ($idAdditive, $ventureTypeId, $nameFields, $classNameFields) {
+			// The Quantities are only applicable for "Normal" Ventures
+			$objectiveId = $data->ID + $idAdditive;
+			$names = $quantities = [];
+
+			if ($data->IsRandom)
+				$names = $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
+			else
+			{
+				// TODO FIGURE OUT THE NAMES
+				// foreach ($this->xivapiLanguages as $lang)
+				// $names['Name_en'] = 'Quick Exploration';
+
+				$q = $this->request('retainertasknormal/' . $data->Task, ['columns' => [
+					'Quantity0',
+					'Quantity1',
+					'Quantity2',
+					'ItemTarget',
+					'ItemTargetID',
+				]]);
+
+				if ($q->ItemTarget == 'Item' && $q->ItemTargetID)
+					foreach (range(0, 2) as $slot)
+						$this->setData('item_objective', [
+							'item_id'      => $q->ItemTargetID,
+							'objective_id' => $objectiveId,
+							'reward'       => 1,
+							'quantity'     => $data->{'ItemCountReward1' . $slot},
+							'quality'      => $q->{'Quantity' . $slot},
+							'rate'         => 33, // Reward is time based, simplifying and saying 33% chance for 3 tiers
+						]);
+			}
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory->ID,
+				'issuer_id'  => null,
+				'target_id'  => null,
+				'type'       => $ventureTypeId,
+				'repeatable' => 1,
+				'level'      => $data->RetainerLevel,
+				'icon'       => null,
+			], $objectiveId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $names ? $names->{'Name_' . $lang} : ($data->{'ClassJobCategory.Name_' . $lang} . ' Exploration'),
+					'description'  => null,
+				]);
+
+			$this->setData('details', [
+				'detailable_id'   => $objectiveId,
+				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'cost'    => $data->VentureCost,
+					'minutes' => $data->MaxTimeMin,
+				]
+			]);
+
+
+		});
 	}
 
 	public function zones()
