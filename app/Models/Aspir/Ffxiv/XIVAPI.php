@@ -396,9 +396,13 @@ trait XIVAPI
 				$names = $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
 			else
 			{
-				// TODO FIGURE OUT THE NAMES
-				// foreach ($this->xivapiLanguages as $lang)
-				// $names['Name_en'] = 'Quick Exploration';
+				/**
+				 * There's something I'm not grasping about Ventures.
+				 *  I think my item list is going to be too loose here, but the point gets across.
+				 *  Cannot determine difference between "Mining/Botany/Fishing/Hunting/Quick" Explorations.
+				 *  Giving it a dummy name.
+				 */
+				$names['Name_en'] = 'Venture Exploration';
 
 				$q = $this->request('retainertasknormal/' . $data->Task, ['columns' => [
 					'Quantity0',
@@ -447,8 +451,6 @@ trait XIVAPI
 					'minutes' => $data->MaxTimeMin,
 				]
 			]);
-
-
 		});
 	}
 
@@ -846,6 +848,32 @@ trait XIVAPI
 						'job_id'   => $jobId,
 						'niche_id' => $data->ID,
 					]);
+		});
+	}
+
+	public function itemCategories()
+	{
+		$apiFields = [
+			'ID',
+			'OrderMajor',
+			'OrderMinor',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('itemuicategory', $apiFields, function($data) {
+			$this->setData('categories', [
+				'id'          => $data->ID,
+				'category_id' => null, // Parent Category ID
+				'rank'        => ($data->OrderMajor * 1000) + $data->OrderMinor,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('category_translations', [
+					'category_id' => $data->ID,
+					'locale'      => $lang,
+					'name'        => $data->{'Name_' . $lang} ?? null,
+				]);
 		});
 	}
 

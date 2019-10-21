@@ -18,6 +18,7 @@ class Categories extends Migration
 			// Fields
 			$table->increments('id');
 			$table->unsignedInteger('category_id')->nullable();
+			$table->unsignedSmallInteger('rank')->nullable();
 
 			// Indexes
 			$table->index('category_id');
