@@ -16,7 +16,7 @@ class Attributes extends Migration
 		Schema::create('attributes', function (Blueprint $table) {
 			// Fields
 			$table->increments('id');
-			// No direct values, just a placeholder for translations and other tables to reference
+			$table->unsignedSmallInteger('rank')->nullable();
 		});
 
 		Schema::create('attribute_translations', function (Blueprint $table) {
@@ -25,6 +25,7 @@ class Attributes extends Migration
 
 			// Fields
 			$table->string('name');
+			$table->text('description')->nullable();
 		});
 
 		Schema::create('attribute_item', function (Blueprint $table) {

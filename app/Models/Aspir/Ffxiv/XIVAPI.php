@@ -682,12 +682,12 @@ trait XIVAPI
 	public function npcs()
 	{
 		// enpcresident IDs start at 1000000
-		$this->npcs();
+		$this->residents();
 		// bncpname IDs range from 1 to 9000+
 		$this->mobs();
 	}
 
-	public function npcs()
+	public function residents()
 	{
 		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
 		$this->limit = 500;
@@ -875,6 +875,297 @@ trait XIVAPI
 					'name'        => $data->{'Name_' . $lang} ?? null,
 				]);
 		});
+	}
+
+	public function attributes()
+	{
+		$apiFields = [
+			'ID',
+			'Order',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
+
+		$this->loopEndpoint('baseparam', $apiFields, function($data) {
+			$this->setData('attributes', [
+				'id'   => $data->ID,
+				'rank' => $data->Order,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('attribute_translations', [
+					'attribute_id' => $data->ID,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => $data->{'Description_' . $lang} ?? null,
+				]);
+		});
+	}
+
+	public function items()
+	{
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 1000;
+
+		$attributes = collect($this->data['attribute_translations'])->keyBy('attribute_id')->filter(function($entry) {
+			return $entry->locale == 'en';
+		})->map(function($entry) {
+			return $entry['name'];
+		});
+
+		$delayAttributeId = array_search('Delay', $attributes);
+
+		$apiFields = [
+			'ID',
+			'PriceLow',
+			'PriceMid',
+			'LevelEquip',
+			'LevelItem',
+			'ItemUICategory.ID',
+			'IsEquippable',
+			'IsUnique',
+			'ClassJobCategoryTargetID',
+			'IsUntradable',
+			'EquipSlotCategory.ID',
+			'Rarity',
+			'IconID',
+			'MateriaSlotCount',
+			// Special X != Normal X
+			'CanBeHq', // AKA Special
+			// Materia Values might always be 0, TODO double check and Manual if needed
+			'Materia.BaseParam.ID',
+			'Materia.Value',
+			// Shop Data
+			'GameContentLinks.GilShopItem.Item',
+			// Special Shop contains all Beast Traders, ItemCurrency for Item trades
+			// 'GameContentLinks.SpecialShop',
+			// ItemAction contains a myriad of things
+			// https://github.com/viion/ffxiv-datamining/blob/master/docs/ItemActions.md
+			//  max attribute values
+			//  potion values
+			//  item food connections
+			'ItemAction',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
+		// Attribute Hunting
+		$this->addNumberedFields($apiFields, 'BaseParam%dTargetID', range(0, 5));
+		$this->addNumberedFields($apiFields, 'BaseParamSpecial%dTargetID', range(0, 5));
+		$this->addNumberedFields($apiFields, 'BaseParamValue%d', range(0, 5));
+		$this->addNumberedFields($apiFields, 'BaseParamValueSpecial%d', range(0, 5));
+
+		// Base Attributes
+		$rootParamConversion = [
+			'Block'       => 'Block Strength',
+			'BlockRate'   => 'Block Rate',
+			'DefenseMag'  => 'Magic Defense',
+			'DefensePhys' => 'Defense',
+			'DamageMag'   => 'Magic Damage',
+			'DamagePhys'  => 'Physical Damage',
+			'DelayMs'     => 'Delay',
+		];
+
+		// HQs of these exist as Special, will need to match on names
+		$apiFields = array_merge($apiFields, array_keys($rootParamConversion));
+
+		$this->loopEndpoint('item', $apiFields, function($data) use ($rootParamConversion, $attributes, $delayAttributeId) {
+			// Empty name, or "dated" item, skip
+			if ($data->Name_en == '' || substr($data->Name_en, 0, 6) == 'Dated ')
+				return;
+
+			$this->setData('items', [
+				'id'          => $data->ID,
+				'ilvl'        => $data->LevelItem,
+				'category_id' => $data->ItemUICategory->ID,
+				'rarity'      => $data->Rarity,
+				'icon'        => $data->IconID,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('item_translations', [
+					'item_id'     => $data->ID,
+					'locale'      => $lang,
+					'name'        => $data->{'Name_' . $lang} ?? null,
+					'description' => $data->{'Description_' . $lang} ?? null,
+				]);
+
+			if ($data->IsEquippable)
+				$this->setData('equipment', [
+					'id'       => $data->ID, // Each item can only have one equipment option, so sharing IDs is safe
+					'item_id'  => $data->ID,
+					'niche_id' => $data->ClassJobCategoryTargetID,
+					'slot'     => $data->EquipSlotCategory->ID,
+					'level'    => $data->LevelEquip,
+					'sockets'  => $data->MateriaSlotCount,
+				]);
+
+			$this->setData('details', [
+				'detailable_id'   => $data->ID,
+				'detailable_type' => 'item', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'unique'    => $data->IsUnique,
+					'tradeable' => $data->IsUntradable ? null : 1,
+				]
+			]);
+
+
+
+
+
+
+			// Attribute Data
+			$nqParams = $hqParams = $maxParams = [];
+
+			foreach ($rootParamConversion as $key => $name)
+				if ($data->$key)
+					$nqParams[$rootParamConversion[$key]] = $data->$key;
+
+			// Delay comes through as "2000", but we want it as "2.00"
+			if (isset($nqParams[$delayAttributeId]))
+				$nqParams[$delayAttributeId] /= 1000;
+
+			if ($data->Materia->BaseParam->ID && $data->Materia->Value)
+				$nqParams[$data->Materia->BaseParam->ID] = $data->Materia->Value;
+
+			foreach (range(0, 5) as $slot)
+				if ($data->{'BaseParam' . $slot . 'TargetID'} > 0)
+					$nqParams[$data->{'BaseParam' . $slot . 'TargetID'}] = $data->{'BaseParamValue' . $slot};
+
+			if ($data->CanBeHq)
+				foreach (range(0, 5) as $slot)
+					if ($data->{'BaseParamSpecial' . $slot . 'TargetID'} > 0 && $data->{'BaseParam' . $slot . 'TargetID'} > 0)
+						$hqParams[$data->{'BaseParamSpecial' . $slot . 'TargetID'}] = $data->{'BaseParamValue' . $slot} + $data->{'BaseParamValueSpecial' . $slot};
+
+			foreach ([0 => 'nq', 1 => 'hq'] as $qualityValue => $quality)
+				foreach (${$quality . 'Params'} as $attributeId => $amount)
+					$this->setData('attribute_item', [
+						'item_id'      => $data->ID,
+						'attribute_id' => $attributeId,
+						'quality'      => $qualityValue,
+						'value'        => $amount,
+					]);
+
+			// Item Actions provide Attribute Data
+			//  Not using $nqParams or $hqParams here
+			if ($data->ItemAction)
+			{
+				$dataQualitySlots = [ '' => 'nq' ];
+				if ($data->CanBeHq)
+					$dataQualitySlots['HQ'] = 'hq';
+
+				switch ($data->ItemAction->Type)
+				{
+					// Health potions, eg: X-Potion
+					case 847:
+						foreach ($dataQualitySlots as $qualitySlot => $quality)
+							$this->setData('attribute_item', [
+								'item_id'      => $data->ID,
+								'attribute_id' => array_search('HP', $attributes),
+								'quality'      => $quality,
+								// 'value'     => $data->ItemAction->{'Data' . $qualitySlot . '0'}, // data_0 = %
+								'value'        => $data->ItemAction->{'Data' . $qualitySlot . '1'}, // data_1 = max
+							]);
+						break;
+					// Ether MP potions, eg: X-Ether
+					case 848:
+						foreach ($dataQualitySlots as $qualitySlot => $quality)
+							$this->setData('attribute_item', [
+								'item_id'      => $data->ID,
+								'attribute_id' => array_search('MP', $attributes),
+								'quality'      => $quality,
+								// 'value'     => $data->ItemAction->{'Data' . $qualitySlot . '0'}, // data_0 = %
+								'value'        => $data->ItemAction->{'Data' . $qualitySlot . '1'}, // data_1 = max
+							]);
+						break;
+					// Elixir potions,
+					case 849:
+						foreach ($dataQualitySlots as $qualitySlot => $quality)
+							$this->setData('attribute_item', [
+								'item_id'      => $data->ID,
+								'attribute_id' => array_search('HP', $attributes),
+								'quality'      => $quality,
+								// 'value'     => $data->ItemAction->{'Data' . $qualitySlot . '0'}, // data_0 = %
+								'value'        => $data->ItemAction->{'Data' . $qualitySlot . '1'}, // data_1 = max
+							]);
+
+						foreach ($dataQualitySlots as $qualitySlot => $quality)
+							$this->setData('attribute_item', [
+								'item_id'      => $data->ID,
+								'attribute_id' => array_search('MP', $attributes),
+								'quality'      => $quality,
+								// 'value'     => $data->ItemAction->{'Data' . $qualitySlot . '2'}, // data_2 = %
+								'value'        => $data->ItemAction->{'Data' . $qualitySlot . '3'}, // data_3 = max
+							]);
+						break;
+					// Wings, eg: Icarus Wing, restores TP
+					case 1767:
+						foreach ($dataQualitySlots as $qualitySlot => $quality)
+							$this->setData('attribute_item', [
+								'item_id'      => $data->ID,
+								'attribute_id' => array_search('TP', $attributes),
+								'quality'      => $quality,
+								'value'        => $data->ItemAction->{'Data' . $qualitySlot . '3'}, // data_1 = max TP to restore
+							]);
+						break;
+					// Crafting + Gathering Food
+					// Battle Food
+					// Attribute Potions, eg: X-Potion of Dexterity
+					// data_1 = `ItemFood`
+					// data_2 = Duration in seconds
+					case 844:
+					case 845:
+					case 846:
+						$foodColumns = [];
+						$this->addNumberedFields($foodColumns, 'BaseParam%d.ID', range(0, 2));
+						$this->addNumberedFields($foodColumns, 'Value%d', range(0, 2));
+						$this->addNumberedFields($foodColumns, 'ValueHQ%d', range(0, 2));
+						$this->addNumberedFields($foodColumns, 'IsRelative%d', range(0, 2));
+						$this->addNumberedFields($foodColumns, 'Max%d', range(0, 2));
+						$this->addNumberedFields($foodColumns, 'MaxHQ%d', range(0, 2));
+
+						$food = $this->request('itemfood/' . $data->ItemAction->Data1, ['columns' => $foodColumns]);
+
+						foreach (range(0, 2) as $slot)
+							if ($food->{'BaseParam' . $slot}->ID)
+								foreach ($dataQualitySlots as $qualitySlot => $quality)
+									$this->setData('attribute_item', [
+										'item_id'      => $data->ID,
+										'attribute_id' => $food->{'BaseParam' . $slot}->ID,
+										'quality'      => $quality,
+										'value'        => $food->{'IsRelative' . $slot}
+															? $food->{'Max' . strtoupper($qualitySlot) . $slot}
+															: $food->{'Value' . strtoupper($qualitySlot) . $slot},
+									]);
+						break;
+				}
+			}
+
+
+
+
+
+			dd('TODO Figure out pricing... I do not have item_shop...');
+
+				// 'price'            => $data->PriceMid,
+				// 'sell_price'       => $data->PriceLow,
+
+
+
+
+
+			// Shopping Data
+			if ($data->GameContentLinks->GilShopItem->Item)
+				foreach ($data->GameContentLinks->GilShopItem->Item as $item)
+					$this->setData('item_shop', [
+						'item_id' => $data->ID,
+						// Shops come through as "262175.11", we only need what's before the dot
+						'shop_id' => explode('.', $item)[0],
+					]);
+		});
+
+		$this->limit = null;
 	}
 
 	/**
