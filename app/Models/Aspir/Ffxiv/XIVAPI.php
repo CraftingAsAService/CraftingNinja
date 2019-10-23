@@ -679,6 +679,69 @@ trait XIVAPI
 		});
 	}
 
+	public function merchants()
+	{
+		// Gilshop IDs range from 262k+, and there's less than 1000
+		$this->gilshops();
+		// Special Shop IDs range from 1.7mil+, and there's less than 1000
+		$this->specialshops();
+	}
+
+	private function gilshops()
+	{
+		$apiFields = [
+			'ID',
+			'Items.*.ID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('gilshop', $apiFields, function($data) {
+			$this->setData('shops', [
+				'id' => $data->ID,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('shop_translations', [
+					'shop_id' => $data->ID,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
+				]);
+		});
+	}
+
+	private function specialshops()
+	{
+		// We want every field; API calls `columns=BLANK`
+		$apiFields = '';
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+
+		$this->loopEndpoint('specialshop', $apiFields, function($data) {
+			$this->setData('shops', [
+				'id' => $data->ID,
+			], $data->ID);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('shop_translations', [
+					'shop_id' => $data->ID,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
+				]);
+
+
+
+
+			// ItemCost00TargetID
+			// 'CountCost*',
+			// ItemReceive01TargetID
+			// 'CountReceive*',
+			// 'HQCost00',
+			// HQReceive00
+		});
+
+	}
+
 	public function npcs()
 	{
 		// enpcresident IDs start at 1000000

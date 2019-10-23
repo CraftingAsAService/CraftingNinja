@@ -33,6 +33,12 @@ class Shops extends Migration
 			// Build the basics of the pivot
 			$table->pivot();
 		});
+
+		// Shops sell items
+		Schema::create('item_shop', function (Blueprint $table) {
+			// Build the basics of the pivot
+			$table->pivot();
+		});
 	}
 
 	/**

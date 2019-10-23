@@ -34,7 +34,7 @@ class NPCs extends Migration
 			$table->string('name');
 		});
 
-		// Merchants can sell items, or Mobs can drop items
+		// NPCs or Mobs can drop items
 		Schema::create('item_npc', function (Blueprint $table) {
 			// Build the basics of the pivot
 			$table->pivot();
