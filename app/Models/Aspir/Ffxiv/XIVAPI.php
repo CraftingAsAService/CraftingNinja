@@ -344,7 +344,7 @@ trait XIVAPI
 						'item_id'      => $data->{'ItemReward0' . $slot},
 						'objective_id' => $objectiveId,
 						'reward'       => 1,
-						'quantity'     => $data->{'ItemCountReward0' . $slot},
+						'quantity'     => $data->{'ItemCountReward0' . $slot} ?? 1,
 						'quality'      => null,
 						'rate'         => null,
 					]);
@@ -356,7 +356,7 @@ trait XIVAPI
 						'item_id'      => $data->{'ItemReward1' . $slot . 'TargetID'},
 						'objective_id' => $objectiveId,
 						'reward'       => 1,
-						'quantity'     => $data->{'ItemCountReward1' . $slot},
+						'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
 						'quality'      => null,
 						'rate'         => null,
 					]);
@@ -387,13 +387,13 @@ trait XIVAPI
 		$nameFields = [];
 		$this->addLanguageFields($nameFields, 'Name_%s');
 
-		$this->loopEndpoint('retainertask', $apiFields, function($data) use ($idAdditive, $ventureTypeId, $nameFields, $classNameFields) {
+		$this->loopEndpoint('retainertask', $apiFields, function($data) use ($idAdditive, $ventureTypeId, $nameFields) {
 			// The Quantities are only applicable for "Normal" Ventures
 			$objectiveId = $data->ID + $idAdditive;
 			$names = $quantities = [];
 
 			if ($data->IsRandom)
-				$names = $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
+				$names = (array) $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
 			else
 			{
 				/**
@@ -418,7 +418,7 @@ trait XIVAPI
 							'item_id'      => $q->ItemTargetID,
 							'objective_id' => $objectiveId,
 							'reward'       => 1,
-							'quantity'     => $data->{'ItemCountReward1' . $slot},
+							'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
 							'quality'      => $q->{'Quantity' . $slot},
 							'rate'         => 33, // Reward is time based, simplifying and saying 33% chance for 3 tiers
 						]);
@@ -439,7 +439,7 @@ trait XIVAPI
 				$this->setData('objective_translations', [
 					'objective_id' => $objectiveId,
 					'locale'       => $lang,
-					'name'         => $names ? $names->{'Name_' . $lang} : ($data->{'ClassJobCategory.Name_' . $lang} . ' Exploration'),
+					'name'         => $names->{'Name_' . $lang} ?? $names['Name_en'],
 					'description'  => null,
 				]);
 
@@ -584,8 +584,6 @@ trait XIVAPI
 						'node_id' => $data->ID,
 					]);
 
-			$gpColumns = ;
-
 			$gp = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], ['columns' => [
 				'PlaceName.ID',
 				// 'TerritoryType.PlaceName.ID',
@@ -662,7 +660,7 @@ trait XIVAPI
 			$this->setData('nodes', [
 				'id'          => $nodeId,
 				// The variable comes back as "2", but it really correlates to "11"; 1 to 10, 3 to 12, etc
-				'type'        => config('games.ffxiv.nodeTypes')[$var + 9] ?? null,
+				'type'        => config('games.ffxiv.nodeTypes')[$data->FishingSpotCategory + 9] ?? null,
 				'level'       => $data->GatheringLevel,
 			], $nodeId);
 
@@ -692,6 +690,8 @@ trait XIVAPI
 		$apiFields = [
 			'ID',
 			'Items.*.ID',
+			'Items.*.PriceLow',
+			'Items.*.PriceMid',
 		];
 
 		$this->addLanguageFields($apiFields, 'Name_%s');
@@ -707,6 +707,36 @@ trait XIVAPI
 					'locale'  => $lang,
 					'name'    => $data->{'Name_' . $lang} ?? null,
 				]);
+
+			foreach ($data->Items as $item)
+			{
+				$this->setData('item_shop', [
+					'item_id' => $item->ID,
+					'shop_id' => $data->ID,
+				]);
+
+				if ($item->PriceLow)
+					$this->setData('item_price', [
+						'shop_id'  => $data->ID,
+						'price_id' => $this->generatePriceId([
+							'quality' => 0,
+							'item_id' => null, // The alternative currency; null is Gil
+							'market'  => 0, // PriceLow is selling price
+							'amount'  => $item->PriceLow,
+						]),
+					]);
+
+				if ($item->PriceMid)
+					$this->setData('item_price', [
+						'shop_id'  => $data->ID,
+						'price_id' => $this->generatePriceId([
+							'quality' => 0,
+							'item_id' => null, // The alternative currency; null is Gil
+							'market'  => 1, // PriceMid is buying price
+							'amount'  => $item->PriceMid,
+						]),
+					]);
+			}
 		});
 	}
 
@@ -718,6 +748,7 @@ trait XIVAPI
 		$this->addLanguageFields($apiFields, 'Name_%s');
 
 		$this->loopEndpoint('specialshop', $apiFields, function($data) {
+			dd($data);
 			$this->setData('shops', [
 				'id' => $data->ID,
 			], $data->ID);
@@ -846,7 +877,7 @@ trait XIVAPI
 	{
 		$apiFields = [
 			'ID',
-			'ClassJobCategory.Name'
+			'ClassJobCategory.Name',
 			'StartingLevel',
 			'ItemSoulCrystalTargetID',
 		];
@@ -1235,14 +1266,26 @@ trait XIVAPI
 	 * Helper Functions
 	 */
 
-	private function addLanguageFields(&$array, $sprintfableString) {
+	private function addLanguageFields(&$array, $sprintfableString)
+	{
 		foreach ($this->xivapiLanguages as $lang)
 			array_push($array, sprintf($sprintfableString, $lang));
 	}
 
-	private function addNumberedFields(&$array, $sprintfableString, $numericalRange) {
+	private function addNumberedFields(&$array, $sprintfableString, $numericalRange)
+	{
 		foreach ($numericalRange as $number)
 			array_push($array, sprintf($sprintfableString, $number));
+	}
+
+	private function generatePriceId($priceData)
+	{
+		$pricingId = array_search($priceData, $this->data['prices']);
+
+		if ($pricingId !== false)
+			return $pricingId;
+
+		return $this->setData('prices', $priceData);
 	}
 
 	/**

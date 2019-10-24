@@ -16,6 +16,7 @@ return [
 		'item_objective'         => [],
 		'item_price'             => [],
 		'item_recipe'            => [],
+		'item_shop'              => [],
 		'item_translations'      => [],
 		'items'                  => [],
 		'job_niche'              => [],
