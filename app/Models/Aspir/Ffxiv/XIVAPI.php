@@ -23,435 +23,134 @@ trait XIVAPI
 		$this->api->environment->key(config('services.xivapi.key'));
 	}
 
-	public function objectives()
+	public function merchants()
 	{
-		// Achievement IDs range from 1 to less than 2400+; ALLOTMENT 1 to 20k
-		$this->achievements(0);
-		// Fate IDs range from 1 to 1500+; ALLOTMENT 20,001 to 40k
-		$this->fates(20000);
-		// Leve IDs range from 1 to 1500+; ALLOTMENT 40,001 to 60k
-		$this->leves(40000);
-		// Quest IDs range from 65500+ to ~70k
-		$this->quests(0);
-		// Venture IDs range from 1 to ~900; ALLOTMENT 90,001 to 100k
-		$this->ventures(90000);
+		// Gilshop IDs range from 262k+, and there's less than 1000
+		$this->gilshops();
+		// Special Shop IDs range from 1.7mil+, and there's less than 1000
+		$this->specialshops();
 	}
 
-	protected function achievements($idAdditive)
+	private function gilshops()
 	{
-		$achievementTypeId = array_search('achievement', config('games.ffxiv.objectiveTypes'));
-
-		if ($achievementTypeId === false)
-			$this->error('Could not find Objective Type ID for "achievement"');
-
 		$apiFields = [
 			'ID',
-			'ItemTargetID',
-			'IconID',
+			'Items.*.ID',
+			'Items.*.PriceLow',
+			'Items.*.PriceMid',
 		];
 
 		$this->addLanguageFields($apiFields, 'Name_%s');
-		$this->addLanguageFields($apiFields, 'Description_%s');
 
-		$this->loopEndpoint('achievement', $apiFields, function($data) use ($idAdditive, $achievementTypeId) {
-			// We only care about achievements that provide an item
-			if ( ! $data->ItemTargetID)
-				return;
-
-			$objectiveId = $data->ID + $idAdditive;
-
-			$this->setData('objectives', [
-				'id'         => $objectiveId,
-				'niche_id'   => null,
-				'issuer_id'  => null,
-				'target_id'  => null,
-				'type'       => $achievementTypeId,
-				'repeatable' => null,
-				'level'      => null,
-				'icon'       => $data->IconID,
-			], $objectiveId);
+		$this->loopEndpoint('gilshop', $apiFields, function($data) {
+			$this->setData('shops', [
+				'id' => $data->ID,
+			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('objective_translations', [
-					'objective_id' => $objectiveId,
-					'locale'       => $lang,
-					'name'         => $data->{'Name_' . $lang} ?? null,
-					'description'  => $data->{'Description_' . $lang} ?? null,
+				$this->setData('shop_translations', [
+					'shop_id' => $data->ID,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
 				]);
 
-			$this->setData('item_objective', [
-				'item_id'      => $data->ItemTargetID,
-				'objective_id' => $objectiveId,
-				'reward'       => 1,
-				'quantity'     => null,
-				'quality'      => null,
-				'rate'         => null,
-			]);
+			foreach ($data->Items as $item)
+			{
+				$this->setData('item_shop', [
+					'item_id' => $item->ID,
+					'shop_id' => $data->ID,
+				]);
 
-			/**
-			 * Achievements don't have coordinates
-			 */
+				if ($item->PriceLow)
+					$this->setData('item_price', [
+						'shop_id'  => $data->ID,
+						'price_id' => $this->generatePriceId([
+							'quality' => 0,
+							'item_id' => null, // The alternative currency; null is Gil
+							'market'  => 0, // PriceLow is selling price
+							'amount'  => $item->PriceLow,
+						]),
+					]);
+
+				if ($item->PriceMid)
+					$this->setData('item_price', [
+						'shop_id'  => $data->ID,
+						'price_id' => $this->generatePriceId([
+							'quality' => 0,
+							'item_id' => null, // The alternative currency; null is Gil
+							'market'  => 1, // PriceMid is buying price
+							'amount'  => $item->PriceMid,
+						]),
+					]);
+			}
 		});
 	}
 
-	protected function fates($idAdditive)
+	private function specialshops()
 	{
-		/**
-		 * Ignoring
-		 * Fates don't offer any items of value
-		 */
-	}
+		// Calling individually is the only way to easily get every field
+		$this->chunkLimit = 1;
+		$apiFields = null;
 
-	protected function leves($idAdditive)
-	{
-		$leveTypeId = array_search('leve', config('games.ffxiv.objectiveTypes'));
-
-		if ($leveTypeId === false)
-			$this->error('Could not find Objective Type ID for "leve"');
-
-		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
-		$this->limit = 1000;
-		$this->chunkLimit = 10;
-
-		$apiFields = [
-			'ID',
-			'ClassJobCategory.ID',
-			'LeveClient.ID',
-			'LeveVfx.IconID',
-			'LeveVfxFrame.IconID',
-			'GilReward',
-			'ExpReward',
-			'ClassJobLevel',
-			'PlaceNameIssuedTargetID',
-			'PlaceNameStartZoneTargetID',
-			'IconIssuerID',
-			'CraftLeve.Item0TargetID',
-			'CraftLeve.ItemCount0',
-			'CraftLeve.Repeats',
-			// Inefficient catchall, but there are a large number of datapoints in there I need to sift through
-			'LeveRewardItem',
-		];
-
-		$this->addLanguageFields($apiFields, 'Name_%s');
-		$this->addLanguageFields($apiFields, 'LeveClient.Name_%s');
-		$this->addLanguageFields($apiFields, 'Description_%s');
-
-		$this->loopEndpoint('leve', $apiFields, function($data) use ($idAdditive, $leveTypeId) {
-			// No rewards? Don't bother.
-			if ($data->LeveRewardItem == null)
-				return;
-
-			$objectiveId = $data->ID + $idAdditive;
-			$targetId = $data->LeveClient->ID + $idAdditive;
-			$issuerId = $targetId;
-
-			// The issuer may be a Levemete, who is an NPC, but is treated more like a "place" than a "person"
-			//  Not sure how to handle this yet, for now, marking the issuer null seems like the best way
-			//  to indicate that something is up, and to use coordinates instead
-			if ($data->PlaceNameIssuedTargetID != $data->PlaceNameStartZoneTargetID)
-				$issuerId = null;
-
-			$this->setData('objectives', [
-				'id'         => $objectiveId,
-				'niche_id'   => $data->ClassJobCategory->ID,
-				'issuer_id'  => $issuerId,
-				'target_id'  => $targetId,
-				'type'       => $leveTypeId,
-				'repeatable' => $data->CraftLeve->Repeats, // Only CraftLeves can repeat
-				'level'      => $data->ClassJobLevel,
-				'icon'       => 'leve',
-			], $objectiveId);
-
-			$this->setData('details', [
-				'detailable_id'   => $objectiveId,
-				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
-					'xp'    => $data->ExpReward,
-					'gil'   => $data->GilReward,
-					'plate' => $data->LeveVfx->IconID,
-					'frame' => $data->LeveVfxFrame->IconID,
-				]
-			]);
-
-			$this->setData('coordinates', [
-				'zone_id'         => $data->PlaceNameIssuedTargetID,
-				'coordinate_id'   => $objectiveId,
-				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'x'               => null,
-				'y'               => null,
-				'z'               => null,
-				'radius'          => null,
-			]);
+		$this->loopEndpoint('specialshop', $apiFields, function($data) {
+			$this->setData('shops', [
+				'id' => $data->ID,
+			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('objective_translations', [
-					'objective_id' => $objectiveId,
-					'locale'       => $lang,
-					'name'         => $data->{'Name_' . $lang} ?? null,
-					'description'  => $data->{'Description_' . $lang} ?? null,
+				$this->setData('shop_translations', [
+					'shop_id' => $data->ID,
+					'locale'  => $lang,
+					'name'    => $data->{'Name_' . $lang} ?? null,
 				]);
 
-			// Target NPC Creation
-			$this->setData('npcs', [
-				'id'    => $targetId,
-				'enemy' => 0,
-				'level' => null,
-			], $targetId);
+			foreach (range(0, 59) as $first)
+				foreach (range(0, 2) as $second)
+				{
+					// 00, 01, 02,  10, 11, 12,  ...,  590, 591, 592
+					$number = implode('', [$first, $second]);
 
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('npc_translations', [
-					'npc_id' => $targetId,
-					'locale' => $lang,
-					'name'   => $data->LeveClient->{'Name_' . $lang} ?? null,
-				]);
+					$itemId = $data->{'ItemReceive' . $number . 'TargetID'} ?? null;
+					$currencyId = $data->{'ItemCost' . $number . 'TargetID'} ?? null;
+					$nqAmount = $data->{'CountCost' . $number} ?? null;
+					$hqAmount = $data->{'HQCost' . $number} ?? null;
 
-			// Requirements
-			//  Up to slot 3 targets exist, however I couldn't find a use-case where a leve required more than one
-			if ($data->CraftLeve->Item0TargetID)
-				$this->setData('item_objective', [
-					'item_id'      => $data->CraftLeve->Item0TargetID,
-					'objective_id' => $objectiveId,
-					'reward'       => 0,
-					'quantity'     => $data->CraftLeve->ItemCount0,
-					'quality'      => null,
-					'rate'         => null,
-				]);
+					if ( ! ($itemId && $currencyId))
+						continue;
 
-			// Rewards
-			//  Come in 8 total "Groups"
-			//  Ignoring Crystals, there's too many to bother with, and it's not a particularly useful piece of information
-			foreach (range(0, 7) as $slot)
-			{
-				$probability = $data->LeveRewardItem->{'Probability%' . $slot};
+					$this->setData('item_shop', [
+						'item_id' => $itemId,
+						'shop_id' => $data->ID,
+					]);
 
-				if ( ! $probability)
-					continue;
+					// You can only buy things from a special shop
+					//  Gil shops handle the selling
 
-				$rewardGroup =& $data->LeveRewardItem->{'LeveRewardItemGroup' . $slot};
+					if ($nqAmount)
+						$this->setData('item_price', [
+							'shop_id'  => $data->ID,
+							'price_id' => $this->generatePriceId([
+								'quality' => 0,
+								'item_id' => $currencyId, // The alternative currency; null is Gil
+								'market'  => 1, // PriceLow is selling price
+								'amount'  => $nqAmount,
+							]),
+						]);
 
-				// Items could be of a higher quality
-				foreach (['Count' => 0, 'HQ' => 1] as $keyVerb => $quality)
-					// Up to 9 total items can be in a group
-					foreach (range(0, 8) as $itemSlot)
-						// Count0/HQ0 should be higher than 0, Item0Target should be set to "Item", and the item shouldn't be a crystal
-						//  Crystals are Category 59
-						if ($rewardGroup->{$keyVerb . $itemSlot} && $rewardGroup->{'Item' . $itemSlot . 'Target'} == 'Item' && $rewardGroup->{'Item' . $itemSlot . 'TargetID'} && $rewardGroup->{'Item' . $itemSlot}->ItemUICategory != 59)
-							$this->setData('item_objective', [
-								'item_id'      => $rewardGroup->{'Item' . $itemSlot . 'TargetID'},
-								'objective_id' => $objectiveId,
-								'reward'       => 1,
-								'quantity'     => $rewardGroup->{$keyVerb . $itemSlot},
-								'quality'      => $quality,
-								'rate'         => $probability,
-							]);
-			}
+					if ($hqAmount)
+						$this->setData('item_price', [
+							'shop_id'  => $data->ID,
+							'price_id' => $this->generatePriceId([
+								'quality' => 1,
+								'item_id' => $currencyId, // The alternative currency; null is Gil
+								'market'  => 1, // PriceLow is selling price
+								'amount'  => $hqAmount,
+							]),
+						]);
+				}
 		});
 
 		$this->chunkLimit = null;
-		$this->limit = null;
-	}
-
-	protected function quests($idAdditive)
-	{
-		$questTypeId = array_search('quest', config('games.ffxiv.objectiveTypes'));
-
-		if ($questTypeId === false)
-			$this->error('Could not find Objective Type ID for "quest"');
-
-		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
-		$this->limit = 400;
-
-		$apiFields = [
-			'ID',
-			'Name',
-			'ClassJobCategory0TargetID',
-			'ClassJobLevel0',
-			'SortKey',
-			'PlaceNameTargetID',
-			'IconID',
-			'IssuerStart',
-			'TargetEnd',
-			'JournalGenreTargetID',
-		];
-
-		$this->addLanguageFields($apiFields, 'Name_%s');
-		// Required; There's like 40 of these, but I'm only going to go for 10
-		$this->addNumberedFields($apiFields, 'ScriptInstruction%d', range(0, 9));
-		$this->addNumberedFields($apiFields, 'ScriptArg%d', range(0, 9));
-		// Rewards; 00-05 are guaranteed. 10-14 are choices. Catalysts are likely guaranteed as well.
-		// 	Make sure the Target's are "Item"
-		$this->addNumberedFields($apiFields, 'ItemReward0%d', range(0, 5));
-		$this->addNumberedFields($apiFields, 'ItemCountReward0%d', range(0, 5));
-		$this->addNumberedFields($apiFields, 'ItemReward1%d', range(0, 4));
-		$this->addNumberedFields($apiFields, 'ItemCountReward1%d', range(0, 4));
-		// Ignoring Crystals (aka Catalysts), there's too many to bother with, and it's not a particularly useful piece of information
-		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTarget', range(0, 2));
-		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTargetID', range(0, 2));
-		// $this->addNumberedFields($apiFields, 'ItemCountCatalyst%d', range(0, 2));
-
-		$this->loopEndpoint('quest', $apiFields, function($data) use ($idAdditive, $questTypeId) {
-			// Skip empty names
-			if ($data->Name == '')
-				return;
-
-			$objectiveId = $data->ID + $idAdditive;
-
-			$this->setData('objectives', [
-				'id'         => $objectiveId,
-				'niche_id'   => $data->ClassJobCategory0TargetID,
-				'issuer_id'  => $data->IssuerStart,
-				'target_id'  => $data->TargetEnd,
-				'type'       => $questTypeId,
-				'repeatable' => 0,
-				'level'      => $data->ClassJobLevel0,
-				'icon'       => $data->IconID,
-			], $objectiveId);
-
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('objective_translations', [
-					'objective_id' => $objectiveId,
-					'locale'       => $lang,
-					'name'         => $data->{'Name_' . $lang} ?? null,
-					'description'  => null,
-				]);
-
-			$this->setData('coordinates', [
-				'zone_id'         => $data->PlaceNameTargetID,
-				'coordinate_id'   => $objectiveId,
-				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'x'               => null,
-				'y'               => null,
-				'z'               => null,
-				'radius'          => null,
-			]);
-
-			// Required Items
-			foreach (range(0, 9) as $slot)
-				if (substr($data->{'ScriptInstruction' . $slot}, 0, 5) == 'RITEM')
-					$this->setData('item_objective', [
-						'item_id'      => $data->{'ScriptArg' . $slot},
-						'objective_id' => $objectiveId,
-						'reward'       => 0,
-						'quantity'     => 1,
-						'quality'      => null,
-						'rate'         => null,
-					]);
-
-			// Reward Items, Guaranteed, 00-05
-			foreach (range(0, 5) as $slot)
-				if ($data->{'ItemReward0' . $slot})
-					$this->setData('item_objective', [
-						'item_id'      => $data->{'ItemReward0' . $slot},
-						'objective_id' => $objectiveId,
-						'reward'       => 1,
-						'quantity'     => $data->{'ItemCountReward0' . $slot} ?? 1,
-						'quality'      => null,
-						'rate'         => null,
-					]);
-
-			// Reward Items, Optional, 10-14
-			foreach (range(0, 4) as $slot)
-				if ($data->{'ItemReward1' . $slot . 'TargetID'} ?? false && $data->{'ItemReward1' . $slot . 'Target'} == 'Item')
-					$this->setData('item_objective', [
-						'item_id'      => $data->{'ItemReward1' . $slot . 'TargetID'},
-						'objective_id' => $objectiveId,
-						'reward'       => 1,
-						'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
-						'quality'      => null,
-						'rate'         => null,
-					]);
-		});
-
-		$this->limit = null;
-	}
-
-	protected function ventures($idAdditive)
-	{
-		$ventureTypeId = array_search('venture', config('games.ffxiv.objectiveTypes'));
-
-		if ($ventureTypeId === false)
-			$this->error('Could not find Objective Type ID for "venture"');
-
-		$apiFields = [
-			'ID',
-			'ClassJobCategory.ID',
-			'RetainerLevel',
-			'MaxTimeMin',
-			'VentureCost',
-			'IsRandom',
-			'Task',
-		];
-
-		$this->addLanguageFields($apiFields, 'ClassJobCategory.Name_%s');
-
-		$nameFields = [];
-		$this->addLanguageFields($nameFields, 'Name_%s');
-
-		$this->loopEndpoint('retainertask', $apiFields, function($data) use ($idAdditive, $ventureTypeId, $nameFields) {
-			// The Quantities are only applicable for "Normal" Ventures
-			$objectiveId = $data->ID + $idAdditive;
-			$names = $quantities = [];
-
-			if ($data->IsRandom)
-				$names = (array) $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
-			else
-			{
-				/**
-				 * There's something I'm not grasping about Ventures.
-				 *  I think my item list is going to be too loose here, but the point gets across.
-				 *  Cannot determine difference between "Mining/Botany/Fishing/Hunting/Quick" Explorations.
-				 *  Giving it a dummy name.
-				 */
-				$names['Name_en'] = 'Venture Exploration';
-
-				$q = $this->request('retainertasknormal/' . $data->Task, ['columns' => [
-					'Quantity0',
-					'Quantity1',
-					'Quantity2',
-					'ItemTarget',
-					'ItemTargetID',
-				]]);
-
-				if ($q->ItemTarget == 'Item' && $q->ItemTargetID)
-					foreach (range(0, 2) as $slot)
-						$this->setData('item_objective', [
-							'item_id'      => $q->ItemTargetID,
-							'objective_id' => $objectiveId,
-							'reward'       => 1,
-							'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
-							'quality'      => $q->{'Quantity' . $slot},
-							'rate'         => 33, // Reward is time based, simplifying and saying 33% chance for 3 tiers
-						]);
-			}
-
-			$this->setData('objectives', [
-				'id'         => $objectiveId,
-				'niche_id'   => $data->ClassJobCategory->ID,
-				'issuer_id'  => null,
-				'target_id'  => null,
-				'type'       => $ventureTypeId,
-				'repeatable' => 1,
-				'level'      => $data->RetainerLevel,
-				'icon'       => null,
-			], $objectiveId);
-
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('objective_translations', [
-					'objective_id' => $objectiveId,
-					'locale'       => $lang,
-					'name'         => $names->{'Name_' . $lang} ?? $names['Name_en'],
-					'description'  => null,
-				]);
-
-			$this->setData('details', [
-				'detailable_id'   => $objectiveId,
-				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
-					'cost'    => $data->VentureCost,
-					'minutes' => $data->MaxTimeMin,
-				]
-			]);
-		});
 	}
 
 	public function zones()
@@ -529,7 +228,6 @@ trait XIVAPI
 					'name'    => $data->{'Name_' . $lang} ?? null,
 				]);
 		});
-
 	}
 
 	public function nodes()
@@ -675,102 +373,6 @@ trait XIVAPI
 				'radius'          => $data->Radius,
 			]);
 		});
-	}
-
-	public function merchants()
-	{
-		// Gilshop IDs range from 262k+, and there's less than 1000
-		$this->gilshops();
-		// Special Shop IDs range from 1.7mil+, and there's less than 1000
-		$this->specialshops();
-	}
-
-	private function gilshops()
-	{
-		$apiFields = [
-			'ID',
-			'Items.*.ID',
-			'Items.*.PriceLow',
-			'Items.*.PriceMid',
-		];
-
-		$this->addLanguageFields($apiFields, 'Name_%s');
-
-		$this->loopEndpoint('gilshop', $apiFields, function($data) {
-			$this->setData('shops', [
-				'id' => $data->ID,
-			], $data->ID);
-
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('shop_translations', [
-					'shop_id' => $data->ID,
-					'locale'  => $lang,
-					'name'    => $data->{'Name_' . $lang} ?? null,
-				]);
-
-			foreach ($data->Items as $item)
-			{
-				$this->setData('item_shop', [
-					'item_id' => $item->ID,
-					'shop_id' => $data->ID,
-				]);
-
-				if ($item->PriceLow)
-					$this->setData('item_price', [
-						'shop_id'  => $data->ID,
-						'price_id' => $this->generatePriceId([
-							'quality' => 0,
-							'item_id' => null, // The alternative currency; null is Gil
-							'market'  => 0, // PriceLow is selling price
-							'amount'  => $item->PriceLow,
-						]),
-					]);
-
-				if ($item->PriceMid)
-					$this->setData('item_price', [
-						'shop_id'  => $data->ID,
-						'price_id' => $this->generatePriceId([
-							'quality' => 0,
-							'item_id' => null, // The alternative currency; null is Gil
-							'market'  => 1, // PriceMid is buying price
-							'amount'  => $item->PriceMid,
-						]),
-					]);
-			}
-		});
-	}
-
-	private function specialshops()
-	{
-		// We want every field; API calls `columns=BLANK`
-		$apiFields = '';
-
-		$this->addLanguageFields($apiFields, 'Name_%s');
-
-		$this->loopEndpoint('specialshop', $apiFields, function($data) {
-			dd($data);
-			$this->setData('shops', [
-				'id' => $data->ID,
-			], $data->ID);
-
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('shop_translations', [
-					'shop_id' => $data->ID,
-					'locale'  => $lang,
-					'name'    => $data->{'Name_' . $lang} ?? null,
-				]);
-
-
-
-
-			// ItemCost00TargetID
-			// 'CountCost*',
-			// ItemReceive01TargetID
-			// 'CountReceive*',
-			// 'HQCost00',
-			// HQReceive00
-		});
-
 	}
 
 	public function npcs()
@@ -1262,6 +864,437 @@ trait XIVAPI
 		$this->limit = null;
 	}
 
+	public function objectives()
+	{
+		// Achievement IDs range from 1 to less than 2400+; ALLOTMENT 1 to 20k
+		$this->achievements(0);
+		// Fate IDs range from 1 to 1500+; ALLOTMENT 20,001 to 40k
+		$this->fates(20000);
+		// Leve IDs range from 1 to 1500+; ALLOTMENT 40,001 to 60k
+		$this->leves(40000);
+		// Quest IDs range from 65500+ to ~70k
+		$this->quests(0);
+		// Venture IDs range from 1 to ~900; ALLOTMENT 90,001 to 100k
+		$this->ventures(90000);
+	}
+
+	protected function achievements($idAdditive)
+	{
+		$achievementTypeId = array_search('achievement', config('games.ffxiv.objectiveTypes'));
+
+		if ($achievementTypeId === false)
+			$this->error('Could not find Objective Type ID for "achievement"');
+
+		$apiFields = [
+			'ID',
+			'ItemTargetID',
+			'IconID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
+
+		$this->loopEndpoint('achievement', $apiFields, function($data) use ($idAdditive, $achievementTypeId) {
+			// We only care about achievements that provide an item
+			if ( ! $data->ItemTargetID)
+				return;
+
+			$objectiveId = $data->ID + $idAdditive;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => null,
+				'issuer_id'  => null,
+				'target_id'  => null,
+				'type'       => $achievementTypeId,
+				'repeatable' => null,
+				'level'      => null,
+				'icon'       => $data->IconID,
+			], $objectiveId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => $data->{'Description_' . $lang} ?? null,
+				]);
+
+			$this->setData('item_objective', [
+				'item_id'      => $data->ItemTargetID,
+				'objective_id' => $objectiveId,
+				'reward'       => 1,
+				'quantity'     => null,
+				'quality'      => null,
+				'rate'         => null,
+			]);
+
+			/**
+			 * Achievements don't have coordinates
+			 */
+		});
+	}
+
+	protected function fates($idAdditive)
+	{
+		/**
+		 * Ignoring
+		 * Fates don't offer any items of value
+		 */
+	}
+
+	protected function leves($idAdditive)
+	{
+		$leveTypeId = array_search('leve', config('games.ffxiv.objectiveTypes'));
+
+		if ($leveTypeId === false)
+			$this->error('Could not find Objective Type ID for "leve"');
+
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 1000;
+		$this->chunkLimit = 10;
+
+		$apiFields = [
+			'ID',
+			'ClassJobCategory.ID',
+			'LeveClient.ID',
+			'LeveVfx.IconID',
+			'LeveVfxFrame.IconID',
+			'GilReward',
+			'ExpReward',
+			'ClassJobLevel',
+			'PlaceNameIssuedTargetID',
+			'PlaceNameStartZoneTargetID',
+			'IconIssuerID',
+			'CraftLeve.Item0TargetID',
+			'CraftLeve.ItemCount0',
+			'CraftLeve.Repeats',
+			// Inefficient catchall, but there are a large number of datapoints in there I need to sift through
+			'LeveRewardItem',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->addLanguageFields($apiFields, 'LeveClient.Name_%s');
+		$this->addLanguageFields($apiFields, 'Description_%s');
+
+		$this->loopEndpoint('leve', $apiFields, function($data) use ($idAdditive, $leveTypeId) {
+			// No rewards? Don't bother.
+			if ($data->LeveRewardItem == null)
+				return;
+
+			$objectiveId = $data->ID + $idAdditive;
+			$targetId = $data->LeveClient->ID + $idAdditive;
+			$issuerId = $targetId;
+
+			// The issuer may be a Levemete, who is an NPC, but is treated more like a "place" than a "person"
+			//  Not sure how to handle this yet, for now, marking the issuer null seems like the best way
+			//  to indicate that something is up, and to use coordinates instead
+			if ($data->PlaceNameIssuedTargetID != $data->PlaceNameStartZoneTargetID)
+				$issuerId = null;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory->ID,
+				'issuer_id'  => $issuerId,
+				'target_id'  => $targetId,
+				'type'       => $leveTypeId,
+				'repeatable' => $data->CraftLeve->Repeats, // Only CraftLeves can repeat
+				'level'      => $data->ClassJobLevel,
+				'icon'       => 'leve',
+			], $objectiveId);
+
+			$this->setData('details', [
+				'detailable_id'   => $objectiveId,
+				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'xp'    => $data->ExpReward,
+					'gil'   => $data->GilReward,
+					'plate' => $data->LeveVfx->IconID,
+					'frame' => $data->LeveVfxFrame->IconID,
+				]
+			]);
+
+			$this->setData('coordinates', [
+				'zone_id'         => $data->PlaceNameIssuedTargetID,
+				'coordinate_id'   => $objectiveId,
+				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'x'               => null,
+				'y'               => null,
+				'z'               => null,
+				'radius'          => null,
+			]);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => $data->{'Description_' . $lang} ?? null,
+				]);
+
+			// Target NPC Creation
+			$this->setData('npcs', [
+				'id'    => $targetId,
+				'enemy' => 0,
+				'level' => null,
+			], $targetId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('npc_translations', [
+					'npc_id' => $targetId,
+					'locale' => $lang,
+					'name'   => $data->LeveClient->{'Name_' . $lang} ?? null,
+				]);
+
+			// Requirements
+			//  Up to slot 3 targets exist, however I couldn't find a use-case where a leve required more than one
+			if ($data->CraftLeve->Item0TargetID)
+				$this->setData('item_objective', [
+					'item_id'      => $data->CraftLeve->Item0TargetID,
+					'objective_id' => $objectiveId,
+					'reward'       => 0,
+					'quantity'     => $data->CraftLeve->ItemCount0,
+					'quality'      => null,
+					'rate'         => null,
+				]);
+
+			// Rewards
+			//  Come in 8 total "Groups"
+			//  Ignoring Crystals, there's too many to bother with, and it's not a particularly useful piece of information
+			foreach (range(0, 7) as $slot)
+			{
+				$probability = $data->LeveRewardItem->{'Probability%' . $slot};
+
+				if ( ! $probability)
+					continue;
+
+				$rewardGroup =& $data->LeveRewardItem->{'LeveRewardItemGroup' . $slot};
+
+				// Items could be of a higher quality
+				foreach (['Count' => 0, 'HQ' => 1] as $keyVerb => $quality)
+					// Up to 9 total items can be in a group
+					foreach (range(0, 8) as $itemSlot)
+						// Count0/HQ0 should be higher than 0, Item0Target should be set to "Item", and the item shouldn't be a crystal
+						//  Crystals are Category 59
+						if ($rewardGroup->{$keyVerb . $itemSlot} && $rewardGroup->{'Item' . $itemSlot . 'Target'} == 'Item' && $rewardGroup->{'Item' . $itemSlot . 'TargetID'} && $rewardGroup->{'Item' . $itemSlot}->ItemUICategory != 59)
+							$this->setData('item_objective', [
+								'item_id'      => $rewardGroup->{'Item' . $itemSlot . 'TargetID'},
+								'objective_id' => $objectiveId,
+								'reward'       => 1,
+								'quantity'     => $rewardGroup->{$keyVerb . $itemSlot},
+								'quality'      => $quality,
+								'rate'         => $probability,
+							]);
+			}
+		});
+
+		$this->chunkLimit = null;
+		$this->limit = null;
+	}
+
+	protected function quests($idAdditive)
+	{
+		$questTypeId = array_search('quest', config('games.ffxiv.objectiveTypes'));
+
+		if ($questTypeId === false)
+			$this->error('Could not find Objective Type ID for "quest"');
+
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 400;
+
+		$apiFields = [
+			'ID',
+			'Name',
+			'ClassJobCategory0TargetID',
+			'ClassJobLevel0',
+			'SortKey',
+			'PlaceNameTargetID',
+			'IconID',
+			'IssuerStart',
+			'TargetEnd',
+			'JournalGenreTargetID',
+		];
+
+		$this->addLanguageFields($apiFields, 'Name_%s');
+		// Required; There's like 40 of these, but I'm only going to go for 10
+		$this->addNumberedFields($apiFields, 'ScriptInstruction%d', range(0, 9));
+		$this->addNumberedFields($apiFields, 'ScriptArg%d', range(0, 9));
+		// Rewards; 00-05 are guaranteed. 10-14 are choices. Catalysts are likely guaranteed as well.
+		// 	Make sure the Target's are "Item"
+		$this->addNumberedFields($apiFields, 'ItemReward0%d', range(0, 5));
+		$this->addNumberedFields($apiFields, 'ItemCountReward0%d', range(0, 5));
+		$this->addNumberedFields($apiFields, 'ItemReward1%d', range(0, 4));
+		$this->addNumberedFields($apiFields, 'ItemCountReward1%d', range(0, 4));
+		// Ignoring Crystals (aka Catalysts), there's too many to bother with, and it's not a particularly useful piece of information
+		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTarget', range(0, 2));
+		// $this->addNumberedFields($apiFields, 'ItemCatalyst%dTargetID', range(0, 2));
+		// $this->addNumberedFields($apiFields, 'ItemCountCatalyst%d', range(0, 2));
+
+		$this->loopEndpoint('quest', $apiFields, function($data) use ($idAdditive, $questTypeId) {
+			// Skip empty names
+			if ($data->Name == '')
+				return;
+
+			$objectiveId = $data->ID + $idAdditive;
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory0TargetID,
+				'issuer_id'  => $data->IssuerStart,
+				'target_id'  => $data->TargetEnd,
+				'type'       => $questTypeId,
+				'repeatable' => 0,
+				'level'      => $data->ClassJobLevel0,
+				'icon'       => $data->IconID,
+			], $objectiveId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $data->{'Name_' . $lang} ?? null,
+					'description'  => null,
+				]);
+
+			$this->setData('coordinates', [
+				'zone_id'         => $data->PlaceNameTargetID,
+				'coordinate_id'   => $objectiveId,
+				'coordinate_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'x'               => null,
+				'y'               => null,
+				'z'               => null,
+				'radius'          => null,
+			]);
+
+			// Required Items
+			foreach (range(0, 9) as $slot)
+				if (substr($data->{'ScriptInstruction' . $slot}, 0, 5) == 'RITEM')
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ScriptArg' . $slot},
+						'objective_id' => $objectiveId,
+						'reward'       => 0,
+						'quantity'     => 1,
+						'quality'      => null,
+						'rate'         => null,
+					]);
+
+			// Reward Items, Guaranteed, 00-05
+			foreach (range(0, 5) as $slot)
+				if ($data->{'ItemReward0' . $slot})
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ItemReward0' . $slot},
+						'objective_id' => $objectiveId,
+						'reward'       => 1,
+						'quantity'     => $data->{'ItemCountReward0' . $slot} ?? 1,
+						'quality'      => null,
+						'rate'         => null,
+					]);
+
+			// Reward Items, Optional, 10-14
+			foreach (range(0, 4) as $slot)
+				if ($data->{'ItemReward1' . $slot . 'TargetID'} ?? false && $data->{'ItemReward1' . $slot . 'Target'} == 'Item')
+					$this->setData('item_objective', [
+						'item_id'      => $data->{'ItemReward1' . $slot . 'TargetID'},
+						'objective_id' => $objectiveId,
+						'reward'       => 1,
+						'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
+						'quality'      => null,
+						'rate'         => null,
+					]);
+		});
+
+		$this->limit = null;
+	}
+
+	protected function ventures($idAdditive)
+	{
+		$ventureTypeId = array_search('venture', config('games.ffxiv.objectiveTypes'));
+
+		if ($ventureTypeId === false)
+			$this->error('Could not find Objective Type ID for "venture"');
+
+		$apiFields = [
+			'ID',
+			'ClassJobCategory.ID',
+			'RetainerLevel',
+			'MaxTimeMin',
+			'VentureCost',
+			'IsRandom',
+			'Task',
+		];
+
+		$this->addLanguageFields($apiFields, 'ClassJobCategory.Name_%s');
+
+		$nameFields = [];
+		$this->addLanguageFields($nameFields, 'Name_%s');
+
+		$this->loopEndpoint('retainertask', $apiFields, function($data) use ($idAdditive, $ventureTypeId, $nameFields) {
+			// The Quantities are only applicable for "Normal" Ventures
+			$objectiveId = $data->ID + $idAdditive;
+			$names = $quantities = [];
+
+			if ($data->IsRandom)
+				$names = (array) $this->request('retainertaskrandom/' . $data->Task, ['columns' => $nameFields]);
+			else
+			{
+				/**
+				 * There's something I'm not grasping about Ventures.
+				 *  I think my item list is going to be too loose here, but the point gets across.
+				 *  Cannot determine difference between "Mining/Botany/Fishing/Hunting/Quick" Explorations.
+				 *  Giving it a dummy name.
+				 */
+				$names['Name_en'] = 'Venture Exploration';
+
+				$q = $this->request('retainertasknormal/' . $data->Task, ['columns' => [
+					'Quantity0',
+					'Quantity1',
+					'Quantity2',
+					'ItemTarget',
+					'ItemTargetID',
+				]]);
+
+				if ($q->ItemTarget == 'Item' && $q->ItemTargetID)
+					foreach (range(0, 2) as $slot)
+						$this->setData('item_objective', [
+							'item_id'      => $q->ItemTargetID,
+							'objective_id' => $objectiveId,
+							'reward'       => 1,
+							'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
+							'quality'      => $q->{'Quantity' . $slot},
+							'rate'         => 33, // Reward is time based, simplifying and saying 33% chance for 3 tiers
+						]);
+			}
+
+			$this->setData('objectives', [
+				'id'         => $objectiveId,
+				'niche_id'   => $data->ClassJobCategory->ID,
+				'issuer_id'  => null,
+				'target_id'  => null,
+				'type'       => $ventureTypeId,
+				'repeatable' => 1,
+				'level'      => $data->RetainerLevel,
+				'icon'       => null,
+			], $objectiveId);
+
+			foreach ($this->xivapiLanguages as $lang)
+				$this->setData('objective_translations', [
+					'objective_id' => $objectiveId,
+					'locale'       => $lang,
+					'name'         => $names->{'Name_' . $lang} ?? $names['Name_en'],
+					'description'  => null,
+				]);
+
+			$this->setData('details', [
+				'detailable_id'   => $objectiveId,
+				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'cost'    => $data->VentureCost,
+					'minutes' => $data->MaxTimeMin,
+				]
+			]);
+		});
+	}
+
 	/**
 	 * Helper Functions
 	 */
@@ -1307,13 +1340,17 @@ trait XIVAPI
 			if (isset($filters['ids']))
 				$ids = $ids->filter($filters['ids']);
 
-			if (empty($ids))
+			if ($ids->isEmpty())
 				continue;
+			elseif ($ids->count() > 1)
+			{
+				$chunk = $this->request($endpoint, ['ids' => $ids->join(','), 'columns' => $columns]);
 
-			$chunk = $this->request($endpoint, ['ids' => $ids->join(','), 'columns' => $columns]);
-
-			foreach ($chunk->Results as $data)
-				$callback($data);
+				foreach ($chunk->Results as $data)
+					$callback($data);
+			}
+			else
+				$callback($this->requestOne($endpoint, $ids->first()));
 		}
 	}
 
@@ -1348,6 +1385,14 @@ trait XIVAPI
 				(isset($queries['ids']) ? ' ' . preg_replace('/,.+,/', '-', $queries['ids']) : '')
 			);
 			return $this->api->queries($queries)->content->{$content}()->list();
+		});
+	}
+
+	private function requestOne($content, $id)
+	{
+		return Cache::store('file')->rememberForever($content . $id, function() use ($content, $id) {
+			$this->command->info('Querying ' . $content . ' (' . $id . ')');
+			return $this->api->content->{$content}()->one($id);
 		});
 	}
 
