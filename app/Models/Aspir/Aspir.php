@@ -156,4 +156,10 @@ abstract class Aspir
 		throw new \Exception($message);
 	}
 
+	protected function humanReadable($size)
+	{
+		$fileSizeNames = [" Bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"];
+		return $size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) .$fileSizeNames[$i] : '0 Bytes';
+	}
+
 }
