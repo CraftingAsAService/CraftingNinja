@@ -13,6 +13,8 @@
 
 namespace App\Models\Aspir;
 
+use Storage;
+
 abstract class Aspir
 {
 
@@ -102,7 +104,7 @@ abstract class Aspir
 		else
 			$this->command->info('Saving ' . count($list) . ' records to ' . $filename . '.json');
 
-		\Storage::put('app/game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
+		Storage::put('game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
 	}
 
 	/**

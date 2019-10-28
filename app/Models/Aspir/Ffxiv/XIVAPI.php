@@ -23,102 +23,6 @@ trait XIVAPI
 		$this->api->environment->key(config('services.xivapi.key'));
 	}
 
-	public function recipes()
-	{
-		// Recipe IDs range 1 to < 10000
-		$this->craftingRecipes();
-		// Company Craft IDs range from 1+; start them at 100k
-		$this->companyCrafts(100000);
-	}
-
-	private function craftingRecipes()
-	{
-		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
-		$this->limit = 500;
-
-		$apiFields = [
-			'ID',
-			'ItemResultTargetID',
-			'ClassJob.ID',
-			'RecipeLevelTable.ClassJobLevel',
-			'RecipeLevelTable.Stars',
-			'AmountResult',
-			'CanHq',
-		];
-
-		// There are 10 possible ingredient items (reagents)
-		$this->addNumberedFields($apiFields, 'ItemIngredient%dTargetID', range(0, 9));
-		$this->addNumberedFields($apiFields, 'AmountIngredient%d', range(0, 9));
-
-		$this->loopEndpoint('recipe', $apiFields, function($data) {
-			if ( ! $data->ItemResultTargetID)
-				return;
-
-			$this->setData('recipe', [
-				'id'           => $data->ID,
-				'item_id'      => $data->ItemResultTargetID,
-				'job_id'       => $data->ClassJob->ID,
-				'level'        => $data->RecipeLevelTable->ClassJobLevel,
-				'sublevel'     => $data->RecipeLevelTable->Stars,
-				'yield'        => $data->AmountResult,
-				'quality'      => $data->CanHq ? 1 : null,
-				'chance'       => null,
-			], $data->ID);
-
-			foreach (range(0, 9) as $slot)
-				if ($data->{'ItemIngredient' . $slot . 'TargetID'} && $data->{'AmountIngredient' . $slot})
-					$this->setData('item_recipe', [
-						'item_id'   => $data->{'ItemIngredient' . $slot . 'TargetID'},
-						'recipe_id' => $data->ID,
-						'quantity'  => $data->{'AmountIngredient' . $slot},
-					]);
-		});
-
-		$this->limit = null;
-	}
-
-	private function companyCrafts($idAdditive)
-	{
-		$apiFields = [
-			'ID',
-			'ResultItemTargetID',
-		];
-
-		// There are 8 possible crafting parts (reagents)
-		$this->addNumberedFields($apiFields, 'CompanyCraftPart%d', range(0, 7));
-
-		$this->loopEndpoint('companycraftsequence', $apiFields, function($data) use ($idAdditive) {
-
-			$recipeId = $data->ID + $idAdditive;
-
-			$this->setData('recipe', [
-				'id'           => $recipeId,
-				'item_id'      => $data->ResultItemTargetID,
-				'job_id'       => 0,
-				'level'        => 1,
-				'sublevel'     => 0,
-				'yield'        => 1,
-				'quality'      => null,
-				'chance'       => null,
-			], $recipeId);
-
-			foreach (range(0, 7) as $partSlot)
-				if ($data->{'CompanyCraftPart' . $partSlot})
-					foreach (range(0, 2) as $processSlot)
-					{
-						$process =& $data->{'CompanyCraftPart' . $partSlot}->{'CompanyCraftProcess' . $processSlot};
-						if ($process)
-							foreach (range(0, 11) as $setSlot)
-								if ($process->{'SetQuantity' . $setSlot})
-									$this->setData('item_recipe', [
-										'item_id'   => $process->{'SupplyItem' . $setSlot}->Item,
-										'recipe_id' => $recipeId,
-										'quantity'  => $process->{'SetQuantity' . $setSlot} * $process->{'SetsRequired' . $setSlot},
-									]);
-					}
-		});
-	}
-
 	public function objectives()
 	{
 		// Achievement IDs range from 1 to less than 2400+; ALLOTMENT 1 to 20k
@@ -1327,6 +1231,102 @@ trait XIVAPI
 		});
 
 		$this->limit = null;
+	}
+
+	public function recipes()
+	{
+		// Recipe IDs range 1 to < 10000
+		$this->craftingRecipes();
+		// Company Craft IDs range from 1+; start them at 100k
+		$this->companyCrafts(100000);
+	}
+
+	private function craftingRecipes()
+	{
+		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
+		$this->limit = 500;
+
+		$apiFields = [
+			'ID',
+			'ItemResultTargetID',
+			'ClassJob.ID',
+			'RecipeLevelTable.ClassJobLevel',
+			'RecipeLevelTable.Stars',
+			'AmountResult',
+			'CanHq',
+		];
+
+		// There are 10 possible ingredient items (reagents)
+		$this->addNumberedFields($apiFields, 'ItemIngredient%dTargetID', range(0, 9));
+		$this->addNumberedFields($apiFields, 'AmountIngredient%d', range(0, 9));
+
+		$this->loopEndpoint('recipe', $apiFields, function($data) {
+			if ( ! $data->ItemResultTargetID)
+				return;
+
+			$this->setData('recipe', [
+				'id'           => $data->ID,
+				'item_id'      => $data->ItemResultTargetID,
+				'job_id'       => $data->ClassJob->ID,
+				'level'        => $data->RecipeLevelTable->ClassJobLevel,
+				'sublevel'     => $data->RecipeLevelTable->Stars,
+				'yield'        => $data->AmountResult,
+				'quality'      => $data->CanHq ? 1 : null,
+				'chance'       => null,
+			], $data->ID);
+
+			foreach (range(0, 9) as $slot)
+				if ($data->{'ItemIngredient' . $slot . 'TargetID'} && $data->{'AmountIngredient' . $slot})
+					$this->setData('item_recipe', [
+						'item_id'   => $data->{'ItemIngredient' . $slot . 'TargetID'},
+						'recipe_id' => $data->ID,
+						'quantity'  => $data->{'AmountIngredient' . $slot},
+					]);
+		});
+
+		$this->limit = null;
+	}
+
+	private function companyCrafts($idAdditive)
+	{
+		$apiFields = [
+			'ID',
+			'ResultItemTargetID',
+		];
+
+		// There are 8 possible crafting parts (reagents)
+		$this->addNumberedFields($apiFields, 'CompanyCraftPart%d', range(0, 7));
+
+		$this->loopEndpoint('companycraftsequence', $apiFields, function($data) use ($idAdditive) {
+
+			$recipeId = $data->ID + $idAdditive;
+
+			$this->setData('recipe', [
+				'id'           => $recipeId,
+				'item_id'      => $data->ResultItemTargetID,
+				'job_id'       => 0,
+				'level'        => 1,
+				'sublevel'     => 0,
+				'yield'        => 1,
+				'quality'      => null,
+				'chance'       => null,
+			], $recipeId);
+
+			foreach (range(0, 7) as $partSlot)
+				if ($data->{'CompanyCraftPart' . $partSlot})
+					foreach (range(0, 2) as $processSlot)
+					{
+						$process =& $data->{'CompanyCraftPart' . $partSlot}->{'CompanyCraftProcess' . $processSlot};
+						if ($process)
+							foreach (range(0, 11) as $setSlot)
+								if ($process->{'SetQuantity' . $setSlot})
+									$this->setData('item_recipe', [
+										'item_id'   => $process->{'SupplyItem' . $setSlot}->Item,
+										'recipe_id' => $recipeId,
+										'quantity'  => $process->{'SetQuantity' . $setSlot} * $process->{'SetsRequired' . $setSlot},
+									]);
+					}
+		});
 	}
 
 	/**

@@ -11,6 +11,11 @@ namespace App\Models\Aspir\Ffxiv;
 trait GarlandTools
 {
 
+	public function garlandTodo()
+	{
+		dd('Garland TODO');
+	}
+
 
 	/**
 	 * Helper Functions
