@@ -72,14 +72,14 @@ abstract class Aspir
 			});
 	}
 
-	protected function setData($table, $row, $id = null)
+	protected function setData($table, $row, $originId = null, $mergeOnly = false)
 	{
 		// If id is null, use the length of the existing data, or check in the $row for it
-		$id = $id ?: (isset($row['id']) ? $row['id'] : count($this->data[$table]) + 1);
+		$id = $originId ?: (isset($row['id']) ? $row['id'] : count($this->data[$table]) + 1);
 
 		if (isset($this->data[$table][$id]))
 			$this->data[$table][$id] = array_merge($this->data[$table][$id], $row);
-		else
+		elseif ( ! $mergeOnly)
 			$this->data[$table][$id] = $row;
 
 		return $id;
@@ -111,7 +111,7 @@ abstract class Aspir
 	 * File Retrieval Functions
 	 */
 
-	private function getCleanedJson($path, $debug = false)
+	protected function getCleanedJson($path, $debug = false)
 	{
 		$content = file_get_contents($path);
 
@@ -137,7 +137,7 @@ abstract class Aspir
 		return $string;
 	}
 
-	private function readTSV($filename)
+	protected function readTSV($filename)
 	{
 		$tsv = array_map(function($l) { return str_getcsv($l, '	'); }, file($filename));
 

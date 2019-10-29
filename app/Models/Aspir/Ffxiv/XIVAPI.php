@@ -868,12 +868,7 @@ trait XIVAPI
 								'npc_id'  => $data->ID,
 							]);
 						}
-		}/* I believe this is fixed, holding onto legacy filter for now. *//*, [
-			'ids' => function($value, $key) {
-				// After ID 1028800, Quests, GilShop and SpecialShop all disappear, causing errors
-				return $value < 1028800;
-			}
-		]*/);
+		});
 
 		$this->limit = null;
 	}
