@@ -622,7 +622,12 @@ trait XIVAPI
 
 	private function instances($idAdditive)
 	{
-		dd('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+		// TODO
+		// dd('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
 
 		$apiFields = [
 			'ID',
