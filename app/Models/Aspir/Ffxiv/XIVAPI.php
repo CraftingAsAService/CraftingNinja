@@ -588,7 +588,7 @@ trait XIVAPI
 	{
 		// placename IDs range from 1 to 3300+
 		$this->placenames();
-		// instance IDs range from 1 to 400+
+		// instance IDs range from 1 to 65000+
 		$this->instances(10000);
 	}
 
@@ -622,6 +622,8 @@ trait XIVAPI
 
 	private function instances($idAdditive)
 	{
+		dd('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
+
 		$apiFields = [
 			'ID',
 			'ContentType.ID',
