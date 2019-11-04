@@ -20,44 +20,43 @@ trait ManualData
 			'Lush Vegetation Patch' => 3, // via Harvesting
 		];
 
-		$nodeTranslations = collect($this->data['node_translations'])->filter(function($entry) {
+		$zoneTranslations = collect($this->data['zone_translations'])->filter(function($entry) {
 			return $entry['locale'] == 'en';
 		})->keyBy('name')->map(function($entry) {
-			return $entry['node_id'];
+			return $entry['zone_id'];
 		});
 
+		$nodes = collect($this->data['nodes']);
+
 		// Node Coordinates file is manually built
-		$coordinates = $this->readTSV($this->manualDataLocation . '/nodeCoordinates.tsv');
+		$manualCoordinateData = $this->readTSV($this->manualDataLocation . '/nodeCoordinates.tsv');
 
-		$coordinates = $coordinates->map(function($row) use ($typeConverter, $nodeTranslations) {
-			$row['type'] = $typeConverter[$row['type']];
-			$coords = explode(' x ', $row['coordinates']);
-			$row['x'] = $coords[0];
-			$row['y'] = $coords[1];
-			$row['zone_id'] = $nodeTranslations[$row['location']] ?? 0;
-			return $row;
-		})/*->filter(function($row) {
-			return $row['zone_id'] !== 0;
-		})*/;
+		$coordinates = collect($this->data['coordinates']);
 
-		dd($coordinates);
+		foreach ($manualCoordinateData as $data)
+		{
+			$zoneId = $zoneTranslations[$data['location']] ?? 0;
 
+			if ( ! $zoneId)
+				continue;
 
-		// $areaFinder = collect($this->data['nodes'])->map(function($entry) use ($nodeTranslations) {
-		// 	return
-		// })
+			$coords = explode(' x ', $data['coordinates']);
 
+			$possibleNodes = $nodes->where('level', $data['level'])
+				->where('type', $typeConverter[$data['type']])
+				->pluck('id');
 
-		foreach ($this->data['coordinates'] as &$coordinate)
-			if ($coordinate[''])
-		foreach ($this->data['nodes'] as &$node)
-			$node['coordinates'] = isset($areaFinder[$node['zone_id']]) && isset($typeConverter[$node['type']])
-				? $coordinates
-					->where('location', $areaFinder[$node['zone_id']])
-					->where('level', $node['level'])
-					->where('type', $typeConverter[$node['type']])
-					->pluck('coordinates')->join(', ', ' or ')
-				: null;
+			$coordinates->where('zone_id', $zoneId)
+				->where('coordinate_type', 'node')
+				->whereIn('coordinate_id', $possibleNodes)
+				->map(function($entry) use ($coords) {
+					$entry['x'] = $coords[0];
+					$entry['y'] = $coords[1];
+					return $entry;
+				});
+		}
+
+		$this->data['coordinates'] = $coordinates->toArray();
 	}
 
 	public function manualNodeTimers()
@@ -88,6 +87,8 @@ trait ManualData
 			22 => '10pm',
 			23 => '11pm',
 		];
+
+		dd('TODO TIMERS');
 
 		$nodeTimers = $this->readTSV($this->path . 'nodeTimers.tsv')
 			->mapWithKeys(function($record) use ($timeConverter) {

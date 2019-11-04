@@ -588,8 +588,8 @@ trait XIVAPI
 	{
 		// placename IDs range from 1 to 3300+
 		$this->placenames();
-		// instance IDs range from 1 to 65000+
-		$this->instances(10000);
+		// instances are already in placename, but additional data is available
+		$this->instances();
 	}
 
 	private function placenames()
@@ -620,15 +620,8 @@ trait XIVAPI
 		});
 	}
 
-	private function instances($idAdditive)
+	private function instances()
 	{
-		// TODO
-		// dd('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
-		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
-		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
-		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
-		echo('instance names are on:: ContentFinderCondition.Name and ContentFinderCondition.Name_en seem to be well provisionned unlike the raw "Names" attributes');
-
 		$apiFields = [
 			'ID',
 			'ContentType.ID',
@@ -636,19 +629,11 @@ trait XIVAPI
 			'ContentFinderCondition.ImageID',
 		];
 
-		$this->addLanguageFields($apiFields, 'Name_%s');
+		$this->loopEndpoint('instancecontent', $apiFields, function($data) {
+			$zoneId = $data->ContentFinderCondition->TerritoryType->PlaceName->ID ?? null;
 
-		$this->loopEndpoint('instancecontent', $apiFields, function($data) use ($idAdditive) {
-			// Skip empty names
-			if ($data->Name_en == '')
+			if ($zoneId === null)
 				return;
-
-			$zoneId = $data->ID + $idAdditive;
-
-			$this->setData('zones', [
-				'id'      => $zoneId,
-				'zone_id' => $data->ContentFinderCondition->TerritoryType->PlaceName->ID ?? null, // Parent Zone
-			], $zoneId);
 
 			$this->setData('details', [
 				'detailable_id'   => $zoneId,
@@ -658,13 +643,6 @@ trait XIVAPI
 					'icon' => $data->ContentFinderCondition->ImageID,
 				]
 			]);
-
-			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('zone_translations', [
-					'zone_id' => $zoneId,
-					'locale'  => $lang,
-					'name'    => $data->{'Name_' . $lang} ?? null,
-				]);
 		});
 	}
 
@@ -722,7 +700,7 @@ trait XIVAPI
 
 			$gp = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], ['columns' => [
 				'PlaceName.ID',
-				// 'TerritoryType.PlaceName.ID',
+				'TerritoryType.PlaceName.ID',
 			]]);
 
 			$this->setData('nodes', [
@@ -733,7 +711,7 @@ trait XIVAPI
 
 			$this->setData('coordinates', [
 				// If I got the zone_id wrong, try $gp->TerritoryType->PlaceName->ID instead
-				'zone_id'         => $gp->PlaceName->ID,
+				'zone_id'         => $gp->TerritoryType->PlaceName->ID,
 				'coordinate_id'   => $data->ID,
 				'coordinate_type' => 'node', // See Relation::morphMap in AppServiceProvider
 				'x'               => null, // Filled in later
