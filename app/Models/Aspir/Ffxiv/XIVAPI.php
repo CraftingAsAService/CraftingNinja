@@ -719,15 +719,6 @@ trait XIVAPI
 				'z'               => null, // Filled in later
 				'radius'          => null, // Filled in later
 			]);
-
-			$this->setData('details', [
-				'detailable_id'   => $data->ID,
-				'detailable_type' => 'node', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
-					// Filled in later
-					//  Timer data, etc
-				]
-			]);
 		});
 	}
 
@@ -1228,8 +1219,8 @@ trait XIVAPI
 
 		$apiFields = [
 			'ID',
-			'ItemResultTargetID',
 			'ClassJob.ID',
+			'ItemResultTargetID',
 			'RecipeLevelTable.ClassJobLevel',
 			'RecipeLevelTable.Stars',
 			'AmountResult',
@@ -1244,7 +1235,7 @@ trait XIVAPI
 			if ( ! $data->ItemResultTargetID)
 				return;
 
-			$this->setData('recipe', [
+			$this->setData('recipes', [
 				'id'           => $data->ID,
 				'item_id'      => $data->ItemResultTargetID,
 				'job_id'       => $data->ClassJob->ID,

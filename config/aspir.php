@@ -23,7 +23,7 @@ return [
 		'job_translations'       => [],
 		'jobs'                   => [],
 		'niches'                 => [],
-		'node_translations'      => [], // Empty for FFXIV, relies on Zone Name
+		// 'node_translations'      => [], // Empty for FFXIV, relies on Zone Name
 		'nodes'                  => [],
 		'npc_shop'               => [],
 		'npc_translations'       => [],
@@ -31,7 +31,7 @@ return [
 		'objective_translations' => [],
 		'objectives'             => [],
 		'prices'                 => [],
-		'recipe_translations'    => [],
+		// 'recipe_translations'    => [], // Empty for FFXIV, relies on Item Name
 		'recipes'                => [],
 		'shop_translations'      => [],
 		'shops'                  => [],

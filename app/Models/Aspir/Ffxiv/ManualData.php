@@ -88,55 +88,61 @@ trait ManualData
 			23 => '11pm',
 		];
 
-		dd('TODO TIMERS');
+		$nodeTimers = $this->readTSV($this->manualDataLocation . '/nodeTimers.tsv');
 
-		$nodeTimers = $this->readTSV($this->path . 'nodeTimers.tsv')
-			->mapWithKeys(function($record) use ($timeConverter) {
-				$hours = collect(explode(',', $record['times']))->map(function($entry) use ($timeConverter) {
-					return $timeConverter[trim($entry)] ?? $entry;
-				})->implode(', ');
-				return [ $record['node_id'] => $hours . ' for ' . $record['uptime'] . 'm' ];
-			});
-
-		foreach ($nodeTimers as $nodeId => $timer)
-			if (isset($this->data['node'][$nodeId]))
-				$this->data['node'][$nodeId]['timer'] = $timer;
+		foreach ($nodeTimers as $entry)
+			$this->setData('details', [
+				'detailable_id'   => $entry['node_id'],
+				'detailable_type' => 'node', // See Relation::morphMap in AppServiceProvider
+				'data'            => [
+					'hours'  => collect(explode(',', $entry['times']))->map(function($entry) use ($timeConverter) {
+									return $timeConverter[trim($entry)] ?? $entry;
+								})->implode(', '),
+					'uptime' => $entry['uptime'] . 'm',
+					'type'   => $entry['type'],
+				]
+			]);
 	}
 
 	public function manualRandomVentureItems()
 	{
 		// Random Venture Items file is manually built
-		$randomVentureItems = $this->readTSV($this->path . 'randomVentureItems.tsv')
+		$randomVentureItems = $this->readTSV($this->manualDataLocation . '/randomVentureItems.tsv')
 			->pluck('items', 'venture');
 
-		$ventures = collect($this->data['venture'])->pluck('id', 'name')->toArray();
-		$items = collect($this->data['item'])->pluck('id', 'name')->toArray();
+		$objectiveTranslations = collect($this->data['objective_translations'])->filter(function($entry) {
+			return $entry['locale'] == 'en';
+		})->keyBy('name')->map(function($entry) {
+			return $entry['objective_id'];
+		});
 
-		// The `venture` column should match against a `venture.name`
-		//  Likewise, exploding the `items` column on a comma, then looping those against the `item.name` should produce a match
-		//  And voila, populate `item_venture`
+		$itemTranslations = collect($this->data['item_translations'])->filter(function($entry) {
+			return $entry['locale'] == 'en';
+		})->keyBy('name')->map(function($entry) {
+			return $entry['item_id'];
+		});
+
+		// The `venture` column should match against an objective name
+		//  Likewise, exploding the `items` column on a comma, then looping those against the item names should produce a match
+		//  And voila, entries to item_objective are born
 		foreach ($randomVentureItems as $venture => $ventureItems)
 		{
 			$ventureItems = explode(',', str_replace(', ', ',', $ventureItems));
+			// There's a one in X chance that the item is given
+			//  Simplified and probably wrong, but it'll do
+			$rate = number_format(1 / count($ventureItems), 2) * 100;
 
 			foreach ($ventureItems as $itemName)
-				if (isset($items[$itemName]) && isset($ventures[$venture]))
-					$this->setData('item_venture', [
-						'venture_id' => $ventures[$venture],
-						'item_id'    => $items[$itemName],
+				if (isset($itemTranslations[$itemName]) && isset($objectiveTranslations[$venture]))
+					$this->setData('item_objective', [
+						'item_id'      => $itemTranslations[$itemName],
+						'objective_id' => $objectiveTranslations[$venture],
+						'reward'       => 1,
+						'quantity'     => 1,
+						'quality'      => 0,
+						'rate'         => $rate
 					]);
 		}
 	}
-
-	public function manualLeveTypes()
-	{
-		$leveTypes = $this->readTSV($this->path . 'leveTypes.tsv')
-			->pluck('type', 'plate');
-
-		foreach ($this->data['leve'] as &$leve)
-			if (isset($leveTypes[$leve['plate']]))
-				$leve['type'] = $leveTypes[$leve['plate']];
-	}
-
 
 }
