@@ -4,11 +4,15 @@
  * Osmose
  * 	This spell absorbs DATA from Aspir
  * 	Based on existing CSV files, data is imported
+ *
+ * Required Configuration to my.cnf (Only doing this to local vagrant instance)
+ * [mysqld]
+ * local_infile = 1
+ * secure-file-priv = ""
  */
 
 namespace App\Models\Aspir;
 
-use App\Traits\BatchInsert;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Storage;
@@ -16,14 +20,12 @@ use Storage;
 class Osmose
 {
 
-	use BatchInsert;
-
 	public function __construct(&$command, $gameSlug)
 	{
 		set_time_limit(0);
-		Model::unguard();
-		DB::connection()->disableQueryLog();
-		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+		// Model::unguard();
+		// DB::connection()->disableQueryLog();
+		// DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
 		$this->command =& $command;
 
@@ -33,7 +35,7 @@ class Osmose
 	public function __destruct()
 	{
 		// Cleanup
-		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+		// DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
 
 	public function run()
@@ -52,25 +54,19 @@ class Osmose
 
 			$this->command->info('Inserting data into ' . $tableName);
 
-			dd($columns);
+			DB::connection($this->gameSlug)->table($tableName)->truncate();
 
-			// $this->truncate($tableName);
-
-			// LOAD DATA INFILE '/tmp/test.txt' REPLACE INTO TABLE test (col1, col2)
-			// IGNORE 1 LINES;
-
-			// $this->batchInsert($data, $tableName, $this->gameSlug);
+			DB::connection($this->gameSlug)->getpdo()->exec(
+				'SET FOREIGN_KEY_CHECKS=0'
+			);
+			DB::connection($this->gameSlug)->getpdo()->exec(
+				'LOAD DATA LOCAL INFILE \'' . Storage::path($dataFile) . '\' ' .
+				'REPLACE INTO TABLE ' . $tableName . ' ' .
+				'FIELDS TERMINATED BY \',\' ENCLOSED BY \'"\' ' .
+				'IGNORE 1 LINES ' .
+				'(' . implode(', ', $columns) . ')'
+			);
 		}
-	}
-
-	// private function getData($tableName)
-	// {
-	// 	return json_decode(Storage::get('game-data/' . $this->gameSlug . '/' . $tableName . '.json'), true);
-	// }
-
-	private function truncate($tableName)
-	{
-		DB::connection($this->gameSlug)->table($tableName)->truncate();
 	}
 
 }

@@ -40,8 +40,7 @@ class MigrationServiceProvider extends ServiceProvider
 
 		// A quick way to create pivot tables
 		//  You can add in additional pivot fields after
-		Blueprint::macro('pivot', function($includeId = false, $table1 = null, $table2 = null) {
-
+		Blueprint::macro('pivot', function($includeId = false, $table1 = null, $table2 = null, $createPrimary = true) {
 			// Table names can be based on the name of the table itself
 			if (is_null($table1) || is_null($table2))
 			{
@@ -62,12 +61,14 @@ class MigrationServiceProvider extends ServiceProvider
 
 			// Indexes
 			// If we don't have an ID field, we want the primary to be both, otherwise the primary is the ID
-			if ( ! $includeId)
+			if ( ! $includeId && ! $primaryKey)
 				$this->primary([ $field1Id, $field2Id ]);
 			$this->index($field1Id);
 			$this->index($field2Id);
 			$this->cascadeDeleteForeign($table1);
 			$this->cascadeDeleteForeign($table2);
+
+			return [ $field1Id, $field2Id ];
 		});
 	}
 

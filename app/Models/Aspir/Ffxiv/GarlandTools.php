@@ -34,7 +34,7 @@ trait GarlandTools
 			foreach ($data->mob->drops as $itemId)
 				$this->setData('item_npc', [
 					'item_id' => $itemId,
-					'mob_id'  => $mobId,
+					'npc_id'  => $mobId,
 				]);
 		});
 	}

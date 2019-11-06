@@ -494,7 +494,7 @@ trait XIVAPI
 
 				if ($item->PriceLow)
 					$this->setData('item_price', [
-						'shop_id'  => $data->ID,
+						'item_id'  => $item->ID,
 						'price_id' => $this->generatePriceId([
 							'quality' => 0,
 							'item_id' => null, // The alternative currency; null is Gil
@@ -505,7 +505,7 @@ trait XIVAPI
 
 				if ($item->PriceMid)
 					$this->setData('item_price', [
-						'shop_id'  => $data->ID,
+						'item_id'  => $item->ID,
 						'price_id' => $this->generatePriceId([
 							'quality' => 0,
 							'item_id' => null, // The alternative currency; null is Gil
@@ -988,7 +988,7 @@ trait XIVAPI
 		$this->loopEndpoint('baseparam', $apiFields, function($data) {
 			$this->setData('attributes', [
 				'id'   => $data->ID,
-				'rank' => $data->Order,
+				'rank' => $data->Order >= 0 ? $data->Order : null,
 			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
@@ -1055,13 +1055,13 @@ trait XIVAPI
 
 		// Base Attributes
 		$rootParamConversion = [
-			'Block'       => 'Block Strength',
-			'BlockRate'   => 'Block Rate',
-			'DefenseMag'  => 'Magic Defense',
-			'DefensePhys' => 'Defense',
-			'DamageMag'   => 'Magic Damage',
-			'DamagePhys'  => 'Physical Damage',
-			'DelayMs'     => 'Delay',
+			'Block'       => array_search('Block Strength', $attributes),
+			'BlockRate'   => array_search('Block Rate', $attributes),
+			'DefenseMag'  => array_search('Magic Defense', $attributes),
+			'DefensePhys' => array_search('Defense', $attributes),
+			'DamageMag'   => array_search('Magic Damage', $attributes),
+			'DamagePhys'  => array_search('Physical Damage', $attributes),
+			'DelayMs'     => array_search('Delay', $attributes),
 		];
 
 		// HQs of these exist as Special, will need to match on names
@@ -1110,9 +1110,9 @@ trait XIVAPI
 			// Attribute Data
 			$nqParams = $hqParams = $maxParams = [];
 
-			foreach ($rootParamConversion as $key => $name)
+			foreach ($rootParamConversion as $key => $rootParamAttributeId)
 				if ($data->$key)
-					$nqParams[$rootParamConversion[$key]] = $data->$key;
+					$nqParams[$rootParamAttributeId] = $data->$key;
 
 			// Delay comes through as "2000", but we want it as "2.00"
 			if (isset($nqParams[$delayAttributeId]))
