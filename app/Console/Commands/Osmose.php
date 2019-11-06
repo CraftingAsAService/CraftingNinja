@@ -31,7 +31,7 @@ class Osmose extends Command
 	 */
 	public function handle()
 	{
-		$gameSlug = ucwords($this->argument('game'));
+		$gameSlug = $this->argument('game');
 
 		(new OsmoseModel($this, $gameSlug))->run();
 	}

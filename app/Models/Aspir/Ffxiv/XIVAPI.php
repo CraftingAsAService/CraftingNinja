@@ -165,12 +165,12 @@ trait XIVAPI
 			$this->setData('details', [
 				'detailable_id'   => $objectiveId,
 				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
+				'data'            => json_encode([
 					'xp'    => $data->ExpReward,
 					'gil'   => $data->GilReward,
 					'plate' => $data->LeveVfx->IconID,
 					'frame' => $data->LeveVfxFrame->IconID,
-				]
+				]),
 			]);
 
 			$this->setData('coordinates', [
@@ -446,10 +446,10 @@ trait XIVAPI
 			$this->setData('details', [
 				'detailable_id'   => $objectiveId,
 				'detailable_type' => 'objective', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
+				'data'            => json_encode([
 					'cost'    => $data->VentureCost,
 					'minutes' => $data->MaxTimeMin,
-				]
+				]),
 			]);
 		});
 	}
@@ -638,10 +638,10 @@ trait XIVAPI
 			$this->setData('details', [
 				'detailable_id'   => $zoneId,
 				'detailable_type' => 'zone', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
+				'data'            => json_encode([
 					'type' => $data->ContentType->ID,
 					'icon' => $data->ContentFinderCondition->ImageID,
-				]
+				]),
 			]);
 		});
 	}
@@ -1101,10 +1101,10 @@ trait XIVAPI
 			$this->setData('details', [
 				'detailable_id'   => $data->ID,
 				'detailable_type' => 'item', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
+				'data'            => json_encode([
 					'unique'    => $data->IsUnique,
 					'tradeable' => $data->IsUntradable ? null : 1,
-				]
+				]),
 			]);
 
 			// Attribute Data

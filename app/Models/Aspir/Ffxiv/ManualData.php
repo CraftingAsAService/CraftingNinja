@@ -94,13 +94,13 @@ trait ManualData
 			$this->setData('details', [
 				'detailable_id'   => $entry['node_id'],
 				'detailable_type' => 'node', // See Relation::morphMap in AppServiceProvider
-				'data'            => [
+				'data'            => json_encode([
 					'hours'  => collect(explode(',', $entry['times']))->map(function($entry) use ($timeConverter) {
 									return $timeConverter[trim($entry)] ?? $entry;
 								})->implode(', '),
 					'uptime' => $entry['uptime'] . 'm',
 					'type'   => $entry['type'],
-				]
+				]),
 			]);
 	}
 

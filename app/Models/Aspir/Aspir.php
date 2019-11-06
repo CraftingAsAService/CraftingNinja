@@ -28,7 +28,9 @@ abstract class Aspir
 
 		$this->manualDataLocation = base_path('../data/' . $this->gameSlug);
 
-		$this->data = config('aspir.dataTemplate');
+		$this->data = array_map(function() {
+			return [];
+		}, array_flip(array_merge(config('aspir.entityTables'), config('aspir.pivotTables'))));
 	}
 
 	public function run()
@@ -93,19 +95,44 @@ abstract class Aspir
 	{
 		$this->command->comment('Saving Data');
 
+		// Saving files down as CSV, so MySQL can use LOAD DATA INFILE later
 		foreach ($this->data as $filename => $data)
-			$this->writeToJSON($filename, $data);
+			$this->writeToCSV($filename, $data);
 	}
 
-	protected function writeToJSON($filename, $list)
+	protected function writeToCSV($filename, $data)
 	{
-		if (empty($list))
-			$this->command->comment('No data for ' . $filename);
-		else
-			$this->command->info('Saving ' . count($list) . ' records to ' . $filename . '.json');
+		$filePath = 'game-data/' . $this->gameSlug . '/' . $filename . '.csv';
 
-		Storage::put('game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
+		if (empty($data))
+		{
+			$this->command->comment('No data for ' . $filename);
+			Storage::delete($filePath);
+		}
+		else
+		{
+			$this->command->info('Saving ' . count($data) . ' records to ' . $filename . '.csv');
+
+			$fp = fopen(Storage::path($filePath), 'w');
+
+			fputcsv($fp, array_keys(current($data)));
+
+			foreach ($data as $row)
+				fputcsv($fp, $row);
+
+			fclose($fp);
+		}
 	}
+
+	// protected function writeToJSON($filename, $list)
+	// {
+	// 	if (empty($list))
+	// 		$this->command->comment('No data for ' . $filename);
+	// 	else
+	// 		$this->command->info('Saving ' . count($list) . ' records to ' . $filename . '.json');
+
+	// 	Storage::put('game-data/' . $this->gameSlug . '/' . $filename . '.json', json_encode($list, JSON_PRETTY_PRINT));
+	// }
 
 	/**
 	 * File Retrieval Functions

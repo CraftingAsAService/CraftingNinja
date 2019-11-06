@@ -73,6 +73,7 @@ class Items extends Migration
 
 			// Mark if there's an "alternate" currency at work, identify it
 			// Treat null as "normal" currency, though it may be an item proper as well
+			// TODO, rename to currency_id ?
 			$table->unsignedInteger('item_id')->nullable();
 
 			// Purchase Price (Player purchasing from Vendor) == true, or Sell Price (Player selling to vendor) == false
