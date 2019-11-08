@@ -16,7 +16,7 @@ trait GarlandTools
 		$this->loopGarlandEndpoint('mob', function($data) {
 			$mobId = $this->translateMobID($data->mob->id);
 
-			$this->setData('mob', [
+			$this->setData('npcs', [
 				'level'   => $data->mob->lvl,
 			], $mobId, true);
 

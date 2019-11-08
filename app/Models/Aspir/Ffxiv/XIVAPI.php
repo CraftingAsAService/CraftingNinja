@@ -862,7 +862,7 @@ trait XIVAPI
 			if ($data->Name_en == '')
 				return;
 
-			$this->setData('npc', [
+			$this->setData('npcs', [
 				'id'    => $data->ID,
 				'enemy' => 1,
 				'level' => null, // Filled in later
@@ -1272,7 +1272,7 @@ trait XIVAPI
 
 			$recipeId = $data->ID + $idAdditive;
 
-			$this->setData('recipe', [
+			$this->setData('recipes', [
 				'id'           => $recipeId,
 				'item_id'      => $data->ResultItemTargetID,
 				'job_id'       => 0,

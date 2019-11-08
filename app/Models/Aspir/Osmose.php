@@ -61,10 +61,10 @@ class Osmose
 			);
 			DB::connection($this->gameSlug)->getpdo()->exec(
 				'LOAD DATA LOCAL INFILE \'' . Storage::path($dataFile) . '\' ' .
-				'REPLACE INTO TABLE ' . $tableName . ' ' .
+				'REPLACE INTO TABLE `' . $tableName . '` ' .
 				'FIELDS TERMINATED BY \',\' ENCLOSED BY \'"\' ' .
 				'IGNORE 1 LINES ' .
-				'(' . implode(', ', $columns) . ')'
+				'(`' . implode('`, `', $columns) . '`)'
 			);
 		}
 	}
