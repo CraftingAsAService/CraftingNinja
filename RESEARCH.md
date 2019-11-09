@@ -26,3 +26,13 @@
 - Map research 2019-09-20 20:50
 - Created/Sent Crafting Game Survey to Patrons 2019-10-15 10:29
 	+ TODO: Open up responses after a while to the public
+
+INVESTIGATE DISCREPANCIES
+shop_translations.csv      	 6195 (vs 5188)
+npc_shop.csv               	 4962 (vs 2481, exactly half...)
+npc_translations.csv       	 183060 (vs 107136)
+item_npc.csv               	 6102 (vs 5941)
+item_objective.csv         	 16522 (vs 14511)
+item_price.csv             	 35502 (vs 11929, suspecting duplicates)
+item_recipe.csv            	 43161 (vs 42527)
+item_shop.csv              	 23392 (vs 22674)

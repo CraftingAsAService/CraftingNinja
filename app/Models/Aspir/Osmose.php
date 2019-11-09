@@ -62,6 +62,7 @@ class Osmose
 			DB::connection($this->gameSlug)->getpdo()->exec(
 				'LOAD DATA LOCAL INFILE \'' . Storage::path($dataFile) . '\' ' .
 				'REPLACE INTO TABLE `' . $tableName . '` ' .
+				'CHARACTER SET utf8 ' .
 				'FIELDS TERMINATED BY \',\' ENCLOSED BY \'"\' ' .
 				'IGNORE 1 LINES ' .
 				'(`' . implode('`, `', $columns) . '`)'
