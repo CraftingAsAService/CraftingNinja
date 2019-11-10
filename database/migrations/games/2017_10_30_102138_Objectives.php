@@ -55,7 +55,7 @@ class Objectives extends Migration
 
 		Schema::create('item_objective', function (Blueprint $table) {
 			// Build the basics of the pivot
-			$table->pivot();
+			$primaryFields = $table->pivot(false, null, null, false); // No ID column, but create our own primary key
 
 			// Additional Pivot Fields
 			$table->boolean('reward')->default(true); // True == Reward, False == Required
@@ -67,6 +67,9 @@ class Objectives extends Migration
 			$table->unsignedTinyInteger('rate')->nullable();
 
 			// Indexes
+			array_push($primaryFields, 'reward');
+			$this->primary($primaryFields);
+
 			$table->index('reward');
 
 			// Description of table

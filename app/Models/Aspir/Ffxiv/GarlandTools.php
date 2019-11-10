@@ -17,7 +17,7 @@ trait GarlandTools
 			$mobId = $this->translateMobID($data->mob->id);
 
 			$this->setData('npcs', [
-				'level'   => $data->mob->lvl,
+				'level' => $data->mob->lvl,
 			], $mobId, true);
 
 			$this->setData('coordinates', [

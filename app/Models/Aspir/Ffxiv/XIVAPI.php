@@ -199,11 +199,12 @@ trait XIVAPI
 			], $targetId);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('npc_translations', [
-					'npc_id' => $targetId,
-					'locale' => $lang,
-					'name'   => $data->LeveClient->{'Name_' . $lang} ?? null,
-				]);
+				if (isset($data->LeveClient->{'Name_' . $lang}) && $data->LeveClient->{'Name_' . $lang})
+					$this->setData('npc_translations', [
+						'npc_id' => $targetId,
+						'locale' => $lang,
+						'name'   => $data->LeveClient->{'Name_' . $lang},
+					]);
 
 			// Requirements
 			//  Up to slot 3 targets exist, however I couldn't find a use-case where a leve required more than one
@@ -418,8 +419,8 @@ trait XIVAPI
 							'item_id'      => $q->ItemTargetID,
 							'objective_id' => $objectiveId,
 							'reward'       => 1,
-							'quantity'     => $data->{'ItemCountReward1' . $slot} ?? 1,
-							'quality'      => $q->{'Quantity' . $slot},
+							'quantity'     => $q->{'Quantity' . $slot},
+							'quality'      => $data->{'ItemCountReward1' . $slot} ?? 1,
 							'rate'         => 33, // Reward is time based, simplifying and saying 33% chance for 3 tiers
 						]);
 			}
@@ -479,11 +480,12 @@ trait XIVAPI
 			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('shop_translations', [
-					'shop_id' => $data->ID,
-					'locale'  => $lang,
-					'name'    => $data->{'Name_' . $lang} ?? null,
-				]);
+				if (isset($data->{'Name_' . $lang}) && $data->{'Name_' . $lang})
+					$this->setData('shop_translations', [
+						'shop_id' => $data->ID,
+						'locale'  => $lang,
+						'name'    => $data->{'Name_' . $lang},
+					]);
 
 			foreach ($data->Items as $item)
 			{
@@ -529,11 +531,12 @@ trait XIVAPI
 			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('shop_translations', [
-					'shop_id' => $data->ID,
-					'locale'  => $lang,
-					'name'    => $data->{'Name_' . $lang} ?? null,
-				]);
+				if (isset($data->{'Name_' . $lang}) && $data->{'Name_' . $lang})
+					$this->setData('shop_translations', [
+						'shop_id' => $data->ID,
+						'locale'  => $lang,
+						'name'    => $data->{'Name_' . $lang},
+					]);
 
 			foreach (range(0, 59) as $first)
 				foreach (range(0, 2) as $second)
@@ -790,7 +793,7 @@ trait XIVAPI
 		$this->mobs();
 	}
 
-	public function residents()
+	private function residents()
 	{
 		// 3000 calls were taking over the allotted 10s call limit imposed by XIVAPI's Guzzle Implementation
 		$this->limit = 500;
@@ -817,33 +820,21 @@ trait XIVAPI
 			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('npc_translations', [
-					'npc_id' => $data->ID,
-					'locale' => $lang,
-					'name'   => $data->{'Name_' . $lang} ?? null,
-				]);
+				if (isset($data->{'Name_' . $lang}) && $data->{'Name_' . $lang})
+					$this->setData('npc_translations', [
+						'npc_id' => $data->ID,
+						'locale' => $lang,
+						'name'   => $data->{'Name_' . $lang},
+					]);
 
 			foreach (['GilShop', 'SpecialShop'] as $shopType)
 				if ($data->$shopType)
 					foreach ($data->$shopType as $shop)
 						if ($shop->ID)
-						{
-							$this->setData('shops', [
-								'id' => $shop->ID,
-							], $shop->ID);
-
-							foreach ($this->xivapiLanguages as $lang)
-								$this->setData('shop_translations', [
-									'shop_id' => $shop->ID,
-									'locale'  => $lang,
-									'name'    => $shop->{'Name_' . $lang} ?? null,
-								], $shop->ID);
-
 							$this->setData('npc_shop', [
 								'shop_id' => $shop->ID,
 								'npc_id'  => $data->ID,
 							]);
-						}
 		});
 
 		$this->limit = null;
@@ -869,11 +860,12 @@ trait XIVAPI
 			], $data->ID);
 
 			foreach ($this->xivapiLanguages as $lang)
-				$this->setData('npc_translations', [
-					'npc_id' => $data->ID,
-					'locale' => $lang,
-					'name'   => $data->{'Name_' . $lang} ?? null,
-				]);
+				if (isset($data->{'Name_' . $lang}) && $data->{'Name_' . $lang})
+					$this->setData('npc_translations', [
+						'npc_id' => $data->ID,
+						'locale' => $lang,
+						'name'   => $data->{'Name_' . $lang},
+					]);
 		});
 	}
 
