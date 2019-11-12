@@ -2,7 +2,7 @@
 	<li class='product__item -item' v-for='(data, index) in results.data'>
 		<div class='product__img'>
 			<div class='product__thumb'>
-				<img v-bind:src='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"' v-bind:alt='"Image of " + data.id'>
+				<img v-bind:src='"/assets/{{ config('game.slug') }}/i/" + data.icon + ".png"' v-bind:alt='"Image of " + data.id'>
 				<span class='levels badge badge-pill badge-light'>
 					<span class='ilvl' v-html='data.ilvl'></span>
 					<span class='rlvl' v-if='data.recipes && data.ilvl != data.recipes[0].level' v-html='data.recipes[0].level'></span>
@@ -15,7 +15,7 @@
 			</div>
 			<div class='product__overlay'>
 				<div class='product__btns'>
-					<ninja-bag-button text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id' :img='"/assets/{{ config('game.slug') }}/item/" + data.icon + ".png"'></ninja-bag-button>
+					<ninja-bag-button text='Add to bag' icon='icon-bag' :type='["recipe","item","equipment"].includes(chapter) ? "item" : chapter' :id='data.id' :img='"/assets/{{ config('game.slug') }}/i/" + data.icon + ".png"'></ninja-bag-button>
 				</div>
 			</div>
 		</div>

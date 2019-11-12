@@ -24,6 +24,9 @@ use App\Models\Aspir\Aspir;
 use App\Models\Aspir\Ffxiv\GarlandTools;
 use App\Models\Aspir\Ffxiv\ManualData;
 use App\Models\Aspir\Ffxiv\XIVAPI;
+use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Objective;
+use DB;
 
 class Ffxiv extends Aspir
 {
@@ -33,5 +36,81 @@ class Ffxiv extends Aspir
 	use XIVAPI,
 		GarlandTools,
 		ManualData;
+
+	/**
+	 * Download assets
+	 *  Triggered by "php artisan assets ffxiv"
+	 *  Exempt from "all public functions will run" list in Aspir.php
+	 */
+	public function assets()
+	{
+		$basePath = base_path('../assets/ffxiv/i/');
+		$iconDomain = 'https://xivapi.com/i/';
+
+		// A stream context to ignore http warnings
+		$streamContext = stream_context_create([
+			'http' => ['ignore_errors' => true],
+		]);
+
+		DB::setDefaultConnection($this->gameSlug);
+
+		$leveIcons = collect([]);
+
+		$allObjectiveDetails = DB::table('details')
+			->distinct()->select('data')
+			->where('detailable_type', 'objective')
+			->pluck('data');
+		foreach ($allObjectiveDetails as $detail)
+		{
+			$detail = json_decode($detail, true);
+
+			foreach (['frame', 'plate'] as $type)
+			{
+				if ( ! isset($detail[$type]))
+					continue;
+
+				$icon = str_pad($detail[$type], 6, "0", STR_PAD_LEFT);
+				$folder = substr($icon, 0, 3) . "000";
+				$leveIcons[] = $folder . '/' . $icon;
+			}
+		}
+
+		$leveIcons = $leveIcons->unique();
+		$itemIcons = Item::distinct()->select('icon')
+			->pluck('icon');
+		$objectiveIcons = Objective::distinct()->select('icon')
+			->where('icon', '<>', 'leve')
+			->where('icon', '<>', '')
+			->pluck('icon');
+
+		$allIcons = $leveIcons->merge($itemIcons)
+			->merge($objectiveIcons)
+			->unique();
+
+		exec('find "' . $basePath . '" -name *.png', $existingIcons);
+		$existingIcons = collect($existingIcons)->map(function($value) use ($basePath) {
+			return str_replace('.png', '', str_replace($basePath, '', $value));
+		});
+
+		$iconsToDownload = $allIcons->diff($existingIcons);
+
+		foreach ($iconsToDownload as $icon)
+		{
+			$this->command->info('Downloading ' . $icon);
+			$image = file_get_contents($iconDomain . $icon . '.png', false, $streamContext);
+
+			if (str_contains($image, '"Code":404'))
+			{
+				$this->command->error('Download failed, 404');
+				continue;
+			}
+
+			$iconBase = explode('/', $icon)[0];
+			if ( ! is_dir($iconBase))
+				exec('mkdir -p "' . $basePath . $iconBase . '"');
+
+			file_put_contents($basePath . $icon . '.png', $image);
+		}
+	}
 
 }

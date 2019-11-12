@@ -19,6 +19,19 @@ class Objective extends Aspect
 	public $translatedAttributes = [ 'name', 'description' ];
 
 	/**
+	 * Mutators and Accessors
+	 */
+
+	public function getIconAttribute($icon)
+	{
+		// Icon is likely a five digit number, or less. 12345
+		//  Icons are stored in a folder structure based on six digits, with only the first 3 mattering. (12345 == 012000)
+		$icon = str_pad($icon, 6, "0", STR_PAD_LEFT);
+		$folder = substr($icon, 0, 3) . "000";
+		return $folder . '/' . $icon;
+	}
+
+	/**
 	 * Relationships
 	 */
 

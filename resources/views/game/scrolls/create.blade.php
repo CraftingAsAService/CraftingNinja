@@ -20,7 +20,7 @@
 							@foreach ($ninjaCart as $entity)
 							<li class='alc-inventory__item -small' data-title='{{ $entity['name'] }}'>
 								<figure class='alc-inventory__item-thumb'>
-									<img src='/assets/{{ config('game.slug') }}/item/{{ $entity['icon'] }}.png' alt=''>
+									<img src='/assets/{{ config('game.slug') }}/i/{{ $entity['icon'] }}.png' alt=''>
 								</figure>
 								@if ($entity['quantity'] > 1)
 								<div class='alc-inventory__item-badges'>

@@ -74,7 +74,7 @@
 							</div>
 							<div class='row item'>
 								<div class='col-auto'>
-									<img src='/assets/{{ config('game.slug') }}/item/999.png' alt='' width='48' height='48'>
+									<img src='/assets/{{ config('game.slug') }}/i/020000/020034.png' alt='' width='48' height='48'>
 								</div>
 								<div class='col info'>
 									<big class='rarity-2'>Elm Log</big>
@@ -122,7 +122,7 @@
 							</div>
 							<div class='row item'>
 								<div class='col-auto'>
-									<img src='/assets/{{ config('game.slug') }}/item/999.png' alt='' width='48' height='48'>
+									<img src='/assets/{{ config('game.slug') }}/i/020000/020034.png' alt='' width='48' height='48'>
 								</div>
 								<div class='col info'>
 									<big class='rarity-2'>Elm Log</big>
@@ -173,7 +173,7 @@
 										</label>
 									</div>
 									<div class='title'>
-										<img src='/assets/{{ config('game.slug') }}/item/1234.png' alt='' width='32' height='32' class='mr-1'>
+										<img src='/assets/{{ config('game.slug') }}/i/020000/020034.png' alt='' width='32' height='32' class='mr-1'>
 										<big class='mr-2'>Elm Log</big>
 									</div>
 								</div>
@@ -205,7 +205,7 @@
 										</label>
 									</div>
 									<div class='title'>
-										<img src='/assets/{{ config('game.slug') }}/item/2211.png' alt='' width='32' height='32' class='mr-1'>
+										<img src='/assets/{{ config('game.slug') }}/i/020000/020034.png' alt='' width='32' height='32' class='mr-1'>
 										<big class='mr-2'>Feather</big>
 									</div>
 								</div>

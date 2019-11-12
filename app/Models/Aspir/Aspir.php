@@ -36,9 +36,9 @@ abstract class Aspir
 	public function run()
 	{
 		// Run every single `public` method available
-		//  Does not run __construct() or run()
+		//  Does not run __construct(), run() or assets()
 		$methodList = collect(get_class_methods($this))
-			->diff(['__construct', 'run'])
+			->diff(['__construct', 'run', 'assets'])
 			->filter(function($methodName) {
 				return (new \ReflectionMethod($this, $methodName))->isPublic();
 			});

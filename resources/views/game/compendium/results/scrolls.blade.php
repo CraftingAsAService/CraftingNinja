@@ -40,7 +40,7 @@
 				<ul class='alc-inventory__list list-unstyled' v-for='(entities, key) in data.entities'>
 					<li class='alc-inventory__item -small' v-for='(entity, index) in entities'>
 						<figure class='alc-inventory__item-thumb'>
-							<img :src='"/assets/{{ config('game.slug') }}/item/" + entity.icon + ".png"' :alt='entity.name'>
+							<img :src='"/assets/{{ config('game.slug') }}/i/" + entity.icon + ".png"' :alt='entity.name'>
 						</figure>
 						<div class='alc-inventory__item-badges' v-if='entity.pivot.quantity > 1'>
 							<span class='badge badge-primary' role='info' v-html='entity.pivot.quantity'></span>

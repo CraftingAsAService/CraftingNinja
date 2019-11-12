@@ -38,7 +38,7 @@
 							<ul class='alc-inventory__list list-unstyled'>
 								<li :class='"alc-inventory__item" + (active === entry ? " alc-inventory__item--active" : "")' v-for='(entry, index) in contents' @click='activate(index)'>
 									<figure class='alc-inventory__item-thumb'>
-										<img :src='"/assets/{{ config('game.slug') }}/item/" + entry.icon + ".png"' alt=''>
+										<img :src='"/assets/{{ config('game.slug') }}/i/" + entry.icon + ".png"' alt=''>
 									</figure>
 									<div class='alc-inventory__item-badges'>
 										<span class='badge badge-recipe' role='info' v-if='entry.type == "recipe"'><img :src='"/assets/{{ config('game.slug') }}/jobs/crafting-" + entry.job.icon + ".png"' :alt='entry.job.name'></span>

@@ -26,17 +26,3 @@
 - Map research 2019-09-20 20:50
 - Created/Sent Crafting Game Survey to Patrons 2019-10-15 10:29
 	+ TODO: Open up responses after a while to the public
-
-- [x] INVESTIGATE DISCREPANCIES
--- Delete all this later --
-GOOD shop_translations.csv      	 6195 (vs 5188) [FIXED, RE-EXAMINE]
-GOOD npc_shop.csv               	 4962 (vs 2481, exactly half...) [FIXED, RE-EXAMINE]
-GOOD npc_translations.csv       	 183060 (vs 107136) [FIXED, RE-EXAMINE, Might always have some duplicates because of Leve NPCs]
-GOOD item_npc.csv               	 6102 (vs 5941) [Will likely always have duplicates for how I get this data, and parse mobId out of a larger ID]
-GOOD item_price.csv             	 35502 (vs 11929, suspecting duplicates) [Definitely duplicates, will always be duplicates]
-GOOD item_recipe.csv            	 43161 (vs 42527) [Any discrepancies are around company crafts, dunno if I even have those right, or should include them. Good for now.]
-GOOD item_shop.csv              	 23392 (vs 22674) [Duplicates from specialshops, Good as-is]
-GOOD item_objective.csv         	 16522 (vs 14511) [ALTERED INDEX, RE-EXAMINE] (Duplicates from Ventures, not going to distinguish rate/quality)
-
-
-
