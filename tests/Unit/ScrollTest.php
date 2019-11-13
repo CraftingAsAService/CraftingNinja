@@ -27,7 +27,7 @@ class ScrollTest extends GameTestCase
 		]);
 
 		$scroll = Scroll::with('job')->filter([
-			'sclass' => [ $job->id ],
+			'sbattle' => [ $job->id ],
 		])->get();
 
 		$this->assertEquals(1, $scroll->count());
@@ -47,11 +47,11 @@ class ScrollTest extends GameTestCase
 		]);
 
 		$scroll = Scroll::filter([
-			'min_level' => 16,
+			'slvlMin' => 16,
 		])->get();
 
 		$this->assertEquals(1, $scroll->count());
-		$this->assertEquals(15, $scroll->first()->min_level);
+		$this->assertEquals(17, $scroll->first()->min_level);
 	}
 
 	/** @test */
@@ -63,15 +63,15 @@ class ScrollTest extends GameTestCase
 		]);
 		factory(Scroll::class)->create([
 			'min_level' => 17,
-			'max_level' => 22
+			'max_level' => 22,
 		]);
 
 		$scroll = Scroll::filter([
-			'max_level' => 21,
+			'slvlMax' => 21,
 		])->get();
 
 		$this->assertEquals(1, $scroll->count());
-		$this->assertEquals(22, $scroll->first()->max_level);
+		$this->assertEquals(19, $scroll->first()->max_level);
 	}
 
 	private function scrolls_can_contain_entity($entityName, $entity)

@@ -61,7 +61,7 @@ class MigrationServiceProvider extends ServiceProvider
 
 			// Indexes
 			// If we don't have an ID field, we want the primary to be both, otherwise the primary is the ID
-			if ( ! $includeId && ! $primaryKey)
+			if ( ! $includeId && ! $createPrimary)
 				$this->primary([ $field1Id, $field2Id ]);
 			$this->index($field1Id);
 			$this->index($field2Id);

@@ -68,7 +68,7 @@ class Objectives extends Migration
 
 			// Indexes
 			array_push($primaryFields, 'reward');
-			$this->primary($primaryFields);
+			$table->primary($primaryFields);
 
 			$table->index('reward');
 

@@ -7,7 +7,7 @@ use App\Models\Game\Concepts\Scroll;
 use App\Models\User;
 use Tests\ScrollTestCase;
 
-class ScrollTest extends ScrollTestCase
+class ApiScrollTest extends ScrollTestCase
 {
 
 	/** @test */
@@ -19,7 +19,7 @@ class ScrollTest extends ScrollTestCase
 		]);
 
 		// Act
-		$response = $this->call('POST', $this->gamePath . '/api/scrolls');
+		$response = $this->call('POST', '/api/scroll');
 
 		// Assert
 		$response->assertStatus(200);

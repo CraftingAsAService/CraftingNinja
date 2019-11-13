@@ -37,7 +37,7 @@ class Attributes extends Migration
 			$table->decimal('value', 8, 2)->default(0); // Allow negatives
 
 			array_push($primaryFields, 'quality');
-			$this->primary($primaryFields);
+			$table->primary($primaryFields);
 		});
 	}
 

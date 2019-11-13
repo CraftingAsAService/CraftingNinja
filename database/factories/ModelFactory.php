@@ -75,7 +75,7 @@ $factory->define(Scroll::class, function(Faker $faker) {
 		'user_id'    => User::inRandomOrder()->first()->id ?? function() {
 			return factory(User::class)->create()->id;
 		},
-		'job_id'     => rand(1, 2) == 1 ? null : Job::inRandomOrder()->first()->id,
+		'job_id'     => rand(1, 2) == 1 ? null : Job::inRandomOrder()->first()->id ?? 0,
 		'min_level'  => rand(1, 2) == 1 ? null : $min,
 		'max_level'  => rand(1, 2) == 1 ? null : $faker->numberBetween($min, 50),
 		'created_at' => $faker->dateTimeBetween('-10 weeks', 'now'),
