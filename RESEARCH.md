@@ -26,3 +26,4 @@
 - Map research 2019-09-20 20:50
 - Created/Sent Crafting Game Survey to Patrons 2019-10-15 10:29
 	+ TODO: Open up responses after a while to the public
+- Ticket prep, idea cleanup, organization 2019-11-13 20:43
