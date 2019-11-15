@@ -38,9 +38,9 @@ class CraftController extends Controller
 			'vendors'  => [],
 			'treasure' => [],
 		];
-		$lineup = $this->recursiveItemDiscovery($itemIds);
+		$this->recursiveItemDiscovery($itemIds);
 
-		dd($lineup);
+		dd($this->lineup);
 
 
 
@@ -50,45 +50,60 @@ class CraftController extends Controller
 
 	private function recursiveItemDiscovery($itemIds = [])
 	{
-		$items = Item::withTranslation()
-			->with(
-				'ingredientsOf',
-					'ingredientsOf.ingredients'/*,
-				'npcs',
-					'npcs.zones',
-				'nodes',
-					'nodes.zones',
-				'rewardedFrom',
-					'rewardedFrom.zones',
-				'zones'*/
-			)
-			->whereIn('id', $itemIds)
-			->get();
+		// !! If I build a recursive MySQL 8.0 query, I can get all the recipe and item ids I need, then query those after in one big batch!
 
-		// Loop through
-		//  Add Recipes to its list
-		//  Recursively go through Item Discovery on the Ingredients
-		//  Add NPCs to their list (enemies or vendors)
-		//  Add Nodes to their list
-		//  Add Rewards to their list (quests)
-		//  Add Zones to their list (treasure)
+		// TODO TODO ^ THIS THIS THIS
+		//
+		//
+		//
+		//
 
-		foreach ($items as $item)
-		{
-			if ( ! isset($this->lineup['items'][$item->id]))
-				$this->lineup['items'][$item->id] = $item;
+		// $items = Item::withTranslation()
+		// 	->with(
+		// 		'recipes'/*,
+		// 			'ingredientsOf.ingredients'/*,
+		// 		'npcs',
+		// 			'npcs.zones',
+		// 		'nodes',
+		// 			'nodes.zones',
+		// 		'rewardedFrom',
+		// 			'rewardedFrom.zones',
+		// 		'zones'*/
+		// 	)
+		// 	->whereIn('id', $itemIds->diff($this->lineup['items']))
+		// 	->get();
 
-			$itemsToDiscover = [];
-			foreach ($item->ingredientsOf as $recipe)
-			{
-				dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
-			}
+		// // Loop through
+		// //  Add Recipes to its list
+		// //  Recursively go through Item Discovery on the Ingredients
+		// //  Add NPCs to their list (enemies or vendors)
+		// //  Add Nodes to their list
+		// //  Add Rewards to their list (quests)
+		// //  Add Zones to their list (treasure)
 
-		}
-		dd($items->first());
+		// foreach ($items as $item)
+		// {
+		// 	\Log::info('Adding item ' . $item->id . ' ' . $item->name);
+		// 	if ( ! isset($this->lineup['items'][$item->id]))
+		// 	{
+		// 		$this->lineup['items'][$item->id] = $item;
 
+		// 		// Loop through this item's recipes
+		// 		foreach ($item->recipes as $recipe)
+		// 		{
+		// 			\Log::info('Adding Recipe ' . $recipe->id);
+		// 			if ( ! isset($this->lineup['recipes'][$recipe->id]))
+		// 			{
+		// 				$this->lineup['recipe'][$recipe->id] = $recipe;
+		// 				// dd($recipe->product->name, $recipe->ingredients->pluck('name'));
+		// 				\Log::info('Looping through recipe items');
+		// 				$this->recursiveItemDiscovery($recipe->ingredients->pluck('id'));
+		// 				// dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
+		// 			}
+		// 		}
+		// 	}
 
-
+		// }
 	}
 
 
