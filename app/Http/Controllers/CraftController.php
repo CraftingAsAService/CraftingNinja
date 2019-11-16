@@ -40,7 +40,7 @@ class CraftController extends Controller
 		];
 		$this->recursiveItemDiscovery($itemIds);
 
-		dd($this->lineup);
+		dd(implode(',', array_keys($this->lineup['items'])), implode(',', array_keys($this->lineup['recipes'])));
 
 
 
@@ -50,6 +50,32 @@ class CraftController extends Controller
 
 	private function recursiveItemDiscovery($itemIds = [])
 	{
+		// If it's not a digit, or a comma, take it out.
+		//  Custom XSS/etc prevention
+		$itemIds = preg_replace('/[^\d,]/', '', $itemIds->implode(','));
+
+		$results = collect(\DB::select(
+			'WITH RECURSIVE cte AS (' .
+				'SELECT rr.recipe_id, rr.item_id ' .
+				'FROM recipes r ' .
+				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
+				'WHERE r.item_id IN ( ' . $itemIds . ') ' .
+				'UNION ALL ' .
+				'SELECT rr.recipe_id, rr.item_id ' .
+				'FROM recipes r ' .
+				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
+				'JOIN cte ON cte.item_id = r.item_id ' .
+			') SELECT recipe_id, item_id FROM cte;'
+		));
+
+		$recipeIds = $results->pluck('recipe_id')->unique();
+		$itemIds = $results->pluck('item_id')->unique();
+
+		$this->lineup['items'] = Item::whereIn('id', $itemIds)->get()->keyBy('id');
+		dd($this->lineup['items']);
+
+		dd($recipeIds, $itemIds);
+		// dd($itemIds->join(','));
 		// !! If I build a recursive MySQL 8.0 query, I can get all the recipe and item ids I need, then query those after in one big batch!
 
 		// TODO TODO ^ THIS THIS THIS
@@ -58,52 +84,102 @@ class CraftController extends Controller
 		//
 		//
 
-		// $items = Item::withTranslation()
-		// 	->with(
-		// 		'recipes'/*,
-		// 			'ingredientsOf.ingredients'/*,
-		// 		'npcs',
-		// 			'npcs.zones',
-		// 		'nodes',
-		// 			'nodes.zones',
-		// 		'rewardedFrom',
-		// 			'rewardedFrom.zones',
-		// 		'zones'*/
-		// 	)
-		// 	->whereIn('id', $itemIds->diff($this->lineup['items']))
-		// 	->get();
+// 		We have item.id
+// 		we want all recipe.item_id matching, now we have recipe.id
+// 		then we want all recipe_reagents whose recipe_id matches, pulling in those item_ids
 
-		// // Loop through
-		// //  Add Recipes to its list
-		// //  Recursively go through Item Discovery on the Ingredients
-		// //  Add NPCs to their list (enemies or vendors)
-		// //  Add Nodes to their list
-		// //  Add Rewards to their list (quests)
-		// //  Add Zones to their list (treasure)
+	// SELECT rr.recipe_id, rr.item_id
+	// FROM recipe r
+	// JOIN recipe_reagents rr ON rr.recipe_id = r.id
+	// WHERE r.item_id IN (10676,10723,15732,6139,12543,5804,8104)
 
-		// foreach ($items as $item)
-		// {
-		// 	\Log::info('Adding item ' . $item->id . ' ' . $item->name);
-		// 	if ( ! isset($this->lineup['items'][$item->id]))
-		// 	{
-		// 		$this->lineup['items'][$item->id] = $item;
+	// SELECT rr.recipe_id, rr.item_id
+	// FROM recipe r
+	// JOIN recipe_reagents rr ON rr.recipe_id = r.id
+	// JOIN cte ON cte.item_id = r.item_id
 
-		// 		// Loop through this item's recipes
-		// 		foreach ($item->recipes as $recipe)
-		// 		{
-		// 			\Log::info('Adding Recipe ' . $recipe->id);
-		// 			if ( ! isset($this->lineup['recipes'][$recipe->id]))
-		// 			{
-		// 				$this->lineup['recipe'][$recipe->id] = $recipe;
-		// 				// dd($recipe->product->name, $recipe->ingredients->pluck('name'));
-		// 				\Log::info('Looping through recipe items');
-		// 				$this->recursiveItemDiscovery($recipe->ingredients->pluck('id'));
-		// 				// dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
-		// 			}
-		// 		}
-		// 	}
+	// SELECT recipe_reagents.recipe_id, recipe_reagents.item_id
+	// FROM recipe
+	// JOIN recipe_reagents ON recipe_reagents.recipe_id = recipe.id
+	// WHERE recipe.item_id IN (10676,10723,15732,6139,12543,5804,8104)
 
-		// }
+// PATH could be Recipe IDs?
+// Select item ids?
+
+// WITH RECURSIVE cte AS
+// (
+// 	## Seed Select
+//   SELECT category_id, name, CAST(category_id AS CHAR(200)) AS path
+//   FROM category WHERE parent IS NULL
+//   UNION ALL
+//   ## Recursive Select
+//   SELECT c.category_id, c.name, CONCAT(cte.path, ",", c.category_id)
+//   FROM category c JOIN cte ON cte.category_id=c.parent
+// )
+// SELECT * FROM cte ORDER BY path;
+// +-------------+----------------------+---------+
+// | category_id | name                 | path    |
+// +-------------+----------------------+---------+
+// |           1 | ELECTRONICS          | 1       |
+// |           2 | TELEVISIONS          | 1,2     |
+// |           3 | TUBE                 | 1,2,3   |
+// |           4 | LCD                  | 1,2,4   |
+// |           5 | PLASMA               | 1,2,5   |
+// |           6 | PORTABLE ELECTRONICS | 1,6     |
+// |          10 | 2 WAY RADIOS         | 1,6,10  |
+// |           7 | MP3 PLAYERS          | 1,6,7   |
+// |           8 | FLASH                | 1,6,7,8 |
+// |           9 | CD PLAYERS           | 1,6,9   |
+// +-------------+----------------------+---------+
+
+
+
+		$items = Item::withTranslation()
+			->with(
+				'recipes'/*,
+					'ingredientsOf.ingredients'/*,
+				'npcs',
+					'npcs.zones',
+				'nodes',
+					'nodes.zones',
+				'rewardedFrom',
+					'rewardedFrom.zones',
+				'zones'*/
+			)
+			->whereIn('id', $itemIds->diff($this->lineup['items']))
+			->get();
+
+		// Loop through
+		//  Add Recipes to its list
+		//  Recursively go through Item Discovery on the Ingredients
+		//  Add NPCs to their list (enemies or vendors)
+		//  Add Nodes to their list
+		//  Add Rewards to their list (quests)
+		//  Add Zones to their list (treasure)
+
+		foreach ($items as $item)
+		{
+			\Log::info('Adding item ' . $item->id . ' ' . $item->name);
+			if ( ! isset($this->lineup['items'][$item->id]))
+			{
+				$this->lineup['items'][$item->id] = $item;
+
+				// Loop through this item's recipes
+				foreach ($item->recipes as $recipe)
+				{
+					\Log::info('Adding Recipe ' . $recipe->id);
+					if ( ! isset($this->lineup['recipes'][$recipe->id]))
+					{
+						$this->lineup['recipes'][$recipe->id] = $recipe;
+						// dd($recipe->product->name, $recipe->ingredients->pluck('name'));
+						\Log::info('Looping through recipe items');
+						$this->recursiveItemDiscovery($recipe->ingredients->pluck('id'));
+						// dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
+					}
+				}
+			}
+
+		}
 	}
 
 
