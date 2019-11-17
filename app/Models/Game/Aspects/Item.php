@@ -333,9 +333,19 @@ class Item extends Aspect
 		return $this->belongsToMany(Npc::class)->withTranslation()->withPivot('rate');
 	}
 
+	public function mobs()
+	{
+		return $this->belongsToMany(Npc::class)->withTranslation()->withPivot('rate')->enemies();
+	}
+
 	public function nodes()
 	{
 		return $this->belongsToMany(Node::class)->withTranslation();
+	}
+
+	public function shops()
+	{
+		return $this->belongsToMany(Shop::class)->withTranslation();
 	}
 
 	public function rewardedFrom()

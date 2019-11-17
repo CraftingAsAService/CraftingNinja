@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concepts\Sling;
 use Illuminate\Http\Request;
 
@@ -30,8 +31,8 @@ class CraftController extends Controller
 		//  If the item has a recipe, prefer that recipe (paying attention to the preferredRecipes)
 		//   and recursively loop through its ingredients
 		$this->lineup = [
-			'items'    => [],
 			'recipes'  => [],
+			'items'    => [],
 			'nodes'    => [],
 			'enemies'  => [],
 			'quests'   => [],
@@ -71,8 +72,32 @@ class CraftController extends Controller
 		$recipeIds = $results->pluck('recipe_id')->unique();
 		$itemIds = $results->pluck('item_id')->unique();
 
-		$this->lineup['items'] = Item::whereIn('id', $itemIds)->get()->keyBy('id');
-		dd($this->lineup['items']);
+		$this->lineup['recipes'] = Recipe::whereIn('id', $recipeIds)
+			->get()
+			->keyBy('id');
+
+		$this->lineup['items'] = Item::with(
+				'nodes', // Gathering drops
+					'nodes.zones',
+				'mobs', // Mob drops
+					'mobs.zones',
+				'rewardedFrom', // Objective drops
+					'rewardedFrom.zones',
+				'shops',
+					'shops.zones',
+				'zones', // Treasure drops
+				'prices',
+			)
+			->whereIn('id', $itemIds)
+			->get()
+			->keyBy('id');
+
+		foreach ($this->lineup['items'] as $item)
+		{
+			dd($item);
+		}
+
+		dd($this->lineup);
 
 		dd($recipeIds, $itemIds);
 		// dd($itemIds->join(','));
