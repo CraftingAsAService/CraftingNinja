@@ -353,6 +353,11 @@ class Item extends Aspect
 		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', true);
 	}
 
+	public function repeatablyRewardedFrom()
+	{
+		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', true)->where('repeatable', true);
+	}
+
 	public function requirementOf()
 	{
 		return $this->belongsToMany(Objective::class)->withTranslation()->withPivot('reward', 'quantity', 'quality', 'rate')->wherePivot('reward', false);

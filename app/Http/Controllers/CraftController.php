@@ -72,17 +72,17 @@ class CraftController extends Controller
 		$recipeIds = $results->pluck('recipe_id')->unique();
 		$itemIds = $results->pluck('item_id')->unique();
 
-		$this->lineup['recipes'] = Recipe::whereIn('id', $recipeIds)
+		$recipes = Recipe::whereIn('id', $recipeIds)
 			->get()
 			->keyBy('id');
 
-		$this->lineup['items'] = Item::with(
+		$items = Item::with(
 				'nodes', // Gathering drops
 					'nodes.zones',
 				'mobs', // Mob drops
 					'mobs.zones',
-				'rewardedFrom', // Objective drops
-					'rewardedFrom.zones',
+				'repeatablyRewardedFrom', // Objective drops
+					'repeatablyRewardedFrom.zones',
 				'shops',
 					'shops.zones',
 				'zones', // Treasure drops
@@ -92,8 +92,57 @@ class CraftController extends Controller
 			->get()
 			->keyBy('id');
 
+		// Break down item availability by zone
+		// [Zone ID] => [
+		// 	 [Item ID] => [
+		// 	   'nodes' => [],
+		// 	   'shops' => [],
+		// 	   'rewards' => [],
+		// 	   'mobs' => [],
+		// 	   'treasure' => [],
+		// 	 ]
+		// ]
+
+		$this->zones = collect([]);
+
+		$rewards = $items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->map(function($entry) {
+			$this->zones = $this->zones->merge($entry->zones);
+			return [
+				'id'    => $entry->id,
+				'level' => $entry->level,
+				'icon'  => $entry->icon,
+				'name'  => $entry->name,
+				'zones' => $entry->zones->pluck('id')->toArray(),
+			];
+		});
+
+		$mobs = $items->pluck('mobs')->flatten()->keyBy('id')->map(function($entry) {
+			$this->zones = $this->zones->merge($entry->zones);
+			return [
+				'id'    => $entry->id,
+				'level' => $entry->level,
+				'name'  => $entry->name,
+				'zones' => $entry->zones->pluck('id')->toArray(),
+			];
+		});
+
+		$nodes = $items->pluck('nodes')->flatten()->keyBy('id')->map(function($entry) {
+			$this->zones = $this->zones->merge($entry->zones);
+			return [
+				'id'    => $entry->id,
+				'level' => $entry->level,
+				'type'  => $entry->type,
+				'zones' => $entry->zones->pluck('id')->toArray(),
+				// TODO - Include name, if it ever gets used. Type pretty much covers it.
+			];
+		});
+
+		dd($this->zones->keyBy('id'));
+
+
 		foreach ($this->lineup['items'] as $item)
 		{
+			// Distinctly grab all different parts
 			dd($item);
 		}
 
