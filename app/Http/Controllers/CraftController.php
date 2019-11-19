@@ -14,6 +14,9 @@ class CraftController extends Controller
 	{
 		$cookieContents = Sling::parseCookie();
 
+		if ($cookieContents->isEmpty())
+			return redirect('sling');
+
 		// If the user had these items marked as a recipe, pre-select it as a recipe
 		$recipes = $cookieContents->filter(function($row) {
 			return $row['type'] == 'recipe';
@@ -103,41 +106,93 @@ class CraftController extends Controller
 		// 	 ]
 		// ]
 
-		$this->zones = collect([]);
+		$this->zones = $items->pluck('zones')->flatten()->keyBy('id');
 
-		$rewards = $items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->map(function($entry) {
+		$items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->each(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			return [
+			$this->rewards[$entry->id] = [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'icon'  => $entry->icon,
 				'name'  => $entry->name,
-				'zones' => $entry->zones->pluck('id')->toArray(),
+				// 'zones' => $entry->zones->pluck('id')->toArray(),
 			];
 		});
 
-		$mobs = $items->pluck('mobs')->flatten()->keyBy('id')->map(function($entry) {
+		$items->pluck('mobs')->flatten()->keyBy('id')->each(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			return [
+			$this->mobs[$entry->id] = [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'name'  => $entry->name,
-				'zones' => $entry->zones->pluck('id')->toArray(),
+				// 'zones' => $entry->zones->pluck('id')->toArray(),
 			];
 		});
 
-		$nodes = $items->pluck('nodes')->flatten()->keyBy('id')->map(function($entry) {
+		$items->pluck('nodes')->flatten()->keyBy('id')->each(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			return [
+			$this->nodes[$entry->id] = [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'type'  => $entry->type,
-				'zones' => $entry->zones->pluck('id')->toArray(),
-				// TODO - Include name, if it ever gets used. Type pretty much covers it.
+				'name'  => $entry->name,
+				// 'zones' => $entry->zones->pluck('id')->toArray(),
 			];
 		});
 
-		dd($this->zones->keyBy('id'));
+		$items->pluck('shops')->flatten()->keyBy('id')->each(function($entry) {
+			$this->zones = $this->zones->merge($entry->zones);
+			$this->shops[$entry->id] = [
+				'id'    => $entry->id,
+				'level' => $entry->level,
+				'type'  => $entry->type,
+				'name'  => $entry->name,
+				// 'zones' => $entry->zones->pluck('id')->toArray(),
+			];
+		});
+
+		$this->zones = $this->zones->keyBy('id');
+
+		$loopVars = [
+			// $item->$key => 'shorthandKey'
+			'nodes' => 'nodes',
+			'mobs' => 'mobs',
+			'shops' => 'shops',
+			'repeatablyRewardedFrom' => 'rewards',
+		];
+
+		$breakdown = [];
+		foreach ($items as $item)
+		{
+			$this->items[$item->id] = [
+				'id'     => $item->id,
+				'ilvl'   => $item->ilvl,
+				'icon'   => $item->icon,
+				'name'   => $item->name,
+				'rarity' => $item->rarity,
+			];
+
+			foreach ($loopVars as $key => $slug)
+				foreach ($item->$key as $var)
+					foreach ($var->zones as $zone)
+						if ($zone->pivot->x != '')
+							dd($zone);
+						else
+						$breakdown[$zone->id][$item->id][$slug][$var->id] = [
+							'x'      => $zone->pivot->x,
+							'y'      => $zone->pivot->y,
+							'radius' => $zone->pivot->radius,
+						];
+
+			foreach ($item->zones as $zone)
+				$breakdown[$zone->id][$item->id]['treasure'][] = [
+					'x'      => $zone->pivot->x,
+					'y'      => $zone->pivot->y,
+					'radius' => $zone->pivot->radius,
+				];
+		}
+
+		dd($breakdown);
 
 
 		foreach ($this->lineup['items'] as $item)
