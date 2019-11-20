@@ -49,14 +49,13 @@ trait ManualData
 			$coordinates->where('zone_id', $zoneId)
 				->where('coordinate_type', 'node')
 				->whereIn('coordinate_id', $possibleNodes)
-				->map(function($entry) use ($coords) {
-					$entry['x'] = $coords[0];
-					$entry['y'] = $coords[1];
-					return $entry;
+				->each(function($entry, $key) use ($coords) {
+					$this->setData('coordinates', [
+						'x' => $coords[0],
+						'y' => $coords[1],
+					], $key, true);
 				});
 		}
-
-		$this->data['coordinates'] = $coordinates->toArray();
 	}
 
 	public function manualNodeTimers()

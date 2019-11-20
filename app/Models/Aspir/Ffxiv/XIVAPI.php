@@ -713,7 +713,6 @@ trait XIVAPI
 			], $data->ID);
 
 			$this->setData('coordinates', [
-				// If I got the zone_id wrong, try $gp->TerritoryType->PlaceName->ID instead
 				'zone_id'         => $gp->TerritoryType->PlaceName->ID,
 				'coordinate_id'   => $data->ID,
 				'coordinate_type' => 'node', // See Relation::morphMap in AppServiceProvider
