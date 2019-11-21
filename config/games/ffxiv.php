@@ -187,7 +187,24 @@ return [
 	// Ignore these items if they're a part of a recipe
 	//  Useful for crystals and other BS ingredients
 	'reagentsToIgnore' => [
-
+		2, // Fire Shard
+		3, // Ice Shard
+		4, // Wind Shard
+		5, // Earth Shard
+		6, // Lightning Shard
+		7, // Water Shard
+		8, // Fire Crystal
+		9, // Ice Crystal
+		10, // Wind Crystal
+		11, // Earth Crystal
+		12, // Lightning Crystal
+		13, // Water Crystal
+		14, // Fire Cluster
+		15, // Ice Cluster
+		16, // Wind Cluster
+		17, // Earth Cluster
+		18, // Lightning Cluster
+		19, // Water Cluster
 	],
 
 ];

@@ -25,45 +25,20 @@ class CraftController extends Controller
 
 		// Users can add items themselves
 		//  AND obviously recipes produce items
-		$itemIds = $cookieContents->filter(function($row) {
+		$givenItemIds = $cookieContents->filter(function($row) {
 			return $row['type'] == 'item';
 		})->pluck('id')->merge($recipes->pluck('item_id'));
 
-		// We have a list of items we want.
-		//  Get all of these items and the ways to obtain them
-		//  If the item has a recipe, prefer that recipe (paying attention to the preferredRecipes)
-		//   and recursively loop through its ingredients
-		$this->lineup = [
-			'recipes'  => [],
-			'items'    => [],
-			'nodes'    => [],
-			'enemies'  => [],
-			'quests'   => [],
-			'vendors'  => [],
-			'treasure' => [],
-		];
-		$this->recursiveItemDiscovery($itemIds);
-
-		dd(implode(',', array_keys($this->lineup['items'])), implode(',', array_keys($this->lineup['recipes'])));
-
-
-
-
-		return view('game.craft');
-	}
-
-	private function recursiveItemDiscovery($itemIds = [])
-	{
 		// If it's not a digit, or a comma, take it out.
 		//  Custom XSS/etc prevention
-		$itemIds = preg_replace('/[^\d,]/', '', $itemIds->implode(','));
+		$givenItemIds = preg_replace('/[^\d,]/', '', $givenItemIds->implode(','));
 
 		$results = collect(\DB::select(
 			'WITH RECURSIVE cte AS (' .
 				'SELECT rr.recipe_id, rr.item_id ' .
 				'FROM recipes r ' .
 				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
-				'WHERE r.item_id IN ( ' . $itemIds . ') ' .
+				'WHERE r.item_id IN ( ' . $givenItemIds . ') ' .
 				'UNION ALL ' .
 				'SELECT rr.recipe_id, rr.item_id ' .
 				'FROM recipes r ' .
@@ -73,7 +48,11 @@ class CraftController extends Controller
 		));
 
 		$recipeIds = $results->pluck('recipe_id')->unique();
-		$itemIds = $results->pluck('item_id')->unique();
+		$itemIds = $results->pluck('item_id')
+			->unique()
+			// Doing things in this order allows the user to manually add and look for Crystals/etc
+			->diff(config('game.reagentsToIgnore')) // Take out Crystals/etc, anything not worth accounting for
+			->merge($givenItemIds); // Add in what was originally searched upon
 
 		$recipes = Recipe::whereIn('id', $recipeIds)
 			->get()
@@ -96,62 +75,51 @@ class CraftController extends Controller
 			->keyBy('id');
 
 		// Break down item availability by zone
-		// [Zone ID] => [
-		// 	 [Item ID] => [
-		// 	   'nodes' => [],
-		// 	   'shops' => [],
-		// 	   'rewards' => [],
-		// 	   'mobs' => [],
-		// 	   'treasure' => [],
-		// 	 ]
-		// ]
 
+		// Globalizing zones temporarily; works better in the mapWithKeys functions
 		$this->zones = $items->pluck('zones')->flatten()->keyBy('id');
 
-		$items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->each(function($entry) {
+		$rewards = $items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			$this->rewards[$entry->id] = [
+			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'icon'  => $entry->icon,
 				'name'  => $entry->name,
-				// 'zones' => $entry->zones->pluck('id')->toArray(),
-			];
+			]];
 		});
 
-		$items->pluck('mobs')->flatten()->keyBy('id')->each(function($entry) {
+		$mobs = $items->pluck('mobs')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			$this->mobs[$entry->id] = [
+			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'name'  => $entry->name,
-				// 'zones' => $entry->zones->pluck('id')->toArray(),
-			];
+			]];
 		});
 
-		$items->pluck('nodes')->flatten()->keyBy('id')->each(function($entry) {
+		$nodes = $items->pluck('nodes')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
 			$this->zones = $this->zones->merge($entry->zones);
-			$this->nodes[$entry->id] = [
-				'id'    => $entry->id,
-				'level' => $entry->level,
-				'type'  => $entry->type,
-				'name'  => $entry->name,
-				// 'zones' => $entry->zones->pluck('id')->toArray(),
-			];
-		});
-
-		$items->pluck('shops')->flatten()->keyBy('id')->each(function($entry) {
-			$this->zones = $this->zones->merge($entry->zones);
-			$this->shops[$entry->id] = [
+			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
 				'type'  => $entry->type,
 				'name'  => $entry->name,
-				// 'zones' => $entry->zones->pluck('id')->toArray(),
-			];
+			]];
 		});
 
-		$this->zones = $this->zones->keyBy('id');
+		$shops = $items->pluck('shops')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
+			$this->zones = $this->zones->merge($entry->zones);
+			return [$entry->id => [
+				'id'    => $entry->id,
+				'level' => $entry->level,
+				'type'  => $entry->type,
+				'name'  => $entry->name,
+			]];
+		});
+
+		$zones = $this->zones->keyBy('id');
+		unset($this->zones);
 
 		$loopVars = [
 			// $item->$key => 'shorthandKey'
@@ -161,23 +129,24 @@ class CraftController extends Controller
 			'repeatablyRewardedFrom' => 'rewards',
 		];
 
-		$breakdown = [];
+		$breakdown = [
+			// ZoneID => [
+			// 	 ItemID => [
+			// 	   'nodes' => [
+			// 	     NodeID => [ Coordinate Data ],
+			// 	   ],
+			// 	   'shops' => [],
+			// 	   'rewards' => [],
+			// 	   'mobs' => [],
+			// 	   'treasure' => [],
+			// 	 ]
+			// ]
+		];
 		foreach ($items as $item)
 		{
-			$this->items[$item->id] = [
-				'id'     => $item->id,
-				'ilvl'   => $item->ilvl,
-				'icon'   => $item->icon,
-				'name'   => $item->name,
-				'rarity' => $item->rarity,
-			];
-
 			foreach ($loopVars as $key => $slug)
 				foreach ($item->$key as $var)
 					foreach ($var->zones as $zone)
-						if ($zone->pivot->x != '')
-							dd($zone);
-						else
 						$breakdown[$zone->id][$item->id][$slug][$var->id] = [
 							'x'      => $zone->pivot->x,
 							'y'      => $zone->pivot->y,
@@ -192,123 +161,12 @@ class CraftController extends Controller
 				];
 		}
 
-		dd($breakdown);
+		// Zone with the most items goes first
+		$breakdown = collect($breakdown)->sortByDesc(function($entries) {
+			return count($entries);
+		});
 
-
-		foreach ($this->lineup['items'] as $item)
-		{
-			// Distinctly grab all different parts
-			dd($item);
-		}
-
-		dd($this->lineup);
-
-		dd($recipeIds, $itemIds);
-		// dd($itemIds->join(','));
-		// !! If I build a recursive MySQL 8.0 query, I can get all the recipe and item ids I need, then query those after in one big batch!
-
-		// TODO TODO ^ THIS THIS THIS
-		//
-		//
-		//
-		//
-
-// 		We have item.id
-// 		we want all recipe.item_id matching, now we have recipe.id
-// 		then we want all recipe_reagents whose recipe_id matches, pulling in those item_ids
-
-	// SELECT rr.recipe_id, rr.item_id
-	// FROM recipe r
-	// JOIN recipe_reagents rr ON rr.recipe_id = r.id
-	// WHERE r.item_id IN (10676,10723,15732,6139,12543,5804,8104)
-
-	// SELECT rr.recipe_id, rr.item_id
-	// FROM recipe r
-	// JOIN recipe_reagents rr ON rr.recipe_id = r.id
-	// JOIN cte ON cte.item_id = r.item_id
-
-	// SELECT recipe_reagents.recipe_id, recipe_reagents.item_id
-	// FROM recipe
-	// JOIN recipe_reagents ON recipe_reagents.recipe_id = recipe.id
-	// WHERE recipe.item_id IN (10676,10723,15732,6139,12543,5804,8104)
-
-// PATH could be Recipe IDs?
-// Select item ids?
-
-// WITH RECURSIVE cte AS
-// (
-// 	## Seed Select
-//   SELECT category_id, name, CAST(category_id AS CHAR(200)) AS path
-//   FROM category WHERE parent IS NULL
-//   UNION ALL
-//   ## Recursive Select
-//   SELECT c.category_id, c.name, CONCAT(cte.path, ",", c.category_id)
-//   FROM category c JOIN cte ON cte.category_id=c.parent
-// )
-// SELECT * FROM cte ORDER BY path;
-// +-------------+----------------------+---------+
-// | category_id | name                 | path    |
-// +-------------+----------------------+---------+
-// |           1 | ELECTRONICS          | 1       |
-// |           2 | TELEVISIONS          | 1,2     |
-// |           3 | TUBE                 | 1,2,3   |
-// |           4 | LCD                  | 1,2,4   |
-// |           5 | PLASMA               | 1,2,5   |
-// |           6 | PORTABLE ELECTRONICS | 1,6     |
-// |          10 | 2 WAY RADIOS         | 1,6,10  |
-// |           7 | MP3 PLAYERS          | 1,6,7   |
-// |           8 | FLASH                | 1,6,7,8 |
-// |           9 | CD PLAYERS           | 1,6,9   |
-// +-------------+----------------------+---------+
-
-
-
-		$items = Item::withTranslation()
-			->with(
-				'recipes'/*,
-					'ingredientsOf.ingredients'/*,
-				'npcs',
-					'npcs.zones',
-				'nodes',
-					'nodes.zones',
-				'rewardedFrom',
-					'rewardedFrom.zones',
-				'zones'*/
-			)
-			->whereIn('id', $itemIds->diff($this->lineup['items']))
-			->get();
-
-		// Loop through
-		//  Add Recipes to its list
-		//  Recursively go through Item Discovery on the Ingredients
-		//  Add NPCs to their list (enemies or vendors)
-		//  Add Nodes to their list
-		//  Add Rewards to their list (quests)
-		//  Add Zones to their list (treasure)
-
-		foreach ($items as $item)
-		{
-			\Log::info('Adding item ' . $item->id . ' ' . $item->name);
-			if ( ! isset($this->lineup['items'][$item->id]))
-			{
-				$this->lineup['items'][$item->id] = $item;
-
-				// Loop through this item's recipes
-				foreach ($item->recipes as $recipe)
-				{
-					\Log::info('Adding Recipe ' . $recipe->id);
-					if ( ! isset($this->lineup['recipes'][$recipe->id]))
-					{
-						$this->lineup['recipes'][$recipe->id] = $recipe;
-						// dd($recipe->product->name, $recipe->ingredients->pluck('name'));
-						\Log::info('Looping through recipe items');
-						$this->recursiveItemDiscovery($recipe->ingredients->pluck('id'));
-						// dd($item->id, $item->name, $recipe->item_id, $recipe->ingredients->pluck('name')->toArray());
-					}
-				}
-			}
-
-		}
+		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'));
 	}
 
 
