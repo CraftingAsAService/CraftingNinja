@@ -767,7 +767,7 @@ trait XIVAPI
 			$this->setData('nodes', [
 				'id'          => $nodeId,
 				// The variable comes back as "2", but it really correlates to "11"; 1 to 10, 3 to 12, etc
-				'type'        => config('games.ffxiv.nodeTypes')[$data->FishingSpotCategory + 9] ?? null,
+				'type'        => $data->FishingSpotCategory + 9,
 				'level'       => $data->GatheringLevel,
 			], $nodeId);
 

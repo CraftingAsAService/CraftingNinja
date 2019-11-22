@@ -56,6 +56,7 @@
 				<div class='col'>
 					<div class='card'>
 						<div class='card__content'>
+							{{--
 							<p>
 								&hellip;7 of your crafting recipes can be purchased. _View_&hellip;
 							</p>
@@ -65,6 +66,64 @@
 								</h5>
 							</div>
 							&hellip;
+							--}}
+							@foreach ($breakdown as $zoneId => $itemIds)
+							<div>
+								@if ( ! $loop->first)
+									<hr>
+								@endif
+								<h5 class='mt-3'>
+								<i class='fas fa-map-pin -desize float-right'></i>
+									<i class='fas fa-map-marked -desize mr-2'></i>{{ $zones[$zoneId]->name }}
+								</h5>
+								@foreach ($itemIds as $itemId => $itemData)
+									@php
+										$item = $items[$itemId];
+									@endphp
+									<div class='row item'>
+										<div class='col-auto'>
+											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48'>
+										</div>
+										<div class='col info'>
+											<big class='rarity-{{ $item->rarity }}'>{{ $item->name }}</big>
+											<div class='sources'>
+												@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
+													<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt='' data-toggle='tooltip' data-title='{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}'>
+												@endforeach
+												<div class='card p-2 mt-2'>
+													@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
+													<i class='fas fa-caret-square-up text-primary'></i>
+													{{-- <i class='fas fa-compress-arrows-alt text-primary'></i> --}}
+													{{-- <i class='fas fa-compress text-primary'></i> --}}
+													<div>
+														<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt=''> <code>{{ $data['x'] }},{{ $data['y'] }}</code> {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}{{--  - <code>55%</code> --}}
+													</div>
+													{{-- <div>
+														<i class='fas fa-skull-crossbones'></i> <code>8,13</code> Dragon - <code>60%</code>
+													</div>
+													<div class='text-muted small'>
+														<i class='fas fa-mountain'></i>
+														<i class='fas fa-piggy-bank mr-1'></i>
+														available elsewhere
+													</div> --}}
+													@endforeach
+												</div>
+											</div>
+										</div>
+										<div class='col-auto'>
+											<div class='form-group tally'>
+												<big><small class='text-muted'>x</small><span class='required'>###</span></big>
+												<label class='checkbox ml-2' style='width: 24px;'>
+													<input type='checkbox'>
+													<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
+												</label>
+											</div>
+										</div>
+									</div>
+								@endforeach
+							</div>
+							@endforeach
+
 							<div>
 								<hr>
 								<h5 class='mt-3'>

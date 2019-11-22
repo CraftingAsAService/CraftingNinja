@@ -88,19 +88,58 @@ return [
 	],
 
 	'nodeTypes' => [
-		0 => 'Mineral Deposit',
-		1 => 'Rocky Outcropping',
-		2 => 'Mature Tree',
-		3 => 'Lush Vegetation',
-		4 => 'Spearfishing', // Spearfishing is a gathering type, not a fishing type
-		10 => 'Ocean Fishing',
-		11 => 'Freshwater Fishing',
-		12 => 'Dunefishing',
-		13 => 'Skyfishing',
-		14 => 'Cloudfishing',
-		15 => 'Hellfishing',
-		16 => 'Aetherfishing',
-		17 => 'Saltfishing',
+		0 => [
+			'name' => 'Mineral Deposit',
+			'icon' => 'mining',
+		],
+		1 => [
+			'name' => 'Rocky Outcropping',
+			'icon' => 'quarrying',
+		],
+		2 => [
+			'name' => 'Mature Tree',
+			'icon' => 'logging',
+		],
+		3 => [
+			'name' => 'Lush Vegetation',
+			'icon' => 'harvesting',
+		],
+		4 => [
+			'name' => 'Spearfishing', // Spearfishing is a gathering type, not a fishing type
+			'icon' => 'spearfishing',
+		],
+		10 => [
+			'name' => 'Ocean Fishing',
+			'icon' => 'fishing',
+		],
+		11 => [
+			'name' => 'Freshwater Fishing',
+			'icon' => 'fishing',
+		],
+		12 => [
+			'name' => 'Dunefishing',
+			'icon' => 'fishing',
+		],
+		13 => [
+			'name' => 'Skyfishing',
+			'icon' => 'fishing',
+		],
+		14 => [
+			'name' => 'Cloudfishing',
+			'icon' => 'fishing',
+		],
+		15 => [
+			'name' => 'Hellfishing',
+			'icon' => 'fishing',
+		],
+		16 => [
+			'name' => 'Aetherfishing',
+			'icon' => 'fishing',
+		],
+		17 => [
+			'name' => 'Saltfishing',
+			'icon' => 'fishing',
+		],
 	],
 
 	'objectiveTypes' => [
