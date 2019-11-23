@@ -27,3 +27,18 @@
 - Created/Sent Crafting Game Survey to Patrons 2019-10-15 10:29
 	+ TODO: Open up responses after a while to the public
 - Ticket prep, idea cleanup, organization 2019-11-13 20:43
+
+#### Map Research
+
+/map/###
+
+OffsetX, OffsetY // where 0,0 sits
+"SizeFactor": 200, // Not totally sure yet
+"MapMarkerRange": 54, // Pointless?
+
+"MapFilename": "/m/f1t1/f1t1.00.jpg",
+"MapFilenameId": "f1t1/00",
+"MapFilename": "/m/w1d5/w1d5.03.jpg",
+"MapFilenameId": "w1d5/03",
+
+Has singular PlaceName match
