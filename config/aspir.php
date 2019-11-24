@@ -10,6 +10,7 @@ return [
 		'categories',
 		'items',
 		'jobs',
+		'maps',
 		'niches',
 		'nodes',
 		'npcs',

@@ -23,6 +23,40 @@ trait XIVAPI
 		$this->api->environment->key(config('services.xivapi.key'));
 	}
 
+	public function maps()
+	{
+		$apiFields = [
+			'ID',
+			'PlaceNameTargetID',
+			'OffsetX',
+			'OffsetY',
+			'SizeFactor',
+			// 'MapMarkerRange',
+			'MapFilenameId',
+		];
+
+		$this->loopEndpoint('map', $apiFields, function($data) {
+			$this->setData('maps', [
+				'id'      => $data->ID,
+				'zone_id' => $data->PlaceNameTargetID
+			], $data->ID);
+
+			$this->setData('details', [
+				'detailable_id'   => $data->ID,
+				'detailable_type' => 'map', // See Relation::morphMap in AppServiceProvider
+				'data'            => json_encode([
+					'offset' => [
+						'x' => $data->OffsetX,
+						'y' => $data->OffsetY,
+					],
+					'size'   => $data->SizeFactor,
+					// 'range'  => $data->MapMarkerRange,
+					'image'  => $data->MapFilenameId,
+				]),
+			]);
+		});
+	}
+
 	public function objectives()
 	{
 		// Achievement IDs range from 1 to less than 2400+; ALLOTMENT 1 to 20k

@@ -7,6 +7,7 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Npc;
+use App\Models\Game\Aspects\Map;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Shop;
@@ -49,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
 			'category'  => Category::class,
 			'shop'      => Shop::class,
 			'npc'       => Npc::class,
+			'map'       => Map::class,
 			'recipe'    => Recipe::class,
 			'objective' => Objective::class,
 			'item'      => Item::class,
