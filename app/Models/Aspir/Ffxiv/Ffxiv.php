@@ -44,6 +44,14 @@ class Ffxiv extends Aspir
 	 */
 	public function assets()
 	{
+		$this->icons();
+		$this->maps();
+	}
+
+	private function icons()
+	{
+		$this->command->info('Investigating Icons');
+
 		$basePath = base_path('../assets/ffxiv/i/');
 		$iconDomain = 'https://xivapi.com/i/';
 
@@ -113,4 +121,62 @@ class Ffxiv extends Aspir
 		}
 	}
 
+	private function maps()
+	{
+		$this->command->info('Investigating Maps');
+
+		$basePath = base_path('../assets/ffxiv/m/');
+		$mapDomain = 'https://xivapi.com/m/';
+		// https://xivapi.com/m/f1t1/f1t1.00.jpg
+
+		// A stream context to ignore http warnings
+		$streamContext = stream_context_create([
+			'http' => ['ignore_errors' => true],
+		]);
+
+		DB::setDefaultConnection($this->gameSlug);
+
+		$mapsToGet = collect([]);
+
+		$allMapDetails = DB::table('details')
+			->distinct()->select('data')
+			->where('detailable_type', 'map')
+			->pluck('data');
+		foreach ($allMapDetails as $detail)
+		{
+			$detail = json_decode($detail, true);
+
+			if ( ! isset($detail['image']) || empty($detail['image']))
+				continue;
+
+			// a1b2/34 becomes a1b2/a1b2.34.jpg
+			list($key, $number) = explode('/', $detail['image']);
+			$mapsToGet[] = $key . '/' . $key . '.' . $number;
+		}
+
+		exec('find "' . $basePath . '" -name *.jpg', $existingMaps);
+		$existingMaps = collect($existingMaps)->map(function($value) use ($basePath) {
+			return str_replace('.jpg', '', str_replace($basePath, '', $value));
+		});
+
+		$mapsToDownload = $mapsToGet->diff($existingMaps)->unique();
+
+		foreach ($mapsToDownload as $map)
+		{
+			$this->command->info('Downloading ' . $map);
+			$image = file_get_contents($mapDomain . $map . '.jpg', false, $streamContext);
+
+			if (str_contains($image, '"Code":404'))
+			{
+				$this->command->error('Download failed, 404');
+				continue;
+			}
+
+			$mapBase = explode('/', $map)[0];
+			if ( ! is_dir($mapBase))
+				exec('mkdir -p "' . $basePath . $mapBase . '"');
+
+			file_put_contents($basePath . $map . '.jpg', $image);
+		}
+	}
 }
