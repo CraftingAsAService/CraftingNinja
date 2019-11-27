@@ -9,6 +9,7 @@ use App\Models\Game\Aspects\Npc;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Shop;
 use App\Models\Game\Concepts\Coordinate;
+use App\Models\Game\Concepts\Map;
 use App\Models\Translations\ZoneTranslation;
 
 class Zone extends Aspect
@@ -24,6 +25,11 @@ class Zone extends Aspect
 	public function parent()
 	{
 		return $this->belongsTo(Zone::class)->withTranslation();
+	}
+
+	public function maps()
+	{
+		return $this->hasMany(Map::class)->with('detail');
 	}
 
 	public function items()

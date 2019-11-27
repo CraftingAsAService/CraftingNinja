@@ -118,6 +118,7 @@
 													<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
 												</label>
 											</div>
+											how-many-you-have / how-many-you-currently-need(minus-completed-recipes) / how-many-you-need-total
 										</div>
 									</div>
 								@endforeach
@@ -312,6 +313,17 @@
 					</div>
 				</div>
 				<div class='col'>
+
+					@foreach ($breakdown->keys() as $zoneId)
+					@if (isset($maps[$zoneId]))
+					@foreach ($maps[$zoneId] as $data)
+						{{ $data['size'] }}
+						{{ $data['image'] }}
+						{{ $data['offset']['x'] }}
+						{{ $data['offset']['y'] }}
+					@endforeach
+					@endif
+					@endforeach
 					<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
 						<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
 					</div>

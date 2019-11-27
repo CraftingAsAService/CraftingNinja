@@ -7,6 +7,10 @@ use App\Models\Game\Concept;
 class Detail extends Concept
 {
 
+	protected $casts = [
+		'data' => 'array',
+	];
+
 	/**
 	 * Relationships
 	 */

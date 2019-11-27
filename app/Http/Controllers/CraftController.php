@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Concepts\Map;
 use App\Models\Game\Concepts\Sling;
 use Illuminate\Http\Request;
 
@@ -121,6 +122,18 @@ class CraftController extends Controller
 		$zones = $this->zones->keyBy('id');
 		unset($this->zones);
 
+		$relevantMaps = Map::with('detail')
+			->whereIn('zone_id', $zones->pluck('id'))
+			->get();
+
+		$maps = [];
+		foreach ($relevantMaps as $map)
+		{
+			if ( ! isset($maps[$map->zone_id]))
+				$maps[$map->zone_id] = [];
+			$maps[$map->zone_id][] = array_merge($map->detail->data, [ 'image' => $map->image ]);
+		}
+
 		$loopVars = [
 			// $item->$key => 'shorthandKey'
 			'nodes' => 'nodes',
@@ -166,7 +179,7 @@ class CraftController extends Controller
 			return count($entries);
 		});
 
-		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'));
+		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps'));
 	}
 
 

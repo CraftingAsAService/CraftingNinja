@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\Game\Aspects;
+namespace App\Models\Game\Concepts;
 
-use App\Models\Game\Aspect;
+use App\Models\Game\Aspects\Zone;
+use App\Models\Game\Concept;
 
-class Map extends Aspect
+class Map extends Concept
 {
 
 	/**
@@ -13,12 +14,9 @@ class Map extends Aspect
 
 	public function getImageAttribute($identifier)
 	{
-		dd($this->details);
-		// Icon is likely a five digit number, or less. 12345
-		//  Icons are stored in a folder structure based on six digits, with only the first 3 mattering. (12345 == 012000)
-		$identifier = str_pad($identifier, 6, "0", STR_PAD_LEFT);
-		$folder = substr($identifier, 0, 3) . "000";
-		return $folder . '/' . $identifier;
+		// a1b2/34 becomes a1b2/a1b2.34.jpg
+		list($key, $number) = explode('/', $this->detail->data['image']);
+		return $key . '/' . $key . '.' . $number;
 	}
 
 	// Converting coordinates to a 2D map
