@@ -115,6 +115,8 @@
 		Javascript Files
 	--}}
 
+	@yield('scripts')
+
 	{{-- Core JS --}}
 	<script src='/alchemists/vendor/jquery/jquery.min.js'></script>
 	<script src='/alchemists/vendor/jquery/jquery-migrate.min.js'></script>

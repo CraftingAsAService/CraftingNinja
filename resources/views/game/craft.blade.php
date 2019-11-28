@@ -8,6 +8,48 @@
 	]
 ])
 
+@section('scripts')
+<script>
+	var maps = [
+		@foreach ($breakdown as $zoneId => $itemIds)
+		@if (isset($maps[$zoneId]))
+		@foreach ($maps[$zoneId] as $key => $data)
+		{
+			id: {{ $zoneId }}{{ $key }},
+			name: '{{ $zones[$zoneId]->name }}',
+			src: '/assets/{{ config('game.slug') }}/m/{{ $data['image'] }}.jpg',
+			{{--
+			Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+			anything less than 1,1 is unreachable
+			44,44 itself is unreachable
+			--}}
+			bounds: [[1, 1], [44, 44]],
+			size: {{ $data['size'] }},
+			offset: {
+				x: {{ $data['offset']['x'] }},
+				y: {{ $data['offset']['y'] }}
+			},
+			markers: [
+				@foreach ($itemIds as $itemId => $itemData)
+				@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
+				{
+					'id': {{ $zoneId }}{{ $key }}{{ $nodeId }},
+					'tooltip': 'Level {{ $nodes[$nodeId]['level'] }} {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}',
+					'x': {{ $data['x'] }},
+					'y': {{ $data['y'] }},
+					'icon': '/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png'
+				}{{ $loop->parent->last ? '' : ',' }}
+				@endforeach
+				@endforeach
+			]
+		}{{ $loop->parent->last ? '' : ',' }}
+		@endforeach
+		@endif
+		@endforeach
+	];
+</script>
+@endsection
+
 @section('topContent')
 	<div class='minor-media mb-3' hidden>
 		<img src='/assets/{{ config('game.slug') }}/cover.jpg' alt='{{ config('game.data.name') }}'>
@@ -313,21 +355,9 @@
 					</div>
 				</div>
 				<div class='col'>
-
-					@foreach ($breakdown->keys() as $zoneId)
-					@if (isset($maps[$zoneId]))
-					@foreach ($maps[$zoneId] as $data)
-						{{ $data['size'] }}
-						{{ $data['image'] }}
-						{{ $data['offset']['x'] }}
-						{{ $data['offset']['y'] }}
-					@endforeach
-					@endif
-					@endforeach
 					<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
 						<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
 					</div>
-
 				</div>
 			</div>
 
