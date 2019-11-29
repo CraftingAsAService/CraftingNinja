@@ -10,7 +10,11 @@
 
 @section('scripts')
 <script>
-	var maps = [
+	var
+		@foreach (['breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
+		{{ $var }} = {!! json_encode($$var) !!},
+		@endforeach
+		maps = [
 		@foreach ($breakdown as $zoneId => $itemIds)
 		@if (isset($maps[$zoneId]))
 		@foreach ($maps[$zoneId] as $key => $data)
@@ -109,6 +113,9 @@
 							</div>
 							&hellip;
 							--}}
+							<div v-for=''>
+
+							</div>
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)

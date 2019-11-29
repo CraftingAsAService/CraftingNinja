@@ -26793,6 +26793,14 @@ var craft = new Vue({
   name: 'Crafting',
   el: '#craft',
   data: {
+    breakdown: breakdown,
+    items: items,
+    recipes: recipes,
+    nodes: nodes,
+    zones: zones,
+    rewards: rewards,
+    mobs: mobs,
+    shops: shops,
     maps: maps
   },
   mounted: function mounted() {
