@@ -26793,6 +26793,8 @@ var craft = new Vue({
   name: 'Crafting',
   el: '#craft',
   data: {
+    preferredRecipeIds: preferredRecipeIds,
+    givenItemIds: givenItemIds,
     breakdown: breakdown,
     items: items,
     recipes: recipes,
@@ -26802,6 +26804,9 @@ var craft = new Vue({
     mobs: mobs,
     shops: shops,
     maps: maps
+  },
+  created: function created() {
+    this.computeAmounts();
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
@@ -26833,7 +26838,17 @@ var craft = new Vue({
       // })
     });
   },
-  methods: {}
+  methods: {
+    computeAmounts: function computeAmounts() {
+      // We want these items: givenItemIds
+      // If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
+      var topTierCrafts = {};
+
+      for (var id in givenItemIds) {
+        console.log(givenItemIds);
+      }
+    }
+  }
 });
 
 /***/ }),

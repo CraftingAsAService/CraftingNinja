@@ -10,6 +10,8 @@ const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
 	data: {
+		preferredRecipeIds: preferredRecipeIds,
+		givenItemIds: givenItemIds,
 		breakdown: breakdown,
 		items: items,
 		recipes: recipes,
@@ -19,6 +21,9 @@ const craft = new Vue({
 		mobs: mobs,
 		shops: shops,
 		maps: maps,
+	},
+	created() {
+		this.computeAmounts();
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -53,6 +58,14 @@ const craft = new Vue({
 		})
 	},
 	methods: {
-
+		computeAmounts:function() {
+			// We want these items: givenItemIds
+			// If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
+			var topTierCrafts = {};
+			for (var id in givenItemIds)
+			{
+				console.log(givenItemIds);
+			}
+		}
 	}
 });
