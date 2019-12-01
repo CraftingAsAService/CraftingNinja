@@ -26,20 +26,26 @@ class CraftController extends Controller
 
 		// Users can add items themselves
 		//  AND obviously recipes produce items
-		$givenItemIds = $cookieContents->filter(function($row) {
-			return $row['type'] == 'item';
-		})->pluck('id')->merge($recipes->pluck('item_id'));
+		$quantities = $cookieContents->mapWithKeys(function($row) {
+			if ($row['type'] == 'recipe')
+				return [ $row['item_id'] => $row['quantity'] ];
+			if ($row['type'] == 'item')
+				return [ $row['id'] => $row['quantity'] ];
+			return [ '' => null ];
+		})->diff([null]);
+
+		$givenItemIds = $quantities->keys();
 
 		// If it's not a digit, or a comma, take it out.
 		//  Custom XSS/etc prevention
-		$givenItemIds = preg_replace('/[^\d,]/', '', $givenItemIds->implode(','));
+		$givenItemIdsSearch = preg_replace('/[^\d,]/', '', $givenItemIds->implode(','));
 
 		$results = collect(\DB::select(
 			'WITH RECURSIVE cte AS (' .
 				'SELECT rr.recipe_id, rr.item_id ' .
 				'FROM recipes r ' .
 				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
-				'WHERE r.item_id IN ( ' . $givenItemIds . ') ' .
+				'WHERE r.item_id IN ( ' . $givenItemIdsSearch . ') ' .
 				'UNION ALL ' .
 				'SELECT rr.recipe_id, rr.item_id ' .
 				'FROM recipes r ' .
@@ -179,7 +185,7 @@ class CraftController extends Controller
 			return count($entries);
 		});
 
-		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps'));
+		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps'));
 	}
 
 

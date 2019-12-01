@@ -26793,11 +26793,12 @@ var craft = new Vue({
   name: 'Crafting',
   el: '#craft',
   data: {
-    preferredRecipeIds: preferredRecipeIds,
-    givenItemIds: givenItemIds,
+    // preferredRecipeIds: preferredRecipeIds,
+    // givenItemIds: givenItemIds,
+    quantities: quantities,
     breakdown: breakdown,
     items: items,
-    recipes: recipes,
+    // recipes: recipes,
     nodes: nodes,
     zones: zones,
     rewards: rewards,
@@ -26839,13 +26840,95 @@ var craft = new Vue({
     });
   },
   methods: {
+    itemsAvailableRecipes: function itemsAvailableRecipes() {
+      var itemsAvailableRecipes = {};
+      Object.keys(recipes).forEach(function (key) {
+        if (typeof itemsAvailableRecipes[recipes[key]['item_id']] === 'undefined') itemsAvailableRecipes[recipes[key]['item_id']] = [];
+        itemsAvailableRecipes[recipes[key]['item_id']].push(key);
+      });
+      return itemsAvailableRecipes;
+    },
     computeAmounts: function computeAmounts() {
       // We want these items: givenItemIds
       // If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
-      var topTierCrafts = {};
+      var topTierCrafts = [],
+          itemsToGather = [],
+          // Prefer to gather items in this order
+      preferredHandleOrder = ['recipes', 'everythingElse'],
+          //nodes', 'shops'],
+      itemsAvailableRecipes = this.itemsAvailableRecipes();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-      for (var id in givenItemIds) {
-        console.log(givenItemIds);
+      try {
+        for (var _iterator = givenItemIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var id = _step.value;
+
+          // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
+          for (var _i = 0, _preferredHandleOrder = preferredHandleOrder; _i < _preferredHandleOrder.length; _i++) {
+            var method = _preferredHandleOrder[_i];
+
+            if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
+              var recipeId = itemsAvailableRecipes[id][0];
+
+              if (itemsAvailableRecipes[id].length > 1) {
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                  for (var _iterator2 = itemsAvailableRecipes[id][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var recipeIdCheck = _step2.value;
+
+                    if (preferredRecipeIds.contains(recipeIdCheck)) {
+                      recipeId = recipeIdCheck;
+                      break;
+                    }
+                  }
+                } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                      _iterator2["return"]();
+                    }
+                  } finally {
+                    if (_didIteratorError2) {
+                      throw _iteratorError2;
+                    }
+                  }
+                }
+              }
+
+              topTierCrafts.push({
+                'recipeId': recipeId,
+                'quantity': quantities[id]
+              });
+              break;
+            } else {
+              itemsToGather.push({
+                'itemId': id,
+                'quantity': quantities[id]
+              });
+              break;
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
     }
   }

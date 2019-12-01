@@ -11,7 +11,7 @@
 @section('scripts')
 <script>
 	var
-		@foreach (['preferredRecipeIds', 'givenItemIds', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
+		@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
 		{{ $var }} = {!! json_encode($$var) !!},
 		@endforeach
 		maps = [

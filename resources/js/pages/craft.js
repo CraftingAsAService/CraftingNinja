@@ -10,11 +10,12 @@ const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
 	data: {
-		preferredRecipeIds: preferredRecipeIds,
-		givenItemIds: givenItemIds,
+		// preferredRecipeIds: preferredRecipeIds,
+		// givenItemIds: givenItemIds,
+		quantities: quantities,
 		breakdown: breakdown,
 		items: items,
-		recipes: recipes,
+		// recipes: recipes,
 		nodes: nodes,
 		zones: zones,
 		rewards: rewards,
@@ -58,13 +59,58 @@ const craft = new Vue({
 		})
 	},
 	methods: {
+		itemsAvailableRecipes:function() {
+			var itemsAvailableRecipes = {};
+			Object.keys(recipes).forEach(key => {
+				if (typeof itemsAvailableRecipes[recipes[key]['item_id']] === 'undefined')
+					itemsAvailableRecipes[recipes[key]['item_id']] = [];
+				itemsAvailableRecipes[recipes[key]['item_id']].push(key);
+			});
+			return itemsAvailableRecipes;
+		},
 		computeAmounts:function() {
 			// We want these items: givenItemIds
 			// If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
-			var topTierCrafts = {};
-			for (var id in givenItemIds)
+			var topTierCrafts = [],
+				itemsToGather = [],
+				// Prefer to gather items in this order
+				preferredHandleOrder = ['recipes', 'everythingElse'],//nodes', 'shops'],
+				itemsAvailableRecipes = this.itemsAvailableRecipes();
+
+			for (var id of givenItemIds)
 			{
-				console.log(givenItemIds);
+				// TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
+				for (var method of preferredHandleOrder)
+				{
+					if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined')
+					{
+						var recipeId = itemsAvailableRecipes[id][0];
+						if (itemsAvailableRecipes[id].length > 1)
+						{
+							for (var recipeIdCheck of itemsAvailableRecipes[id])
+							{
+								if (preferredRecipeIds.contains(recipeIdCheck))
+								{
+									recipeId = recipeIdCheck;
+									break;
+								}
+							}
+						}
+						topTierCrafts.push({
+							'recipeId': recipeId,
+							'quantity': quantities[id]
+						});
+						break;
+					}
+					else
+					{
+						itemsToGather.push({
+							'itemId': id,
+							'quantity': quantities[id]
+						});
+						break;
+					}
+				}
 			}
 		}
 	}
