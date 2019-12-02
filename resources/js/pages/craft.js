@@ -71,15 +71,17 @@ const craft = new Vue({
 		computeAmounts:function() {
 			// We want these items: givenItemIds
 			// If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
-			var topTierCrafts = [],
-				itemsToGather = [],
-				// Prefer to gather items in this order
-				preferredHandleOrder = ['recipes', 'everythingElse'],//nodes', 'shops'],
+			this.topTierCrafts = {};
+			this.itemsToGather = {};
+
+			// Prefer to gather items in this order
+			var preferredHandleOrder = ['recipes', 'everythingElse'],//nodes', 'shops'],
 				itemsAvailableRecipes = this.itemsAvailableRecipes();
 
 			for (var id of givenItemIds)
 			{
 				// TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
+				// This loop is broken out of when the answer is hit
 				for (var method of preferredHandleOrder)
 				{
 					if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined')
@@ -96,22 +98,34 @@ const craft = new Vue({
 								}
 							}
 						}
-						topTierCrafts.push({
-							'recipeId': recipeId,
-							'quantity': quantities[id]
-						});
+						this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, quantities[id]);
 						break;
 					}
 					else
 					{
-						itemsToGather.push({
-							'itemId': id,
-							'quantity': quantities[id]
-						});
+						this.itemsToGather[id] = this.dataTemplate(id, quantities[id]);
 						break;
 					}
 				}
 			}
+
+			Object.getOwnPropertyNames(this.topTierCrafts).forEach(id => {
+				this.craftRecipe(id);
+			});
+
+			console.log(this.topTierCrafts, this.itemsToGather);
+		},
+		dataTemplate:function(id, quantity) {
+			return {
+				'id': id,
+				'amountHave': 0, // How many you physically have
+				'amountNeeded': 0, // How many you currently need (minus completed recipes)
+				'amountRequired': quantity, // How many you need in absolute total (including completed recipes)
+			};
+		},
+		craftRecipe:function(id) {
+			console.log(id, this.topTierCrafts[id], recipes[id]);
+
 		}
 	}
 });
