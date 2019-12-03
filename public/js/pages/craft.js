@@ -26795,7 +26795,7 @@ var craft = new Vue({
   data: {
     // preferredRecipeIds: preferredRecipeIds,
     // givenItemIds: givenItemIds,
-    quantities: quantities,
+    // quantities: quantities,
     breakdown: breakdown,
     items: items,
     // recipes: recipes,
@@ -26807,7 +26807,9 @@ var craft = new Vue({
     maps: maps
   },
   created: function created() {
-    this.computeAmounts();
+    this.topTierCrafts = {};
+    this.itemsToGather = {};
+    this.computeAmounts(givenItemIds, quantities);
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
@@ -26848,29 +26850,24 @@ var craft = new Vue({
       });
       return itemsAvailableRecipes;
     },
-    computeAmounts: function computeAmounts() {
-      var _this = this;
-
-      // We want these items: givenItemIds
-      // If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
-      this.topTierCrafts = {};
-      this.itemsToGather = {}; // Prefer to gather items in this order
-
+    computeAmounts: function computeAmounts(itemIds, loopQtys) {
+      // Prefer to gather items in this order
       var preferredHandleOrder = ['recipes', 'everythingElse'],
           //nodes', 'shops'],
-      itemsAvailableRecipes = this.itemsAvailableRecipes();
+      itemsAvailableRecipes = this.itemsAvailableRecipes(),
+          recipesToLoopThisRound = [];
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = givenItemIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = itemIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var id = _step.value;
 
           // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
           // This loop is broken out of when the answer is hit
-          for (var _i = 0, _preferredHandleOrder = preferredHandleOrder; _i < _preferredHandleOrder.length; _i++) {
-            var method = _preferredHandleOrder[_i];
+          for (var _i2 = 0, _preferredHandleOrder = preferredHandleOrder; _i2 < _preferredHandleOrder.length; _i2++) {
+            var method = _preferredHandleOrder[_i2];
 
             if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
               var recipeId = itemsAvailableRecipes[id][0];
@@ -26884,7 +26881,7 @@ var craft = new Vue({
                   for (var _iterator2 = itemsAvailableRecipes[id][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var recipeIdCheck = _step2.value;
 
-                    if (preferredRecipeIds.contains(recipeIdCheck)) {
+                    if (preferredRecipeIds.includes(recipeIdCheck)) {
                       recipeId = recipeIdCheck;
                       break;
                     }
@@ -26905,10 +26902,21 @@ var craft = new Vue({
                 }
               }
 
-              this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, quantities[id]);
+              if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
+                this.topTierCrafts[recipeId].amountRequired += loopQtys[id];
+              } else {
+                this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
+              }
+
+              recipesToLoopThisRound.push(recipeId);
               break;
             } else {
-              this.itemsToGather[id] = this.dataTemplate(id, quantities[id]);
+              if (typeof this.itemsToGather[id] !== 'undefined') {
+                this.itemsToGather[id].amountRequired += loopQtys[id];
+              } else {
+                this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
+              }
+
               break;
             }
           }
@@ -26928,9 +26936,11 @@ var craft = new Vue({
         }
       }
 
-      Object.getOwnPropertyNames(this.topTierCrafts).forEach(function (id) {
-        _this.craftRecipe(id);
-      });
+      for (var _i = 0, _recipesToLoopThisRou = recipesToLoopThisRound; _i < _recipesToLoopThisRou.length; _i++) {
+        var recipeId = _recipesToLoopThisRou[_i];
+        this.craftRecipe(recipeId);
+      }
+
       console.log(this.topTierCrafts, this.itemsToGather);
     },
     dataTemplate: function dataTemplate(id, quantity) {
@@ -26945,7 +26955,36 @@ var craft = new Vue({
       };
     },
     craftRecipe: function craftRecipe(id) {
-      console.log(id, this.topTierCrafts[id], recipes[id]);
+      var required = this.topTierCrafts[id].amountRequired,
+          yields = recipes[id]["yield"],
+          itemIds = [],
+          loopQtys = {};
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = recipes[id].ingredients[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var item = _step3.value;
+          itemIds.push(item.id);
+          loopQtys[item.id] = item.pivot.quantity;
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+            _iterator3["return"]();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      this.computeAmounts(itemIds, loopQtys);
     }
   }
 });

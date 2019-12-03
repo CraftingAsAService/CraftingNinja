@@ -61,7 +61,10 @@ class CraftController extends Controller
 			->diff(config('game.reagentsToIgnore')) // Take out Crystals/etc, anything not worth accounting for
 			->merge($givenItemIds); // Add in what was originally searched upon
 
-		$recipes = Recipe::whereIn('id', $recipeIds)
+		$recipes = Recipe::with(['ingredients' => function($query) {
+				$query->whereNotIn('item_id', config('game.reagentsToIgnore'));
+			}])
+			->whereIn('id', $recipeIds)
 			->get()
 			->keyBy('id');
 

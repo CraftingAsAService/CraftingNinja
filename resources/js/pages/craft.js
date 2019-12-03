@@ -12,7 +12,7 @@ const craft = new Vue({
 	data: {
 		// preferredRecipeIds: preferredRecipeIds,
 		// givenItemIds: givenItemIds,
-		quantities: quantities,
+		// quantities: quantities,
 		breakdown: breakdown,
 		items: items,
 		// recipes: recipes,
@@ -24,7 +24,9 @@ const craft = new Vue({
 		maps: maps,
 	},
 	created() {
-		this.computeAmounts();
+		this.topTierCrafts = {};
+		this.itemsToGather = {};
+		this.computeAmounts(givenItemIds, quantities);
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -68,17 +70,13 @@ const craft = new Vue({
 			});
 			return itemsAvailableRecipes;
 		},
-		computeAmounts:function() {
-			// We want these items: givenItemIds
-			// If any of them can be recipe'd, do it, otherwise it'll have to come from a drop
-			this.topTierCrafts = {};
-			this.itemsToGather = {};
-
+		computeAmounts:function(itemIds, loopQtys) {
 			// Prefer to gather items in this order
-			var preferredHandleOrder = ['recipes', 'everythingElse'],//nodes', 'shops'],
-				itemsAvailableRecipes = this.itemsAvailableRecipes();
+			var preferredHandleOrder   = ['recipes', 'everythingElse'],//nodes', 'shops'],
+				itemsAvailableRecipes  = this.itemsAvailableRecipes(),
+				recipesToLoopThisRound = [];
 
-			for (var id of givenItemIds)
+			for (var id of itemIds)
 			{
 				// TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
 				// This loop is broken out of when the answer is hit
@@ -91,27 +89,39 @@ const craft = new Vue({
 						{
 							for (var recipeIdCheck of itemsAvailableRecipes[id])
 							{
-								if (preferredRecipeIds.contains(recipeIdCheck))
+								if (preferredRecipeIds.includes(recipeIdCheck))
 								{
 									recipeId = recipeIdCheck;
 									break;
 								}
 							}
 						}
-						this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, quantities[id]);
+						if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
+							this.topTierCrafts[recipeId].amountRequired += loopQtys[id];
+						} else {
+							this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
+						}
+
+						recipesToLoopThisRound.push(recipeId);
+
 						break;
 					}
 					else
 					{
-						this.itemsToGather[id] = this.dataTemplate(id, quantities[id]);
+						if (typeof this.itemsToGather[id] !== 'undefined') {
+							this.itemsToGather[id].amountRequired += loopQtys[id];
+						} else {
+							this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
+						}
+
 						break;
 					}
 				}
 			}
 
-			Object.getOwnPropertyNames(this.topTierCrafts).forEach(id => {
-				this.craftRecipe(id);
-			});
+			for (var recipeId of recipesToLoopThisRound) {
+				this.craftRecipe(recipeId);
+			}
 
 			console.log(this.topTierCrafts, this.itemsToGather);
 		},
@@ -124,8 +134,17 @@ const craft = new Vue({
 			};
 		},
 		craftRecipe:function(id) {
-			console.log(id, this.topTierCrafts[id], recipes[id]);
+			var required = this.topTierCrafts[id].amountRequired,
+				yields   = recipes[id].yield,
+				itemIds  = [],
+				loopQtys = {};
 
+			for (var item of recipes[id].ingredients) {
+				itemIds.push(item.id);
+				loopQtys[item.id] = item.pivot.quantity;
+			}
+
+			this.computeAmounts(itemIds, loopQtys);
 		}
 	}
 });
