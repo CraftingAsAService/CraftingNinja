@@ -10,11 +10,10 @@
 
 @section('scripts')
 <script>
-	var
-		@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
-		{{ $var }} = {!! json_encode($$var) !!},
-		@endforeach
-		maps = [
+	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
+	var {{ $var }} = {!! json_encode($$var) !!};
+	@endforeach
+	var maps = [
 		@foreach ($breakdown as $zoneId => $itemIds)
 		@if (isset($maps[$zoneId]))
 		@foreach ($maps[$zoneId] as $key => $data)

@@ -26796,19 +26796,20 @@ var craft = new Vue({
     // preferredRecipeIds: preferredRecipeIds,
     // givenItemIds: givenItemIds,
     // quantities: quantities,
-    breakdown: breakdown,
-    items: items,
+    // breakdown: breakdown,
+    // items: items,
     // recipes: recipes,
-    nodes: nodes,
-    zones: zones,
-    rewards: rewards,
-    mobs: mobs,
-    shops: shops,
-    maps: maps
+    // nodes: nodes,
+    // zones: zones,
+    // rewards: rewards,
+    // mobs: mobs,
+    // shops: shops,
+    maps: maps,
+    // Crafting loop
+    topTierCrafts: {},
+    itemsToGather: {}
   },
   created: function created() {
-    this.topTierCrafts = {};
-    this.itemsToGather = {};
     this.computeAmounts(givenItemIds, quantities);
   },
   mounted: function mounted() {
@@ -26939,9 +26940,8 @@ var craft = new Vue({
       for (var _i = 0, _recipesToLoopThisRou = recipesToLoopThisRound; _i < _recipesToLoopThisRou.length; _i++) {
         var recipeId = _recipesToLoopThisRou[_i];
         this.craftRecipe(recipeId);
-      }
+      } // console.log(this.topTierCrafts, this.itemsToGather);
 
-      console.log(this.topTierCrafts, this.itemsToGather);
     },
     dataTemplate: function dataTemplate(id, quantity) {
       return {
@@ -26950,15 +26950,22 @@ var craft = new Vue({
         // How many you physically have
         'amountNeeded': 0,
         // How many you currently need (minus completed recipes)
-        'amountRequired': quantity // How many you need in absolute total (including completed recipes)
+        'amountRequired': parseInt(quantity) // How many you need in absolute total (including completed recipes)
 
       };
     },
     craftRecipe: function craftRecipe(id) {
       var required = this.topTierCrafts[id].amountRequired,
+          alreadyHave = this.topTierCrafts[id].amountHave,
           yields = recipes[id]["yield"],
           itemIds = [],
-          loopQtys = {};
+          loopQtys = {},
+          qtyMultiplier = 1; // Quantity Multiplier
+      // If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
+      // But if you already have one of them, don't count it
+
+      qtyMultiplier = Math.ceil((required - alreadyHave) / yields);
+      console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
@@ -26967,7 +26974,7 @@ var craft = new Vue({
         for (var _iterator3 = recipes[id].ingredients[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var item = _step3.value;
           itemIds.push(item.id);
-          loopQtys[item.id] = item.pivot.quantity;
+          loopQtys[item.id] = item.pivot.quantity * qtyMultiplier;
         }
       } catch (err) {
         _didIteratorError3 = true;
