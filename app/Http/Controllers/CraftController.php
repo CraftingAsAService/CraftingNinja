@@ -139,7 +139,8 @@ class CraftController extends Controller
 		foreach ($relevantMaps as $map)
 		{
 			if ( ! isset($map->detail->data))
-				dd($map);
+				continue;
+
 			if ( ! isset($maps[$map->zone_id]))
 				$maps[$map->zone_id] = [];
 			$maps[$map->zone_id][] = array_merge($map->detail->data, [ 'image' => $map->image ]);
