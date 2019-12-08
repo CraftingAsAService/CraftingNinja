@@ -98,7 +98,7 @@
 			</h3>
 
 			<div class='row'>
-				<div class='col'>
+				<div class='col-sm-4'>
 					<div class='card'>
 						<div class='card__content'>
 							{{--
@@ -112,17 +112,16 @@
 							</div>
 							&hellip;
 							--}}
-							<div v-for=''>
-
-							</div>
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)
 									<hr>
 								@endif
-								<h5 class='mt-3'>
-								<i class='fas fa-map-pin -desize float-right'></i>
-									<i class='fas fa-map-marked -desize mr-2'></i>{{ $zones[$zoneId]->name }}
+								<h5>
+									<i class='fas fa-map-pin -desize float-right' hidden></i>
+									<i class='fas fa-map-marked -desize float-right' hidden></i>
+									{{-- <i class='fas fa-map-marked -desize mr-2'></i> --}}
+									{{ $zones[$zoneId]->name }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
 									@php
@@ -133,12 +132,14 @@
 											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48'>
 										</div>
 										<div class='col info'>
+											<span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountRequired'></span>
+											<small class='text-muted'>x</small>
 											<big class='rarity-{{ $item->rarity }}'>{{ $item->name }}</big>
 											<div class='sources'>
 												@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-													<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt='' data-toggle='tooltip' data-title='{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}'>
+													<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt='' data-toggle='tooltip' data-title='Level {{ $nodes[$nodeId]['level'] }}, {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}'>
 												@endforeach
-												<div class='card p-2 mt-2'>
+												<div class='card p-2 mt-2' hidden>
 													@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 													<i class='fas fa-caret-square-up text-primary'></i>
 													{{-- <i class='fas fa-compress-arrows-alt text-primary'></i> --}}
@@ -160,13 +161,22 @@
 										</div>
 										<div class='col-auto'>
 											<div class='form-group tally'>
-												<big><small class='text-muted'>x</small><span class='required'>###</span></big>
+												{{-- <big><small class='text-muted mr-1'>x</small><span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountRequired'></span></big> --}}
 												<label class='checkbox ml-2' style='width: 24px;'>
 													<input type='checkbox'>
 													<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
 												</label>
 											</div>
-											how-many-you-have / how-many-you-currently-need(minus-completed-recipes) / how-many-you-need-total
+											{{--
+											<span v-html='itemsToGather[{{ $itemId }}].amountHave'></span> /
+											<span v-html='itemsToGather[{{ $itemId }}].amountNeeded'></span> /
+											<span v-html='itemsToGather[{{ $itemId }}].amountRequired'></span>
+											--}}
+											{{--
+												how-many-you-have
+												how-many-you-currently-need(minus-completed-recipes)
+												how-many-you-need-total
+											--}}
 										</div>
 									</div>
 								@endforeach
@@ -360,9 +370,13 @@
 						</div>
 					</div>
 				</div>
-				<div class='col'>
-					<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
-						<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
+				<div class='col-sm-4'>
+					<div class='card'>
+						<div class='card__content'>
+							<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
+								<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

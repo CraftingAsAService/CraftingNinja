@@ -74,8 +74,7 @@ const craft = new Vue({
 		computeAmounts:function(itemIds, loopQtys) {
 			// Prefer to gather items in this order
 			var preferredHandleOrder   = ['recipes', 'everythingElse'],//nodes', 'shops'],
-				itemsAvailableRecipes  = this.itemsAvailableRecipes(),
-				recipesToLoopThisRound = [];
+				itemsAvailableRecipes  = this.itemsAvailableRecipes();
 
 			for (var id of itemIds)
 			{
@@ -103,7 +102,7 @@ const craft = new Vue({
 							this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
 						}
 
-						recipesToLoopThisRound.push(recipeId);
+						this.craftRecipe(recipeId);
 
 						break;
 					}
@@ -119,12 +118,6 @@ const craft = new Vue({
 					}
 				}
 			}
-
-			for (var recipeId of recipesToLoopThisRound) {
-				this.craftRecipe(recipeId);
-			}
-
-			// console.log(this.topTierCrafts, this.itemsToGather);
 		},
 		dataTemplate:function(id, quantity) {
 			return {
@@ -146,7 +139,8 @@ const craft = new Vue({
 			// If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
 			// But if you already have one of them, don't count it
 			qtyMultiplier = Math.ceil((required - alreadyHave) / yields);
-			console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
+
+			// console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
 
 			for (var item of recipes[id].ingredients) {
 				itemIds.push(item.id);

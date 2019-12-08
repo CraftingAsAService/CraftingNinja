@@ -26855,8 +26855,7 @@ var craft = new Vue({
       // Prefer to gather items in this order
       var preferredHandleOrder = ['recipes', 'everythingElse'],
           //nodes', 'shops'],
-      itemsAvailableRecipes = this.itemsAvailableRecipes(),
-          recipesToLoopThisRound = [];
+      itemsAvailableRecipes = this.itemsAvailableRecipes();
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -26867,8 +26866,8 @@ var craft = new Vue({
 
           // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
           // This loop is broken out of when the answer is hit
-          for (var _i2 = 0, _preferredHandleOrder = preferredHandleOrder; _i2 < _preferredHandleOrder.length; _i2++) {
-            var method = _preferredHandleOrder[_i2];
+          for (var _i = 0, _preferredHandleOrder = preferredHandleOrder; _i < _preferredHandleOrder.length; _i++) {
+            var method = _preferredHandleOrder[_i];
 
             if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
               var recipeId = itemsAvailableRecipes[id][0];
@@ -26909,7 +26908,7 @@ var craft = new Vue({
                 this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
               }
 
-              recipesToLoopThisRound.push(recipeId);
+              this.craftRecipe(recipeId);
               break;
             } else {
               if (typeof this.itemsToGather[id] !== 'undefined') {
@@ -26936,12 +26935,6 @@ var craft = new Vue({
           }
         }
       }
-
-      for (var _i = 0, _recipesToLoopThisRou = recipesToLoopThisRound; _i < _recipesToLoopThisRou.length; _i++) {
-        var recipeId = _recipesToLoopThisRou[_i];
-        this.craftRecipe(recipeId);
-      } // console.log(this.topTierCrafts, this.itemsToGather);
-
     },
     dataTemplate: function dataTemplate(id, quantity) {
       return {
@@ -26964,8 +26957,8 @@ var craft = new Vue({
       // If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
       // But if you already have one of them, don't count it
 
-      qtyMultiplier = Math.ceil((required - alreadyHave) / yields);
-      console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
+      qtyMultiplier = Math.ceil((required - alreadyHave) / yields); // console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
+
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
