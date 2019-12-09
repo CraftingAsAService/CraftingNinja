@@ -89,6 +89,17 @@
 								top: 45%;
 								left: 50%;
 							}
+
+							.item.-done {
+								opacity: .5;
+							}
+							/*.item.-done .icon {
+								width: 24px;
+								height: 24px;
+							}*/
+							.item.-done .sources {
+								display: none;
+							}
 						</style>
 
 		<div id='craft'>
@@ -121,18 +132,21 @@
 									<i class='fas fa-map-pin -desize float-right' hidden></i>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									{{-- <i class='fas fa-map-marked -desize mr-2'></i> --}}
+									@if ($zones[$zoneId]->parent !== null)
+									{{ $zones[$zoneId]->parent->name }} -
+									@endif
 									{{ $zones[$zoneId]->name }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
 									@php
 										$item = $items[$itemId];
 									@endphp
-									<div class='row item'>
+									<div :class='"row item" + (itemsToGather[{{ $itemId }}].amountNeeded <= 0 ? " -done" : "")'>
 										<div class='col-auto'>
-											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48'>
+											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48' class='icon'>
 										</div>
 										<div class='col info'>
-											<span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountRequired'></span>
+											<span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountNeeded'></span>
 											<small class='text-muted'>x</small>
 											<big class='rarity-{{ $item->rarity }}'>{{ $item->name }}</big>
 											<div class='sources'>

@@ -28,6 +28,7 @@ const craft = new Vue({
 	},
 	created() {
 		this.computeAmounts(givenItemIds, quantities);
+		this.recalculateAmountsNeeded();
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -148,6 +149,9 @@ const craft = new Vue({
 			}
 
 			this.computeAmounts(itemIds, loopQtys);
+		},
+		recalculateAmountsNeeded:function() {
+
 		}
 	}
 });

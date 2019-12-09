@@ -26811,6 +26811,7 @@ var craft = new Vue({
   },
   created: function created() {
     this.computeAmounts(givenItemIds, quantities);
+    this.recalculateAmountsNeeded();
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
@@ -26985,7 +26986,8 @@ var craft = new Vue({
       }
 
       this.computeAmounts(itemIds, loopQtys);
-    }
+    },
+    recalculateAmountsNeeded: function recalculateAmountsNeeded() {}
   }
 });
 

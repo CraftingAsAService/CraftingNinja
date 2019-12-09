@@ -24,7 +24,7 @@ class Zone extends Aspect
 
 	public function parent()
 	{
-		return $this->belongsTo(Zone::class)->withTranslation();
+		return $this->belongsTo(Zone::class, 'zone_id')->withTranslation();
 	}
 
 	public function maps()

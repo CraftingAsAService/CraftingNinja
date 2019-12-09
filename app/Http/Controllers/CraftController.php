@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Recipe;
+use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Map;
 use App\Models\Game\Concepts\Sling;
 use Illuminate\Http\Request;
@@ -87,10 +88,10 @@ class CraftController extends Controller
 		// Break down item availability by zone
 
 		// Globalizing zones temporarily; works better in the mapWithKeys functions
-		$this->zones = $items->pluck('zones')->flatten()->keyBy('id');
+		$this->zones = $items->pluck('zones')->flatten()->pluck('id');
 
 		$rewards = $items->pluck('repeatablyRewardedFrom')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
-			$this->zones = $this->zones->merge($entry->zones);
+			$this->zones = $this->zones->merge($entry->zones->pluck('id'));
 			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
@@ -100,7 +101,7 @@ class CraftController extends Controller
 		});
 
 		$mobs = $items->pluck('mobs')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
-			$this->zones = $this->zones->merge($entry->zones);
+			$this->zones = $this->zones->merge($entry->zones->pluck('id'));
 			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
@@ -109,7 +110,7 @@ class CraftController extends Controller
 		});
 
 		$nodes = $items->pluck('nodes')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
-			$this->zones = $this->zones->merge($entry->zones);
+			$this->zones = $this->zones->merge($entry->zones->pluck('id'));
 			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
@@ -119,7 +120,7 @@ class CraftController extends Controller
 		});
 
 		$shops = $items->pluck('shops')->flatten()->keyBy('id')->mapWithKeys(function($entry) {
-			$this->zones = $this->zones->merge($entry->zones);
+			$this->zones = $this->zones->merge($entry->zones->pluck('id'));
 			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
@@ -128,7 +129,10 @@ class CraftController extends Controller
 			]];
 		});
 
-		$zones = $this->zones->keyBy('id');
+		$zones = Zone::with('parent', 'translations')
+			->whereIn('id', $this->zones->unique())
+			->get()
+			->keyBy('id');
 		unset($this->zones);
 
 		$relevantMaps = Map::with('detail')
