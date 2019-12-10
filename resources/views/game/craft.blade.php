@@ -123,6 +123,7 @@
 							</div>
 							&hellip;
 							--}}
+							TODO I've gotta take this into full Vue
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)

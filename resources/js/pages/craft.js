@@ -27,8 +27,7 @@ const craft = new Vue({
 		itemsToGather: {},
 	},
 	created() {
-		this.computeAmounts(givenItemIds, quantities);
-		this.recalculateAmountsNeeded();
+		this.calculateAll();
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -63,6 +62,11 @@ const craft = new Vue({
 		})
 	},
 	methods: {
+		calculateAll:function() {
+			this.resetAmountsRequired();
+			this.computeAmounts(givenItemIds, quantities);
+			this.recalculateAmountsNeeded();
+		},
 		itemsAvailableRecipes:function() {
 			var itemsAvailableRecipes = {};
 			Object.keys(recipes).forEach(key => {
@@ -98,7 +102,7 @@ const craft = new Vue({
 							}
 						}
 						if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-							this.topTierCrafts[recipeId].amountRequired += loopQtys[id];
+							this.topTierCrafts[recipeId].amountRequired += parseInt(loopQtys[id]);
 						} else {
 							this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
 						}
@@ -110,7 +114,7 @@ const craft = new Vue({
 					else
 					{
 						if (typeof this.itemsToGather[id] !== 'undefined') {
-							this.itemsToGather[id].amountRequired += loopQtys[id];
+							this.itemsToGather[id].amountRequired += parseInt(loopQtys[id]);
 						} else {
 							this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
 						}
@@ -131,7 +135,7 @@ const craft = new Vue({
 		craftRecipe:function(id) {
 			var required = this.topTierCrafts[id].amountRequired,
 				alreadyHave = this.topTierCrafts[id].amountHave,
-				yields   = recipes[id].yield,
+				yields   = parseInt(recipes[id].yield),
 				itemIds  = [],
 				loopQtys = {},
 				qtyMultiplier = 1;
@@ -150,8 +154,21 @@ const craft = new Vue({
 
 			this.computeAmounts(itemIds, loopQtys);
 		},
+		resetAmountsRequired:function() {
+			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
+				entry.amountRequired = 0;
+			});
+			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
+				entry.amountRequired = 0;
+			});
+		},
 		recalculateAmountsNeeded:function() {
-
+			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
+				entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+			});
+			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
+				entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+			});
 		}
 	}
 });

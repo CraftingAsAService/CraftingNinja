@@ -26788,6 +26788,14 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
 var craft = new Vue({
   name: 'Crafting',
@@ -26810,8 +26818,7 @@ var craft = new Vue({
     itemsToGather: {}
   },
   created: function created() {
-    this.computeAmounts(givenItemIds, quantities);
-    this.recalculateAmountsNeeded();
+    this.calculateAll();
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
@@ -26844,6 +26851,11 @@ var craft = new Vue({
     });
   },
   methods: {
+    calculateAll: function calculateAll() {
+      this.resetAmountsRequired();
+      this.computeAmounts(givenItemIds, quantities);
+      this.recalculateAmountsNeeded();
+    },
     itemsAvailableRecipes: function itemsAvailableRecipes() {
       var itemsAvailableRecipes = {};
       Object.keys(recipes).forEach(function (key) {
@@ -26904,7 +26916,7 @@ var craft = new Vue({
               }
 
               if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-                this.topTierCrafts[recipeId].amountRequired += loopQtys[id];
+                this.topTierCrafts[recipeId].amountRequired += parseInt(loopQtys[id]);
               } else {
                 this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
               }
@@ -26913,7 +26925,7 @@ var craft = new Vue({
               break;
             } else {
               if (typeof this.itemsToGather[id] !== 'undefined') {
-                this.itemsToGather[id].amountRequired += loopQtys[id];
+                this.itemsToGather[id].amountRequired += parseInt(loopQtys[id]);
               } else {
                 this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
               }
@@ -26951,7 +26963,7 @@ var craft = new Vue({
     craftRecipe: function craftRecipe(id) {
       var required = this.topTierCrafts[id].amountRequired,
           alreadyHave = this.topTierCrafts[id].amountHave,
-          yields = recipes[id]["yield"],
+          yields = parseInt(recipes[id]["yield"]),
           itemIds = [],
           loopQtys = {},
           qtyMultiplier = 1; // Quantity Multiplier
@@ -26987,7 +26999,38 @@ var craft = new Vue({
 
       this.computeAmounts(itemIds, loopQtys);
     },
-    recalculateAmountsNeeded: function recalculateAmountsNeeded() {}
+    resetAmountsRequired: function resetAmountsRequired() {
+      Object.entries(this.topTierCrafts).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            key = _ref2[0],
+            entry = _ref2[1];
+
+        entry.amountRequired = 0;
+      });
+      Object.entries(this.itemsToGather).forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            entry = _ref4[1];
+
+        entry.amountRequired = 0;
+      });
+    },
+    recalculateAmountsNeeded: function recalculateAmountsNeeded() {
+      Object.entries(this.topTierCrafts).forEach(function (_ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2),
+            key = _ref6[0],
+            entry = _ref6[1];
+
+        entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+      });
+      Object.entries(this.itemsToGather).forEach(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2),
+            key = _ref8[0],
+            entry = _ref8[1];
+
+        entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+      });
+    }
   }
 });
 
