@@ -5,6 +5,7 @@
 'use strict';
 
 Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
+Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
 
 const craft = new Vue({
 	name: 'Crafting',

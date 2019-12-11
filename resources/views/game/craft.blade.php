@@ -124,6 +124,12 @@
 							&hellip;
 							--}}
 							TODO I've gotta take this into full Vue
+
+
+
+
+
+
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)
@@ -139,9 +145,15 @@
 									{{ $zones[$zoneId]->name }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
+									<crafting-reagent itemId='{{ $itemId }}'></crafting-reagent>
+								@endforeach
+
+								<?php /*
+								@foreach ($itemIds as $itemId => $itemData)
 									@php
 										$item = $items[$itemId];
 									@endphp
+
 									<div :class='"row item" + (itemsToGather[{{ $itemId }}].amountNeeded <= 0 ? " -done" : "")'>
 										<div class='col-auto'>
 											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48' class='icon'>
@@ -195,6 +207,7 @@
 										</div>
 									</div>
 								@endforeach
+								*/ ?>
 							</div>
 							@endforeach
 
