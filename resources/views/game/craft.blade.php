@@ -10,6 +10,7 @@
 
 @section('scripts')
 <script>
+	var nodeTypes = {!! json_encode(config('game.nodeTypes')) !!};
 	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
 	var {{ $var }} = {!! json_encode($$var) !!};
 	@endforeach
@@ -145,7 +146,7 @@
 									{{ $zones[$zoneId]->name }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
-									<crafting-reagent itemId='{{ $itemId }}'></crafting-reagent>
+									<crafting-reagent item-id='{{ $itemId }}' item-name='{{ $items[$itemId]->name }}' item-data='{{ json_encode($itemData) }}'></crafting-reagent>
 								@endforeach
 
 								<?php /*

@@ -1,17 +1,17 @@
 <template>
 	<!-- <crafting-reagent itemId='12345'></crafting-reagent> -->
-	<div :class='"row item" + (needed <= 0 ? " -done" : "")'>
+	<div class='row item'>
 		<div class='col-auto'>
-			<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48' class='icon'>
+			<img :src='"/assets/" + gameSlug + "/i/" + icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
 		<div class='col info'>
-			<span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountNeeded'></span>
+			<span class='required text-warning' v-html='need'></span>
 			<small class='text-muted'>x</small>
-			<big class='rarity-{{ $item->rarity }}'>{{ $item->name }}</big>
+			<big :class='"rarity-" + rarity' v-html='itemName'></big>
+
 			<div class='sources'>
-				@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-					<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt='' data-toggle='tooltip' data-title='Level {{ $nodes[$nodeId]['level'] }}, {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}'>
-				@endforeach
+				<img v-if='typeof sources.nodes !== "undefined"' v-for='(node, nodeId) in sources.nodes' :src='"/assets/" + gameSlug + "/map/icons/" + nodeTypes[nodes[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodes[nodeId].level + ", " + nodeTypes[nodes[nodeId].type].name'>
+				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 					<i class='fas fa-caret-square-up text-primary'></i>
@@ -20,6 +20,7 @@
 					</div>
 					@endforeach
 				</div>
+				-->
 			</div>
 		</div>
 		<div class='col-auto'>
@@ -35,16 +36,25 @@
 
 <script>
 	export default {
-		props: [ 'itemId' ],
+		props: [ 'itemId', 'itemData', 'itemName' ],
 		data () {
 			return {
+				gameSlug: game.slug,
+				nodeTypes: nodeTypes,
+				nodes: nodes,
+				sources: {},
+				icon: '',
+				rarity: '',
 				have: 0,
 				need: 0,
 				required: 0
 			}
 		},
 		mounted:function() {
+			this.icon = items[this.itemId].icon;
+			this.rarity = items[this.itemId].rarity;
 
+			this.sources = JSON.parse(this.itemData);
 		},
 		created:function() {
 			// this.$cookies.config('31d');

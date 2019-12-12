@@ -44,16 +44,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['itemId'],
+  props: ['itemId', 'itemData', 'itemName'],
   data: function data() {
     return {
+      gameSlug: game.slug,
+      nodeTypes: nodeTypes,
+      nodes: nodes,
+      sources: {},
+      icon: '',
+      rarity: '',
       have: 0,
       need: 0,
       required: 0
     };
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    this.icon = items[this.itemId].icon;
+    this.rarity = items[this.itemId].rarity;
+    this.sources = JSON.parse(this.itemData);
+  },
   created: function created() {// this.$cookies.config('31d');
     // this.$eventBus.$on('addToCart', this.addToCart);
     // this.$eventBus.$on('removeFromCart', this.removeFromCart);
@@ -15431,8 +15442,96 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function () {}
-var staticRenderFns = []
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row item" }, [
+    _c("div", { staticClass: "col-auto" }, [
+      _c("img", {
+        staticClass: "icon",
+        attrs: {
+          src: "/assets/" + _vm.gameSlug + "/i/" + _vm.icon + ".png",
+          alt: "",
+          width: "48",
+          height: "48"
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "col info" },
+      [
+        _c("span", {
+          staticClass: "required text-warning",
+          domProps: { innerHTML: _vm._s(_vm.need) }
+        }),
+        _vm._v(" "),
+        _c("small", { staticClass: "text-muted" }, [_vm._v("x")]),
+        _vm._v(" "),
+        _c("big", {
+          class: "rarity-" + _vm.rarity,
+          domProps: { innerHTML: _vm._s(_vm.itemName) }
+        }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "sources" },
+          _vm._l(_vm.sources.nodes, function(node, nodeId) {
+            return typeof _vm.sources.nodes !== "undefined"
+              ? _c("img", {
+                  attrs: {
+                    src:
+                      "/assets/" +
+                      _vm.gameSlug +
+                      "/map/icons/" +
+                      _vm.nodeTypes[_vm.nodes[nodeId].type].icon +
+                      ".png",
+                    alt: "",
+                    "data-toggle": "tooltip",
+                    "data-title":
+                      "Level " +
+                      _vm.nodes[nodeId].level +
+                      ", " +
+                      _vm.nodeTypes[_vm.nodes[nodeId].type].name
+                  }
+                })
+              : _vm._e()
+          }),
+          0
+        )
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _vm._m(0)
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-auto" }, [
+      _c("div", { staticClass: "form-group tally" }, [
+        _c(
+          "label",
+          { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+          [
+            _c("input", { attrs: { type: "checkbox" } }),
+            _vm._v(" "),
+            _c("span", {
+              staticClass: "checkbox-indicator",
+              staticStyle: { width: "24px", height: "24px", top: "-10px" }
+            })
+          ]
+        )
+      ])
+    ])
+  }
+]
+render._withStripped = true
 
 
 
