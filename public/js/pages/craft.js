@@ -27173,7 +27173,7 @@ var craft = new Vue({
               }
 
               if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-                this.topTierCrafts[recipeId].amountRequired += parseInt(loopQtys[id]);
+                this.topTierCrafts[recipeId].required += parseInt(loopQtys[id]);
               } else {
                 this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
               }
@@ -27182,7 +27182,7 @@ var craft = new Vue({
               break;
             } else {
               if (typeof this.itemsToGather[id] !== 'undefined') {
-                this.itemsToGather[id].amountRequired += parseInt(loopQtys[id]);
+                this.itemsToGather[id].required += parseInt(loopQtys[id]);
               } else {
                 this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
               }
@@ -27209,17 +27209,17 @@ var craft = new Vue({
     dataTemplate: function dataTemplate(id, quantity) {
       return {
         'id': id,
-        'amountHave': 0,
+        'have': 0,
         // How many you physically have
-        'amountNeeded': 0,
+        'need': 0,
         // How many you currently need (minus completed recipes)
-        'amountRequired': parseInt(quantity) // How many you need in absolute total (including completed recipes)
+        'required': parseInt(quantity) // How many you need in absolute total (including completed recipes)
 
       };
     },
     craftRecipe: function craftRecipe(id) {
-      var required = this.topTierCrafts[id].amountRequired,
-          alreadyHave = this.topTierCrafts[id].amountHave,
+      var required = this.topTierCrafts[id].required,
+          alreadyHave = this.topTierCrafts[id].have,
           yields = parseInt(recipes[id]["yield"]),
           itemIds = [],
           loopQtys = {},
@@ -27262,14 +27262,14 @@ var craft = new Vue({
             key = _ref2[0],
             entry = _ref2[1];
 
-        entry.amountRequired = 0;
+        entry.required = 0;
       });
       Object.entries(this.itemsToGather).forEach(function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2),
             key = _ref4[0],
             entry = _ref4[1];
 
-        entry.amountRequired = 0;
+        entry.required = 0;
       });
     },
     recalculateAmountsNeeded: function recalculateAmountsNeeded() {
@@ -27278,15 +27278,15 @@ var craft = new Vue({
             key = _ref6[0],
             entry = _ref6[1];
 
-        entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+        entry.need = Math.max(0, entry.required - entry.have);
       });
       Object.entries(this.itemsToGather).forEach(function (_ref7) {
         var _ref8 = _slicedToArray(_ref7, 2),
             key = _ref8[0],
             entry = _ref8[1];
 
-        entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
-      });
+        entry.need = Math.max(0, entry.required - entry.have);
+      }); // Use the Bus to pass new values around
     }
   }
 });

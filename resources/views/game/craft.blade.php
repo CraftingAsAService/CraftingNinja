@@ -124,7 +124,6 @@
 							</div>
 							&hellip;
 							--}}
-							TODO I've gotta take this into full Vue
 
 
 

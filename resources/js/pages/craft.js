@@ -103,7 +103,7 @@ const craft = new Vue({
 							}
 						}
 						if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-							this.topTierCrafts[recipeId].amountRequired += parseInt(loopQtys[id]);
+							this.topTierCrafts[recipeId].required += parseInt(loopQtys[id]);
 						} else {
 							this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
 						}
@@ -115,7 +115,7 @@ const craft = new Vue({
 					else
 					{
 						if (typeof this.itemsToGather[id] !== 'undefined') {
-							this.itemsToGather[id].amountRequired += parseInt(loopQtys[id]);
+							this.itemsToGather[id].required += parseInt(loopQtys[id]);
 						} else {
 							this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
 						}
@@ -128,14 +128,14 @@ const craft = new Vue({
 		dataTemplate:function(id, quantity) {
 			return {
 				'id': id,
-				'amountHave': 0, // How many you physically have
-				'amountNeeded': 0, // How many you currently need (minus completed recipes)
-				'amountRequired': parseInt(quantity), // How many you need in absolute total (including completed recipes)
+				'have': 0, // How many you physically have
+				'need': 0, // How many you currently need (minus completed recipes)
+				'required': parseInt(quantity), // How many you need in absolute total (including completed recipes)
 			};
 		},
 		craftRecipe:function(id) {
-			var required = this.topTierCrafts[id].amountRequired,
-				alreadyHave = this.topTierCrafts[id].amountHave,
+			var required = this.topTierCrafts[id].required,
+				alreadyHave = this.topTierCrafts[id].have,
 				yields   = parseInt(recipes[id].yield),
 				itemIds  = [],
 				loopQtys = {},
@@ -157,19 +157,21 @@ const craft = new Vue({
 		},
 		resetAmountsRequired:function() {
 			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
-				entry.amountRequired = 0;
+				entry.required = 0;
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
-				entry.amountRequired = 0;
+				entry.required = 0;
 			});
 		},
 		recalculateAmountsNeeded:function() {
 			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
-				entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+				entry.need = Math.max(0, entry.required - entry.have);
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
-				entry.amountNeeded = Math.max(0, entry.amountRequired - entry.amountHave);
+				entry.need = Math.max(0, entry.required - entry.have);
 			});
+
+			// Use the Bus to pass new values around
 		}
 	}
 });
