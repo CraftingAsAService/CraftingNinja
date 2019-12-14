@@ -145,7 +145,7 @@
 									{{ $zones[$zoneId]->name }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
-									<crafting-reagent item-id='{{ $itemId }}' item-name='{{ $items[$itemId]->name }}' item-data='{{ json_encode($itemData) }}'></crafting-reagent>
+									<crafting-reagent item-id='{{ $itemId }}' item-name='{{ $items[$itemId]->name }}' item-data='{{ json_encode($itemData) }}' :items-to-gather='itemsToGather' @pass-have-item-to-parent='haveItem'></crafting-reagent>
 								@endforeach
 
 								<?php /*

@@ -63,6 +63,14 @@ const craft = new Vue({
 		})
 	},
 	methods: {
+		haveItem:function(itemId, truthy) {
+			if (truthy)
+				this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;
+			else
+				this.itemsToGather[itemId].have = 0;
+
+			this.calculateAll();
+		},
 		calculateAll:function() {
 			this.resetAmountsRequired();
 			this.computeAmounts(givenItemIds, quantities);
@@ -172,6 +180,8 @@ const craft = new Vue({
 			});
 
 			// Use the Bus to pass new values around
+			// this.$eventBus.$emit('reagentAmountsUpdated', this.itemsToGather);
+			// this.$eventBus.$emit('recipeAmountsUpdated', this.topTierCrafts);
 		}
 	}
 });

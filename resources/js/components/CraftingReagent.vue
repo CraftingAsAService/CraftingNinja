@@ -4,9 +4,9 @@
 		<div class='col-auto'>
 			<img :src='"/assets/" + gameSlug + "/i/" + icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
-		<div class='col info'>
-			<span class='required text-warning' v-html='need'></span>
-			<small class='text-muted'>x</small>
+		<div class='col info' :style='itemsToGather[itemId].need <= 0 ? "opacity: .5;" : ""'>
+			<span class='required text-warning' v-if='itemsToGather[itemId].need > 0' v-html='itemsToGather[itemId].need'></span>
+			<small class='text-muted' v-if='itemsToGather[itemId].need > 0'>x</small>
 			<big :class='"rarity-" + rarity' v-html='itemName'></big>
 
 			<div class='sources'>
@@ -26,7 +26,7 @@
 		<div class='col-auto'>
 			<div class='form-group tally'>
 				<label class='checkbox ml-2' style='width: 24px;'>
-					<input type='checkbox'>
+					<input type='checkbox' v-model='checked'>
 					<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
 				</label>
 			</div>
@@ -36,7 +36,7 @@
 
 <script>
 	export default {
-		props: [ 'itemId', 'itemData', 'itemName' ],
+		props: [ 'itemId', 'itemData', 'itemName', 'itemsToGather' ],
 		data () {
 			return {
 				gameSlug: game.slug,
@@ -47,7 +47,8 @@
 				rarity: '',
 				have: 0,
 				need: 0,
-				required: 0
+				required: 0,
+				checked: false
 			}
 		},
 		mounted:function() {
@@ -57,21 +58,26 @@
 			this.sources = JSON.parse(this.itemData);
 		},
 		created:function() {
-			// this.$cookies.config('31d');
-
-			// this.$eventBus.$on('addToCart', this.addToCart);
-			// this.$eventBus.$on('removeFromCart', this.removeFromCart);
-			// this.$eventBus.$on('clearCart', this.clearCart);
-			// this.$eventBus.$on('updateCart', this.updateCart);
+			// console.log('created');
+			// this.$eventBus.$on('reagentAmountsUpdated', this.amountUpdate);
 		},
 		beforeDestroy:function() {
-			// this.$eventBus.$off('addToCart');
-			// this.$eventBus.$off('removeFromCart');
-			// this.$eventBus.$off('clearCart');
-			// this.$eventBus.$off('updateCart');
+			// console.log('beforeDestroy');
+			// this.$eventBus.$off('reagentAmountsUpdated');
+		},
+		watch: {
+			checked:function(truthy) {
+				this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+			}
 		},
 		methods: {
+			// amountUpdate:function(a, b, c, allAmounts) {
+			// 	console.log(a, b, c);
 
+			// 	this.have = allAmounts[this.itemId].have;
+			// 	this.need = allAmounts[this.itemId].need;
+			// 	this.required = allAmounts[this.itemId].required;
+			// }
 		}
 	}
 </script>

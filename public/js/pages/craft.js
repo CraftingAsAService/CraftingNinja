@@ -46,7 +46,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['itemId', 'itemData', 'itemName'],
+  props: ['itemId', 'itemData', 'itemName', 'itemsToGather'],
   data: function data() {
     return {
       gameSlug: game.slug,
@@ -57,7 +57,8 @@ __webpack_require__.r(__webpack_exports__);
       rarity: '',
       have: 0,
       need: 0,
-      required: 0
+      required: 0,
+      checked: false
     };
   },
   mounted: function mounted() {
@@ -65,18 +66,24 @@ __webpack_require__.r(__webpack_exports__);
     this.rarity = items[this.itemId].rarity;
     this.sources = JSON.parse(this.itemData);
   },
-  created: function created() {// this.$cookies.config('31d');
-    // this.$eventBus.$on('addToCart', this.addToCart);
-    // this.$eventBus.$on('removeFromCart', this.removeFromCart);
-    // this.$eventBus.$on('clearCart', this.clearCart);
-    // this.$eventBus.$on('updateCart', this.updateCart);
+  created: function created() {// console.log('created');
+    // this.$eventBus.$on('reagentAmountsUpdated', this.amountUpdate);
   },
-  beforeDestroy: function beforeDestroy() {// this.$eventBus.$off('addToCart');
-    // this.$eventBus.$off('removeFromCart');
-    // this.$eventBus.$off('clearCart');
-    // this.$eventBus.$off('updateCart');
+  beforeDestroy: function beforeDestroy() {// console.log('beforeDestroy');
+    // this.$eventBus.$off('reagentAmountsUpdated');
   },
-  methods: {}
+  watch: {
+    checked: function checked(truthy) {
+      this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+    }
+  },
+  methods: {// amountUpdate:function(a, b, c, allAmounts) {
+    // 	console.log(a, b, c);
+    // 	this.have = allAmounts[this.itemId].have;
+    // 	this.need = allAmounts[this.itemId].need;
+    // 	this.required = allAmounts[this.itemId].required;
+    // }
+  }
 });
 
 /***/ }),
@@ -15461,14 +15468,23 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "col info" },
+      {
+        staticClass: "col info",
+        style: _vm.itemsToGather[_vm.itemId].need <= 0 ? "opacity: .5;" : ""
+      },
       [
-        _c("span", {
-          staticClass: "required text-warning",
-          domProps: { innerHTML: _vm._s(_vm.need) }
-        }),
+        _vm.itemsToGather[_vm.itemId].need > 0
+          ? _c("span", {
+              staticClass: "required text-warning",
+              domProps: {
+                innerHTML: _vm._s(_vm.itemsToGather[_vm.itemId].need)
+              }
+            })
+          : _vm._e(),
         _vm._v(" "),
-        _c("small", { staticClass: "text-muted" }, [_vm._v("x")]),
+        _vm.itemsToGather[_vm.itemId].need > 0
+          ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
+          : _vm._e(),
         _vm._v(" "),
         _c("big", {
           class: "rarity-" + _vm.rarity,
@@ -15505,21 +15521,49 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _vm._m(0)
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
+    _c("div", { staticClass: "col-auto" }, [
       _c("div", { staticClass: "form-group tally" }, [
         _c(
           "label",
           { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
           [
-            _c("input", { attrs: { type: "checkbox" } }),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.checked,
+                  expression: "checked"
+                }
+              ],
+              attrs: { type: "checkbox" },
+              domProps: {
+                checked: Array.isArray(_vm.checked)
+                  ? _vm._i(_vm.checked, null) > -1
+                  : _vm.checked
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.checked,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = null,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        (_vm.checked = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)))
+                    }
+                  } else {
+                    _vm.checked = $$c
+                  }
+                }
+              }
+            }),
             _vm._v(" "),
             _c("span", {
               staticClass: "checkbox-indicator",
@@ -15529,8 +15573,9 @@ var staticRenderFns = [
         )
       ])
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -27108,6 +27153,10 @@ var craft = new Vue({
     });
   },
   methods: {
+    haveItem: function haveItem(itemId, truthy) {
+      if (truthy) this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;else this.itemsToGather[itemId].have = 0;
+      this.calculateAll();
+    },
     calculateAll: function calculateAll() {
       this.resetAmountsRequired();
       this.computeAmounts(givenItemIds, quantities);
@@ -27287,6 +27336,8 @@ var craft = new Vue({
 
         entry.need = Math.max(0, entry.required - entry.have);
       }); // Use the Bus to pass new values around
+      // this.$eventBus.$emit('reagentAmountsUpdated', this.itemsToGather);
+      // this.$eventBus.$emit('recipeAmountsUpdated', this.topTierCrafts);
     }
   }
 });
