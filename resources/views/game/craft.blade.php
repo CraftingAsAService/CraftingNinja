@@ -398,14 +398,14 @@
 						</div>
 					</div>
 				</div>
-				<div class='col-sm-4'>
-					<div class='card'>
-						<div class='card__content'>
+				<div class='col-sm-8'>
+					{{-- <div class='card'>
+						<div class='card__content'> --}}
 							<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
 								<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
 							</div>
-						</div>
-					</div>
+						{{-- </div>
+					</div> --}}
 				</div>
 			</div>
 

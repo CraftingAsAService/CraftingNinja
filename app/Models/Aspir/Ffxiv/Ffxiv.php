@@ -44,11 +44,11 @@ class Ffxiv extends Aspir
 	 */
 	public function assets()
 	{
-		$this->icons();
-		$this->maps();
+		$this->iconAssets();
+		$this->mapAssets();
 	}
 
-	private function icons()
+	private function iconAssets()
 	{
 		$this->command->info('Investigating Icons');
 
@@ -121,7 +121,7 @@ class Ffxiv extends Aspir
 		}
 	}
 
-	private function maps()
+	private function mapAssets()
 	{
 		$this->command->info('Investigating Maps');
 

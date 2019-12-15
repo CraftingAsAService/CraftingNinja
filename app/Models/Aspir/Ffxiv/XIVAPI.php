@@ -31,8 +31,8 @@ trait XIVAPI
 			'OffsetX',
 			'OffsetY',
 			'SizeFactor',
-			// 'MapMarkerRange',
 			'MapFilenameId',
+			// 'MapMarkerRange',
 		];
 
 		$this->loopEndpoint('map', $apiFields, function($data) {

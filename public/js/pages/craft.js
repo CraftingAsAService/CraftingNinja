@@ -27121,6 +27121,7 @@ var craft = new Vue({
   },
   created: function created() {
     this.calculateAll();
+    console.log(this.maps);
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
