@@ -150,10 +150,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var size = 577; // TODO calculate magic number based on column width
+var size = 379; // TODO calculate magic number based on column width
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['mapName', 'mapSrc', 'mapBounds', 'markers'],
+  props: ['mapName', 'mapSrc', 'mapBounds', 'markers', 'active'],
   components: {
     LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
     LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
@@ -15601,11 +15601,9 @@ var render = function() {
     "l-map",
     {
       ref: "map",
-      staticStyle: {
-        "background-color": "#392d49",
-        "border-radius": "4px",
-        border: "1px solid #4b3b60"
-      },
+      style:
+        "background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;" +
+        (_vm.active ? "" : " display: none;"),
       attrs: {
         options: _vm.leaflet.options,
         "min-zoom": _vm.leaflet.minZoom,
@@ -27115,6 +27113,7 @@ var craft = new Vue({
     // mobs: mobs,
     // shops: shops,
     maps: maps,
+    activeMap: 0,
     // Crafting loop
     topTierCrafts: {},
     itemsToGather: {}

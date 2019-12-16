@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game\Aspects\Item;
+use App\Models\Game\Aspects\Job;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Map;
@@ -195,7 +196,23 @@ class CraftController extends Controller
 			return count($entries);
 		});
 
-		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps'));
+		// Organize Recipes by JobId
+		$recipeBreakdown = [
+			// JobId => [ RecipeId, RecipeId ]
+		];
+		foreach ($recipes as $recipe)
+		{
+			if ( ! isset($recipeBreakdown[$recipe->job_id]))
+				$recipeBreakdown[$recipe->job_id] = [];
+
+			$recipeBreakdown[$recipe->job_id][] = $recipe->id;
+		}
+
+		$recipeJobs = Job::withTranslation()
+			->whereIn('id', array_keys($recipeBreakdown))
+			->get();
+
+		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
 	}
 
 

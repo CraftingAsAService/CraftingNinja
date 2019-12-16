@@ -105,14 +105,15 @@
 
 		<div id='craft'>
 
-			<h3>
-				Collect
-			</h3>
-
 			<div class='row'>
 				<div class='col-sm-4'>
+					<h3>
+						Collect
+					</h3>
+
 					<div class='card'>
 						<div class='card__content'>
+
 							{{--
 							<p>
 								&hellip;7 of your crafting recipes can be purchased. _View_&hellip;
@@ -398,20 +399,29 @@
 						</div>
 					</div>
 				</div>
-				<div class='col-sm-8'>
+				<div class='col-sm-4'>
+					<h3>
+						&nbsp;
+					</h3>
 					{{-- <div class='card'>
 						<div class='card__content'> --}}
-							<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 577px;'>
-								<ninja-map v-for='map in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' />
+							<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
+								<ninja-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap' />
 							</div>
 						{{-- </div>
 					</div> --}}
 				</div>
-			</div>
+				<div class='col-sm-4'>
+					<h3>
+						Craft
+					</h3>
 
-			<h3>
-				Craft
-			</h3>
+					@foreach ($recipeJobs as $job)
+					{{ $job->name }}
+					@endforeach
+
+				</div>
+			</div>
 
 			<div class='card'>
 				<div class='card__content'>

@@ -23,6 +23,7 @@ const craft = new Vue({
 		// mobs: mobs,
 		// shops: shops,
 		maps: maps,
+		activeMap: 0,
 		// Crafting loop
 		topTierCrafts: {},
 		itemsToGather: {},

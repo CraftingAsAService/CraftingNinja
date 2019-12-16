@@ -1,6 +1,6 @@
 <template>
 	<l-map
-		style='background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;'
+		:style='"background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;" + (active ? "" : " display: none;")'
 		ref='map'
 		:options='leaflet.options'
 		:min-zoom='leaflet.minZoom'
@@ -48,10 +48,10 @@
 	import { CRS, Icon } from 'leaflet'
 	import 'leaflet/dist/leaflet.css'
 
-	let size = 577; // TODO calculate magic number based on column width
+	let size = 379; // TODO calculate magic number based on column width
 
 	export default {
-		props: [ 'mapName', 'mapSrc', 'mapBounds', 'markers' ],
+		props: [ 'mapName', 'mapSrc', 'mapBounds', 'markers', 'active' ],
 		components: {
 			LMap, LImageOverlay, LControlAttribution, LControlZoom, LMarker, LPopup, LIcon
 		},
