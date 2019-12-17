@@ -113,24 +113,6 @@
 
 					<div class='card'>
 						<div class='card__content'>
-
-							{{--
-							<p>
-								&hellip;7 of your crafting recipes can be purchased. _View_&hellip;
-							</p>
-							<div>
-								<h5>
-									<i class='far fa-map -desize mr-2'></i>Unknown Locations
-								</h5>
-							</div>
-							&hellip;
-							--}}
-
-
-
-
-
-
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)
@@ -148,74 +130,74 @@
 								@foreach ($itemIds as $itemId => $itemData)
 									<crafting-reagent item-id='{{ $itemId }}' item-name='{{ $items[$itemId]->name }}' item-data='{{ json_encode($itemData) }}' :items-to-gather='itemsToGather' @pass-have-item-to-parent='haveItem'></crafting-reagent>
 								@endforeach
-
-								<?php /*
-								@foreach ($itemIds as $itemId => $itemData)
-									@php
-										$item = $items[$itemId];
-									@endphp
-
-									<div :class='"row item" + (itemsToGather[{{ $itemId }}].amountNeeded <= 0 ? " -done" : "")'>
-										<div class='col-auto'>
-											<img src='/assets/{{ config('game.slug') }}/i/{{ $item->icon }}.png' alt='' width='48' height='48' class='icon'>
-										</div>
-										<div class='col info'>
-											<span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountNeeded'></span>
-											<small class='text-muted'>x</small>
-											<big class='rarity-{{ $item->rarity }}'>{{ $item->name }}</big>
-											<div class='sources'>
-												@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-													<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt='' data-toggle='tooltip' data-title='Level {{ $nodes[$nodeId]['level'] }}, {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}'>
-												@endforeach
-												<div class='card p-2 mt-2' hidden>
-													@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-													<i class='fas fa-caret-square-up text-primary'></i>
-													{{-- <i class='fas fa-compress-arrows-alt text-primary'></i> --}}
-													{{-- <i class='fas fa-compress text-primary'></i> --}}
-													<div>
-														<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png' alt=''> <code>{{ $data['x'] }},{{ $data['y'] }}</code> {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}{{--  - <code>55%</code> --}}
-													</div>
-													{{-- <div>
-														<i class='fas fa-skull-crossbones'></i> <code>8,13</code> Dragon - <code>60%</code>
-													</div>
-													<div class='text-muted small'>
-														<i class='fas fa-mountain'></i>
-														<i class='fas fa-piggy-bank mr-1'></i>
-														available elsewhere
-													</div> --}}
-													@endforeach
-												</div>
-											</div>
-										</div>
-										<div class='col-auto'>
-											<div class='form-group tally'>
-												{{-- <big><small class='text-muted mr-1'>x</small><span class='required text-warning' v-html='itemsToGather[{{ $itemId }}].amountRequired'></span></big> --}}
-												<label class='checkbox ml-2' style='width: 24px;'>
-													<input type='checkbox'>
-													<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
-												</label>
-											</div>
-											{{--
-											<span v-html='itemsToGather[{{ $itemId }}].amountHave'></span> /
-											<span v-html='itemsToGather[{{ $itemId }}].amountNeeded'></span> /
-											<span v-html='itemsToGather[{{ $itemId }}].amountRequired'></span>
-											--}}
-											{{--
-												how-many-you-have
-												how-many-you-currently-need(minus-completed-recipes)
-												how-many-you-need-total
-											--}}
-										</div>
-									</div>
-								@endforeach
-								*/ ?>
 							</div>
 							@endforeach
+						</div>
+					</div>
+				</div>
+				<div class='col-sm-4'>
+					<h3>
+						&nbsp;
+					</h3>
+					<div class='scroll-container'>
+						<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
+							<ninja-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap' />
+						</div>
+					</div>
+				</div>
+				<div class='col-sm-4'>
+					<h3>
+						Craft
+					</h3>
+
+					<div class='card'>
+						<div class='card__content'>
+							@foreach ($recipeJobs as $job)
+							<div>
+								@if ( ! $loop->first)
+									<hr>
+								@endif
+								<h5>
+									<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->icon }}.png' alt='' width='20' height='20' class='icon mr-1'>
+									{{ ucwords($job->name) }}
+								</h5>
+								@foreach ($recipes as $recipe)
+									@if ($recipe->job_id == $job->id)
+										<div>{{ $recipe->product->name }}</div>
+									@endif
+								@endforeach
+							</div>
+							@endforeach
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+
+			<hr class='mt-5'>
+
+			Ideas
+
+			<div class='row'>
+				<div class='col-sm-4'>
+					<div class='card'>
+						<div class='card__content'>
+
+
+							<p>
+								&hellip;7 of your crafting recipes can be purchased. _View_&hellip;
+							</p>
+							<div>
+								<h5>
+									<i class='far fa-map -desize mr-2'></i>Unknown Locations
+								</h5>
+							</div>
+							&hellip;
 
 							<div>
-								<hr>
 								<h5 class='mt-3'>
-								<i class='fas fa-map-pin -desize float-right'></i>
+									<i class='fas fa-map-pin -desize float-right'></i>
 									<i class='fas fa-map-marked -desize mr-2'></i>Central Shroud - Bentbranch
 								</h5>
 							</div>
@@ -399,35 +381,8 @@
 						</div>
 					</div>
 				</div>
-				<div class='col-sm-4'>
-					<h3>
-						&nbsp;
-					</h3>
-					{{-- <div class='card'>
-						<div class='card__content'> --}}
-							<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
-								<ninja-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap' />
-							</div>
-						{{-- </div>
-					</div> --}}
-				</div>
-				<div class='col-sm-4'>
-					<h3>
-						Craft
-					</h3>
-
-					@foreach ($recipeJobs as $job)
-					{{ $job->name }}
-					@endforeach
-
-				</div>
-			</div>
-
-			<div class='card'>
-				<div class='card__content'>
-					&hellip;
-				</div>
 			</div>
 		</div>
+
 
 @endsection
