@@ -163,7 +163,7 @@
 								</h5>
 								@foreach ($recipes as $recipe)
 									@if ($recipe->job_id == $job->id)
-										<div>{{ $recipe->product->name }}</div>
+										<crafting-recipe recipe-id='{{ $recipe->id }}' item-id='{{ $recipe->product->id }}' item-name='{{ $recipe->product->name }}' :top-tier-crafts='topTierCrafts' @pass-have-item-to-parent='haveItem'></crafting-recipe>
 									@endif
 								@endforeach
 							</div>
