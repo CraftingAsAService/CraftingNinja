@@ -31,7 +31,6 @@ const craft = new Vue({
 	},
 	created() {
 		this.calculateAll();
-		console.log(this.maps);
 	},
 	mounted() {
 		this.$nextTick(() => {

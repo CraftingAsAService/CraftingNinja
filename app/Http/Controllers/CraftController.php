@@ -196,21 +196,15 @@ class CraftController extends Controller
 			return count($entries);
 		});
 
-		// Organize Recipes by JobId
-		$recipeBreakdown = [
-			// JobId => [ RecipeId, RecipeId ]
-		];
-		foreach ($recipes as $recipe)
-		{
-			if ( ! isset($recipeBreakdown[$recipe->job_id]))
-				$recipeBreakdown[$recipe->job_id] = [];
-
-			$recipeBreakdown[$recipe->job_id][] = $recipe->id;
-		}
-
 		$recipeJobs = Job::withTranslation()
-			->whereIn('id', array_keys($recipeBreakdown))
-			->get();
+			->whereIn('id', $recipes->pluck('job_id')->unique())
+			->get()
+			->filter(function($job) use ($recipes) {
+				$count = $recipes->filter(function($recipe) use ($job) {
+					return $recipe->job_id == $job->id;
+				})->count();
+				return $count;
+			});
 
 		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
 	}

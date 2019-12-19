@@ -1,6 +1,6 @@
 <template>
 	<!-- <crafting-recipe recipeId='12345'></crafting-recipe> -->
-	<div class='row item'>
+	<div class='row item' v-if='typeof topTierCrafts[recipeId] !== "undefined"'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + gameSlug + "/i/" + icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>

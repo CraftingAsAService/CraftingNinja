@@ -15670,100 +15670,103 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row item" }, [
-    _c("div", { staticClass: "col-auto" }, [
-      _c("img", {
-        staticClass: "icon",
-        attrs: {
-          src: "/assets/" + _vm.gameSlug + "/i/" + _vm.icon + ".png",
-          alt: "",
-          width: "48",
-          height: "48"
-        }
-      })
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "col info",
-        style: _vm.topTierCrafts[_vm.recipeId].need <= 0 ? "opacity: .5;" : ""
-      },
-      [
-        _vm.topTierCrafts[_vm.recipeId].need > 0
-          ? _c("span", {
-              staticClass: "required text-warning",
-              domProps: {
-                innerHTML: _vm._s(_vm.topTierCrafts[_vm.recipeId].need)
-              }
-            })
-          : _vm._e(),
+  return typeof _vm.topTierCrafts[_vm.recipeId] !== "undefined"
+    ? _c("div", { staticClass: "row item" }, [
+        _c("div", { staticClass: "col-auto" }, [
+          _c("img", {
+            staticClass: "icon",
+            attrs: {
+              src: "/assets/" + _vm.gameSlug + "/i/" + _vm.icon + ".png",
+              alt: "",
+              width: "48",
+              height: "48"
+            }
+          })
+        ]),
         _vm._v(" "),
-        _vm.topTierCrafts[_vm.recipeId].need > 0
-          ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-          : _vm._e(),
-        _vm._v(" "),
-        _c("big", {
-          class: "rarity-" + _vm.rarity,
-          domProps: { innerHTML: _vm._s(_vm.itemName) }
-        })
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-auto" }, [
-      _c("div", { staticClass: "form-group tally" }, [
         _c(
-          "label",
-          { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+          "div",
+          {
+            staticClass: "col info",
+            style:
+              _vm.topTierCrafts[_vm.recipeId].need <= 0 ? "opacity: .5;" : ""
+          },
           [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.checked,
-                  expression: "checked"
-                }
-              ],
-              attrs: { type: "checkbox" },
-              domProps: {
-                checked: Array.isArray(_vm.checked)
-                  ? _vm._i(_vm.checked, null) > -1
-                  : _vm.checked
-              },
-              on: {
-                change: function($event) {
-                  var $$a = _vm.checked,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = null,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                    } else {
-                      $$i > -1 &&
-                        (_vm.checked = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
-                    }
-                  } else {
-                    _vm.checked = $$c
+            _vm.topTierCrafts[_vm.recipeId].need > 0
+              ? _c("span", {
+                  staticClass: "required text-warning",
+                  domProps: {
+                    innerHTML: _vm._s(_vm.topTierCrafts[_vm.recipeId].need)
                   }
-                }
-              }
-            }),
+                })
+              : _vm._e(),
             _vm._v(" "),
-            _c("span", {
-              staticClass: "checkbox-indicator",
-              staticStyle: { width: "24px", height: "24px", top: "-10px" }
+            _vm.topTierCrafts[_vm.recipeId].need > 0
+              ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("big", {
+              class: "rarity-" + _vm.rarity,
+              domProps: { innerHTML: _vm._s(_vm.itemName) }
             })
-          ]
-        )
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-auto" }, [
+          _c("div", { staticClass: "form-group tally" }, [
+            _c(
+              "label",
+              { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.checked,
+                      expression: "checked"
+                    }
+                  ],
+                  attrs: { type: "checkbox" },
+                  domProps: {
+                    checked: Array.isArray(_vm.checked)
+                      ? _vm._i(_vm.checked, null) > -1
+                      : _vm.checked
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.checked,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            (_vm.checked = $$a
+                              .slice(0, $$i)
+                              .concat($$a.slice($$i + 1)))
+                        }
+                      } else {
+                        _vm.checked = $$c
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("span", {
+                  staticClass: "checkbox-indicator",
+                  staticStyle: { width: "24px", height: "24px", top: "-10px" }
+                })
+              ]
+            )
+          ])
+        ])
       ])
-    ])
-  ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -27380,7 +27383,6 @@ var craft = new Vue({
   },
   created: function created() {
     this.calculateAll();
-    console.log(this.maps);
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add

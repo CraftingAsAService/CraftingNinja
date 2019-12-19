@@ -19,7 +19,7 @@
 		@if (isset($maps[$zoneId]))
 		@foreach ($maps[$zoneId] as $key => $data)
 		{
-			id: {{ $zoneId }}{{ $key }},
+			id: '{{ uniqid() }}'{{--{{ $zoneId }}{{ $key }}--}},
 			name: '{{ $zones[$zoneId]->name }}',
 			src: '/assets/{{ config('game.slug') }}/m/{{ $data['image'] }}.jpg',
 			{{--
@@ -37,7 +37,7 @@
 				@foreach ($itemIds as $itemId => $itemData)
 				@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 				{
-					'id': {{ $zoneId }}{{ $key }}{{ $nodeId }},
+					'id': '{{ uniqid() }}'{{--{{ $zoneId }}{{ $key }}{{ $nodeId }}--}},
 					'tooltip': 'Level {{ $nodes[$nodeId]['level'] }} {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}',
 					'x': {{ $data['x'] }},
 					'y': {{ $data['y'] }},
