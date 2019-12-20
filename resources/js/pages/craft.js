@@ -73,6 +73,14 @@ const craft = new Vue({
 
 			this.calculateAll();
 		},
+		haveRecipe:function(recipeId, truthy) {
+			if (truthy)
+				this.topTierCrafts[recipeId].have = this.topTierCrafts[recipeId].required;
+			else
+				this.topTierCrafts[recipeId].have = 0;
+
+			this.calculateAll();
+		},
 		calculateAll:function() {
 			this.resetAmountsRequired();
 			this.computeAmounts(givenItemIds, quantities);
@@ -180,10 +188,6 @@ const craft = new Vue({
 			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
 				entry.need = Math.max(0, entry.required - entry.have);
 			});
-
-			// Use the Bus to pass new values around
-			// this.$eventBus.$emit('reagentAmountsUpdated', this.itemsToGather);
-			// this.$eventBus.$emit('recipeAmountsUpdated', this.topTierCrafts);
 		}
 	}
 });

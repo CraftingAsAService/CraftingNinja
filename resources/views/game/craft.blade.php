@@ -19,7 +19,7 @@
 		@if (isset($maps[$zoneId]))
 		@foreach ($maps[$zoneId] as $key => $data)
 		{
-			id: '{{ uniqid() }}'{{--{{ $zoneId }}{{ $key }}--}},
+			id: '{{ uniqid() }}',
 			name: '{{ $zones[$zoneId]->name }}',
 			src: '/assets/{{ config('game.slug') }}/m/{{ $data['image'] }}.jpg',
 			{{--
@@ -37,7 +37,7 @@
 				@foreach ($itemIds as $itemId => $itemData)
 				@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 				{
-					'id': '{{ uniqid() }}'{{--{{ $zoneId }}{{ $key }}{{ $nodeId }}--}},
+					'id': '{{ uniqid() }}',
 					'tooltip': 'Level {{ $nodes[$nodeId]['level'] }} {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}',
 					'x': {{ $data['x'] }},
 					'y': {{ $data['y'] }},
@@ -122,10 +122,8 @@
 									<i class='fas fa-map-pin -desize float-right' hidden></i>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									{{-- <i class='fas fa-map-marked -desize mr-2'></i> --}}
-									@if ($zones[$zoneId]->parent !== null)
-									{{ $zones[$zoneId]->parent->name }} -
-									@endif
-									{{ $zones[$zoneId]->name }}
+
+									{{ $zones[$zoneId]->fullName }}
 								</h5>
 								@foreach ($itemIds as $itemId => $itemData)
 									<crafting-reagent item-id='{{ $itemId }}' item-name='{{ $items[$itemId]->name }}' item-data='{{ json_encode($itemData) }}' :items-to-gather='itemsToGather' @pass-have-item-to-parent='haveItem'></crafting-reagent>
@@ -163,7 +161,7 @@
 								</h5>
 								@foreach ($recipes as $recipe)
 									@if ($recipe->job_id == $job->id)
-										<crafting-recipe recipe-id='{{ $recipe->id }}' item-id='{{ $recipe->product->id }}' item-name='{{ $recipe->product->name }}' :top-tier-crafts='topTierCrafts' @pass-have-item-to-parent='haveItem'></crafting-recipe>
+										<crafting-recipe recipe-id='{{ $recipe->id }}' item-id='{{ $recipe->product->id }}' item-name='{{ $recipe->product->name }}' :top-tier-crafts='topTierCrafts' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
 									@endif
 								@endforeach
 							</div>

@@ -57,4 +57,15 @@ class Zone extends Aspect
 		return $this->morphedByMany(Objective::class, 'coordinate')->withTranslation()->withPivot('x', 'y', 'z', 'radius');
 	}
 
+	/**
+	 * Accessors/Mutators
+	 */
+
+	public function getFullNameAttribute()
+	{
+		if ($this->parent !== null && $this->parent->name)
+			return $this->parent->name . ' - ' . $this->name;
+		return $this->name;
+	}
+
 }

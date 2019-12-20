@@ -55,9 +55,6 @@ __webpack_require__.r(__webpack_exports__);
       sources: {},
       icon: '',
       rarity: '',
-      have: 0,
-      need: 0,
-      required: 0,
       checked: false
     };
   },
@@ -129,10 +126,8 @@ __webpack_require__.r(__webpack_exports__);
       sources: {},
       icon: '',
       rarity: '',
-      have: 0,
-      need: 0,
-      required: 0,
-      checked: false
+      checked: false,
+      progress: 0
     };
   },
   mounted: function mounted() {
@@ -147,7 +142,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     checked: function checked(truthy) {
-      this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+      this.$emit('pass-have-recipe-to-parent', this.recipeId, truthy);
     }
   },
   methods: {// amountUpdate:function(a, b, c, allAmounts) {
@@ -27419,6 +27414,10 @@ var craft = new Vue({
       if (truthy) this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;else this.itemsToGather[itemId].have = 0;
       this.calculateAll();
     },
+    haveRecipe: function haveRecipe(recipeId, truthy) {
+      if (truthy) this.topTierCrafts[recipeId].have = this.topTierCrafts[recipeId].required;else this.topTierCrafts[recipeId].have = 0;
+      this.calculateAll();
+    },
     calculateAll: function calculateAll() {
       this.resetAmountsRequired();
       this.computeAmounts(givenItemIds, quantities);
@@ -27597,9 +27596,7 @@ var craft = new Vue({
             entry = _ref8[1];
 
         entry.need = Math.max(0, entry.required - entry.have);
-      }); // Use the Bus to pass new values around
-      // this.$eventBus.$emit('reagentAmountsUpdated', this.itemsToGather);
-      // this.$eventBus.$emit('recipeAmountsUpdated', this.topTierCrafts);
+      });
     }
   }
 });

@@ -31,10 +31,8 @@
 				sources: {},
 				icon: '',
 				rarity: '',
-				have: 0,
-				need: 0,
-				required: 0,
-				checked: false
+				checked: false,
+				progress: 0
 			}
 		},
 		mounted:function() {
@@ -51,7 +49,7 @@
 		},
 		watch: {
 			checked:function(truthy) {
-				this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+				this.$emit('pass-have-recipe-to-parent', this.recipeId, truthy);
 			}
 		},
 		methods: {

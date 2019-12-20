@@ -45,9 +45,6 @@
 				sources: {},
 				icon: '',
 				rarity: '',
-				have: 0,
-				need: 0,
-				required: 0,
 				checked: false
 			}
 		},
