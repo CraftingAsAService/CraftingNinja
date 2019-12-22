@@ -189,6 +189,8 @@ class CraftController extends Controller
 					'y'      => $zone->pivot->y,
 					'radius' => $zone->pivot->radius,
 				];
+
+			// TODO Did this item have no location entries?? Make an "unknown" location
 		}
 
 		// Zone with the most items goes first
@@ -205,6 +207,24 @@ class CraftController extends Controller
 				})->count();
 				return $count;
 			});
+
+		// Compress variables for JavaScript
+		//  TODO Convert to Resources
+		$zones = $zones->map(function($zone) {
+			return [
+				'id'       => $zone->id,
+				'parentId' => $zone->zone_id,
+				'name'     => $zone->fullName,
+			];
+		});
+		$items = $items->map(function($item) {
+			return [
+				'id'     => $item->id,
+				'name'   => $item->name,
+				'rarity' => $item->rarity,
+				'icon'   => $item->icon,
+			];
+		});
 
 		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
 	}

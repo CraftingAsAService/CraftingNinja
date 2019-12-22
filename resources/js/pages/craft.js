@@ -6,20 +6,20 @@
 
 Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
 Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
-Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
+// Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
 	data: {
+		breakdown: breakdown,
+		zones: zones,
+		items: items,
 		// preferredRecipeIds: preferredRecipeIds,
 		// givenItemIds: givenItemIds,
 		// quantities: quantities,
-		// breakdown: breakdown,
-		// items: items,
 		// recipes: recipes,
 		// nodes: nodes,
-		// zones: zones,
 		// rewards: rewards,
 		// mobs: mobs,
 		// shops: shops,
@@ -30,6 +30,7 @@ const craft = new Vue({
 		itemsToGather: {},
 	},
 	created() {
+		this.registerItems();
 		this.calculateAll();
 	},
 	mounted() {
@@ -65,6 +66,9 @@ const craft = new Vue({
 		})
 	},
 	methods: {
+		registerItems:function() {
+			this.computeAmounts(givenItemIds, quantities);
+		},
 		haveItem:function(itemId, truthy) {
 			if (truthy)
 				this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;

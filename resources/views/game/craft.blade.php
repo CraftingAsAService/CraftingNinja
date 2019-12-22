@@ -20,7 +20,7 @@
 		@foreach ($maps[$zoneId] as $key => $data)
 		{
 			id: '{{ uniqid() }}',
-			name: '{{ $zones[$zoneId]->name }}',
+			name: '{{ $zones[$zoneId]['name'] }}',
 			src: '/assets/{{ config('game.slug') }}/m/{{ $data['image'] }}.jpg',
 			{{--
 			Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
@@ -113,6 +113,19 @@
 
 					<div class='card'>
 						<div class='card__content'>
+							<div v-for='(itemIds, zoneId) in breakdown' class='zone'>
+								<h5 class='name'>
+									<i class='fas fa-map-marked -desize float-right' hidden></i>
+									<span v-html='zones[zoneId].name'></span>
+								</h5>
+								<div v-for='(sources, itemId) in itemIds'>
+									<span v-html='itemId'></span> -
+									<span v-html='sources'></span>
+								</div>
+								<crafting-reagent v-for='(itemId, itemId) in itemIds' :item='items[itemId]' :sources='sources' :need='0' :required='999' @pass-have-item-to-parent='haveItem'></crafting-reagent>
+								<hr>
+							</div>
+							{{--
 							@foreach ($breakdown as $zoneId => $itemIds)
 							<div>
 								@if ( ! $loop->first)
@@ -121,7 +134,7 @@
 								<h5>
 									<i class='fas fa-map-pin -desize float-right' hidden></i>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
-									{{-- <i class='fas fa-map-marked -desize mr-2'></i> --}}
+									<i class='fas fa-map-marked -desize mr-2' hidden></i>
 
 									{{ $zones[$zoneId]->fullName }}
 								</h5>
@@ -130,6 +143,7 @@
 								@endforeach
 							</div>
 							@endforeach
+							--}}
 						</div>
 					</div>
 				</div>
