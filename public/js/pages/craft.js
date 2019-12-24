@@ -45,12 +45,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['item', 'sources', 'need', 'required'],
   data: function data() {
@@ -15450,7 +15444,17 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row item" }, [
-    _c("div", { staticClass: "col-auto" }),
+    _c("div", { staticClass: "col-auto" }, [
+      _c("img", {
+        staticClass: "icon",
+        attrs: {
+          src: "/assets/" + _vm.gameSlug + "/i/" + _vm.item.icon + ".png",
+          alt: "",
+          width: "48",
+          height: "48"
+        }
+      })
+    ]),
     _vm._v(" "),
     _c(
       "div",
@@ -15467,8 +15471,37 @@ var render = function() {
           ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
           : _vm._e(),
         _vm._v(" "),
-        _c("div", { staticClass: "sources" })
-      ]
+        _c("big", {
+          class: "rarity-" + _vm.item.rarity,
+          domProps: { innerHTML: _vm._s(_vm.item.name) }
+        }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "sources" },
+          _vm._l(_vm.sources.nodes, function(node, nodeId) {
+            return _c("img", {
+              attrs: {
+                src:
+                  "/assets/" +
+                  _vm.gameSlug +
+                  "/map/icons/" +
+                  _vm.nodeTypes[_vm.nodes[nodeId].type].icon +
+                  ".png",
+                alt: "",
+                "data-toggle": "tooltip",
+                "data-title":
+                  "Level " +
+                  _vm.nodes[nodeId].level +
+                  ", " +
+                  _vm.nodeTypes[_vm.nodes[nodeId].type].name
+              }
+            })
+          }),
+          0
+        )
+      ],
+      1
     ),
     _vm._v(" "),
     _c("div", { staticClass: "col-auto" }, [
@@ -27072,6 +27105,19 @@ var craft = new Vue({
   created: function created() {
     this.registerItems();
     this.calculateAll();
+  },
+  computed: {
+    sortedBreakdown: function sortedBreakdown() {
+      function reverseCount(a, b) {
+        var a = Object.values(breakdown[a]).length,
+            b = Object.values(breakdown[b]).length;
+        if (a < b) return 1;
+        if (a > b) return -1;
+        return 0;
+      }
+
+      return Object.keys(this.breakdown).sort(reverseCount);
+    }
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add

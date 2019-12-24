@@ -113,16 +113,12 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							<div v-for='(itemIds, zoneId) in breakdown' class='zone'>
+							<div v-for='(zoneId, key) in sortedBreakdown' class='zone'>
 								<h5 class='name'>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									<span v-html='zones[zoneId].name'></span>
 								</h5>
-								<div v-for='(sources, itemId) in itemIds'>
-									<span v-html='itemId'></span> -
-									<span v-html='sources'></span>
-								</div>
-								<crafting-reagent v-for='(itemId, itemId) in itemIds' :item='items[itemId]' :sources='sources' :need='0' :required='999' @pass-have-item-to-parent='haveItem'></crafting-reagent>
+								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :item='items[itemId]' :sources='sources' :need='999' :required='999' @pass-have-item-to-parent='haveItem'></crafting-reagent>
 								<hr>
 							</div>
 							{{--

@@ -33,6 +33,21 @@ const craft = new Vue({
 		this.registerItems();
 		this.calculateAll();
 	},
+	computed: {
+		sortedBreakdown:function() {
+			function reverseCount(a, b) {
+				var a = Object.values(breakdown[a]).length,
+					b = Object.values(breakdown[b]).length;
+				if (a < b)
+					return 1;
+				if (a > b)
+					return -1;
+				return 0;
+			}
+
+			return Object.keys(this.breakdown).sort(reverseCount);
+		}
+	},
 	mounted() {
 		this.$nextTick(() => {
 			// // Fake a dynamic add

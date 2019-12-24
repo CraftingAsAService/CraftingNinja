@@ -2,21 +2,15 @@
 	<!-- <crafting-reagent itemId='12345'></crafting-reagent> -->
 	<div class='row item'>
 		<div class='col-auto'>
-			<!--
 			<img :src='"/assets/" + gameSlug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
-			-->
 		</div>
 		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
 			<span class='required text-warning' v-if='need > 0' v-html='need'></span>
 			<small class='text-muted' v-if='need > 0'>x</small>
-			<!--
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
-			-->
 
 			<div class='sources'>
-				<!--
-				<img v-if='typeof sources.nodes !== "undefined"' v-for='(node, nodeId) in sources.nodes' :src='"/assets/" + gameSlug + "/map/icons/" + nodeTypes[nodes[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodes[nodeId].level + ", " + nodeTypes[nodes[nodeId].type].name'>
-				-->
+				<img v-for='(node, nodeId) in sources.nodes' :src='"/assets/" + gameSlug + "/map/icons/" + nodeTypes[nodes[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodes[nodeId].level + ", " + nodeTypes[nodes[nodeId].type].name'>
 				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
