@@ -28,3 +28,4 @@
 	+ TODO: Open up responses after a while to the public
 - Ticket prep, idea cleanup, organization 2019-11-13 20:43
 - Patreon post
+- FFXIV Data Refresh 2019-12-24 23:01
