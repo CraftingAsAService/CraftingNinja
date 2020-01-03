@@ -28,25 +28,12 @@ const craft = new Vue({
 		// Crafting loop
 		topTierCrafts: {},
 		itemsToGather: {},
+		sortedBreakdown: {},
 	},
 	created() {
 		this.registerItems();
 		this.calculateAll();
-	},
-	computed: {
-		sortedBreakdown:function() {
-			function reverseCount(a, b) {
-				var a = Object.values(breakdown[a]).length,
-					b = Object.values(breakdown[b]).length;
-				if (a < b)
-					return 1;
-				if (a > b)
-					return -1;
-				return 0;
-			}
-
-			return Object.keys(this.breakdown).sort(reverseCount);
-		}
+		this.calculateSortedBreakdown();
 	},
 	mounted() {
 		this.$nextTick(() => {
@@ -81,6 +68,19 @@ const craft = new Vue({
 		})
 	},
 	methods: {
+		calculateSortedBreakdown:function() {
+			function reverseCount(a, b) {
+				var a = Object.values(breakdown[a]).length,
+					b = Object.values(breakdown[b]).length;
+				if (a < b)
+					return 1;
+				if (a > b)
+					return -1;
+				return 0;
+			}
+
+			this.sortedBreakdown = Object.keys(this.breakdown).sort(reverseCount);
+		},
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);
 		},
@@ -193,19 +193,20 @@ const craft = new Vue({
 			this.computeAmounts(itemIds, loopQtys);
 		},
 		resetAmountsRequired:function() {
-			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
+			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.required = 0;
 			});
-			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
+			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.required = 0;
 			});
 		},
 		recalculateAmountsNeeded:function() {
-			Object.entries(this.topTierCrafts).forEach(([key, entry])=>{
+			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
 			});
-			Object.entries(this.itemsToGather).forEach(([key, entry])=>{
+			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
+				this.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 		}
 	}

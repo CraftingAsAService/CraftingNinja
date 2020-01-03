@@ -36,24 +36,24 @@
 
 <script>
 	export default {
-		props: [ 'item', 'sources', 'need', 'required' ],
+		props: [ 'item', 'sources' ],
 		data () {
 			return {
 				gameSlug: game.slug,
 				nodeTypes: nodeTypes,
 				nodes: nodes,
-				checked: false
+				checked: false,
+				need: 0,
+				required: 0
 			}
 		},
 		mounted:function() {
 		},
 		created:function() {
-			// console.log('created');
-			// this.$eventBus.$on('reagentAmountsUpdated', this.amountUpdate);
+			this.$eventBus.$on('item' + item.id + 'data', this.amountUpdate);
 		},
 		beforeDestroy:function() {
-			// console.log('beforeDestroy');
-			// this.$eventBus.$off('reagentAmountsUpdated');
+			this.$eventBus.$off('item' + item.id + 'data');
 		},
 		watch: {
 			checked:function(truthy) {
@@ -61,13 +61,14 @@
 			}
 		},
 		methods: {
-			// amountUpdate:function(a, b, c, allAmounts) {
-			// 	console.log(a, b, c);
+			amountUpdate:function(need, have, required) {
+				console.log(need, have, required);
+			//entry.need, entry.have, entry.required);
 
-			// 	this.have = allAmounts[this.itemId].have;
-			// 	this.need = allAmounts[this.itemId].need;
-			// 	this.required = allAmounts[this.itemId].required;
-			// }
+				// this.have = allAmounts[this.itemId].have;
+				// this.need = allAmounts[this.itemId].need;
+				// this.required = allAmounts[this.itemId].required;
+			}
 		}
 	}
 </script>

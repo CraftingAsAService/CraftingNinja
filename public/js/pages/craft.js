@@ -46,33 +46,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['item', 'sources', 'need', 'required'],
+  props: ['item', 'sources'],
   data: function data() {
     return {
       gameSlug: game.slug,
       nodeTypes: nodeTypes,
       nodes: nodes,
-      checked: false
+      checked: false,
+      need: 0,
+      required: 0
     };
   },
   mounted: function mounted() {},
-  created: function created() {// console.log('created');
-    // this.$eventBus.$on('reagentAmountsUpdated', this.amountUpdate);
+  created: function created() {
+    this.$eventBus.$on('item' + item.id + 'data', this.amountUpdate);
   },
-  beforeDestroy: function beforeDestroy() {// console.log('beforeDestroy');
-    // this.$eventBus.$off('reagentAmountsUpdated');
+  beforeDestroy: function beforeDestroy() {
+    this.$eventBus.$off('item' + item.id + 'data');
   },
   watch: {
     checked: function checked(truthy) {
       this.$emit('pass-have-item-to-parent', this.itemId, truthy);
     }
   },
-  methods: {// amountUpdate:function(a, b, c, allAmounts) {
-    // 	console.log(a, b, c);
-    // 	this.have = allAmounts[this.itemId].have;
-    // 	this.need = allAmounts[this.itemId].need;
-    // 	this.required = allAmounts[this.itemId].required;
-    // }
+  methods: {
+    amountUpdate: function amountUpdate(need, have, required) {
+      console.log(need, have, required); //entry.need, entry.have, entry.required);
+      // this.have = allAmounts[this.itemId].have;
+      // this.need = allAmounts[this.itemId].need;
+      // this.required = allAmounts[this.itemId].required;
+    }
   }
 });
 
@@ -26715,7 +26718,7 @@ var findRealParent = function (firstVueParent) {
 /*!***********************************************************!*\
   !*** ./node_modules/vue2-leaflet/dist/vue2-leaflet.es.js ***!
   \***********************************************************/
-/*! exports provided: CircleMixin, ControlMixin, GridLayerMixin, ImageOverlayMixin, InteractiveLayerMixin, LayerMixin, LayerGroupMixin, OptionsMixin, PathMixin, PolygonMixin, PolylineMixin, PopperMixin, TileLayerMixin, TileLayerWMSMixin, LCircle, LCircleMarker, LControl, LControlAttribution, LControlLayers, LControlScale, LControlZoom, LFeatureGroup, LGeoJson, LGridLayer, LIcon, LIconDefault, LImageOverlay, LLayerGroup, LMap, LMarker, LPolygon, LPolyline, LPopup, LRectangle, LTileLayer, LTooltip, LWMSTileLayer, debounce, capitalizeFirstLetter, propsBinder, collectionCleaner, optionsMerger, findRealParent */
+/*! exports provided: debounce, capitalizeFirstLetter, propsBinder, collectionCleaner, optionsMerger, findRealParent, CircleMixin, ControlMixin, GridLayerMixin, ImageOverlayMixin, InteractiveLayerMixin, LayerMixin, LayerGroupMixin, OptionsMixin, PathMixin, PolygonMixin, PolylineMixin, PopperMixin, TileLayerMixin, TileLayerWMSMixin, LCircle, LCircleMarker, LControl, LControlAttribution, LControlLayers, LControlScale, LControlZoom, LFeatureGroup, LGeoJson, LGridLayer, LIcon, LIconDefault, LImageOverlay, LLayerGroup, LMap, LMarker, LPolygon, LPolyline, LPopup, LRectangle, LTileLayer, LTooltip, LWMSTileLayer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -27100,24 +27103,13 @@ var craft = new Vue({
     activeMap: 0,
     // Crafting loop
     topTierCrafts: {},
-    itemsToGather: {}
+    itemsToGather: {},
+    sortedBreakdown: {}
   },
   created: function created() {
     this.registerItems();
     this.calculateAll();
-  },
-  computed: {
-    sortedBreakdown: function sortedBreakdown() {
-      function reverseCount(a, b) {
-        var a = Object.values(breakdown[a]).length,
-            b = Object.values(breakdown[b]).length;
-        if (a < b) return 1;
-        if (a > b) return -1;
-        return 0;
-      }
-
-      return Object.keys(this.breakdown).sort(reverseCount);
-    }
+    this.calculateSortedBreakdown();
   },
   mounted: function mounted() {
     this.$nextTick(function () {// // Fake a dynamic add
@@ -27150,6 +27142,17 @@ var craft = new Vue({
     });
   },
   methods: {
+    calculateSortedBreakdown: function calculateSortedBreakdown() {
+      function reverseCount(a, b) {
+        var a = Object.values(breakdown[a]).length,
+            b = Object.values(breakdown[b]).length;
+        if (a < b) return 1;
+        if (a > b) return -1;
+        return 0;
+      }
+
+      this.sortedBreakdown = Object.keys(this.breakdown).sort(reverseCount);
+    },
     registerItems: function registerItems() {
       this.computeAmounts(givenItemIds, quantities);
     },
@@ -27326,6 +27329,8 @@ var craft = new Vue({
       });
     },
     recalculateAmountsNeeded: function recalculateAmountsNeeded() {
+      var _this = this;
+
       Object.entries(this.topTierCrafts).forEach(function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2),
             key = _ref6[0],
@@ -27339,6 +27344,8 @@ var craft = new Vue({
             entry = _ref8[1];
 
         entry.need = Math.max(0, entry.required - entry.have);
+
+        _this.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
       });
     }
   }

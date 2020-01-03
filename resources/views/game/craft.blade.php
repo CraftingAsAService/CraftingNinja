@@ -118,7 +118,7 @@
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									<span v-html='zones[zoneId].name'></span>
 								</h5>
-								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :item='items[itemId]' :sources='sources' :need='999' :required='999' @pass-have-item-to-parent='haveItem'></crafting-reagent>
+								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :item='items[itemId]' :sources='sources' @pass-have-item-to-parent='haveItem'></crafting-reagent>
 								<hr>
 							</div>
 							{{--
@@ -171,7 +171,7 @@
 								</h5>
 								@foreach ($recipes as $recipe)
 									@if ($recipe->job_id == $job->id)
-										<crafting-recipe recipe-id='{{ $recipe->id }}' item-id='{{ $recipe->product->id }}' item-name='{{ $recipe->product->name }}' :top-tier-crafts='topTierCrafts' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
+										{{-- <crafting-recipe recipe-id='{{ $recipe->id }}' item-id='{{ $recipe->product->id }}' item-name='{{ $recipe->product->name }}' :top-tier-crafts='topTierCrafts' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe> --}}
 									@endif
 								@endforeach
 							</div>
