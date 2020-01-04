@@ -15,10 +15,10 @@ const craft = new Vue({
 		breakdown: breakdown,
 		zones: zones,
 		items: items,
+		recipes: recipes,
 		// preferredRecipeIds: preferredRecipeIds,
 		// givenItemIds: givenItemIds,
 		// quantities: quantities,
-		// recipes: recipes,
 		// nodes: nodes,
 		// rewards: rewards,
 		// mobs: mobs,
@@ -32,40 +32,42 @@ const craft = new Vue({
 	},
 	created() {
 		this.registerItems();
-		this.calculateAll();
 		this.calculateSortedBreakdown();
 	},
 	mounted() {
-		this.$nextTick(() => {
-			// // Fake a dynamic add
-			// let markers = [
-			// 	{
-			// 		'id': 111,
-			// 		'tooltip': 'Level 65 Rocky Outcrop',
-			// 		'x': 20.4,
-			// 		'y': 33.3,
-			// 		'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
-			// 	},
-			// 	{
-			// 		'id': 77,
-			// 		'tooltip': 'Level 65 Rocky Outcrop',
-			// 		'x': 33.4,
-			// 		'y': 15.3,
-			// 		'icon': '/assets/' + game.slug + '/map/icons/mining.png'
-			// 	}
-			// ];
+		// Calling calculateAll in mounted() allows all the crafting-reagent/recipes to hit their respective created() calls first
+		this.calculateAll();
 
-			// this.maps.push({
-			// 	id: 222,
-			// 	name: 'Central Shroud - Bentbranch',
-			// 	src: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
-			// 	// Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
-			// 	//  anything less than 1,1 is unreachable
-			// 	//  44,44 itself is unreachable
-			// 	bounds: [[1, 1], [44, 44]],
-			// 	markers: markers
-			// })
-		})
+		// this.$nextTick(() => {
+		// 	// // Fake a dynamic add
+		// 	// let markers = [
+		// 	// 	{
+		// 	// 		'id': 111,
+		// 	// 		'tooltip': 'Level 65 Rocky Outcrop',
+		// 	// 		'x': 20.4,
+		// 	// 		'y': 33.3,
+		// 	// 		'icon': '/assets/' + game.slug + '/map/icons/spearfishing.png'
+		// 	// 	},
+		// 	// 	{
+		// 	// 		'id': 77,
+		// 	// 		'tooltip': 'Level 65 Rocky Outcrop',
+		// 	// 		'x': 33.4,
+		// 	// 		'y': 15.3,
+		// 	// 		'icon': '/assets/' + game.slug + '/map/icons/mining.png'
+		// 	// 	}
+		// 	// ];
+
+		// 	// this.maps.push({
+		// 	// 	id: 222,
+		// 	// 	name: 'Central Shroud - Bentbranch',
+		// 	// 	src: '/assets/' + game.slug + '/m/r2f1/r2f1.00.jpg',
+		// 	// 	// Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+		// 	// 	//  anything less than 1,1 is unreachable
+		// 	// 	//  44,44 itself is unreachable
+		// 	// 	bounds: [[1, 1], [44, 44]],
+		// 	// 	markers: markers
+		// 	// })
+		// })
 	},
 	methods: {
 		calculateSortedBreakdown:function() {
@@ -203,10 +205,11 @@ const craft = new Vue({
 		recalculateAmountsNeeded:function() {
 			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
+				this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
-				this.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
+				this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 		}
 	}

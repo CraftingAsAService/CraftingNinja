@@ -44,30 +44,28 @@
 				nodes: nodes,
 				checked: false,
 				need: 0,
+				have: 0,
 				required: 0
 			}
 		},
-		mounted:function() {
-		},
 		created:function() {
-			this.$eventBus.$on('item' + item.id + 'data', this.amountUpdate);
+			this.$eventBus.$on('item' + this.item.id + 'data', this.amountUpdate);
 		},
+		// mounted:function() {
+		// },
 		beforeDestroy:function() {
-			this.$eventBus.$off('item' + item.id + 'data');
+			this.$eventBus.$off('item' + this.item.id + 'data');
 		},
 		watch: {
 			checked:function(truthy) {
-				this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+				this.$emit('pass-have-item-to-parent', this.item.id, truthy);
 			}
 		},
 		methods: {
 			amountUpdate:function(need, have, required) {
-				console.log(need, have, required);
-			//entry.need, entry.have, entry.required);
-
-				// this.have = allAmounts[this.itemId].have;
-				// this.need = allAmounts[this.itemId].need;
-				// this.required = allAmounts[this.itemId].required;
+				this.need = need;
+				this.have = have;
+				this.required = required;
 			}
 		}
 	}

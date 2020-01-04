@@ -1,13 +1,13 @@
 <template>
 	<!-- <crafting-recipe recipeId='12345'></crafting-recipe> -->
-	<div class='row item' v-if='typeof topTierCrafts[recipeId] !== "undefined"'>
+	<div class='row item'>
 		<div class='col-auto'>
-			<img :src='"/assets/" + gameSlug + "/i/" + icon + ".png"' alt='' width='48' height='48' class='icon'>
+			<img :src='"/assets/" + gameSlug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
-		<div class='col info' :style='topTierCrafts[recipeId].need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='topTierCrafts[recipeId].need > 0' v-html='topTierCrafts[recipeId].need'></span>
-			<small class='text-muted' v-if='topTierCrafts[recipeId].need > 0'>x</small>
-			<big :class='"rarity-" + rarity' v-html='itemName'></big>
+		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
+			<span class='required text-warning' v-if='need > 0' v-html='need'></span>
+			<small class='text-muted' v-if='need > 0'>x</small>
+			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 		</div>
 		<div class='col-auto'>
 			<div class='form-group tally'>
@@ -22,30 +22,27 @@
 
 <script>
 	export default {
-		props: [ 'recipeId', 'itemId', 'itemName', 'topTierCrafts' ],
+		props: [ 'recipe', 'item' ],
 		data () {
 			return {
 				gameSlug: game.slug,
 				nodeTypes: nodeTypes,
 				nodes: nodes,
 				sources: {},
-				icon: '',
-				rarity: '',
+				progress: 0,
 				checked: false,
-				progress: 0
+				need: 0,
+				have: 0,
+				required: 0
 			}
 		},
-		mounted:function() {
-			this.icon = items[this.itemId].icon;
-			this.rarity = items[this.itemId].rarity;
-		},
 		created:function() {
-			// console.log('created');
-			// this.$eventBus.$on('reagentAmountsUpdated', this.amountUpdate);
+			this.$eventBus.$on('recipe' + this.item.id + 'data', this.amountUpdate);
 		},
+		// mounted:function() {
+		// },
 		beforeDestroy:function() {
-			// console.log('beforeDestroy');
-			// this.$eventBus.$off('reagentAmountsUpdated');
+			this.$eventBus.$off('recipe' + this.item.id + 'data');
 		},
 		watch: {
 			checked:function(truthy) {
@@ -53,13 +50,11 @@
 			}
 		},
 		methods: {
-			// amountUpdate:function(a, b, c, allAmounts) {
-			// 	console.log(a, b, c);
-
-			// 	this.have = allAmounts[this.itemId].have;
-			// 	this.need = allAmounts[this.itemId].need;
-			// 	this.required = allAmounts[this.itemId].required;
-			// }
+			amountUpdate:function(need, have, required) {
+				this.need = need;
+				this.have = have;
+				this.required = required;
+			}
 		}
 	}
 </script>
