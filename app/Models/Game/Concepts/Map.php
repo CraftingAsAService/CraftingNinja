@@ -14,7 +14,9 @@ class Map extends Concept
 
 	public function getImageAttribute($identifier)
 	{
-		// a1b2/34 becomes a1b2/a1b2.34.jpg
+		// a1b2/34 becomes a1b2/a1b2.34 (Assumption is that "a1b2/a1b2.34.jpg" exists)
+		if ( ! $this->detail->data['image'])
+			return 'none';
 		list($key, $number) = explode('/', $this->detail->data['image']);
 		return $key . '/' . $key . '.' . $number;
 	}

@@ -16,6 +16,8 @@ const craft = new Vue({
 		zones: zones,
 		items: items,
 		recipes: recipes,
+		recipeJobs: recipeJobs,
+		maps: maps,
 		// preferredRecipeIds: preferredRecipeIds,
 		// givenItemIds: givenItemIds,
 		// quantities: quantities,
@@ -23,7 +25,6 @@ const craft = new Vue({
 		// rewards: rewards,
 		// mobs: mobs,
 		// shops: shops,
-		maps: maps,
 		activeMap: 0,
 		// Crafting loop
 		topTierCrafts: {},
@@ -71,6 +72,11 @@ const craft = new Vue({
 	},
 	methods: {
 		calculateSortedBreakdown:function() {
+			// TODO let user decide how they want items sorted
+			// Group by most available?
+			// Group by zone names?
+
+			// Primary Objective, Sort them by how many items a zone can provide
 			function reverseCount(a, b) {
 				var a = Object.values(breakdown[a]).length,
 					b = Object.values(breakdown[b]).length;
@@ -81,7 +87,18 @@ const craft = new Vue({
 				return 0;
 			}
 
-			this.sortedBreakdown = Object.keys(this.breakdown).sort(reverseCount);
+			// Secondary Objective, if they have the same amount, sort them by name
+			//  This hopefully keeps zone-adjacent areas together to avoid confusion
+			function nameSort(a, b) {
+				if (zones[a].name < zones[b].name)
+					return -1;
+				if (zones[a].name > zones[b].name)
+					return 1;
+				return 0;
+			}
+
+			// Order of operations says we should sort by name first, then by the number of items to achieve this
+			this.sortedBreakdown = Object.keys(this.breakdown).sort(nameSort).sort(reverseCount);
 		},
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);

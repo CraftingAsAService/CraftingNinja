@@ -226,7 +226,57 @@ class CraftController extends Controller
 			];
 		});
 
+		// Convert maps to the Ninja Maps data structure
+		$maps = $this->buildNinjaMapsArray($breakdown, $maps, $zones, $nodes);
+
 		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
+	}
+
+	private function buildNinjaMapsArray($breakdown, $maps, $zones, $nodes)
+	{
+		$ninjaMaps = [];
+
+		// Generic identifier, we don't care what this ID is, it just needs one
+		//  It's used for both map records and each individual marker
+		$identifier = 1;
+
+		foreach ($breakdown as $zoneId => $itemIds)
+		{
+			if ( ! isset($maps[$zoneId]))
+				continue;
+
+			foreach ($maps[$zoneId] as $key => $data)
+			{
+				$mapRecord = [
+					'id'     => $identifier++,
+					'name'   => $zones[$zoneId]['name'],
+					'src'    => '/assets/' . config('game.slug') . '/m/' . $data['image'] . '.jpg',
+					// Bounds goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
+					// anything less than 1,1 is unreachable, and likewise 44,44 itself is unreachable
+					'bounds' => [[1, 1], [44, 44]],
+					'size'   => $data['size'],
+					'offset' => [
+						'x' => $data['offset']['x'] ?: 0,
+						'y' => $data['offset']['y'] ?: 0
+					],
+					'markers' => [],
+				];
+
+				foreach ($itemIds as $itemId => $itemData)
+					foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
+						$mapRecord['markers'][] = [
+							'id'      => $identifier++,
+							'tooltip' => __('Level') . ' ' . $nodes[$nodeId]['level'] . ' ' . config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'],
+							'x'       => $data['x'] ?: 0,
+							'y'       => $data['y'] ?: 0,
+							'icon'    => '/assets/' . config('game.slug') . '/map/icons/' . config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] . '.png',
+						];
+
+				$ninjaMaps[] = $mapRecord;
+			}
+		}
+
+		return $ninjaMaps;
 	}
 
 

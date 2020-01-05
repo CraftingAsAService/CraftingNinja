@@ -11,46 +11,9 @@
 @section('scripts')
 <script>
 	var nodeTypes = {!! json_encode(config('game.nodeTypes')) !!};
-	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops'] as $var)
+	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'recipeJobs', 'maps'] as $var)
 	var {{ $var }} = {!! json_encode($$var) !!};
 	@endforeach
-	var maps = [
-		@foreach ($breakdown as $zoneId => $itemIds)
-		@if (isset($maps[$zoneId]))
-		@foreach ($maps[$zoneId] as $key => $data)
-		{
-			id: '{{ uniqid() }}',
-			name: '{{ $zones[$zoneId]['name'] }}',
-			src: '/assets/{{ config('game.slug') }}/m/{{ $data['image'] }}.jpg',
-			{{--
-			Goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
-			anything less than 1,1 is unreachable
-			44,44 itself is unreachable
-			--}}
-			bounds: [[1, 1], [44, 44]],
-			size: {{ $data['size'] }},
-			offset: {
-				x: {{ $data['offset']['x'] }},
-				y: {{ $data['offset']['y'] }}
-			},
-			markers: [
-				@foreach ($itemIds as $itemId => $itemData)
-				@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-				{
-					'id': '{{ uniqid() }}',
-					'tooltip': 'Level {{ $nodes[$nodeId]['level'] }} {{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'] }}',
-					'x': {{ $data['x'] }},
-					'y': {{ $data['y'] }},
-					'icon': '/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodes[$nodeId]['type']]['icon'] }}.png'
-				}{{ $loop->parent->last ? '' : ',' }}
-				@endforeach
-				@endforeach
-			]
-		}{{ $loop->parent->last ? '' : ',' }}
-		@endforeach
-		@endif
-		@endforeach
-	];
 </script>
 @endsection
 
@@ -142,15 +105,15 @@
 					<div class='card'>
 						<div class='card__content'>
 
-							<div v-for='(jobId, key) in sortedJobs' class='job'>
+							<div v-for='(job, jobId) in recipeJobs' class='job'>
 								<h5 class='name'>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
-									<span v-html='zones[zoneId].name'></span>
+									<span v-html='job.name'></span>
 								</h5>
-								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :item='items[itemId]' :sources='sources' @pass-have-item-to-parent='haveItem'></crafting-reagent>
+
 								<hr>
 							</div>
-							@foreach ($recipeJobs as $job)
+							{{-- @foreach ($recipeJobs as $job)
 							<div>
 								@if ( ! $loop->first)
 									<hr>
@@ -165,7 +128,7 @@
 									@endif
 								@endforeach
 							</div>
-							@endforeach
+							@endforeach --}}
 						</div>
 					</div>
 
