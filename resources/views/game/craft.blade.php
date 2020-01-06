@@ -110,7 +110,7 @@
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									<span v-html='job.name'></span>
 								</h5>
-
+								<crafting-recipe v-for='(recipe, id) in recipes' v-if='recipe.job_id == jobId' :recipe='recipes[recipeId]' :item='items[recipes[recipeId].itemId]' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
 								<hr>
 							</div>
 							{{-- @foreach ($recipeJobs as $job)
