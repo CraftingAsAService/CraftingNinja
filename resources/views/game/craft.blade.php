@@ -104,13 +104,24 @@
 
 					<div class='card'>
 						<div class='card__content'>
-
+							{{--
+								TODO, this is a little flawed. By job is good, but the depth matters a lot too. I think it needs to be:
+								Depth 1
+									Blacksmith
+									...
+								Depth 2
+									...
+									Blacksmith
+									...
+								Depth 3
+									...
+							--}}
 							<div v-for='(job, jobId) in recipeJobs' class='job'>
 								<h5 class='name'>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									<span v-html='job.name'></span>
 								</h5>
-								<crafting-recipe v-for='(recipe, id) in recipes' v-if='recipe.job_id == jobId' :recipe='recipes[recipeId]' :item='items[recipes[recipeId].itemId]' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
+								<crafting-recipe v-for='(recipe, id) in recipes' v-if='recipe.job_id == jobId' :recipe='recipe' :item='items[recipe.item_id]' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
 								<hr>
 							</div>
 							{{-- @foreach ($recipeJobs as $job)

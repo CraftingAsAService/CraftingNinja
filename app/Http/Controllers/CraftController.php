@@ -39,21 +39,21 @@ class CraftController extends Controller
 		$givenItemIds = $quantities->keys();
 
 		// If it's not a digit, or a comma, take it out.
-		//  Custom XSS/etc prevention
+		//  A form of XSS prevention
 		$givenItemIdsSearch = preg_replace('/[^\d,]/', '', $givenItemIds->implode(','));
 
 		$results = collect(\DB::select(
 			'WITH RECURSIVE cte AS (' .
-				'SELECT rr.recipe_id, rr.item_id ' .
+				'SELECT rr.recipe_id, rr.item_id, 1 AS depth ' .
 				'FROM recipes r ' .
 				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
-				'WHERE r.item_id IN ( ' . $givenItemIdsSearch . ') ' .
+				'WHERE r.item_id IN (' . $givenItemIdsSearch . ') ' .
 				'UNION ALL ' .
-				'SELECT rr.recipe_id, rr.item_id ' .
+				'SELECT rr.recipe_id, rr.item_id, cte.depth + 1 ' .
 				'FROM recipes r ' .
 				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
 				'JOIN cte ON cte.item_id = r.item_id ' .
-			') SELECT recipe_id, item_id FROM cte;'
+			') SELECT recipe_id, item_id, depth FROM cte;'
 		));
 
 		$recipeIds = $results->pluck('recipe_id')->unique();
@@ -69,6 +69,26 @@ class CraftController extends Controller
 			->whereIn('id', $recipeIds)
 			->get()
 			->keyBy('id');
+
+		$recipeJobs = Job::withTranslation()
+			->whereIn('id', $recipes->pluck('job_id')->unique())
+			->get()
+			->filter(function($job) use ($recipes) {
+				$count = $recipes->filter(function($recipe) use ($job) {
+					return $recipe->job_id == $job->id;
+				})->count();
+				return $count;
+			})->keyBy('id');
+
+		// We want to sort recipes by their depth, but they might appear at multiple depths
+		//  The higher the depth, we want it to show up first, but also make sure they only show up once per list.
+		$recipeDepths = [];
+		foreach ($results->groupBy('depth') as $depth => $recipesAtThisDepth)
+			foreach ($recipesAtThisDepth->pluck('recipe_id')->unique() as $recipeId)
+				$recipeDepths[$recipeId] = $depth;
+		arsort($recipeDepths);
+		// Put the recipes in their depth-order
+		$recipes = collect(array_replace($recipeDepths, $recipes->toArray()));
 
 		$items = Item::with(
 				'nodes', // Gathering drops
@@ -197,16 +217,6 @@ class CraftController extends Controller
 		$breakdown = collect($breakdown)->sortByDesc(function($entries) {
 			return count($entries);
 		});
-
-		$recipeJobs = Job::withTranslation()
-			->whereIn('id', $recipes->pluck('job_id')->unique())
-			->get()
-			->filter(function($job) use ($recipes) {
-				$count = $recipes->filter(function($recipe) use ($job) {
-					return $recipe->job_id == $job->id;
-				})->count();
-				return $count;
-			});
 
 		// Compress variables for JavaScript
 		//  TODO Convert to Resources

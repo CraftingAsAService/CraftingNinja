@@ -1,5 +1,4 @@
 <template>
-	<!-- <crafting-recipe recipeId='12345'></crafting-recipe> -->
 	<div class='row item'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + gameSlug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
@@ -46,7 +45,7 @@
 		},
 		watch: {
 			checked:function(truthy) {
-				this.$emit('pass-have-recipe-to-parent', this.recipeId, truthy);
+				this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
 			}
 		},
 		methods: {

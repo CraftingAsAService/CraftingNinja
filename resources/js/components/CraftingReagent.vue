@@ -1,5 +1,4 @@
 <template>
-	<!-- <crafting-reagent itemId='12345'></crafting-reagent> -->
 	<div class='row item'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + gameSlug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
