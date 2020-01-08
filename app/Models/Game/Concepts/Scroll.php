@@ -9,7 +9,6 @@ use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
 use App\Models\Game\Concept;
 use App\Models\Game\Concepts\Scroll\Vote;
-use App\Models\Game\Concepts\Report;
 use App\Models\Translations\ScrollTranslation;
 use App\Models\User;
 use Carbon\Carbon;

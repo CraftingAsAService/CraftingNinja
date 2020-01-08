@@ -439,13 +439,15 @@ trait XIVAPI
 				 */
 				$names['Name_en'] = 'Venture Exploration';
 
-				$q = $this->request('retainertasknormal/' . $data->Task, ['columns' => [
-					'Quantity0',
-					'Quantity1',
-					'Quantity2',
-					'ItemTarget',
-					'ItemTargetID',
-				]]);
+				$q = $this->request('retainertasknormal/' . $data->Task, [
+					'columns' => [
+						'Quantity0',
+						'Quantity1',
+						'Quantity2',
+						'ItemTarget',
+						'ItemTargetID',
+					]
+				]);
 
 				if ($q->ItemTarget == 'Item' && $q->ItemTargetID)
 					foreach (range(0, 2) as $slot)
@@ -721,24 +723,26 @@ trait XIVAPI
 
 			sort($gatheringItemIds);
 
-			$gi = $this->request('gatheringitem', [
+			$gatheringItem = $this->request('gatheringitem', [
 				'ids' => implode(',', $gatheringItemIds),
 				'columns' => [
 					'Item',
 				],
 			])->Results;
 
-			foreach ($gi as $gatheringItem)
+			foreach ($gatheringItem as $gatheringItem)
 				if ($gatheringItem)
 					$this->setData('item_node', [
 						'item_id' => $gatheringItem->Item,
 						'node_id' => $data->ID,
 					]);
 
-			$gp = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], ['columns' => [
-				'PlaceName.ID',
-				'TerritoryType.PlaceName.ID',
-			]]);
+			$gatheringPoint = $this->request('gatheringpoint/' . $data->GameContentLinks->GatheringPoint->GatheringPointBase['0'], [
+				'columns' => [
+					'PlaceName.ID',
+					'TerritoryType.PlaceName.ID',
+				]
+			]);
 
 			$this->setData('nodes', [
 				'id'          => $data->ID,
@@ -747,7 +751,7 @@ trait XIVAPI
 			], $data->ID);
 
 			$this->setData('coordinates', [
-				'zone_id'         => $gp->TerritoryType->PlaceName->ID,
+				'zone_id'         => $gatheringPoint->TerritoryType->PlaceName->ID,
 				'coordinate_id'   => $data->ID,
 				'coordinate_type' => 'node', // See Relation::morphMap in AppServiceProvider
 				'x'               => null, // Filled in later

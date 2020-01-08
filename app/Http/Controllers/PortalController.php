@@ -21,7 +21,7 @@ class PortalController extends Controller
 
 	/**
 	 * Get posts from the subreddit made by me
-	 * @param  integer $limit [description]
+	 * @param  int     $limit [description]
 	 * @return [type]         [description]
 	 */
 	private function getRecentPosts($limit = 10)
@@ -72,7 +72,8 @@ class PortalController extends Controller
 					}
 				}
 			} catch (Exception $e) {
-				// Do nothing
+				// Leave posts empty
+				$posts = [];
 			}
 
 			return $posts;

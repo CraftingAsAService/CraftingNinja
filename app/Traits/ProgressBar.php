@@ -5,7 +5,7 @@ namespace App\Traits;
 trait ProgressBar
 {
 
-	protected $_spinners = ['|', '/', '-', '\\', '|', '/', '-', '\\'];
+	protected $spinners = ['|', '/', '-', '\\', '|', '/', '-', '\\'];
 
 	/**
 	 * This is used to echo the progress of a task on the command line.
@@ -37,7 +37,7 @@ trait ProgressBar
 			$progressBar = str_repeat('-', $steps - $toGo);
 			$emptySpace  = str_repeat(' ', $toGo);
 			$index       = $totalDone % 8;
-			$display     = "Progress: [" . $progressBar . $this->_spinners[$index] . $emptySpace . "]\r";
+			$display     = "Progress: [" . $progressBar . $this->spinners[$index] . $emptySpace . "]\r";
 		}
 
 		echo $display;

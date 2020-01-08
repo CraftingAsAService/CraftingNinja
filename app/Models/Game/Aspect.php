@@ -5,6 +5,7 @@ namespace App\Models\Game;
 use App\Models\Game\Entity;
 use Astrotomic\Translatable\Translatable;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+
 /**
  * Common aspects of a game share the same basic setup
  * 	Aspects are more akin to Game Entities

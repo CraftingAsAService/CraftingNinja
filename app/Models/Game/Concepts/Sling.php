@@ -6,7 +6,6 @@ use App\Models\Game\Aspects\Item;
 use App\Models\Game\Aspects\Node;
 use App\Models\Game\Aspects\Objective;
 use App\Models\Game\Aspects\Recipe;
-use App\Models\Game\Concepts\Scroll;
 
 class Sling {
 
@@ -14,9 +13,9 @@ class Sling {
 
 	static public function parseCookie()
 	{
-		$ninjaCart = isset($_COOKIE['NinjaCart']) && $_COOKIE['NinjaCart']
-			? json_decode($_COOKIE['NinjaCart'])
-			: [];
+		$ninjaCartCookie = getCookieValue('NinjaCart');
+		$ninjaCart = $ninjaCartCookie ? json_decode($ninjaCartCookie) : [];
+
 		foreach ($ninjaCart as &$entry)
 			$entry = Sling::convert($entry);
 		unset($entry);

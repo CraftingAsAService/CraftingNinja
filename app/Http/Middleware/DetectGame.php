@@ -2,11 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-
 use App\Models\Game;
-
 use Cache;
+use Closure;
 
 class DetectGame
 {

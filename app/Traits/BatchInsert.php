@@ -13,7 +13,7 @@ trait BatchInsert
 	 *                                Should be passed in a basic [ [ 'columnName' => 'columnValue' ], ] manner
 	 * @param  string  $table        The table to insert the data into
 	 * @param  string  $connection   `null`/`false`/'' for default connection; DB::connection('') uses default
-	 * @param  integer $chunkSize    How to split up array_chunk
+	 * @param  int     $chunkSize    How to split up array_chunk
 	 * @return array                 Returns an empty array
 	 */
 	private function batchInsert($originalData = [], $table = '', $connection = null, $chunkSize = 50)

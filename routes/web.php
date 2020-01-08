@@ -33,7 +33,6 @@ Route::/*domain('{game}.' . config('app.base_url'))->*/middleware('is-game')->gr
 
 	Route::get('/', 'GameController@index')->name('home');
 
-
 	Route::get('compendium', 'CompendiumController@index')->name('compendium');
 	Route::post('compendium', 'CompendiumController@index')->name('compendium.search');
 

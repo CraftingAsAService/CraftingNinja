@@ -74,10 +74,9 @@ class CraftController extends Controller
 			->whereIn('id', $recipes->pluck('job_id')->unique())
 			->get()
 			->filter(function($job) use ($recipes) {
-				$count = $recipes->filter(function($recipe) use ($job) {
+				return $recipes->filter(function($recipe) use ($job) {
 					return $recipe->job_id == $job->id;
 				})->count();
-				return $count;
 			})->keyBy('id');
 
 		// We want to sort recipes by their depth, but they might appear at multiple depths
@@ -255,7 +254,7 @@ class CraftController extends Controller
 			if ( ! isset($maps[$zoneId]))
 				continue;
 
-			foreach ($maps[$zoneId] as $key => $data)
+			foreach ($maps[$zoneId] as $data)
 			{
 				$mapRecord = [
 					'id'     => $identifier++,
@@ -272,7 +271,7 @@ class CraftController extends Controller
 					'markers' => [],
 				];
 
-				foreach ($itemIds as $itemId => $itemData)
+				foreach ($itemIds as $itemData)
 					foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 						$mapRecord['markers'][] = [
 							'id'      => $identifier++,

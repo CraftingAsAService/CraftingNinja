@@ -29,6 +29,12 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Resource::withoutWrapping();
 
+		$this->registerMacros();
+		$this->registerMorphMap();
+	}
+
+	private function registerMacros()
+	{
 		Builder::macro('addSubSelect', function($column, $query) {
 			if (is_null($this->getQuery()->columns))
 				$this->select($this->getQuery()->from . '.*');
@@ -43,7 +49,10 @@ class AppServiceProvider extends ServiceProvider
 		Builder::macro('orderBySubDesc', function($query) {
 			return $this->orderBySub($query, 'desc');
 		});
+	}
 
+	private function registerMorphMap()
+	{
 		Relation::morphMap([
 			'job'       => Job::class,
 			'niche'     => Niche::class,

@@ -158,7 +158,7 @@ abstract class Aspir
 	{
 		// Some file begins with 'efbbbf' to mark the beginning of the file. (binary level)
 		// here we detect it and we remove it, basically it's the first 3 characters
-		if (0 === strpos(bin2hex($string), 'efbbbf'))
+		if (strpos(bin2hex($string), 'efbbbf') === 0)
 		   $string = substr($string, 3);
 
 		return $string;
@@ -166,7 +166,9 @@ abstract class Aspir
 
 	protected function readTSV($filename)
 	{
-		$tsv = array_map(function($l) { return str_getcsv($l, '	'); }, file($filename));
+		$tsv = array_map(function($l) {
+			return str_getcsv($l, '	');
+		}, file($filename));
 
 		array_walk($tsv, function(&$a) use ($tsv) {
 			$a = array_combine($tsv[0], $a);
