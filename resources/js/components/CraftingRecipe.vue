@@ -24,7 +24,6 @@
 		props: [ 'recipe', 'item' ],
 		data () {
 			return {
-				master: craftingMaster.state,
 				gameSlug: game.slug,
 				nodeTypes: nodeTypes,
 				nodes: nodes,

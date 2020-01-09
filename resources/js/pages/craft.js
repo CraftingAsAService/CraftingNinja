@@ -4,14 +4,19 @@
 
 'use strict';
 
-const craftingMaster = {
-	state: {
-		// Variables
-	}//,
-	//functionName(arg) {
-	//this.state.VARIABLE = whatever
-	//}
-}
+import { store, mutators } from "../stores/crafting";
+
+// "Global" variables, applied to every vue instance
+Vue.mixin({
+	data:function() {
+		return {
+			game: game,
+			itemData: items,
+			nodeData: nodes,
+			nodeTypes: nodeTypes,
+		}
+	}
+});
 
 Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
 Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
@@ -23,7 +28,6 @@ const craft = new Vue({
 	data: {
 		breakdown: breakdown,
 		zones: zones,
-		items: items,
 		recipes: recipes,
 		recipeJobs: recipeJobs,
 		maps: maps,
@@ -43,11 +47,10 @@ const craft = new Vue({
 	created() {
 		this.registerItems();
 		this.calculateSortedBreakdown();
-	},
-	mounted() {
-		// Calling calculateAll in mounted() allows all the crafting-reagent/recipes to hit their respective created() calls first
 		this.calculateAll();
 	},
+	// mounted() {
+	// },
 	methods: {
 		calculateSortedBreakdown:function() {
 			// TODO let user decide how they want items sorted
@@ -76,7 +79,7 @@ const craft = new Vue({
 			}
 
 			// Order of operations says we should sort by name first, then by the number of items to achieve this
-			this.sortedBreakdown = Object.keys(this.breakdown).sort(nameSort).sort(reverseCount);
+			this.sortedBreakdown = Object.keys(breakdown).sort(nameSort).sort(reverseCount);
 		},
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);
@@ -200,11 +203,13 @@ const craft = new Vue({
 		recalculateAmountsNeeded:function() {
 			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
-				this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
+				mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
+				// this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
-				this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
+				mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
+				// this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 		}
 	}

@@ -9,6 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
 //
 //
 //
@@ -44,30 +45,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['item', 'sources'],
+  props: ['itemId', 'sources'],
   data: function data() {
     return {
-      gameSlug: game.slug,
-      nodeTypes: nodeTypes,
-      nodes: nodes,
-      checked: false,
-      need: 0,
-      have: 0,
-      required: 0
+      checked: false
     };
   },
-  created: function created() {
-    this.$eventBus.$on('item' + this.item.id + 'data', this.amountUpdate);
-  },
+  // created:function() {
+  // 	// this.$eventBus.$on('item' + this.item.id + 'data', this.amountUpdate);
+  // },
   // mounted:function() {
   // },
-  beforeDestroy: function beforeDestroy() {
-    this.$eventBus.$off('item' + this.item.id + 'data');
+  // beforeDestroy:function() {
+  // 	// this.$eventBus.$off('item' + this.item.id + 'data');
+  // },
+  computed: {
+    item: function item() {
+      return this.itemData[this.itemId];
+    },
+    need: function need() {
+      return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"].items[this.itemId].need;
+    },
+    have: function have() {
+      return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"].items[this.itemId].have;
+    },
+    required: function required() {
+      return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"].items[this.itemId].required;
+    }
   },
   watch: {
     checked: function checked(truthy) {
-      this.$emit('pass-have-item-to-parent', this.item.id, truthy);
+      this.$emit('pass-have-item-to-parent', this.itemId, truthy);
     }
   },
   methods: {
@@ -115,7 +125,6 @@ __webpack_require__.r(__webpack_exports__);
   props: ['recipe', 'item'],
   data: function data() {
     return {
-      master: craftingMaster.state,
       gameSlug: game.slug,
       nodeTypes: nodeTypes,
       nodes: nodes,
@@ -15521,7 +15530,7 @@ var render = function() {
       _c("img", {
         staticClass: "icon",
         attrs: {
-          src: "/assets/" + _vm.gameSlug + "/i/" + _vm.item.icon + ".png",
+          src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
           alt: "",
           width: "48",
           height: "48"
@@ -15557,17 +15566,17 @@ var render = function() {
               attrs: {
                 src:
                   "/assets/" +
-                  _vm.gameSlug +
+                  _vm.game.slug +
                   "/map/icons/" +
-                  _vm.nodeTypes[_vm.nodes[nodeId].type].icon +
+                  _vm.nodeTypes[_vm.nodeData[nodeId].type].icon +
                   ".png",
                 alt: "",
                 "data-toggle": "tooltip",
                 "data-title":
                   "Level " +
-                  _vm.nodes[nodeId].level +
+                  _vm.nodeData[nodeId].level +
                   ", " +
-                  _vm.nodeTypes[_vm.nodes[nodeId].type].name
+                  _vm.nodeTypes[_vm.nodeData[nodeId].type].name
               }
             })
           }),
@@ -27315,10 +27324,12 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************!*\
   !*** ./resources/js/pages/craft.js ***!
   \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
 /**
  * Craft Page
  */
@@ -27332,14 +27343,18 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-var craftingMaster = {
-  state: {} // Variables
-  //,
-  //functionName(arg) {
-  //this.state.VARIABLE = whatever
-  //}
+ // "Global" variables, applied to every vue instance
 
-};
+Vue.mixin({
+  data: function data() {
+    return {
+      game: game,
+      itemData: items,
+      nodeData: nodes,
+      nodeTypes: nodeTypes
+    };
+  }
+});
 Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
 Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
@@ -27349,7 +27364,6 @@ var craft = new Vue({
   data: {
     breakdown: breakdown,
     zones: zones,
-    items: items,
     recipes: recipes,
     recipeJobs: recipeJobs,
     maps: maps,
@@ -27369,11 +27383,10 @@ var craft = new Vue({
   created: function created() {
     this.registerItems();
     this.calculateSortedBreakdown();
-  },
-  mounted: function mounted() {
-    // Calling calculateAll in mounted() allows all the crafting-reagent/recipes to hit their respective created() calls first
     this.calculateAll();
   },
+  // mounted() {
+  // },
   methods: {
     calculateSortedBreakdown: function calculateSortedBreakdown() {
       // TODO let user decide how they want items sorted
@@ -27397,7 +27410,7 @@ var craft = new Vue({
       } // Order of operations says we should sort by name first, then by the number of items to achieve this
 
 
-      this.sortedBreakdown = Object.keys(this.breakdown).sort(nameSort).sort(reverseCount);
+      this.sortedBreakdown = Object.keys(breakdown).sort(nameSort).sort(reverseCount);
     },
     registerItems: function registerItems() {
       this.computeAmounts(givenItemIds, quantities);
@@ -27575,16 +27588,13 @@ var craft = new Vue({
       });
     },
     recalculateAmountsNeeded: function recalculateAmountsNeeded() {
-      var _this = this;
-
       Object.entries(this.topTierCrafts).forEach(function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2),
             key = _ref6[0],
             entry = _ref6[1];
 
         entry.need = Math.max(0, entry.required - entry.have);
-
-        _this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
+        _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutators"].updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required); // this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
       });
       Object.entries(this.itemsToGather).forEach(function (_ref7) {
         var _ref8 = _slicedToArray(_ref7, 2),
@@ -27592,12 +27602,56 @@ var craft = new Vue({
             entry = _ref8[1];
 
         entry.need = Math.max(0, entry.required - entry.have);
-
-        _this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
+        _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutators"].updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required); // this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
       });
     }
   }
 });
+
+/***/ }),
+
+/***/ "./resources/js/stores/crafting.js":
+/*!*****************************************!*\
+  !*** ./resources/js/stores/crafting.js ***!
+  \*****************************************/
+/*! exports provided: store, mutators */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "store", function() { return store; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mutators", function() { return mutators; });
+var store = Vue.observable({
+  items: {},
+  recipes: {},
+  activeMap: null,
+  activeItemRecipes: {// 123 => { 456: 3, 789: 1 }, // Item 123 is crafted using 3 of 456 and 1 of 789
+  },
+  activeItemZones: {// 123 => 456, // Item 123 is only to be viewed in 456
+  }
+});
+var mutators = {
+  updateRawRecipeAmounts: function updateRawRecipeAmounts(id, need, have, required) {
+    if (typeof store.recipes[id] === 'undefined') store.recipes[id] = {
+      need: 0,
+      have: 0,
+      required: 0
+    };
+    store.recipes[id].need = need;
+    store.recipes[id].have = have;
+    store.recipes[id].required = required;
+  },
+  updateRawItemAmounts: function updateRawItemAmounts(id, need, have, required) {
+    if (typeof store.items[id] === 'undefined') store.items[id] = {
+      need: 0,
+      have: 0,
+      required: 0
+    };
+    store.items[id].need = need;
+    store.items[id].have = have;
+    store.items[id].required = required;
+  }
+};
 
 /***/ }),
 
