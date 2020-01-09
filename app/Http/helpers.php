@@ -1,8 +1,8 @@
 <?php
 
-function getCookieValue($key)
+function getCookieValue($key, $defaultValue = null)
 {
 	if (isset($_COOKIE[$key]) && $_COOKIE[$key])
-		return $key;
-	return null;
+		return $_COOKIE[$key];
+	return $defaultValue;
 }

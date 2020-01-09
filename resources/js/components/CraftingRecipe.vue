@@ -24,6 +24,7 @@
 		props: [ 'recipe', 'item' ],
 		data () {
 			return {
+				master: craftingMaster.state,
 				gameSlug: game.slug,
 				nodeTypes: nodeTypes,
 				nodes: nodes,
@@ -36,12 +37,12 @@
 			}
 		},
 		created:function() {
-			this.$eventBus.$on('recipe' + this.item.id + 'data', this.amountUpdate);
+			this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
 		},
 		// mounted:function() {
 		// },
 		beforeDestroy:function() {
-			this.$eventBus.$off('recipe' + this.item.id + 'data');
+			this.$eventBus.$off('recipe' + this.recipe.id + 'data');
 		},
 		watch: {
 			checked:function(truthy) {

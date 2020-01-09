@@ -4,6 +4,15 @@
 
 'use strict';
 
+const craftingMaster = {
+	state: {
+		// Variables
+	}//,
+	//functionName(arg) {
+	//this.state.VARIABLE = whatever
+	//}
+}
+
 Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
 Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
 Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);

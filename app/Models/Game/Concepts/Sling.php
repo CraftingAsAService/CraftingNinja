@@ -13,7 +13,7 @@ class Sling {
 
 	static public function parseCookie()
 	{
-		$ninjaCartCookie = getCookieValue('NinjaCart');
+		$ninjaCartCookie = getCookieValue('NinjaCart', []);
 		$ninjaCart = $ninjaCartCookie ? json_decode($ninjaCartCookie) : [];
 
 		foreach ($ninjaCart as &$entry)

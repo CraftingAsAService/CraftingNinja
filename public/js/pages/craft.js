@@ -115,6 +115,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['recipe', 'item'],
   data: function data() {
     return {
+      master: craftingMaster.state,
       gameSlug: game.slug,
       nodeTypes: nodeTypes,
       nodes: nodes,
@@ -127,12 +128,12 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    this.$eventBus.$on('recipe' + this.item.id + 'data', this.amountUpdate);
+    this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
   },
   // mounted:function() {
   // },
   beforeDestroy: function beforeDestroy() {
-    this.$eventBus.$off('recipe' + this.item.id + 'data');
+    this.$eventBus.$off('recipe' + this.recipe.id + 'data');
   },
   watch: {
     checked: function checked(truthy) {
@@ -27331,6 +27332,14 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+var craftingMaster = {
+  state: {} // Variables
+  //,
+  //functionName(arg) {
+  //this.state.VARIABLE = whatever
+  //}
+
+};
 Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
 Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
