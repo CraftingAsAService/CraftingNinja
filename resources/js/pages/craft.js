@@ -14,6 +14,7 @@ Vue.mixin({
 			itemData: items,
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
+			breakdown: breakdown,
 		}
 	}
 });
@@ -26,7 +27,9 @@ const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
 	data: {
-		breakdown: breakdown,
+		store: store,
+
+
 		zones: zones,
 		recipes: recipes,
 		recipeJobs: recipeJobs,
@@ -56,11 +59,12 @@ const craft = new Vue({
 			// TODO let user decide how they want items sorted
 			// Group by most available?
 			// Group by zone names?
+			let bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
 
 			// Primary Objective, Sort them by how many items a zone can provide
 			function reverseCount(a, b) {
-				var a = Object.values(breakdown[a]).length,
-					b = Object.values(breakdown[b]).length;
+				var a = Object.values(bd[a]).length,
+					b = Object.values(bd[b]).length;
 				if (a < b)
 					return 1;
 				if (a > b)
@@ -79,7 +83,7 @@ const craft = new Vue({
 			}
 
 			// Order of operations says we should sort by name first, then by the number of items to achieve this
-			this.sortedBreakdown = Object.keys(breakdown).sort(nameSort).sort(reverseCount);
+			this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
 		},
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);

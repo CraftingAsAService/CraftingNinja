@@ -47,19 +47,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['itemId', 'sources'],
+  props: ['itemId', 'zoneId'],
   data: function data() {
     return {
-      checked: false
+      checked: false,
+      store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"]
     };
   },
-  // created:function() {
-  // 	// this.$eventBus.$on('item' + this.item.id + 'data', this.amountUpdate);
-  // },
+  created: function created() {
+    _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutators"].firstComeFirstServeItemToZone(this.itemId, this.zoneId);
+  },
   // mounted:function() {
   // },
   // beforeDestroy:function() {
-  // 	// this.$eventBus.$off('item' + this.item.id + 'data');
   // },
   computed: {
     item: function item() {
@@ -15525,120 +15525,128 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row item" }, [
-    _c("div", { staticClass: "col-auto" }, [
-      _c("img", {
-        staticClass: "icon",
-        attrs: {
-          src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
-          alt: "",
-          width: "48",
-          height: "48"
-        }
-      })
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
-      [
-        _vm.need > 0
-          ? _c("span", {
-              staticClass: "required text-warning",
-              domProps: { innerHTML: _vm._s(_vm.need) }
-            })
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.need > 0
-          ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-          : _vm._e(),
-        _vm._v(" "),
-        _c("big", {
-          class: "rarity-" + _vm.item.rarity,
-          domProps: { innerHTML: _vm._s(_vm.item.name) }
-        }),
+  return _vm.store.activeItemZones[_vm.itemId] == _vm.zoneId
+    ? _c("div", { staticClass: "row item" }, [
+        _c("div", { staticClass: "col-auto" }, [
+          _c("img", {
+            staticClass: "icon",
+            attrs: {
+              src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
+              alt: "",
+              width: "48",
+              height: "48"
+            }
+          })
+        ]),
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "sources" },
-          _vm._l(_vm.sources.nodes, function(node, nodeId) {
-            return _c("img", {
-              attrs: {
-                src:
-                  "/assets/" +
-                  _vm.game.slug +
-                  "/map/icons/" +
-                  _vm.nodeTypes[_vm.nodeData[nodeId].type].icon +
-                  ".png",
-                alt: "",
-                "data-toggle": "tooltip",
-                "data-title":
-                  "Level " +
-                  _vm.nodeData[nodeId].level +
-                  ", " +
-                  _vm.nodeTypes[_vm.nodeData[nodeId].type].name
-              }
-            })
-          }),
-          0
-        )
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-auto" }, [
-      _c("div", { staticClass: "form-group tally" }, [
-        _c(
-          "label",
-          { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+          {
+            staticClass: "col info",
+            style: _vm.need <= 0 ? "opacity: .5;" : ""
+          },
           [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.checked,
-                  expression: "checked"
-                }
-              ],
-              attrs: { type: "checkbox" },
-              domProps: {
-                checked: Array.isArray(_vm.checked)
-                  ? _vm._i(_vm.checked, null) > -1
-                  : _vm.checked
-              },
-              on: {
-                change: function($event) {
-                  var $$a = _vm.checked,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = null,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                    } else {
-                      $$i > -1 &&
-                        (_vm.checked = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
-                    }
-                  } else {
-                    _vm.checked = $$c
-                  }
-                }
-              }
+            _vm.need > 0
+              ? _c("span", {
+                  staticClass: "required text-warning",
+                  domProps: { innerHTML: _vm._s(_vm.need) }
+                })
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.need > 0
+              ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("big", {
+              class: "rarity-" + _vm.item.rarity,
+              domProps: { innerHTML: _vm._s(_vm.item.name) }
             }),
             _vm._v(" "),
-            _c("span", {
-              staticClass: "checkbox-indicator",
-              staticStyle: { width: "24px", height: "24px", top: "-10px" }
-            })
-          ]
-        )
+            _c(
+              "div",
+              { staticClass: "sources" },
+              _vm._l(_vm.breakdown[_vm.zoneId][_vm.itemId].nodes, function(
+                node,
+                nodeId
+              ) {
+                return _c("img", {
+                  attrs: {
+                    src:
+                      "/assets/" +
+                      _vm.game.slug +
+                      "/map/icons/" +
+                      _vm.nodeTypes[_vm.nodeData[nodeId].type].icon +
+                      ".png",
+                    alt: "",
+                    "data-toggle": "tooltip",
+                    "data-title":
+                      "Level " +
+                      _vm.nodeData[nodeId].level +
+                      ", " +
+                      _vm.nodeTypes[_vm.nodeData[nodeId].type].name
+                  }
+                })
+              }),
+              0
+            )
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-auto" }, [
+          _c("div", { staticClass: "form-group tally" }, [
+            _c(
+              "label",
+              { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.checked,
+                      expression: "checked"
+                    }
+                  ],
+                  attrs: { type: "checkbox" },
+                  domProps: {
+                    checked: Array.isArray(_vm.checked)
+                      ? _vm._i(_vm.checked, null) > -1
+                      : _vm.checked
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.checked,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            (_vm.checked = $$a
+                              .slice(0, $$i)
+                              .concat($$a.slice($$i + 1)))
+                        }
+                      } else {
+                        _vm.checked = $$c
+                      }
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("span", {
+                  staticClass: "checkbox-indicator",
+                  staticStyle: { width: "24px", height: "24px", top: "-10px" }
+                })
+              ]
+            )
+          ])
+        ])
       ])
-    ])
-  ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -27351,7 +27359,8 @@ Vue.mixin({
       game: game,
       itemData: items,
       nodeData: nodes,
-      nodeTypes: nodeTypes
+      nodeTypes: nodeTypes,
+      breakdown: breakdown
     };
   }
 });
@@ -27362,7 +27371,7 @@ var craft = new Vue({
   name: 'Crafting',
   el: '#craft',
   data: {
-    breakdown: breakdown,
+    store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"],
     zones: zones,
     recipes: recipes,
     recipeJobs: recipeJobs,
@@ -27392,10 +27401,12 @@ var craft = new Vue({
       // TODO let user decide how they want items sorted
       // Group by most available?
       // Group by zone names?
+      var bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
       // Primary Objective, Sort them by how many items a zone can provide
+
       function reverseCount(a, b) {
-        var a = Object.values(breakdown[a]).length,
-            b = Object.values(breakdown[b]).length;
+        var a = Object.values(bd[a]).length,
+            b = Object.values(bd[b]).length;
         if (a < b) return 1;
         if (a > b) return -1;
         return 0;
@@ -27410,7 +27421,7 @@ var craft = new Vue({
       } // Order of operations says we should sort by name first, then by the number of items to achieve this
 
 
-      this.sortedBreakdown = Object.keys(breakdown).sort(nameSort).sort(reverseCount);
+      this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
     },
     registerItems: function registerItems() {
       this.computeAmounts(givenItemIds, quantities);
@@ -27621,6 +27632,14 @@ var craft = new Vue({
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "store", function() { return store; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mutators", function() { return mutators; });
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 var store = Vue.observable({
   items: {},
   recipes: {},
@@ -27628,9 +27647,34 @@ var store = Vue.observable({
   activeItemRecipes: {// 123 => { 456: 3, 789: 1 }, // Item 123 is crafted using 3 of 456 and 1 of 789
   },
   activeItemZones: {// 123 => 456, // Item 123 is only to be viewed in 456
-  }
+  } // zoneItemCount123: 1, // Zone 123 has one item
+
 });
 var mutators = {
+  firstComeFirstServeItemToZone: function firstComeFirstServeItemToZone(itemId, zoneId) {
+    if (typeof store.activeItemZones[itemId] === 'undefined') mutators.setItemToZone(itemId, zoneId);
+  },
+  setItemToZone: function setItemToZone(itemId, zoneId) {
+    store.activeItemZones[itemId] = zoneId;
+    mutators.recalculateZoneItemCounts();
+  },
+  recalculateZoneItemCounts: function recalculateZoneItemCounts() {
+    var counts = {};
+    Object.entries(store.activeItemZones).forEach(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2),
+          itemId = _ref2[0],
+          zoneId = _ref2[1];
+
+      counts[zoneId] = counts[zoneId] ? counts[zoneId] + 1 : 1;
+    });
+    Object.entries(counts).forEach(function (_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2),
+          zoneId = _ref4[0],
+          count = _ref4[1];
+
+      store['zoneItemCount' + zoneId] = count;
+    });
+  },
   updateRawRecipeAmounts: function updateRawRecipeAmounts(id, need, have, required) {
     if (typeof store.recipes[id] === 'undefined') store.recipes[id] = {
       need: 0,

@@ -76,12 +76,12 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							<div v-for='(zoneId, key) in sortedBreakdown' class='zone'>
+							<div v-for='(zoneId, key) in sortedBreakdown' :key='key' class='zone' v-show='store["zoneItemCount" + zoneId] > 0'>
 								<h5 class='name'>
 									<i class='fas fa-map-marked -desize float-right' hidden></i>
 									<span v-html='zones[zoneId].name'></span>
 								</h5>
-								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :item-id='itemId' :sources='sources' @pass-have-item-to-parent='haveItem'></crafting-reagent>
+								<crafting-reagent v-for='(sources, itemId) in breakdown[zoneId]' :key='itemId' :item-id='itemId' :zone-id='zoneId' @pass-have-item-to-parent='haveItem'></crafting-reagent>
 								<hr>
 							</div>
 						</div>

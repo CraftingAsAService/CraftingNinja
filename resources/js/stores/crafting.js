@@ -7,10 +7,28 @@ export const store = Vue.observable({
 	},
 	activeItemZones: {
 		// 123 => 456, // Item 123 is only to be viewed in 456
-	}
+	},
+	// zoneItemCount123: 1, // Zone 123 has one item
 });
 
 export const mutators = {
+	firstComeFirstServeItemToZone:function(itemId, zoneId) {
+		if (typeof store.activeItemZones[itemId] === 'undefined')
+			mutators.setItemToZone(itemId, zoneId);
+	},
+	setItemToZone:function(itemId, zoneId) {
+		store.activeItemZones[itemId] = zoneId;
+		mutators.recalculateZoneItemCounts();
+	},
+	recalculateZoneItemCounts:function() {
+		var counts = {};
+		Object.entries(store.activeItemZones).forEach(([itemId, zoneId]) => {
+			counts[zoneId] = counts[zoneId] ? counts[zoneId] + 1 : 1;
+		});
+		Object.entries(counts).forEach(([zoneId, count]) => {
+			store['zoneItemCount' + zoneId] = count;
+		});
+	},
 	updateRawRecipeAmounts:function(id, need, have, required) {
 		if (typeof store.recipes[id] === 'undefined')
 			store.recipes[id] = {

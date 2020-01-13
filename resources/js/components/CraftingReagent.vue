@@ -1,5 +1,5 @@
 <template>
-	<div class='row item'>
+	<div class='row item' v-if='store.activeItemZones[itemId] == zoneId'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
@@ -9,7 +9,7 @@
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources'>
-				<img v-for='(node, nodeId) in sources.nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'>
+				<img v-for='(node, nodeId) in breakdown[zoneId][itemId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'>
 				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
@@ -36,20 +36,19 @@
 <script>
 	import { store, mutators } from "../stores/crafting";
 	export default {
-		props: [ 'itemId', 'sources' ],
+		props: [ 'itemId', 'zoneId' ],
 		data () {
 			return {
-				checked: false
+				checked: false,
+				store: store,
 			}
 		},
-		// created:function() {
-		// 	// this.$eventBus.$on('item' + this.item.id + 'data', this.amountUpdate);
-		// },
+		created:function() {
+			mutators.firstComeFirstServeItemToZone(this.itemId, this.zoneId);
+		},
 		// mounted:function() {
-
 		// },
 		// beforeDestroy:function() {
-		// 	// this.$eventBus.$off('item' + this.item.id + 'data');
 		// },
 		computed: {
 			item() {
