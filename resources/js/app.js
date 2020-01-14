@@ -1,7 +1,9 @@
 'use strict';
 
 window.Vue = require('vue');
+// window.Vuex = require('vuex');
 Vue.use(require('vue-cookies'));
+// Vue.use(Vuex);
 
 require('./directives/ClickOutside.js');
 require('./directives/Tooltip.js');

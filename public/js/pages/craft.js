@@ -27370,24 +27370,26 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
 var craft = new Vue({
   name: 'Crafting',
   el: '#craft',
-  data: {
-    store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"],
-    zones: zones,
-    recipes: recipes,
-    recipeJobs: recipeJobs,
-    maps: maps,
-    // preferredRecipeIds: preferredRecipeIds,
-    // givenItemIds: givenItemIds,
-    // quantities: quantities,
-    // nodes: nodes,
-    // rewards: rewards,
-    // mobs: mobs,
-    // shops: shops,
-    activeMap: 0,
-    // Crafting loop
-    topTierCrafts: {},
-    itemsToGather: {},
-    sortedBreakdown: {}
+  data: function data() {
+    return {
+      store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"],
+      zones: zones,
+      recipes: recipes,
+      recipeJobs: recipeJobs,
+      maps: maps,
+      // preferredRecipeIds: preferredRecipeIds,
+      // givenItemIds: givenItemIds,
+      // quantities: quantities,
+      // nodes: nodes,
+      // rewards: rewards,
+      // mobs: mobs,
+      // shops: shops,
+      activeMap: 0,
+      // Crafting loop
+      topTierCrafts: {},
+      itemsToGather: {},
+      sortedBreakdown: {}
+    };
   },
   created: function created() {
     this.registerItems();
@@ -27640,6 +27642,28 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+// export const storex = new Vuex.Store({
+// 	state: {
+// 		variable: 0
+// 	},
+// 	getters: {
+// 		someFilter: state => {
+// 			return state.myVariable[0]
+// 		}
+// 	},
+// 	// Mutations are Syncronous
+// 	mutations: {
+// 		addToArray(state, value) {
+// 			state.myVariable.push(value)
+// 		}
+// 	},
+// 	// Actions are Asyncronous
+// 	// actions: {
+// 	// 	addToArray(context) { // Matches a mutation function name
+// 	// 		context.commit('addToArray');
+// 	// 	}
+// 	// }
+// })
 var store = Vue.observable({
   items: {},
   recipes: {},
@@ -27647,7 +27671,8 @@ var store = Vue.observable({
   activeItemRecipes: {// 123 => { 456: 3, 789: 1 }, // Item 123 is crafted using 3 of 456 and 1 of 789
   },
   activeItemZones: {// 123 => 456, // Item 123 is only to be viewed in 456
-  } // zoneItemCount123: 1, // Zone 123 has one item
+  } // zoneItemCount: { 123 => 1 }, // Zone 123 has one item
+  // zoneItemCount: {},
 
 });
 var mutators = {
@@ -27672,7 +27697,7 @@ var mutators = {
           zoneId = _ref4[0],
           count = _ref4[1];
 
-      store['zoneItemCount' + zoneId] = count;
+      Vue.set(store, 'zoneItemCount' + zoneId, count);
     });
   },
   updateRawRecipeAmounts: function updateRawRecipeAmounts(id, need, have, required) {

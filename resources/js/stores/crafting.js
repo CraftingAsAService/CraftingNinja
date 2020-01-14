@@ -1,3 +1,26 @@
+// export const storex = new Vuex.Store({
+// 	state: {
+// 		variable: 0
+// 	},
+// 	getters: {
+// 		someFilter: state => {
+// 			return state.myVariable[0]
+// 		}
+// 	},
+// 	// Mutations are Syncronous
+// 	mutations: {
+// 		addToArray(state, value) {
+// 			state.myVariable.push(value)
+// 		}
+// 	},
+// 	// Actions are Asyncronous
+// 	// actions: {
+// 	// 	addToArray(context) { // Matches a mutation function name
+// 	// 		context.commit('addToArray');
+// 	// 	}
+// 	// }
+// })
+
 export const store = Vue.observable({
 	items: {},
 	recipes: {},
@@ -8,7 +31,8 @@ export const store = Vue.observable({
 	activeItemZones: {
 		// 123 => 456, // Item 123 is only to be viewed in 456
 	},
-	// zoneItemCount123: 1, // Zone 123 has one item
+	// zoneItemCount: { 123 => 1 }, // Zone 123 has one item
+	// zoneItemCount: {},
 });
 
 export const mutators = {
@@ -26,7 +50,7 @@ export const mutators = {
 			counts[zoneId] = counts[zoneId] ? counts[zoneId] + 1 : 1;
 		});
 		Object.entries(counts).forEach(([zoneId, count]) => {
-			store['zoneItemCount' + zoneId] = count;
+			Vue.set(store, 'zoneItemCount' + zoneId, count);
 		});
 	},
 	updateRawRecipeAmounts:function(id, need, have, required) {

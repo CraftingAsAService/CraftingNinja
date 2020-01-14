@@ -26,26 +26,28 @@ Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').def
 const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
-	data: {
-		store: store,
+	data() {
+		return {
+			store: store,
 
 
-		zones: zones,
-		recipes: recipes,
-		recipeJobs: recipeJobs,
-		maps: maps,
-		// preferredRecipeIds: preferredRecipeIds,
-		// givenItemIds: givenItemIds,
-		// quantities: quantities,
-		// nodes: nodes,
-		// rewards: rewards,
-		// mobs: mobs,
-		// shops: shops,
-		activeMap: 0,
-		// Crafting loop
-		topTierCrafts: {},
-		itemsToGather: {},
-		sortedBreakdown: {},
+			zones: zones,
+			recipes: recipes,
+			recipeJobs: recipeJobs,
+			maps: maps,
+			// preferredRecipeIds: preferredRecipeIds,
+			// givenItemIds: givenItemIds,
+			// quantities: quantities,
+			// nodes: nodes,
+			// rewards: rewards,
+			// mobs: mobs,
+			// shops: shops,
+			activeMap: 0,
+			// Crafting loop
+			topTierCrafts: {},
+			itemsToGather: {},
+			sortedBreakdown: {},
+		}
 	},
 	created() {
 		this.registerItems();

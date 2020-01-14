@@ -1132,8 +1132,9 @@ module.exports = g;
 "use strict";
 
 
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-Vue.use(__webpack_require__(/*! vue-cookies */ "./node_modules/vue-cookies/vue-cookies.js"));
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); // window.Vuex = require('vuex');
+
+Vue.use(__webpack_require__(/*! vue-cookies */ "./node_modules/vue-cookies/vue-cookies.js")); // Vue.use(Vuex);
 
 __webpack_require__(/*! ./directives/ClickOutside.js */ "./resources/js/directives/ClickOutside.js");
 
