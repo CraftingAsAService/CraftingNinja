@@ -54,9 +54,7 @@ __webpack_require__.r(__webpack_exports__);
       store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"]
     };
   },
-  created: function created() {
-    _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutators"].firstComeFirstServeItemToZone(this.itemId, this.zoneId);
-  },
+  created: function created() {},
   // mounted:function() {
   // },
   // beforeDestroy:function() {
@@ -154,6 +152,43 @@ __webpack_require__.r(__webpack_exports__);
       this.need = need;
       this.have = have;
       this.required = required;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// import { store, mutators } from "../stores/crafting";
+Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['zoneId', 'itemIds'],
+  data: function data() {
+    return {// store: store,
+    };
+  },
+  computed: {
+    zone: function zone() {
+      return this.zoneData[this.zoneId];
     }
   }
 });
@@ -15525,128 +15560,123 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.store.activeItemZones[_vm.itemId] == _vm.zoneId
-    ? _c("div", { staticClass: "row item" }, [
-        _c("div", { staticClass: "col-auto" }, [
-          _c("img", {
-            staticClass: "icon",
-            attrs: {
-              src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
-              alt: "",
-              width: "48",
-              height: "48"
-            }
-          })
-        ]),
+  return _c("div", { staticClass: "row item" }, [
+    _c("div", { staticClass: "col-auto" }, [
+      _c("img", {
+        staticClass: "icon",
+        attrs: {
+          src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
+          alt: "",
+          width: "48",
+          height: "48"
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
+      [
+        _vm.need > 0
+          ? _c("span", {
+              staticClass: "required text-warning",
+              domProps: { innerHTML: _vm._s(_vm.need) }
+            })
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.need > 0
+          ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
+          : _vm._e(),
+        _vm._v(" "),
+        _c("big", {
+          class: "rarity-" + _vm.item.rarity,
+          domProps: { innerHTML: _vm._s(_vm.item.name) }
+        }),
         _vm._v(" "),
         _c(
           "div",
-          {
-            staticClass: "col info",
-            style: _vm.need <= 0 ? "opacity: .5;" : ""
-          },
+          { staticClass: "sources" },
+          _vm._l(_vm.breakdown[_vm.zoneId][_vm.itemId].nodes, function(
+            node,
+            nodeId
+          ) {
+            return _c("img", {
+              attrs: {
+                src:
+                  "/assets/" +
+                  _vm.game.slug +
+                  "/map/icons/" +
+                  _vm.nodeTypes[_vm.nodeData[nodeId].type].icon +
+                  ".png",
+                alt: "",
+                "data-toggle": "tooltip",
+                "data-title":
+                  "Level " +
+                  _vm.nodeData[nodeId].level +
+                  ", " +
+                  _vm.nodeTypes[_vm.nodeData[nodeId].type].name
+              }
+            })
+          }),
+          0
+        )
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-auto" }, [
+      _c("div", { staticClass: "form-group tally" }, [
+        _c(
+          "label",
+          { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
           [
-            _vm.need > 0
-              ? _c("span", {
-                  staticClass: "required text-warning",
-                  domProps: { innerHTML: _vm._s(_vm.need) }
-                })
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.need > 0
-              ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-              : _vm._e(),
-            _vm._v(" "),
-            _c("big", {
-              class: "rarity-" + _vm.item.rarity,
-              domProps: { innerHTML: _vm._s(_vm.item.name) }
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.checked,
+                  expression: "checked"
+                }
+              ],
+              attrs: { type: "checkbox" },
+              domProps: {
+                checked: Array.isArray(_vm.checked)
+                  ? _vm._i(_vm.checked, null) > -1
+                  : _vm.checked
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.checked,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = null,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        (_vm.checked = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)))
+                    }
+                  } else {
+                    _vm.checked = $$c
+                  }
+                }
+              }
             }),
             _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "sources" },
-              _vm._l(_vm.breakdown[_vm.zoneId][_vm.itemId].nodes, function(
-                node,
-                nodeId
-              ) {
-                return _c("img", {
-                  attrs: {
-                    src:
-                      "/assets/" +
-                      _vm.game.slug +
-                      "/map/icons/" +
-                      _vm.nodeTypes[_vm.nodeData[nodeId].type].icon +
-                      ".png",
-                    alt: "",
-                    "data-toggle": "tooltip",
-                    "data-title":
-                      "Level " +
-                      _vm.nodeData[nodeId].level +
-                      ", " +
-                      _vm.nodeTypes[_vm.nodeData[nodeId].type].name
-                  }
-                })
-              }),
-              0
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-auto" }, [
-          _c("div", { staticClass: "form-group tally" }, [
-            _c(
-              "label",
-              { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.checked,
-                      expression: "checked"
-                    }
-                  ],
-                  attrs: { type: "checkbox" },
-                  domProps: {
-                    checked: Array.isArray(_vm.checked)
-                      ? _vm._i(_vm.checked, null) > -1
-                      : _vm.checked
-                  },
-                  on: {
-                    change: function($event) {
-                      var $$a = _vm.checked,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false
-                      if (Array.isArray($$a)) {
-                        var $$v = null,
-                          $$i = _vm._i($$a, $$v)
-                        if ($$el.checked) {
-                          $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                        } else {
-                          $$i > -1 &&
-                            (_vm.checked = $$a
-                              .slice(0, $$i)
-                              .concat($$a.slice($$i + 1)))
-                        }
-                      } else {
-                        _vm.checked = $$c
-                      }
-                    }
-                  }
-                }),
-                _vm._v(" "),
-                _c("span", {
-                  staticClass: "checkbox-indicator",
-                  staticStyle: { width: "24px", height: "24px", top: "-10px" }
-                })
-              ]
-            )
-          ])
-        ])
+            _c("span", {
+              staticClass: "checkbox-indicator",
+              staticStyle: { width: "24px", height: "24px", top: "-10px" }
+            })
+          ]
+        )
       ])
-    : _vm._e()
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -15759,6 +15789,53 @@ var render = function() {
       ])
     ])
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "zone" },
+    [
+      _c("h5", { staticClass: "name" }, [
+        _c("i", {
+          staticClass: "fas fa-map-marked -desize float-right",
+          attrs: { hidden: "" }
+        }),
+        _vm._v(" "),
+        _c("span", { domProps: { innerHTML: _vm._s(_vm.zone.name) } })
+      ]),
+      _vm._v(" "),
+      _vm._l(_vm.itemIds, function(itemId) {
+        return _c("crafting-reagent", {
+          key: itemId,
+          attrs: { "item-id": itemId, "zone-id": _vm.zoneId }
+        })
+      }),
+      _vm._v(" "),
+      _c("hr")
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -27259,6 +27336,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/CraftingZone.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/CraftingZone.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingZone.vue?vue&type=template&id=aa16350e& */ "./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&");
+/* harmony import */ var _CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingZone.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/CraftingZone.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/CraftingZone.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingZone.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingZone.vue?vue&type=template&id=aa16350e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/NinjaMap.vue":
 /*!**********************************************!*\
   !*** ./resources/js/components/NinjaMap.vue ***!
@@ -27358,6 +27504,7 @@ Vue.mixin({
     return {
       game: game,
       itemData: items,
+      zoneData: zones,
       nodeData: nodes,
       nodeTypes: nodeTypes,
       breakdown: breakdown
@@ -27365,7 +27512,7 @@ Vue.mixin({
   }
 });
 Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
-Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
+Vue.component('crafting-zone', __webpack_require__(/*! ../components/CraftingZone.vue */ "./resources/js/components/CraftingZone.vue")["default"]);
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
 var craft = new Vue({
   name: 'Crafting',
@@ -27388,7 +27535,9 @@ var craft = new Vue({
       // Crafting loop
       topTierCrafts: {},
       itemsToGather: {},
-      sortedBreakdown: {}
+      sortedBreakdown: {},
+      sortZonesBy: 'efficiency' // 'alphabetical',
+
     };
   },
   created: function created() {
@@ -27398,6 +27547,55 @@ var craft = new Vue({
   },
   // mounted() {
   // },
+  computed: {
+    sortedZones: function sortedZones() {
+      // Get a new copy of breakdown
+      var breakdown = Object.assign({}, this.breakdown),
+          sortedZones = [];
+
+      if (this.sortZonesBy == 'efficiency') {
+        // TODO - Users will be able to switch their preference of getting items in specific areas
+        //  When they do, remove those items from any zone they didn't choose
+        while (Object.keys(breakdown).length > 0) {
+          // Sort it in reverse by the number of items it has
+          var sorted = Object.keys(breakdown).sort(function (a, b) {
+            var a = Object.values(breakdown[a]).length,
+                b = Object.values(breakdown[b]).length;
+            if (a < b) return 1;
+            if (a > b) return -1;
+            return 0;
+          }); // Take the items and remove them from any other zone
+
+          var takenZoneId = sorted[0],
+              takenItemIds = Object.keys(breakdown[takenZoneId]);
+          sortedZones.push({
+            'zoneId': takenZoneId,
+            'itemIds': takenItemIds
+          });
+          delete breakdown[takenZoneId];
+          Object.keys(breakdown).forEach(function (zoneId) {
+            for (var _i = 0, _takenItemIds = takenItemIds; _i < _takenItemIds.length; _i++) {
+              var itemId = _takenItemIds[_i];
+              delete breakdown[zoneId][itemId];
+            }
+
+            if (Object.keys(breakdown[zoneId]).length == 0) delete breakdown[zoneId];
+          });
+        }
+      } else {} // Assumed Alphabetical
+      // function nameSort(a, b) {
+      // 	if (zones[a].name < zones[b].name)
+      // 		return -1;
+      // 	if (zones[a].name > zones[b].name)
+      // 		return 1;
+      // 	return 0;
+      // }
+      // { zoneId: 123, items: [ 1, 2, 3 ]}
+
+
+      return sortedZones;
+    }
+  },
   methods: {
     calculateSortedBreakdown: function calculateSortedBreakdown() {
       // TODO let user decide how they want items sorted
@@ -27464,8 +27662,8 @@ var craft = new Vue({
 
           // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
           // This loop is broken out of when the answer is hit
-          for (var _i = 0, _preferredHandleOrder = preferredHandleOrder; _i < _preferredHandleOrder.length; _i++) {
-            var method = _preferredHandleOrder[_i];
+          for (var _i2 = 0, _preferredHandleOrder = preferredHandleOrder; _i2 < _preferredHandleOrder.length; _i2++) {
+            var method = _preferredHandleOrder[_i2];
 
             if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
               var recipeId = itemsAvailableRecipes[id][0];
@@ -27699,6 +27897,7 @@ var mutators = {
 
       Vue.set(store, 'zoneItemCount' + zoneId, count);
     });
+    console.log(store);
   },
   updateRawRecipeAmounts: function updateRawRecipeAmounts(id, need, have, required) {
     if (typeof store.recipes[id] === 'undefined') store.recipes[id] = {

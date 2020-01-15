@@ -12,6 +12,7 @@ Vue.mixin({
 		return {
 			game: game,
 			itemData: items,
+			zoneData: zones,
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
 			breakdown: breakdown,
@@ -20,7 +21,7 @@ Vue.mixin({
 });
 
 Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
-Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
+Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
 Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 const craft = new Vue({
@@ -47,6 +48,8 @@ const craft = new Vue({
 			topTierCrafts: {},
 			itemsToGather: {},
 			sortedBreakdown: {},
+
+			sortZonesBy: 'efficiency', // 'alphabetical',
 		}
 	},
 	created() {
@@ -56,6 +59,62 @@ const craft = new Vue({
 	},
 	// mounted() {
 	// },
+	computed: {
+		sortedZones() {
+			// Get a new copy of breakdown
+			let breakdown = Object.assign({}, this.breakdown),
+				sortedZones = [];
+
+			if (this.sortZonesBy == 'efficiency') {
+
+				// TODO - Users will be able to switch their preference of getting items in specific areas
+				//  When they do, remove those items from any zone they didn't choose
+
+				while (Object.keys(breakdown).length > 0)
+				{
+					// Sort it in reverse by the number of items it has
+					let sorted = Object.keys(breakdown).sort((a, b) => {
+						var a = Object.values(breakdown[a]).length,
+							b = Object.values(breakdown[b]).length;
+						if (a < b)
+							return 1;
+						if (a > b)
+							return -1;
+						return 0;
+					});
+
+					// Take the items and remove them from any other zone
+					var takenZoneId = sorted[0],
+						takenItemIds = Object.keys(breakdown[takenZoneId]);
+
+					sortedZones.push({
+						'zoneId': takenZoneId,
+						'itemIds': takenItemIds,
+					});
+
+					delete breakdown[takenZoneId];
+
+					Object.keys(breakdown).forEach(zoneId => {
+						for (let itemId of takenItemIds)
+							delete breakdown[zoneId][itemId];
+						if (Object.keys(breakdown[zoneId]).length == 0)
+							delete breakdown[zoneId];
+					});
+				}
+			} else {
+				// Assumed Alphabetical
+				// function nameSort(a, b) {
+				// 	if (zones[a].name < zones[b].name)
+				// 		return -1;
+				// 	if (zones[a].name > zones[b].name)
+				// 		return 1;
+				// 	return 0;
+				// }
+			}
+			// { zoneId: 123, items: [ 1, 2, 3 ]}
+			return sortedZones;
+		}
+	},
 	methods: {
 		calculateSortedBreakdown:function() {
 			// TODO let user decide how they want items sorted

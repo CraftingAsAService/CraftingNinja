@@ -52,6 +52,7 @@ export const mutators = {
 		Object.entries(counts).forEach(([zoneId, count]) => {
 			Vue.set(store, 'zoneItemCount' + zoneId, count);
 		});
+		console.log(store);
 	},
 	updateRawRecipeAmounts:function(id, need, have, required) {
 		if (typeof store.recipes[id] === 'undefined')

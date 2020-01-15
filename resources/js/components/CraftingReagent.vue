@@ -1,5 +1,5 @@
 <template>
-	<div class='row item' v-if='store.activeItemZones[itemId] == zoneId'>
+	<div class='row item'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
@@ -44,7 +44,7 @@
 			}
 		},
 		created:function() {
-			mutators.firstComeFirstServeItemToZone(this.itemId, this.zoneId);
+
 		},
 		// mounted:function() {
 		// },
