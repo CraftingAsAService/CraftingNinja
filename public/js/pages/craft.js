@@ -10,6 +10,13 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
 //
 //
 //
@@ -54,7 +61,9 @@ __webpack_require__.r(__webpack_exports__);
       store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"]
     };
   },
-  created: function created() {},
+  created: function created() {
+    console.log(this.item.name, this.sources);
+  },
   // mounted:function() {
   // },
   // beforeDestroy:function() {
@@ -62,6 +71,24 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     item: function item() {
       return this.itemData[this.itemId];
+    },
+    sources: function sources() {
+      // Ensure that the current zones sources are first
+      var sources = {};
+      sources[this.zoneId] = this.breakdown[this.zoneId][this.itemId];
+      return _objectSpread({}, sources, {}, this.otherSources);
+    },
+    otherSources: function otherSources() {
+      var _this = this;
+
+      var alternateSources = {};
+      Object.keys(this.breakdown).forEach(function (loopedZoneId) {
+        if (loopedZoneId == _this.zoneId) return;
+        Object.keys(_this.breakdown[loopedZoneId]).forEach(function (loopedItemId) {
+          if (loopedItemId == _this.itemId) alternateSources[loopedZoneId] = _this.breakdown[loopedZoneId][_this.itemId];
+        });
+      });
+      return alternateSources;
     },
     need: function need() {
       return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"].items[this.itemId].need;
@@ -74,8 +101,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
-    checked: function checked(truthy) {
-      this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+    checked: function checked(truthy) {// this.$emit('pass-have-item-to-parent', this.itemId, truthy);
     }
   },
   methods: {
@@ -15596,10 +15622,7 @@ var render = function() {
         _c(
           "div",
           { staticClass: "sources" },
-          _vm._l(_vm.breakdown[_vm.zoneId][_vm.itemId].nodes, function(
-            node,
-            nodeId
-          ) {
+          _vm._l(_vm.sources[_vm.zoneId].nodes, function(node, nodeId) {
             return _c("img", {
               attrs: {
                 src:
@@ -27507,7 +27530,8 @@ Vue.mixin({
       zoneData: zones,
       nodeData: nodes,
       nodeTypes: nodeTypes,
-      breakdown: breakdown
+      breakdown: breakdown,
+      sortableBreakdown: sortableBreakdown
     };
   }
 });
@@ -27549,37 +27573,38 @@ var craft = new Vue({
   // },
   computed: {
     sortedZones: function sortedZones() {
+      var _this = this;
+
       // Get a new copy of breakdown
-      var breakdown = Object.assign({}, this.breakdown),
-          sortedZones = [];
+      var sortedZones = [];
 
       if (this.sortZonesBy == 'efficiency') {
         // TODO - Users will be able to switch their preference of getting items in specific areas
         //  When they do, remove those items from any zone they didn't choose
-        while (Object.keys(breakdown).length > 0) {
+        while (Object.keys(this.sortableBreakdown).length > 0) {
           // Sort it in reverse by the number of items it has
-          var sorted = Object.keys(breakdown).sort(function (a, b) {
-            var a = Object.values(breakdown[a]).length,
-                b = Object.values(breakdown[b]).length;
+          var sorted = Object.keys(this.sortableBreakdown).sort(function (a, b) {
+            var a = Object.values(_this.sortableBreakdown[a]).length,
+                b = Object.values(_this.sortableBreakdown[b]).length;
             if (a < b) return 1;
             if (a > b) return -1;
             return 0;
           }); // Take the items and remove them from any other zone
 
           var takenZoneId = sorted[0],
-              takenItemIds = Object.keys(breakdown[takenZoneId]);
+              takenItemIds = Object.keys(this.sortableBreakdown[takenZoneId]);
           sortedZones.push({
             'zoneId': takenZoneId,
             'itemIds': takenItemIds
           });
-          delete breakdown[takenZoneId];
-          Object.keys(breakdown).forEach(function (zoneId) {
+          delete this.sortableBreakdown[takenZoneId];
+          Object.keys(this.sortableBreakdown).forEach(function (zoneId) {
             for (var _i = 0, _takenItemIds = takenItemIds; _i < _takenItemIds.length; _i++) {
               var itemId = _takenItemIds[_i];
-              delete breakdown[zoneId][itemId];
+              delete _this.sortableBreakdown[zoneId][itemId];
             }
 
-            if (Object.keys(breakdown[zoneId]).length == 0) delete breakdown[zoneId];
+            if (Object.keys(_this.sortableBreakdown[zoneId]).length == 0) delete _this.sortableBreakdown[zoneId];
           });
         }
       } else {} // Assumed Alphabetical

@@ -16,6 +16,7 @@ Vue.mixin({
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
 			breakdown: breakdown,
+			sortableBreakdown: sortableBreakdown,
 		}
 	}
 });
@@ -62,20 +63,19 @@ const craft = new Vue({
 	computed: {
 		sortedZones() {
 			// Get a new copy of breakdown
-			let breakdown = Object.assign({}, this.breakdown),
-				sortedZones = [];
+			let sortedZones = [];
 
 			if (this.sortZonesBy == 'efficiency') {
 
 				// TODO - Users will be able to switch their preference of getting items in specific areas
 				//  When they do, remove those items from any zone they didn't choose
 
-				while (Object.keys(breakdown).length > 0)
+				while (Object.keys(this.sortableBreakdown).length > 0)
 				{
 					// Sort it in reverse by the number of items it has
-					let sorted = Object.keys(breakdown).sort((a, b) => {
-						var a = Object.values(breakdown[a]).length,
-							b = Object.values(breakdown[b]).length;
+					let sorted = Object.keys(this.sortableBreakdown).sort((a, b) => {
+						var a = Object.values(this.sortableBreakdown[a]).length,
+							b = Object.values(this.sortableBreakdown[b]).length;
 						if (a < b)
 							return 1;
 						if (a > b)
@@ -85,20 +85,20 @@ const craft = new Vue({
 
 					// Take the items and remove them from any other zone
 					var takenZoneId = sorted[0],
-						takenItemIds = Object.keys(breakdown[takenZoneId]);
+						takenItemIds = Object.keys(this.sortableBreakdown[takenZoneId]);
 
 					sortedZones.push({
 						'zoneId': takenZoneId,
 						'itemIds': takenItemIds,
 					});
 
-					delete breakdown[takenZoneId];
+					delete this.sortableBreakdown[takenZoneId];
 
-					Object.keys(breakdown).forEach(zoneId => {
+					Object.keys(this.sortableBreakdown).forEach(zoneId => {
 						for (let itemId of takenItemIds)
-							delete breakdown[zoneId][itemId];
-						if (Object.keys(breakdown[zoneId]).length == 0)
-							delete breakdown[zoneId];
+							delete this.sortableBreakdown[zoneId][itemId];
+						if (Object.keys(this.sortableBreakdown[zoneId]).length == 0)
+							delete this.sortableBreakdown[zoneId];
 					});
 				}
 			} else {

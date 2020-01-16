@@ -9,7 +9,8 @@
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources'>
-				<img v-for='(node, nodeId) in breakdown[zoneId][itemId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'>
+				<!-- TODO CraftingSource.vue -->
+				<img v-for='(node, nodeId) in sources[zoneId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'>
 				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
@@ -44,7 +45,7 @@
 			}
 		},
 		created:function() {
-
+			console.log(this.item.name, this.sources);
 		},
 		// mounted:function() {
 		// },
@@ -53,6 +54,24 @@
 		computed: {
 			item() {
 				return this.itemData[this.itemId];
+			},
+			sources() {
+				// Ensure that the current zones sources are first
+				let sources = {};
+				sources[this.zoneId] = this.breakdown[this.zoneId][this.itemId];
+				return { ...sources, ...this.otherSources };
+			},
+			otherSources() {
+				var alternateSources = {};
+				Object.keys(this.breakdown).forEach(loopedZoneId => {
+					if (loopedZoneId == this.zoneId)
+						return;
+					Object.keys(this.breakdown[loopedZoneId]).forEach(loopedItemId => {
+						if (loopedItemId == this.itemId)
+							alternateSources[loopedZoneId] = this.breakdown[loopedZoneId][this.itemId];
+					});
+				});
+				return alternateSources;
 			},
 			need() {
 				return store.items[this.itemId].need;
@@ -66,8 +85,7 @@
 		},
 		watch: {
 			checked:function(truthy) {
-
-				this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+				// this.$emit('pass-have-item-to-parent', this.itemId, truthy);
 			}
 		},
 		methods: {
