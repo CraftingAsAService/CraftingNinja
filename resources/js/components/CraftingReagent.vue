@@ -9,8 +9,12 @@
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources'>
-				<!-- TODO CraftingSource.vue -->
-				<img v-for='(node, nodeId) in sources[zoneId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'>
+				<template v-for='(sourceTypes, sourceZoneId) in sources'>
+					<template v-for='(sourceData, type) in sourceTypes'>
+						<crafting-source v-for='(info, id) in sourceData' :key='id' :zone-matches='zoneId == sourceZoneId' :type='type' :id='id' :info='info'></crafting-source>
+					</template>
+				</template>
+				<!-- <img v-for='(node, nodeId) in sources[zoneId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'> -->
 				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
@@ -36,6 +40,9 @@
 
 <script>
 	import { store, mutators } from "../stores/crafting";
+
+	Vue.component('crafting-source', require('../components/CraftingSource.vue').default);
+
 	export default {
 		props: [ 'itemId', 'zoneId' ],
 		data () {

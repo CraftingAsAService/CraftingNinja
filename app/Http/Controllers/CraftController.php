@@ -9,6 +9,7 @@ use App\Models\Game\Aspects\Zone;
 use App\Models\Game\Concepts\Map;
 use App\Models\Game\Concepts\Sling;
 use Illuminate\Http\Request;
+use Str;
 
 class CraftController extends Controller
 {
@@ -196,7 +197,7 @@ class CraftController extends Controller
 			foreach ($loopVars as $key => $slug)
 				foreach ($item->$key as $var)
 					foreach ($var->zones as $zone)
-						$breakdown[$zone->id][$item->id][$slug][$var->id] = [
+						$breakdown[$zone->id][$item->id][Str::singular($slug)][$var->id] = [
 							'x'      => $zone->pivot->x,
 							'y'      => $zone->pivot->y,
 							'radius' => $zone->pivot->radius,
@@ -237,7 +238,6 @@ class CraftController extends Controller
 
 		// Convert maps to the Ninja Maps data structure
 		$maps = $this->buildNinjaMapsArray($breakdown, $maps, $zones, $nodes);
-
 		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
 	}
 
@@ -245,19 +245,17 @@ class CraftController extends Controller
 	{
 		$ninjaMaps = [];
 
-		// Generic identifier, we don't care what this ID is, it just needs one
-		//  It's used for both map records and each individual marker
-		$identifier = 1;
-
 		foreach ($breakdown as $zoneId => $itemIds)
 		{
 			if ( ! isset($maps[$zoneId]))
 				continue;
 
+			$floor = 0;
+
 			foreach ($maps[$zoneId] as $data)
 			{
 				$mapRecord = [
-					'id'     => $identifier++,
+					'id'     => 'zone' . $zoneId . '-' . $floor,
 					'name'   => $zones[$zoneId]['name'],
 					'src'    => '/assets/' . config('game.slug') . '/m/' . $data['image'] . '.jpg',
 					// Bounds goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
@@ -268,13 +266,14 @@ class CraftController extends Controller
 						'x' => $data['offset']['x'] ?: 0,
 						'y' => $data['offset']['y'] ?: 0
 					],
+					'floor' => $floor,
 					'markers' => [],
 				];
 
 				foreach ($itemIds as $itemData)
 					foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
 						$mapRecord['markers'][] = [
-							'id'      => $identifier++,
+							'id'      => 'node' . $nodeId . '@' . $zoneId,
 							'tooltip' => __('Level') . ' ' . $nodes[$nodeId]['level'] . ' ' . config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'],
 							'x'       => $data['x'] ?: 0,
 							'y'       => $data['y'] ?: 0,
@@ -282,6 +281,8 @@ class CraftController extends Controller
 						];
 
 				$ninjaMaps[] = $mapRecord;
+
+				$floor++;
 			}
 		}
 
