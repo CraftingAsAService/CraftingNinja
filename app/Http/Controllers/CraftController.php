@@ -126,7 +126,7 @@ class CraftController extends Controller
 			return [$entry->id => [
 				'id'    => $entry->id,
 				'level' => $entry->level,
-				'name'  => $entry->name,
+				'name'  => ucwords($entry->name),
 			]];
 		});
 

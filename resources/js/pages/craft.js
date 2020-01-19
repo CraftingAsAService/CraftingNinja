@@ -13,6 +13,7 @@ Vue.mixin({
 			game: game,
 			itemData: items,
 			zoneData: zones,
+			mobData: mobs,
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
 			breakdown: breakdown,

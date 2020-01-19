@@ -11,10 +11,9 @@
 			<div class='sources'>
 				<template v-for='(sourceTypes, sourceZoneId) in sources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
-						<crafting-source v-for='(info, id) in sourceData' :key='id' :zone-matches='zoneId == sourceZoneId' :type='type' :id='id' :info='info'></crafting-source>
+						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :zone-matches='zoneId == sourceZoneId' :zone-id='sourceZoneId' :type='type' :id='id' :info='info'></crafting-source>
 					</template>
 				</template>
-				<!-- <img v-for='(node, nodeId) in sources[zoneId].nodes' :src='"/assets/" + game.slug + "/map/icons/" + nodeTypes[nodeData[nodeId].type].icon + ".png"' alt='' data-toggle='tooltip' :data-title='"Level " + nodeData[nodeId].level + ", " + nodeTypes[nodeData[nodeId].type].name'> -->
 				<!--
 				<div class='card p-2 mt-2' hidden>
 					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)

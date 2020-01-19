@@ -55,7 +55,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingSource.vue */ "./resources/js/components/CraftingSource.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -204,13 +203,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 // import { store, mutators } from "../stores/crafting";
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['zoneMatches', 'type', 'id', 'info'],
+  props: ['zoneMatches', 'type', 'id', 'info', 'zoneId'],
   computed: {
     src: function src() {
-      if (this.type == 'node') return "/assets/" + game.slug + "/map/icons/" + this.nodeTypes[this.nodeData[this.id].type].icon + ".png";
+      if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
     },
     title: function title() {
-      if (this.type == 'node') return "Level " + this.nodeData[this.id].level + ", " + this.nodeTypes[this.nodeData[this.id].type].name;
+      var title = '',
+          prefix = '';
+      if (!this.zoneMatches) prefix = this.zoneData[this.zoneId].name + ':<br>';
+      if (this.type == 'node') title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;else if (this.type == 'mob') title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
+      return prefix + title;
     }
   }
 });
@@ -15661,9 +15664,10 @@ var render = function() {
                 _vm._l(sourceTypes, function(sourceData, type) {
                   return _vm._l(sourceData, function(info, id) {
                     return _c("crafting-source", {
-                      key: id,
+                      key: sourceZoneId + type + id,
                       attrs: {
                         "zone-matches": _vm.zoneId == sourceZoneId,
+                        "zone-id": sourceZoneId,
                         type: type,
                         id: id,
                         info: info
@@ -15869,11 +15873,12 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("img", {
-    class: _vm.zoneMatches ? "" : "opaque",
+    style: _vm.zoneMatches ? "" : "opacity: .5;",
     attrs: {
       src: _vm.src,
       alt: "",
       "data-toggle": "tooltip",
+      "data-html": "true",
       "data-title": _vm.title
     }
   })
@@ -27662,6 +27667,7 @@ Vue.mixin({
       game: game,
       itemData: items,
       zoneData: zones,
+      mobData: mobs,
       nodeData: nodes,
       nodeTypes: nodeTypes,
       breakdown: breakdown,

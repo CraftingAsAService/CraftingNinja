@@ -1,20 +1,36 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' :data-title='title' :class='zoneMatches ? "" : "opaque"'>
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5;"'>
 </template>
 
 <script>
 	// import { store, mutators } from "../stores/crafting";
 
 	export default {
-		props: [ 'zoneMatches', 'type', 'id', 'info' ],
+		props: [ 'zoneMatches', 'type', 'id', 'info', 'zoneId' ],
 		computed: {
 			src() {
 				if (this.type == 'node')
-					return "/assets/" + game.slug + "/map/icons/" + this.nodeTypes[this.nodeData[this.id].type].icon + ".png";
+					return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';
+				else if (this.type == 'mob')
+					return '/assets/' + game.slug + '/map/icons/battle.png';
+				else if (this.type == 'shop')
+					return '/assets/' + game.slug + '/map/icons/vendor.png';
+				else if (this.type == 'reward')
+					return '/assets/' + game.slug + '/map/icons/landmark.png';
 			},
 			title() {
+				let title = '',
+					prefix = '';
+
+				if ( ! this.zoneMatches)
+					prefix = this.zoneData[this.zoneId].name + ':<br>';
+
 				if (this.type == 'node')
-					return "Level " + this.nodeData[this.id].level + ", " + this.nodeTypes[this.nodeData[this.id].type].name;
+					title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;
+				else if (this.type == 'mob')
+					title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
+
+				return prefix + title;
 			}
 		}
 	}
