@@ -1,5 +1,5 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5;"'>
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5;"' @click='switchZone()'>
 </template>
 
 <script>
@@ -31,6 +31,12 @@
 					title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
 
 				return prefix + title;
+			}
+		},
+		methods: {
+			switchZone() {
+				if ( ! this.zoneMatches)
+				console.log(this.id, this.zoneId);
 			}
 		}
 	}

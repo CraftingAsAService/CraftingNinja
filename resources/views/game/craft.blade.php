@@ -87,7 +87,7 @@
 					</h3>
 					<div class='scroll-container'>
 						<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
-							<ninja-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap' />
+							<crafting-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap'></crafting-map>
 						</div>
 					</div>
 				</div>

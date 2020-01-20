@@ -1,5 +1,151 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/js/pages/craft"],{
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-leaflet */ "./node_modules/vue2-leaflet/dist/vue2-leaflet.es.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! leaflet/dist/leaflet.css */ "./node_modules/leaflet/dist/leaflet.css");
+/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+var size = 379; // TODO calculate magic number based on column width
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['mapName', 'mapSrc', 'mapBounds', 'markers', 'active'],
+  components: {
+    LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
+    LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
+    LControlAttribution: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlAttribution"],
+    LControlZoom: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlZoom"],
+    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"],
+    LPopup: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LPopup"],
+    LIcon: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LIcon"]
+  },
+  data: function data() {
+    return {
+      map: null,
+      leaflet: {
+        minZoom: 0,
+        maxZoom: 3,
+        crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
+        noWrap: true,
+        bounds: null,
+        options: {
+          zoomControl: false,
+          attributionControl: false,
+          zoomSnap: true,
+          popperOptions: {
+            position: 'top'
+          }
+        }
+      },
+      gameSlug: game.slug,
+      coordinateOutput: '',
+      mapWidth: null,
+      mapSizeModifier: null
+    };
+  },
+  created: function created() {
+    this.setupNewMap();
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$nextTick(function () {
+      _this.map = _this.$refs.map.mapObject;
+
+      _this.map.on('mousemove', function (event) {
+        var xy = _this.map.project(event.latlng, 1),
+            xCoord = (xy['x'] / _this.mapSizeModifier + 1).toFixed(1),
+            yCoord = (xy['y'] / _this.mapSizeModifier + 1).toFixed(1);
+
+        _this.coordinateOutput = _this.styleCoordinates(xCoord, yCoord);
+      }); // TODO TURN THIS ON, DISABLED FOR DEBUGGING
+      // this.map.on('contextmenu', (event) => {
+      // 	return false;
+      // });
+
+
+      _this.map.on('mouseout', function (event) {
+        _this.coordinateOutput = ''; //this.styleCoordinates();
+      });
+    });
+  },
+  methods: {
+    setupNewMap: function setupNewMap() {
+      this.mapWidth = document.getElementById('mapContainer').clientWidth;
+      this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
+      var coordinateRange = this.mapBounds[1][0] - this.mapBounds[0][0];
+      this.mapSizeModifier = this.mapWidth / coordinateRange * 2;
+    },
+    styleCoordinates: function styleCoordinates(x, y) {
+      return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>';
+    },
+    convertCoordinates: function convertCoordinates(x, y) {
+      return {
+        lat: y / 2 * -this.mapSizeModifier,
+        lng: x / 2 * this.mapSizeModifier
+      };
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagent.vue?vue&type=script&lang=js&":
 /*!**************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingReagent.vue?vue&type=script&lang=js& ***!
@@ -65,13 +211,6 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
       store: _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["store"]
     };
   },
-  created: function created() {
-    console.log(this.item.name, this.sources);
-  },
-  // mounted:function() {
-  // },
-  // beforeDestroy:function() {
-  // },
   computed: {
     item: function item() {
       return this.itemData[this.itemId];
@@ -215,6 +354,11 @@ __webpack_require__.r(__webpack_exports__);
       if (this.type == 'node') title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;else if (this.type == 'mob') title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
       return prefix + title;
     }
+  },
+  methods: {
+    switchZone: function switchZone() {
+      if (!this.zoneMatches) console.log(this.id, this.zoneId);
+    }
   }
 });
 
@@ -244,159 +388,9 @@ __webpack_require__.r(__webpack_exports__);
 Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['zoneId', 'itemIds'],
-  data: function data() {
-    return {// store: store,
-    };
-  },
   computed: {
     zone: function zone() {
       return this.zoneData[this.zoneId];
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-leaflet */ "./node_modules/vue2-leaflet/dist/vue2-leaflet.es.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! leaflet/dist/leaflet.css */ "./node_modules/leaflet/dist/leaflet.css");
-/* harmony import */ var leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(leaflet_dist_leaflet_css__WEBPACK_IMPORTED_MODULE_2__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-var size = 379; // TODO calculate magic number based on column width
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['mapName', 'mapSrc', 'mapBounds', 'markers', 'active'],
-  components: {
-    LMap: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMap"],
-    LImageOverlay: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LImageOverlay"],
-    LControlAttribution: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlAttribution"],
-    LControlZoom: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LControlZoom"],
-    LMarker: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LMarker"],
-    LPopup: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LPopup"],
-    LIcon: vue2_leaflet__WEBPACK_IMPORTED_MODULE_0__["LIcon"]
-  },
-  data: function data() {
-    return {
-      map: null,
-      leaflet: {
-        minZoom: 0,
-        maxZoom: 3,
-        crs: leaflet__WEBPACK_IMPORTED_MODULE_1__["CRS"].Simple,
-        noWrap: true,
-        bounds: null,
-        options: {
-          zoomControl: false,
-          attributionControl: false,
-          zoomSnap: true,
-          popperOptions: {
-            position: 'top'
-          }
-        }
-      },
-      gameSlug: game.slug,
-      coordinateOutput: '',
-      mapWidth: null,
-      mapSizeModifier: null
-    };
-  },
-  created: function created() {
-    this.setupNewMap();
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    this.$nextTick(function () {
-      _this.map = _this.$refs.map.mapObject;
-
-      _this.map.on('mousemove', function (event) {
-        var xy = _this.map.project(event.latlng, 1),
-            xCoord = (xy['x'] / _this.mapSizeModifier + 1).toFixed(1),
-            yCoord = (xy['y'] / _this.mapSizeModifier + 1).toFixed(1);
-
-        _this.coordinateOutput = _this.styleCoordinates(xCoord, yCoord);
-      }); // TODO TURN THIS ON, DISABLED FOR DEBUGGING
-      // this.map.on('contextmenu', (event) => {
-      // 	return false;
-      // });
-
-
-      _this.map.on('mouseout', function (event) {
-        _this.coordinateOutput = ''; //this.styleCoordinates();
-      });
-    });
-  },
-  methods: {
-    setupNewMap: function setupNewMap() {
-      this.mapWidth = document.getElementById('mapContainer').clientWidth;
-      this.leaflet.bounds = [[-this.mapWidth, 0], [0, this.mapWidth]];
-      var coordinateRange = this.mapBounds[1][0] - this.mapBounds[0][0];
-      this.mapSizeModifier = this.mapWidth / coordinateRange * 2;
-    },
-    styleCoordinates: function styleCoordinates(x, y) {
-      return '<span class="text-muted">&lt;</span>' + (x || '0.0') + ', ' + (y || '0.0') + '<span class="text-muted">&gt;</span>';
-    },
-    convertCoordinates: function convertCoordinates(x, y) {
-      return {
-        lat: y / 2 * -this.mapSizeModifier,
-        lng: x / 2 * this.mapSizeModifier
-      };
     }
   }
 });
@@ -15607,6 +15601,85 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "l-map",
+    {
+      ref: "map",
+      style:
+        "background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;" +
+        (_vm.active ? "" : " display: none;"),
+      attrs: {
+        options: _vm.leaflet.options,
+        "min-zoom": _vm.leaflet.minZoom,
+        "max-zoom": _vm.leaflet.maxZoom,
+        crs: _vm.leaflet.crs,
+        noWrap: _vm.leaflet.noWrap,
+        bounds: _vm.leaflet.bounds,
+        "max-bounds": _vm.leaflet.bounds
+      }
+    },
+    [
+      _c("l-image-overlay", {
+        attrs: { url: this.mapSrc, bounds: _vm.leaflet.bounds, attribution: "" }
+      }),
+      _vm._v(" "),
+      _c("l-control-zoom", { attrs: { position: "topleft" } }),
+      _vm._v(" "),
+      _c("l-control-attribution", {
+        attrs: { position: "bottomleft", prefix: this.mapName }
+      }),
+      _vm._v(" "),
+      _c("l-control-attribution", {
+        attrs: { position: "bottomright", prefix: _vm.coordinateOutput }
+      }),
+      _vm._v(" "),
+      _vm._l(this.markers, function(marker) {
+        return _c(
+          "l-marker",
+          {
+            key: marker.id,
+            attrs: { "lat-lng": _vm.convertCoordinates(marker.x, marker.y) }
+          },
+          [
+            _c("l-icon", {
+              attrs: {
+                "icon-size": [24, 24],
+                "icon-anchor": [24 / 2, 0],
+                "icon-url": marker.icon
+              }
+            }),
+            _vm._v(" "),
+            _c("l-popup", { attrs: { content: marker.tooltip } })
+          ],
+          1
+        )
+      })
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagent.vue?vue&type=template&id=62694e16&":
 /*!******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingReagent.vue?vue&type=template&id=62694e16& ***!
@@ -15880,6 +15953,11 @@ var render = function() {
       "data-toggle": "tooltip",
       "data-html": "true",
       "data-title": _vm.title
+    },
+    on: {
+      click: function($event) {
+        return _vm.switchZone()
+      }
     }
   })
 }
@@ -15926,85 +16004,6 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("hr")
-    ],
-    2
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&":
-/*!***********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246& ***!
-  \***********************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "l-map",
-    {
-      ref: "map",
-      style:
-        "background-color: #392d49; border-radius: 4px; border: 1px solid #4b3b60;" +
-        (_vm.active ? "" : " display: none;"),
-      attrs: {
-        options: _vm.leaflet.options,
-        "min-zoom": _vm.leaflet.minZoom,
-        "max-zoom": _vm.leaflet.maxZoom,
-        crs: _vm.leaflet.crs,
-        noWrap: _vm.leaflet.noWrap,
-        bounds: _vm.leaflet.bounds,
-        "max-bounds": _vm.leaflet.bounds
-      }
-    },
-    [
-      _c("l-image-overlay", {
-        attrs: { url: this.mapSrc, bounds: _vm.leaflet.bounds, attribution: "" }
-      }),
-      _vm._v(" "),
-      _c("l-control-zoom", { attrs: { position: "topleft" } }),
-      _vm._v(" "),
-      _c("l-control-attribution", {
-        attrs: { position: "bottomleft", prefix: this.mapName }
-      }),
-      _vm._v(" "),
-      _c("l-control-attribution", {
-        attrs: { position: "bottomright", prefix: _vm.coordinateOutput }
-      }),
-      _vm._v(" "),
-      _vm._l(this.markers, function(marker) {
-        return _c(
-          "l-marker",
-          {
-            key: marker.id,
-            attrs: { "lat-lng": _vm.convertCoordinates(marker.x, marker.y) }
-          },
-          [
-            _c("l-icon", {
-              attrs: {
-                "icon-size": [24, 24],
-                "icon-anchor": [24 / 2, 0],
-                "icon-url": marker.icon
-              }
-            }),
-            _vm._v(" "),
-            _c("l-popup", { attrs: { content: marker.tooltip } })
-          ],
-          1
-        )
-      })
     ],
     2
   )
@@ -27291,6 +27290,75 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./resources/js/components/CraftingMap.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/components/CraftingMap.vue ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingMap.vue?vue&type=template&id=6f7f8a1f& */ "./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&");
+/* harmony import */ var _CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingMap.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/CraftingMap.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/components/CraftingMap.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingMap.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f& ***!
+  \********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingMap.vue?vue&type=template&id=6f7f8a1f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/CraftingReagent.vue":
 /*!*****************************************************!*\
   !*** ./resources/js/components/CraftingReagent.vue ***!
@@ -27567,75 +27635,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/NinjaMap.vue":
-/*!**********************************************!*\
-  !*** ./resources/js/components/NinjaMap.vue ***!
-  \**********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NinjaMap.vue?vue&type=template&id=70bf9246& */ "./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&");
-/* harmony import */ var _NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NinjaMap.vue?vue&type=script&lang=js& */ "./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/NinjaMap.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&":
-/*!***********************************************************************!*\
-  !*** ./resources/js/components/NinjaMap.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaMap.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246& ***!
-  \*****************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./NinjaMap.vue?vue&type=template&id=70bf9246& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NinjaMap.vue?vue&type=template&id=70bf9246&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NinjaMap_vue_vue_type_template_id_70bf9246___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./resources/js/pages/craft.js":
 /*!*************************************!*\
   !*** ./resources/js/pages/craft.js ***!
@@ -27675,7 +27674,7 @@ Vue.mixin({
     };
   }
 });
-Vue.component('ninja-map', __webpack_require__(/*! ../components/NinjaMap.vue */ "./resources/js/components/NinjaMap.vue")["default"]);
+Vue.component('crafting-map', __webpack_require__(/*! ../components/CraftingMap.vue */ "./resources/js/components/CraftingMap.vue")["default"]);
 Vue.component('crafting-zone', __webpack_require__(/*! ../components/CraftingZone.vue */ "./resources/js/components/CraftingZone.vue")["default"]);
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
 var craft = new Vue({
@@ -27709,8 +27708,6 @@ var craft = new Vue({
     this.calculateSortedBreakdown();
     this.calculateAll();
   },
-  // mounted() {
-  // },
   computed: {
     sortedZones: function sortedZones() {
       var _this = this;

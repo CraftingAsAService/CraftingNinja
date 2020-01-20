@@ -50,13 +50,6 @@
 				store: store,
 			}
 		},
-		created:function() {
-			console.log(this.item.name, this.sources);
-		},
-		// mounted:function() {
-		// },
-		// beforeDestroy:function() {
-		// },
 		computed: {
 			item() {
 				return this.itemData[this.itemId];

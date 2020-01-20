@@ -16,11 +16,6 @@
 
 	export default {
 		props: [ 'zoneId', 'itemIds' ],
-		data () {
-			return {
-				// store: store,
-			}
-		},
 		computed: {
 			zone() {
 				return this.zoneData[this.zoneId];

@@ -22,7 +22,7 @@ Vue.mixin({
 	}
 });
 
-Vue.component('ninja-map', require('../components/NinjaMap.vue').default);
+Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
 Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
@@ -59,8 +59,6 @@ const craft = new Vue({
 		this.calculateSortedBreakdown();
 		this.calculateAll();
 	},
-	// mounted() {
-	// },
 	computed: {
 		sortedZones() {
 			// Get a new copy of breakdown

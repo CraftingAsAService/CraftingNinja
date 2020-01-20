@@ -213,11 +213,6 @@ class CraftController extends Controller
 			// TODO Did this item have no location entries?? Make an "unknown" location
 		}
 
-		// Zone with the most items goes first
-		$breakdown = collect($breakdown)->sortByDesc(function($entries) {
-			return count($entries);
-		});
-
 		// Compress variables for JavaScript
 		//  TODO Convert to Resources
 		$zones = $zones->map(function($zone) {
@@ -244,18 +239,17 @@ class CraftController extends Controller
 	private function buildNinjaMapsArray($breakdown, $maps, $zones, $nodes)
 	{
 		$ninjaMaps = [];
+		$identifier = 0;
 
 		foreach ($breakdown as $zoneId => $itemIds)
 		{
 			if ( ! isset($maps[$zoneId]))
 				continue;
 
-			$floor = 0;
-
 			foreach ($maps[$zoneId] as $data)
 			{
 				$mapRecord = [
-					'id'     => 'zone' . $zoneId . '-' . $floor,
+					'id'     => $identifier++, //'zone' . $zoneId . '-' . $floor,
 					'name'   => $zones[$zoneId]['name'],
 					'src'    => '/assets/' . config('game.slug') . '/m/' . $data['image'] . '.jpg',
 					// Bounds goes from 1,1 to 44,44 (as opposed to 0,0 to x,y)
@@ -266,14 +260,13 @@ class CraftController extends Controller
 						'x' => $data['offset']['x'] ?: 0,
 						'y' => $data['offset']['y'] ?: 0
 					],
-					'floor' => $floor,
 					'markers' => [],
 				];
 
 				foreach ($itemIds as $itemData)
-					foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
+					foreach ($itemData['node'] ?? [] as $nodeId => $data)
 						$mapRecord['markers'][] = [
-							'id'      => 'node' . $nodeId . '@' . $zoneId,
+							'id'      => $identifier++, //'node' . $nodeId . '@' . $zoneId,
 							'tooltip' => __('Level') . ' ' . $nodes[$nodeId]['level'] . ' ' . config('game.nodeTypes')[$nodes[$nodeId]['type']]['name'],
 							'x'       => $data['x'] ?: 0,
 							'y'       => $data['y'] ?: 0,
@@ -281,8 +274,6 @@ class CraftController extends Controller
 						];
 
 				$ninjaMaps[] = $mapRecord;
-
-				$floor++;
 			}
 		}
 
