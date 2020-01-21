@@ -4,7 +4,8 @@
 
 'use strict';
 
-import { store, mutators } from "../stores/crafting";
+import { getters, mutations, actions } from '../stores/crafting';
+import { clonedeep } from 'lodash';
 
 // "Global" variables, applied to every vue instance
 Vue.mixin({
@@ -17,7 +18,6 @@ Vue.mixin({
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
 			breakdown: breakdown,
-			sortableBreakdown: sortableBreakdown,
 		}
 	}
 });
@@ -31,9 +31,6 @@ const craft = new Vue({
 	el: '#craft',
 	data() {
 		return {
-			store: store,
-
-
 			zones: zones,
 			recipes: recipes,
 			recipeJobs: recipeJobs,
@@ -62,19 +59,22 @@ const craft = new Vue({
 	computed: {
 		sortedZones() {
 			// Get a new copy of breakdown
-			let sortedZones = [];
+			let sortedZones = [],
+				sortableBreakdown = _.cloneDeep(this.breakdown);
+
+			// Users can have a preference about where they gather their item
+
+
 
 			if (this.sortZonesBy == 'efficiency') {
 
-				// TODO - Users will be able to switch their preference of getting items in specific areas
-				//  When they do, remove those items from any zone they didn't choose
 
-				while (Object.keys(this.sortableBreakdown).length > 0)
+				while (Object.keys(sortableBreakdown).length > 0)
 				{
 					// Sort it in reverse by the number of items it has
-					let sorted = Object.keys(this.sortableBreakdown).sort((a, b) => {
-						var a = Object.values(this.sortableBreakdown[a]).length,
-							b = Object.values(this.sortableBreakdown[b]).length;
+					let sorted = Object.keys(sortableBreakdown).sort((a, b) => {
+						var a = Object.values(sortableBreakdown[a]).length,
+							b = Object.values(sortableBreakdown[b]).length;
 						if (a < b)
 							return 1;
 						if (a > b)
@@ -84,20 +84,20 @@ const craft = new Vue({
 
 					// Take the items and remove them from any other zone
 					var takenZoneId = sorted[0],
-						takenItemIds = Object.keys(this.sortableBreakdown[takenZoneId]);
+						takenItemIds = Object.keys(sortableBreakdown[takenZoneId]);
 
 					sortedZones.push({
 						'zoneId': takenZoneId,
 						'itemIds': takenItemIds,
 					});
 
-					delete this.sortableBreakdown[takenZoneId];
+					delete sortableBreakdown[takenZoneId];
 
-					Object.keys(this.sortableBreakdown).forEach(zoneId => {
+					Object.keys(sortableBreakdown).forEach(zoneId => {
 						for (let itemId of takenItemIds)
-							delete this.sortableBreakdown[zoneId][itemId];
-						if (Object.keys(this.sortableBreakdown[zoneId]).length == 0)
-							delete this.sortableBreakdown[zoneId];
+							delete sortableBreakdown[zoneId][itemId];
+						if (Object.keys(sortableBreakdown[zoneId]).length == 0)
+							delete sortableBreakdown[zoneId];
 					});
 				}
 			} else {
@@ -115,6 +115,8 @@ const craft = new Vue({
 		}
 	},
 	methods: {
+		...mutations,
+		...actions,
 		calculateSortedBreakdown:function() {
 			// TODO let user decide how they want items sorted
 			// Group by most available?
@@ -267,12 +269,14 @@ const craft = new Vue({
 		recalculateAmountsNeeded:function() {
 			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
-				mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
+				this.setRecipeData(entry.id, entry.need, entry.have, entry.required);
+				// mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
 				// this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
-				mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
+				this.setItemData(entry.id, entry.need, entry.have, entry.required);
+				// mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
 				// this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 		}

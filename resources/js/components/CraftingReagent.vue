@@ -3,9 +3,9 @@
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
-		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='need > 0' v-html='need'></span>
-			<small class='text-muted' v-if='need > 0'>x</small>
+		<div class='col info' :style='item.need <= 0 ? "opacity: .5;" : ""'>
+			<span class='required text-warning' v-if='item.need > 0' v-html='item.need'></span>
+			<small class='text-muted' v-if='item.need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources'>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-	import { store, mutators } from "../stores/crafting";
+	import { getters, mutations, actions } from '../stores/crafting';
 
 	Vue.component('crafting-source', require('../components/CraftingSource.vue').default);
 
@@ -46,13 +46,15 @@
 		props: [ 'itemId', 'zoneId' ],
 		data () {
 			return {
-				checked: false,
-				store: store,
+				checked: false
 			}
 		},
 		computed: {
 			item() {
-				return this.itemData[this.itemId];
+				return {
+					...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
+					...getters.items()[this.itemId] // "Crafting" item data, have/need/required
+				};
 			},
 			sources() {
 				// Ensure that the current zones sources are first
@@ -71,28 +73,22 @@
 					});
 				});
 				return alternateSources;
-			},
-			need() {
-				return store.items[this.itemId].need;
-			},
-			have() {
-				return store.items[this.itemId].have;
-			},
-			required() {
-				return store.items[this.itemId].required;
 			}
 		},
 		watch: {
 			checked:function(truthy) {
+				console.log('checked!');
 				// this.$emit('pass-have-item-to-parent', this.itemId, truthy);
 			}
 		},
 		methods: {
-			amountUpdate:function(need, have, required) {
-				this.need = need;
-				this.have = have;
-				this.required = required;
-			}
+			// ...mutators,
+			// ...actions,
+			// amountUpdate:function(need, have, required) {
+			// 	this.need = need;
+			// 	this.have = have;
+			// 	this.required = required;
+			// }
 		}
 	}
 </script>

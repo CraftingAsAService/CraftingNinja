@@ -10,8 +10,6 @@
 </template>
 
 <script>
-	// import { store, mutators } from "../stores/crafting";
-
 	Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
 
 	export default {
