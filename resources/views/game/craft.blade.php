@@ -76,7 +76,7 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							<crafting-zone v-for='entry in sortedZones' :key='entry.zoneId' :zone-id='entry.zoneId' :item-ids='entry.itemIds'></crafting-zone>
+							<crafting-zone v-for='entry in sortedZones()' :key='entry.zoneId' :zone-id='entry.zoneId' :item-ids='entry.itemIds'></crafting-zone>
 						</div>
 					</div>
 				</div>

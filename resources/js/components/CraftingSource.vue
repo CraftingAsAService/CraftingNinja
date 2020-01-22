@@ -3,7 +3,7 @@
 </template>
 
 <script>
-	// import { store, mutators } from "../stores/crafting";
+	import { mutations } from '../stores/crafting';
 
 	export default {
 		props: [ 'zoneMatches', 'type', 'id', 'info', 'zoneId' ],
@@ -35,8 +35,11 @@
 		},
 		methods: {
 			switchZone() {
-				if ( ! this.zoneMatches)
-				console.log(this.id, this.zoneId);
+				if (this.zoneMatches)
+					return;
+
+				mutations.setItemZonePreference(this.id, this.zoneId);
+				this.$eventBus.$emit('craftRefresh');
 			}
 		}
 	}

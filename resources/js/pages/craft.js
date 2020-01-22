@@ -13,6 +13,7 @@ Vue.mixin({
 		return {
 			game: game,
 			itemData: items,
+			recipeData: recipes,
 			zoneData: zones,
 			mobData: mobs,
 			nodeData: nodes,
@@ -32,7 +33,6 @@ const craft = new Vue({
 	data() {
 		return {
 			zones: zones,
-			recipes: recipes,
 			recipeJobs: recipeJobs,
 			maps: maps,
 			// preferredRecipeIds: preferredRecipeIds,
@@ -55,16 +55,40 @@ const craft = new Vue({
 		this.registerItems();
 		this.calculateSortedBreakdown();
 		this.calculateAll();
+		this.$eventBus.$on('craftRefresh', this.craftRefresh);
+	},
+	beforeDestroy:function() {
+		this.$eventBus.$off('craftRefresh');
 	},
 	computed: {
+		...getters,
+	},
+	methods: {
+		...mutations,
+		...actions,
+		craftRefresh() {
+			console.log('FORCE UPDATE');
+			this.$forceUpdate();
+		},
 		sortedZones() {
+			// Because this needs to be reactive, it's a `method`, and not a `computed`
 			// Get a new copy of breakdown
 			let sortedZones = [],
 				sortableBreakdown = _.cloneDeep(this.breakdown);
 
 			// Users can have a preference about where they gather their item
-
-
+			Object.entries(this.itemZonePreferences).forEach(([preferredItemId, preferredZoneId]) => {
+				console.log('investigating', preferredItemId, preferredZoneId);
+				// Remove this itemId from every zone _except_ zoneId
+				Object.keys(sortableBreakdown).forEach(zoneId => {
+					if (preferredZoneId != zoneId)
+					{
+						console.log('deleting', zoneId, preferredItemId, typeof sortableBreakdown[zoneId][preferredItemId]);
+						delete sortableBreakdown[zoneId][preferredItemId];
+						console.log('deleted', zoneId, preferredItemId, typeof sortableBreakdown[zoneId][preferredItemId]);
+					}
+				});
+			});
 
 			if (this.sortZonesBy == 'efficiency') {
 
@@ -112,11 +136,7 @@ const craft = new Vue({
 			}
 			// { zoneId: 123, items: [ 1, 2, 3 ]}
 			return sortedZones;
-		}
-	},
-	methods: {
-		...mutations,
-		...actions,
+		},
 		calculateSortedBreakdown:function() {
 			// TODO let user decide how they want items sorted
 			// Group by most available?
@@ -173,10 +193,10 @@ const craft = new Vue({
 		},
 		itemsAvailableRecipes:function() {
 			var itemsAvailableRecipes = {};
-			Object.keys(recipes).forEach(key => {
-				if (typeof itemsAvailableRecipes[recipes[key]['item_id']] === 'undefined')
-					itemsAvailableRecipes[recipes[key]['item_id']] = [];
-				itemsAvailableRecipes[recipes[key]['item_id']].push(key);
+			Object.keys(this.recipeData).forEach(key => {
+				if (typeof itemsAvailableRecipes[this.recipeData[key]['item_id']] === 'undefined')
+					itemsAvailableRecipes[this.recipeData[key]['item_id']] = [];
+				itemsAvailableRecipes[this.recipeData[key]['item_id']].push(key);
 			});
 			return itemsAvailableRecipes;
 		},

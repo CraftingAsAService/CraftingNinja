@@ -37,7 +37,7 @@
 			},
 			optionClick:function(key, value, title) {
 				this.displayTitle = title;
-				this.$emit('clicked', key, value)
+				this.$emit('clicked', key, value);
 				this.close();
 			}
 		}

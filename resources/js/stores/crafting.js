@@ -1,11 +1,14 @@
+// https://austincooper.dev/2019/08/09/vue-observable-state-store/
 const state = Vue.observable({
 	items: {},
-	recipes: {}
+	recipes: {},
+	itemZonePreferences: {},
 });
 
 export const getters = {
 	items: () => state.items,
-	recipes: () => state.recipes
+	recipes: () => state.recipes,
+	itemZonePreferences: () => state.itemZonePreferences,
 };
 
 export const mutations = {
@@ -18,7 +21,8 @@ export const mutations = {
 			need:     need,
 			have:     have,
 			required: required
-		}
+		},
+	setItemZonePreference: (itemId, zoneId) => state.itemZonePreferences[itemId] = zoneId,
 }
 
 export const actions = {

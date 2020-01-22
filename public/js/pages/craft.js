@@ -328,11 +328,12 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
 //
 //
 //
 //
-// import { store, mutators } from "../stores/crafting";
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['zoneMatches', 'type', 'id', 'info', 'zoneId'],
   computed: {
@@ -349,7 +350,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     switchZone: function switchZone() {
-      if (!this.zoneMatches) console.log(this.id, this.zoneId);
+      if (this.zoneMatches) return;
+      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.id, this.zoneId);
+      this.$eventBus.$emit('craftRefresh');
     }
   }
 });
@@ -44795,6 +44798,8 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -44817,6 +44822,7 @@ Vue.mixin({
     return {
       game: game,
       itemData: items,
+      recipeData: recipes,
       zoneData: zones,
       mobData: mobs,
       nodeData: nodes,
@@ -44834,7 +44840,6 @@ var craft = new Vue({
   data: function data() {
     return {
       zones: zones,
-      recipes: recipes,
       recipeJobs: recipeJobs,
       maps: maps,
       // preferredRecipeIds: preferredRecipeIds,
@@ -44857,13 +44862,39 @@ var craft = new Vue({
     this.registerItems();
     this.calculateSortedBreakdown();
     this.calculateAll();
+    this.$eventBus.$on('craftRefresh', this.craftRefresh);
   },
-  computed: {
+  beforeDestroy: function beforeDestroy() {
+    this.$eventBus.$off('craftRefresh');
+  },
+  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"]),
+  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
+    craftRefresh: function craftRefresh() {
+      console.log('FORCE UPDATE');
+      this.$forceUpdate();
+    },
     sortedZones: function sortedZones() {
+      // Because this needs to be reactive, it's a `method`, and not a `computed`
       // Get a new copy of breakdown
       var sortedZones = [],
           sortableBreakdown = _.cloneDeep(this.breakdown); // Users can have a preference about where they gather their item
 
+
+      Object.entries(this.itemZonePreferences).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            preferredItemId = _ref2[0],
+            preferredZoneId = _ref2[1];
+
+        console.log('investigating', preferredItemId, preferredZoneId); // Remove this itemId from every zone _except_ zoneId
+
+        Object.keys(sortableBreakdown).forEach(function (zoneId) {
+          if (preferredZoneId != zoneId) {
+            console.log('deleting', zoneId, preferredItemId, _typeof(sortableBreakdown[zoneId][preferredItemId]));
+            delete sortableBreakdown[zoneId][preferredItemId];
+            console.log('deleted', zoneId, preferredItemId, _typeof(sortableBreakdown[zoneId][preferredItemId]));
+          }
+        });
+      });
 
       if (this.sortZonesBy == 'efficiency') {
         while (Object.keys(sortableBreakdown).length > 0) {
@@ -44884,8 +44915,8 @@ var craft = new Vue({
           });
           delete sortableBreakdown[takenZoneId];
           Object.keys(sortableBreakdown).forEach(function (zoneId) {
-            for (var _i = 0, _takenItemIds = takenItemIds; _i < _takenItemIds.length; _i++) {
-              var itemId = _takenItemIds[_i];
+            for (var _i2 = 0, _takenItemIds = takenItemIds; _i2 < _takenItemIds.length; _i2++) {
+              var itemId = _takenItemIds[_i2];
               delete sortableBreakdown[zoneId][itemId];
             }
 
@@ -44904,9 +44935,7 @@ var craft = new Vue({
 
 
       return sortedZones;
-    }
-  },
-  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
+    },
     calculateSortedBreakdown: function calculateSortedBreakdown() {
       // TODO let user decide how they want items sorted
       // Group by most available?
@@ -44950,10 +44979,13 @@ var craft = new Vue({
       this.recalculateAmountsNeeded();
     },
     itemsAvailableRecipes: function itemsAvailableRecipes() {
+      var _this = this;
+
       var itemsAvailableRecipes = {};
-      Object.keys(recipes).forEach(function (key) {
-        if (typeof itemsAvailableRecipes[recipes[key]['item_id']] === 'undefined') itemsAvailableRecipes[recipes[key]['item_id']] = [];
-        itemsAvailableRecipes[recipes[key]['item_id']].push(key);
+      Object.keys(this.recipeData).forEach(function (key) {
+        if (typeof itemsAvailableRecipes[_this.recipeData[key]['item_id']] === 'undefined') itemsAvailableRecipes[_this.recipeData[key]['item_id']] = [];
+
+        itemsAvailableRecipes[_this.recipeData[key]['item_id']].push(key);
       });
       return itemsAvailableRecipes;
     },
@@ -44972,8 +45004,8 @@ var craft = new Vue({
 
           // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
           // This loop is broken out of when the answer is hit
-          for (var _i2 = 0, _preferredHandleOrder = preferredHandleOrder; _i2 < _preferredHandleOrder.length; _i2++) {
-            var method = _preferredHandleOrder[_i2];
+          for (var _i3 = 0, _preferredHandleOrder = preferredHandleOrder; _i3 < _preferredHandleOrder.length; _i3++) {
+            var method = _preferredHandleOrder[_i3];
 
             if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
               var recipeId = itemsAvailableRecipes[id][0];
@@ -45093,43 +45125,43 @@ var craft = new Vue({
       this.computeAmounts(itemIds, loopQtys);
     },
     resetAmountsRequired: function resetAmountsRequired() {
-      Object.entries(this.topTierCrafts).forEach(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            key = _ref2[0],
-            entry = _ref2[1];
-
-        entry.required = 0;
-      });
-      Object.entries(this.itemsToGather).forEach(function (_ref3) {
+      Object.entries(this.topTierCrafts).forEach(function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2),
             key = _ref4[0],
             entry = _ref4[1];
 
         entry.required = 0;
       });
-    },
-    recalculateAmountsNeeded: function recalculateAmountsNeeded() {
-      var _this = this;
-
-      Object.entries(this.topTierCrafts).forEach(function (_ref5) {
+      Object.entries(this.itemsToGather).forEach(function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2),
             key = _ref6[0],
             entry = _ref6[1];
 
-        entry.need = Math.max(0, entry.required - entry.have);
-
-        _this.setRecipeData(entry.id, entry.need, entry.have, entry.required); // mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
-        // this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
-
+        entry.required = 0;
       });
-      Object.entries(this.itemsToGather).forEach(function (_ref7) {
+    },
+    recalculateAmountsNeeded: function recalculateAmountsNeeded() {
+      var _this2 = this;
+
+      Object.entries(this.topTierCrafts).forEach(function (_ref7) {
         var _ref8 = _slicedToArray(_ref7, 2),
             key = _ref8[0],
             entry = _ref8[1];
 
         entry.need = Math.max(0, entry.required - entry.have);
 
-        _this.setItemData(entry.id, entry.need, entry.have, entry.required); // mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
+        _this2.setRecipeData(entry.id, entry.need, entry.have, entry.required); // mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
+        // this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
+
+      });
+      Object.entries(this.itemsToGather).forEach(function (_ref9) {
+        var _ref10 = _slicedToArray(_ref9, 2),
+            key = _ref10[0],
+            entry = _ref10[1];
+
+        entry.need = Math.max(0, entry.required - entry.have);
+
+        _this2.setItemData(entry.id, entry.need, entry.have, entry.required); // mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
         // this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 
       });
@@ -45151,9 +45183,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getters", function() { return getters; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mutations", function() { return mutations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actions", function() { return actions; });
+// https://austincooper.dev/2019/08/09/vue-observable-state-store/
 var state = Vue.observable({
   items: {},
-  recipes: {}
+  recipes: {},
+  itemZonePreferences: {}
 });
 var getters = {
   items: function items() {
@@ -45161,6 +45195,9 @@ var getters = {
   },
   recipes: function recipes() {
     return state.recipes;
+  },
+  itemZonePreferences: function itemZonePreferences() {
+    return state.itemZonePreferences;
   }
 };
 var mutations = {
@@ -45177,6 +45214,9 @@ var mutations = {
       have: have,
       required: required
     };
+  },
+  setItemZonePreference: function setItemZonePreference(itemId, zoneId) {
+    return state.itemZonePreferences[itemId] = zoneId;
   }
 };
 var actions = {}; // export const mutators = {
