@@ -335,7 +335,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['zoneMatches', 'type', 'id', 'info', 'zoneId'],
+  props: ['zoneMatches', 'type', 'id', 'info', 'zoneId', 'itemId'],
   computed: {
     src: function src() {
       if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
@@ -351,7 +351,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     switchZone: function switchZone() {
       if (this.zoneMatches) return;
-      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.id, this.zoneId);
+      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.itemId, this.zoneId);
       this.$eventBus.$emit('craftRefresh');
     }
   }
@@ -32854,6 +32854,7 @@ var render = function() {
                       attrs: {
                         "zone-matches": _vm.zoneId == sourceZoneId,
                         "zone-id": sourceZoneId,
+                        "item-id": _vm.item.id,
                         type: type,
                         id: id,
                         info: info
@@ -33059,7 +33060,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("img", {
-    style: _vm.zoneMatches ? "" : "opacity: .5;",
+    style: _vm.zoneMatches ? "" : "opacity: .5; cursor: pointer;",
     attrs: {
       src: _vm.src,
       alt: "",
@@ -44798,8 +44799,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -44859,8 +44858,8 @@ var craft = new Vue({
     };
   },
   created: function created() {
-    this.registerItems();
-    this.calculateSortedBreakdown();
+    this.registerItems(); // this.calculateSortedBreakdown();
+
     this.calculateAll();
     this.$eventBus.$on('craftRefresh', this.craftRefresh);
   },
@@ -44885,14 +44884,9 @@ var craft = new Vue({
             preferredItemId = _ref2[0],
             preferredZoneId = _ref2[1];
 
-        console.log('investigating', preferredItemId, preferredZoneId); // Remove this itemId from every zone _except_ zoneId
-
+        // Remove this itemId from every zone _except_ zoneId
         Object.keys(sortableBreakdown).forEach(function (zoneId) {
-          if (preferredZoneId != zoneId) {
-            console.log('deleting', zoneId, preferredItemId, _typeof(sortableBreakdown[zoneId][preferredItemId]));
-            delete sortableBreakdown[zoneId][preferredItemId];
-            console.log('deleted', zoneId, preferredItemId, _typeof(sortableBreakdown[zoneId][preferredItemId]));
-          }
+          if (preferredZoneId != zoneId) delete sortableBreakdown[zoneId][preferredItemId];
         });
       });
 
@@ -44936,32 +44930,33 @@ var craft = new Vue({
 
       return sortedZones;
     },
-    calculateSortedBreakdown: function calculateSortedBreakdown() {
-      // TODO let user decide how they want items sorted
-      // Group by most available?
-      // Group by zone names?
-      var bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
-      // Primary Objective, Sort them by how many items a zone can provide
-
-      function reverseCount(a, b) {
-        var a = Object.values(bd[a]).length,
-            b = Object.values(bd[b]).length;
-        if (a < b) return 1;
-        if (a > b) return -1;
-        return 0;
-      } // Secondary Objective, if they have the same amount, sort them by name
-      //  This hopefully keeps zone-adjacent areas together to avoid confusion
-
-
-      function nameSort(a, b) {
-        if (zones[a].name < zones[b].name) return -1;
-        if (zones[a].name > zones[b].name) return 1;
-        return 0;
-      } // Order of operations says we should sort by name first, then by the number of items to achieve this
-
-
-      this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
-    },
+    // calculateSortedBreakdown:function() {
+    // 	// TODO let user decide how they want items sorted
+    // 	// Group by most available?
+    // 	// Group by zone names?
+    // 	let bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
+    // 	// Primary Objective, Sort them by how many items a zone can provide
+    // 	function reverseCount(a, b) {
+    // 		var a = Object.values(bd[a]).length,
+    // 			b = Object.values(bd[b]).length;
+    // 		if (a < b)
+    // 			return 1;
+    // 		if (a > b)
+    // 			return -1;
+    // 		return 0;
+    // 	}
+    // 	// Secondary Objective, if they have the same amount, sort them by name
+    // 	//  This hopefully keeps zone-adjacent areas together to avoid confusion
+    // 	function nameSort(a, b) {
+    // 		if (zones[a].name < zones[b].name)
+    // 			return -1;
+    // 		if (zones[a].name > zones[b].name)
+    // 			return 1;
+    // 		return 0;
+    // 	}
+    // 	// Order of operations says we should sort by name first, then by the number of items to achieve this
+    // 	this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
+    // },
     registerItems: function registerItems() {
       this.computeAmounts(givenItemIds, quantities);
     },

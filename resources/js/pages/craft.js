@@ -53,7 +53,7 @@ const craft = new Vue({
 	},
 	created() {
 		this.registerItems();
-		this.calculateSortedBreakdown();
+		// this.calculateSortedBreakdown();
 		this.calculateAll();
 		this.$eventBus.$on('craftRefresh', this.craftRefresh);
 	},
@@ -78,21 +78,14 @@ const craft = new Vue({
 
 			// Users can have a preference about where they gather their item
 			Object.entries(this.itemZonePreferences).forEach(([preferredItemId, preferredZoneId]) => {
-				console.log('investigating', preferredItemId, preferredZoneId);
 				// Remove this itemId from every zone _except_ zoneId
 				Object.keys(sortableBreakdown).forEach(zoneId => {
 					if (preferredZoneId != zoneId)
-					{
-						console.log('deleting', zoneId, preferredItemId, typeof sortableBreakdown[zoneId][preferredItemId]);
 						delete sortableBreakdown[zoneId][preferredItemId];
-						console.log('deleted', zoneId, preferredItemId, typeof sortableBreakdown[zoneId][preferredItemId]);
-					}
 				});
 			});
 
 			if (this.sortZonesBy == 'efficiency') {
-
-
 				while (Object.keys(sortableBreakdown).length > 0)
 				{
 					// Sort it in reverse by the number of items it has
@@ -137,36 +130,36 @@ const craft = new Vue({
 			// { zoneId: 123, items: [ 1, 2, 3 ]}
 			return sortedZones;
 		},
-		calculateSortedBreakdown:function() {
-			// TODO let user decide how they want items sorted
-			// Group by most available?
-			// Group by zone names?
-			let bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
+		// calculateSortedBreakdown:function() {
+		// 	// TODO let user decide how they want items sorted
+		// 	// Group by most available?
+		// 	// Group by zone names?
+		// 	let bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
 
-			// Primary Objective, Sort them by how many items a zone can provide
-			function reverseCount(a, b) {
-				var a = Object.values(bd[a]).length,
-					b = Object.values(bd[b]).length;
-				if (a < b)
-					return 1;
-				if (a > b)
-					return -1;
-				return 0;
-			}
+		// 	// Primary Objective, Sort them by how many items a zone can provide
+		// 	function reverseCount(a, b) {
+		// 		var a = Object.values(bd[a]).length,
+		// 			b = Object.values(bd[b]).length;
+		// 		if (a < b)
+		// 			return 1;
+		// 		if (a > b)
+		// 			return -1;
+		// 		return 0;
+		// 	}
 
-			// Secondary Objective, if they have the same amount, sort them by name
-			//  This hopefully keeps zone-adjacent areas together to avoid confusion
-			function nameSort(a, b) {
-				if (zones[a].name < zones[b].name)
-					return -1;
-				if (zones[a].name > zones[b].name)
-					return 1;
-				return 0;
-			}
+		// 	// Secondary Objective, if they have the same amount, sort them by name
+		// 	//  This hopefully keeps zone-adjacent areas together to avoid confusion
+		// 	function nameSort(a, b) {
+		// 		if (zones[a].name < zones[b].name)
+		// 			return -1;
+		// 		if (zones[a].name > zones[b].name)
+		// 			return 1;
+		// 		return 0;
+		// 	}
 
-			// Order of operations says we should sort by name first, then by the number of items to achieve this
-			this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
-		},
+		// 	// Order of operations says we should sort by name first, then by the number of items to achieve this
+		// 	this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
+		// },
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);
 		},

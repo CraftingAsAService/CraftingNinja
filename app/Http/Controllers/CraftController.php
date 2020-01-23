@@ -172,10 +172,10 @@ class CraftController extends Controller
 		}
 
 		$loopVars = [
-			// $item->$key => 'shorthandKey'
-			'nodes' => 'nodes',
-			'mobs' => 'mobs',
-			'shops' => 'shops',
+			// $item->$key           => 'shorthandKey'
+			'nodes'                  => 'nodes',
+			'mobs'                   => 'mobs',
+			'shops'                  => 'shops',
 			'repeatablyRewardedFrom' => 'rewards',
 		];
 
@@ -192,6 +192,12 @@ class CraftController extends Controller
 			// 	 ]
 			// ]
 		];
+
+		// Ensure every zone is registered in the breakdown,
+		//  regardless of items or not
+		foreach ($zones as $zone)
+			$breakdown[$zone->id] = [];
+
 		foreach ($items as $item)
 		{
 			foreach ($loopVars as $key => $slug)
@@ -230,6 +236,10 @@ class CraftController extends Controller
 				'icon'   => $item->icon,
 			];
 		});
+
+		// The Dravanian Hinterlands - 2001
+		// The Dravanian Forelands - 2000
+		// dd($zones);
 
 		// Convert maps to the Ninja Maps data structure
 		$maps = $this->buildNinjaMapsArray($breakdown, $maps, $zones, $nodes);

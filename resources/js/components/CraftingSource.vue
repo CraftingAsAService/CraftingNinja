@@ -1,12 +1,12 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5;"' @click='switchZone()'>
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5; cursor: pointer;"' @click='switchZone()'>
 </template>
 
 <script>
 	import { mutations } from '../stores/crafting';
 
 	export default {
-		props: [ 'zoneMatches', 'type', 'id', 'info', 'zoneId' ],
+		props: [ 'zoneMatches', 'type', 'id', 'info', 'zoneId', 'itemId' ],
 		computed: {
 			src() {
 				if (this.type == 'node')
@@ -38,7 +38,7 @@
 				if (this.zoneMatches)
 					return;
 
-				mutations.setItemZonePreference(this.id, this.zoneId);
+				mutations.setItemZonePreference(this.itemId, this.zoneId);
 				this.$eventBus.$emit('craftRefresh');
 			}
 		}
