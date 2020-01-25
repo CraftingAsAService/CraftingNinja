@@ -49,6 +49,7 @@ const craft = new Vue({
 			sortedBreakdown: {},
 
 			sortZonesBy: 'efficiency', // 'alphabetical',
+			forcedUpdate: false,
 		}
 	},
 	created() {
@@ -67,8 +68,9 @@ const craft = new Vue({
 		...mutations,
 		...actions,
 		craftRefresh() {
-			console.log('FORCE UPDATE');
+			this.forcedUpdate = true;
 			this.$forceUpdate();
+			this.forcedUpdate = false;
 		},
 		sortedZones() {
 			// Because this needs to be reactive, it's a `method`, and not a `computed`
@@ -85,7 +87,39 @@ const craft = new Vue({
 				});
 			});
 
+			// Most likely they were hovering a tooltip; hide it - its moving
+			$('.tooltip').tooltip('hide');
+
+			// If this is a forced update, don't sort
+			let sortByEfficiency = (a, b) => {
+					if (a[1].length < b[1].length)
+						return 1;
+					if (a[1].length > b[1].length)
+						return -1;
+					return 0
+				},
+				sortAlphabetically = (a, b) => {
+					if (zones[a[0]].name < zones[b[0]].name)
+						return -1;
+					if (zones[a[0]].name > zones[b[0]].name)
+						return 1;
+					return 0;
+				};
+
+
+				// Assumed Alphabetical
+				// function nameSort(a, b) {
+				// 	if (zones[a].name < zones[b].name)
+				// 		return -1;
+				// 	if (zones[a].name > zones[b].name)
+				// 		return 1;
+				// 	return 0;
+				// }
+
+			// TODO - On a refresh MAINTAIN EXISTING ORDER
+
 			if (this.sortZonesBy == 'efficiency') {
+
 				while (Object.keys(sortableBreakdown).length > 0)
 				{
 					// Sort it in reverse by the number of items it has

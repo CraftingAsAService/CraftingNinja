@@ -44853,8 +44853,9 @@ var craft = new Vue({
       topTierCrafts: {},
       itemsToGather: {},
       sortedBreakdown: {},
-      sortZonesBy: 'efficiency' // 'alphabetical',
-
+      sortZonesBy: 'efficiency',
+      // 'alphabetical',
+      forcedUpdate: false
     };
   },
   created: function created() {
@@ -44869,8 +44870,9 @@ var craft = new Vue({
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"]),
   methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
     craftRefresh: function craftRefresh() {
-      console.log('FORCE UPDATE');
+      this.forcedUpdate = true;
       this.$forceUpdate();
+      this.forcedUpdate = false;
     },
     sortedZones: function sortedZones() {
       // Because this needs to be reactive, it's a `method`, and not a `computed`
@@ -44888,7 +44890,29 @@ var craft = new Vue({
         Object.keys(sortableBreakdown).forEach(function (zoneId) {
           if (preferredZoneId != zoneId) delete sortableBreakdown[zoneId][preferredItemId];
         });
-      });
+      }); // Most likely they were hovering a tooltip; hide it - its moving
+
+      $('.tooltip').tooltip('hide'); // If this is a forced update, don't sort
+
+      var sortByEfficiency = function sortByEfficiency(a, b) {
+        if (a[1].length < b[1].length) return 1;
+        if (a[1].length > b[1].length) return -1;
+        return 0;
+      },
+          sortAlphabetically = function sortAlphabetically(a, b) {
+        if (zones[a[0]].name < zones[b[0]].name) return -1;
+        if (zones[a[0]].name > zones[b[0]].name) return 1;
+        return 0;
+      }; // Assumed Alphabetical
+      // function nameSort(a, b) {
+      // 	if (zones[a].name < zones[b].name)
+      // 		return -1;
+      // 	if (zones[a].name > zones[b].name)
+      // 		return 1;
+      // 	return 0;
+      // }
+      // TODO - On a refresh MAINTAIN EXISTING ORDER
+
 
       if (this.sortZonesBy == 'efficiency') {
         while (Object.keys(sortableBreakdown).length > 0) {
