@@ -23,9 +23,9 @@ Vue.mixin({
 	}
 });
 
-Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
+// Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
-Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
+// Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 const craft = new Vue({
 	name: 'Crafting',
@@ -49,7 +49,6 @@ const craft = new Vue({
 			sortedBreakdown: {},
 
 			sortZonesBy: 'efficiency', // 'alphabetical',
-			forcedUpdate: false,
 		}
 	},
 	created() {
@@ -63,137 +62,59 @@ const craft = new Vue({
 	},
 	computed: {
 		...getters,
-	},
-	methods: {
-		...mutations,
-		...actions,
-		craftRefresh() {
-			this.forcedUpdate = true;
-			this.$forceUpdate();
-			this.forcedUpdate = false;
-		},
 		sortedZones() {
 			// Because this needs to be reactive, it's a `method`, and not a `computed`
 			// Get a new copy of breakdown
 			let sortedZones = [],
 				sortableBreakdown = _.cloneDeep(this.breakdown);
 
-			// Users can have a preference about where they gather their item
-			Object.entries(this.itemZonePreferences).forEach(([preferredItemId, preferredZoneId]) => {
-				// Remove this itemId from every zone _except_ zoneId
-				Object.keys(sortableBreakdown).forEach(zoneId => {
-					if (preferredZoneId != zoneId)
-						delete sortableBreakdown[zoneId][preferredItemId];
-				});
-			});
-
 			// Most likely they were hovering a tooltip; hide it - its moving
-			$('.tooltip').tooltip('hide');
+			// $('.tooltip').tooltip('hide');
 
-			// If this is a forced update, don't sort
-			let sortByEfficiency = (a, b) => {
-					if (a[1].length < b[1].length)
-						return 1;
-					if (a[1].length > b[1].length)
-						return -1;
-					return 0
-				},
-				sortAlphabetically = (a, b) => {
-					if (zones[a[0]].name < zones[b[0]].name)
-						return -1;
-					if (zones[a[0]].name > zones[b[0]].name)
-						return 1;
-					return 0;
-				};
-
-
-				// Assumed Alphabetical
-				// function nameSort(a, b) {
-				// 	if (zones[a].name < zones[b].name)
-				// 		return -1;
-				// 	if (zones[a].name > zones[b].name)
-				// 		return 1;
-				// 	return 0;
-				// }
-
-			// TODO - On a refresh MAINTAIN EXISTING ORDER
-
-			if (this.sortZonesBy == 'efficiency') {
-
-				while (Object.keys(sortableBreakdown).length > 0)
-				{
-					// Sort it in reverse by the number of items it has
-					let sorted = Object.keys(sortableBreakdown).sort((a, b) => {
-						var a = Object.values(sortableBreakdown[a]).length,
-							b = Object.values(sortableBreakdown[b]).length;
-						if (a < b)
+			while (Object.keys(sortableBreakdown).length > 0) {
+				// Sort it in reverse by the number of items it has
+				let sorted = this.sortZonesBy == 'efficiency'
+					? Object.entries(sortableBreakdown).sort((a, b) => {
+						if (a[1].length < b[1].length)
 							return 1;
-						if (a > b)
+						if (a[1].length > b[1].length)
 							return -1;
+						return 0
+					})
+					: Object.entries(sortableBreakdown).sort((a, b) => {
+						if (this.zoneData[a[0]].name < this.zoneData[b[0]].name)
+							return -1;
+						if (this.zoneData[a[0]].name > this.zoneData[b[0]].name)
+							return 1;
 						return 0;
-					});
+					})
+				;
 
-					// Take the items and remove them from any other zone
-					var takenZoneId = sorted[0],
-						takenItemIds = Object.keys(sortableBreakdown[takenZoneId]);
+				// Take the items and remove them from any other zone
+				var takenZoneId = sorted[0],
+					takenItemIds = Object.keys(sortableBreakdown[takenZoneId]);
 
-					sortedZones.push({
-						'zoneId': takenZoneId,
-						'itemIds': takenItemIds,
-					});
+				sortedZones.push(takenZoneId);
 
-					delete sortableBreakdown[takenZoneId];
+				delete sortableBreakdown[takenZoneId];
 
-					Object.keys(sortableBreakdown).forEach(zoneId => {
-						for (let itemId of takenItemIds)
-							delete sortableBreakdown[zoneId][itemId];
-						if (Object.keys(sortableBreakdown[zoneId]).length == 0)
-							delete sortableBreakdown[zoneId];
-					});
-				}
-			} else {
-				// Assumed Alphabetical
-				// function nameSort(a, b) {
-				// 	if (zones[a].name < zones[b].name)
-				// 		return -1;
-				// 	if (zones[a].name > zones[b].name)
-				// 		return 1;
-				// 	return 0;
-				// }
+				Object.keys(sortableBreakdown).forEach(zoneId => {
+					for (let itemId of takenItemIds)
+						delete sortableBreakdown[zoneId][itemId];
+					if (Object.keys(sortableBreakdown[zoneId]).length == 0)
+						delete sortableBreakdown[zoneId];
+				});
 			}
-			// { zoneId: 123, items: [ 1, 2, 3 ]}
+
 			return sortedZones;
 		},
-		// calculateSortedBreakdown:function() {
-		// 	// TODO let user decide how they want items sorted
-		// 	// Group by most available?
-		// 	// Group by zone names?
-		// 	let bd = this.breakdown; // Localizing because reverseCount() can't use `this.`
-
-		// 	// Primary Objective, Sort them by how many items a zone can provide
-		// 	function reverseCount(a, b) {
-		// 		var a = Object.values(bd[a]).length,
-		// 			b = Object.values(bd[b]).length;
-		// 		if (a < b)
-		// 			return 1;
-		// 		if (a > b)
-		// 			return -1;
-		// 		return 0;
-		// 	}
-
-		// 	// Secondary Objective, if they have the same amount, sort them by name
-		// 	//  This hopefully keeps zone-adjacent areas together to avoid confusion
-		// 	function nameSort(a, b) {
-		// 		if (zones[a].name < zones[b].name)
-		// 			return -1;
-		// 		if (zones[a].name > zones[b].name)
-		// 			return 1;
-		// 		return 0;
-		// 	}
-
-		// 	// Order of operations says we should sort by name first, then by the number of items to achieve this
-		// 	this.sortedBreakdown = Object.keys(bd).sort(nameSort).sort(reverseCount);
-		// },
+	},
+	methods: {
+		...mutations,
+		...actions,
+		craftRefresh() {
+			this.$forceUpdate();
+		},
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);
 		},
@@ -317,14 +238,10 @@ const craft = new Vue({
 			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
 				this.setRecipeData(entry.id, entry.need, entry.have, entry.required);
-				// mutators.updateRawRecipeAmounts(entry.id, entry.need, entry.have, entry.required);
-				// this.$eventBus.$emit('recipe' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
 				entry.need = Math.max(0, entry.required - entry.have);
 				this.setItemData(entry.id, entry.need, entry.have, entry.required);
-				// mutators.updateRawItemAmounts(entry.id, entry.need, entry.have, entry.required);
-				// this.$eventBus.$emit('item' + entry.id + 'data', entry.need, entry.have, entry.required);
 			});
 		}
 	}

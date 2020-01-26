@@ -76,7 +76,7 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							<crafting-zone v-for='entry in sortedZones()' :key='entry.zoneId' :zone-id='entry.zoneId' :item-ids='entry.itemIds'></crafting-zone>
+							<crafting-zone v-for='zoneId in sortedZones' :key='zoneId' :zone-id='zoneId'></crafting-zone>
 						</div>
 					</div>
 				</div>
@@ -86,7 +86,7 @@
 					</h3>
 					<div class='scroll-container'>
 						<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
-							<crafting-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap'></crafting-map>
+							{{-- <crafting-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap'></crafting-map> --}}
 						</div>
 					</div>
 				</div>

@@ -13,10 +13,13 @@
 	Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
 
 	export default {
-		props: [ 'zoneId', 'itemIds' ],
+		props: [ 'zoneId' ],
 		computed: {
 			zone() {
 				return this.zoneData[this.zoneId];
+			},
+			itemIds() {
+				return Object.keys(this.breakdown[this.zoneId]);
 			}
 		}
 	}
