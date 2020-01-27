@@ -91,7 +91,7 @@ const craft = new Vue({
 				;
 
 				// Take the items and remove them from any other zone
-				var takenZoneId = sorted[0],
+				var takenZoneId = sorted[0][0],
 					takenItemIds = Object.keys(sortableBreakdown[takenZoneId]);
 
 				sortedZones.push(takenZoneId);
