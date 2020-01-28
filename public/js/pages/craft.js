@@ -17940,7 +17940,9 @@ Vue.mixin({
       game: game,
       itemData: items,
       recipeData: recipes,
+      recipeJobs: recipeJobs,
       zoneData: zones,
+      maps: maps,
       mobData: mobs,
       nodeData: nodes,
       nodeTypes: nodeTypes,
@@ -17956,18 +17958,6 @@ var craft = new Vue({
   el: '#craft',
   data: function data() {
     return {
-      zones: zones,
-      recipeJobs: recipeJobs,
-      maps: maps,
-      // preferredRecipeIds: preferredRecipeIds,
-      // givenItemIds: givenItemIds,
-      // quantities: quantities,
-      // nodes: nodes,
-      // rewards: rewards,
-      // mobs: mobs,
-      // shops: shops,
-      activeMap: 0,
-      // Crafting loop
       topTierCrafts: {},
       itemsToGather: {},
       sortedBreakdown: {},
@@ -17976,8 +17966,7 @@ var craft = new Vue({
     };
   },
   created: function created() {
-    this.registerItems(); // this.calculateSortedBreakdown();
-
+    this.registerItems();
     this.calculateAll();
     this.$eventBus.$on('craftRefresh', this.craftRefresh);
   },
@@ -17998,8 +17987,8 @@ var craft = new Vue({
       while (Object.keys(sortableBreakdown).length > 0) {
         // Sort it in reverse by the number of items it has
         var sorted = this.sortZonesBy == 'efficiency' ? Object.entries(sortableBreakdown).sort(function (a, b) {
-          if (a[1].length < b[1].length) return 1;
-          if (a[1].length > b[1].length) return -1;
+          if (Object.keys(a[1]).length < Object.keys(b[1]).length) return 1;
+          if (Object.keys(a[1]).length > Object.keys(b[1]).length) return -1;
           return 0;
         }) : Object.entries(sortableBreakdown).sort(function (a, b) {
           if (_this.zoneData[a[0]].name < _this.zoneData[b[0]].name) return -1;
