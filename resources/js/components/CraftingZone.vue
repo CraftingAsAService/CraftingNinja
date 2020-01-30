@@ -1,5 +1,5 @@
 <template>
-	<div class='zone'>
+	<div class='zone' v-show='shown'>
 		<h5 class='name'>
 			<i class='fas fa-map-marked -desize float-right' hidden></i>
 			<span v-html='zone.name'></span>
@@ -14,13 +14,27 @@
 
 	export default {
 		props: [ 'zoneId' ],
+		data() {
+			return {
+				shown: false,
+				itemCount: []
+			}
+		},
+		mounted() {
+			// Determine if its shown
+			for (let c of this.$children)
+				if (c.shown) {
+					this.shown = true;
+					break;
+				}
+		},
 		computed: {
 			zone() {
 				return this.zoneData[this.zoneId];
 			},
 			itemIds() {
 				return Object.keys(this.breakdown[this.zoneId]);
-			}
-		}
+			},
+		},
 	}
 </script>

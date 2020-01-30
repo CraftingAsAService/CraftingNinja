@@ -1,5 +1,5 @@
 <template>
-	<div class='row item'>
+	<div class='row item' v-show='shown'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
@@ -44,10 +44,15 @@
 
 	export default {
 		props: [ 'itemId', 'zoneId' ],
-		data () {
+		data() {
 			return {
+				shown: true,
 				checked: false
 			}
+		},
+		created() {
+			// Calculate if its shown
+			this.shown = actions.fcfsItemZonePreference(this.itemId, this.zoneId);
 		},
 		computed: {
 			item() {
@@ -73,7 +78,7 @@
 					});
 				});
 				return alternateSources;
-			}
+			},
 		},
 		watch: {
 			checked:function(truthy) {
@@ -82,8 +87,7 @@
 			}
 		},
 		methods: {
-			// ...mutators,
-			// ...actions,
+			// ...mutations,
 			// amountUpdate:function(need, have, required) {
 			// 	this.need = need;
 			// 	this.have = have;

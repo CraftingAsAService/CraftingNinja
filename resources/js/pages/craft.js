@@ -25,7 +25,7 @@ Vue.mixin({
 	}
 });
 
-// Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
+Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
 // Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
@@ -54,6 +54,7 @@ const craft = new Vue({
 			// Because this needs to be reactive, it's a `method`, and not a `computed`
 			// Get a new copy of breakdown
 			let sortedZones = [],
+				blankZones = [],
 				sortableBreakdown = _.cloneDeep(this.breakdown);
 
 			// Most likely they were hovering a tooltip; hide it - its moving
@@ -89,10 +90,16 @@ const craft = new Vue({
 				Object.keys(sortableBreakdown).forEach(zoneId => {
 					for (let itemId of takenItemIds)
 						delete sortableBreakdown[zoneId][itemId];
-					if (Object.keys(sortableBreakdown[zoneId]).length == 0)
+
+					if (Object.keys(sortableBreakdown[zoneId]).length == 0) {
 						delete sortableBreakdown[zoneId];
+						blankZones.push(zoneId);
+					}
 				});
 			}
+
+			for (let z of blankZones)
+				sortedZones.push(z);
 
 			return sortedZones;
 		},

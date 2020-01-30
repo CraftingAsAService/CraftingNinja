@@ -26,7 +26,14 @@ export const mutations = {
 }
 
 export const actions = {
+	fcfsItemZonePreference: (itemId, zoneId) => {
+		// First Come, First Serve the Item-Zone Preference
+		if (typeof state.itemZonePreferences[itemId] !== 'undefined')
+			return state.itemZonePreferences[itemId] == zoneId;
 
+		mutations.setItemZonePreference(itemId, zoneId);
+		return true;
+	},
 }
 
 // export const mutators = {
