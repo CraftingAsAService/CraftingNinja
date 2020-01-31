@@ -207,15 +207,24 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
   props: ['itemId', 'zoneId'],
   data: function data() {
     return {
-      shown: true,
+      // shown: true,
       checked: false
     };
   },
-  created: function created() {
-    // Calculate if its shown
-    this.shown = _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
+  mounted: function mounted() {// Calculate if its shown
+    // this.$eventBus.$on('reagentRefresh', this.refresh);
   },
+  // beforeDestroy:function() {
+  // 	this.$eventBus.$off('reagentRefresh');
+  // },
   computed: {
+    shown: {
+      cache: false,
+      get: function get() {
+        console.log('shown calculating');
+        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
+      }
+    },
     item: function item() {
       return _objectSpread({}, this.itemData[this.itemId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].items()[this.itemId]);
     },
@@ -244,6 +253,9 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
     }
   },
   methods: {// ...mutations,
+    // refresh() {
+    // 	this.$forceUpdate();
+    // }
     // amountUpdate:function(need, have, required) {
     // 	this.need = need;
     // 	this.have = have;
@@ -264,14 +276,23 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['zoneMatches', 'type', 'id', 'info', 'zoneId', 'itemId'],
-  computed: {
+  props: ['sectionZoneId', 'type', 'id', 'info', 'zoneId', 'itemId'],
+  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
+    zoneMatches: function zoneMatches() {
+      return this.sectionZoneId == this.zoneId;
+    },
     src: function src() {
       if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
     },
@@ -282,11 +303,13 @@ __webpack_require__.r(__webpack_exports__);
       if (this.type == 'node') title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;else if (this.type == 'mob') title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
       return prefix + title;
     }
-  },
+  }),
   methods: {
     switchZone: function switchZone() {
       if (this.zoneMatches) return;
-      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.itemId, this.zoneId);
+      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.itemId, this.zoneId); // this.$eventBus.$emit('zoneRefresh', this.zoneId);
+      // this.$eventBus.$emit('zoneRefresh', this.sectionZoneId);
+
       this.$eventBus.$emit('craftRefresh');
     }
   }
@@ -317,50 +340,66 @@ __webpack_require__.r(__webpack_exports__);
 Vue.component('crafting-reagent', __webpack_require__(/*! ../components/CraftingReagent.vue */ "./resources/js/components/CraftingReagent.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['zoneId'],
-  data: function data() {
-    return {
-      shown: false,
-      itemCount: []
-    };
-  },
+  // data() {
+  // 	return {
+  // 		// shown: false,
+  // 		itemCount: []
+  // 	}
+  // },
+  // created() {
+  // 	this.$eventBus.$on('zoneRefresh', this.zoneRefresh);
+  // },
+  // beforeDestroy:function() {
+  // 	this.$eventBus.$off('zoneRefresh');
+  // },
   mounted: function mounted() {
-    // Determine if its shown
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = this.$children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var c = _step.value;
-
-        if (c.shown) {
-          this.shown = true;
-          break;
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
+    this.$forceUpdate();
   },
   computed: {
+    shown: {
+      cache: false,
+      get: function get() {
+        console.log('to show?');
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.$children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var c = _step.value;
+            if (c.shown) return true;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        return false;
+      }
+    },
     zone: function zone() {
       return this.zoneData[this.zoneId];
     },
     itemIds: function itemIds() {
       return Object.keys(this.breakdown[this.zoneId]);
     }
-  }
+  } // methods: {
+  // 	zoneRefresh(zoneId) {
+  // 		if (zoneId == this.zoneId)
+  // 			this.$forceUpdate();
+  // 	}
+  // }
+
 });
 
 /***/ }),
@@ -32839,7 +32878,7 @@ var render = function() {
                       return _c("crafting-source", {
                         key: sourceZoneId + type + id,
                         attrs: {
-                          "zone-matches": _vm.zoneId == sourceZoneId,
+                          "section-zone-id": _vm.zoneId,
                           "zone-id": sourceZoneId,
                           "item-id": _vm.item.id,
                           type: type,
@@ -44647,6 +44686,18 @@ Vue.mixin({
       nodeTypes: nodeTypes,
       breakdown: breakdown
     };
+  },
+  created: function created() {
+    this.$eventBus.$on('craftRefresh', this.refresh);
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.$eventBus.$off('craftRefresh');
+  },
+  methods: {
+    refresh: function refresh() {
+      console.log('Refreshing component', this);
+      this.$forceUpdate();
+    }
   }
 });
 Vue.component('crafting-map', __webpack_require__(/*! ../components/CraftingMap.vue */ "./resources/js/components/CraftingMap.vue")["default"]);
@@ -44666,12 +44717,11 @@ var craft = new Vue({
   },
   created: function created() {
     this.registerItems();
-    this.calculateAll();
-    this.$eventBus.$on('craftRefresh', this.craftRefresh);
+    this.calculateAll(); // this.$eventBus.$on('craftRefresh', this.craftRefresh);
   },
-  beforeDestroy: function beforeDestroy() {
-    this.$eventBus.$off('craftRefresh');
-  },
+  // beforeDestroy() {
+  // 	this.$eventBus.$off('craftRefresh');
+  // },
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     sortedZones: function sortedZones() {
       var _this = this;
@@ -44722,9 +44772,10 @@ var craft = new Vue({
     }
   }),
   methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
-    craftRefresh: function craftRefresh() {
-      this.$forceUpdate();
-    },
+    // craftRefresh() {
+    // 	console.log('refreshing!');
+    // 	this.$forceUpdate();
+    // },
     registerItems: function registerItems() {
       this.computeAmounts(givenItemIds, quantities);
     },

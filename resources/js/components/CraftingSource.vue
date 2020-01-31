@@ -3,11 +3,15 @@
 </template>
 
 <script>
-	import { mutations } from '../stores/crafting';
+	import { getters, mutations } from '../stores/crafting';
 
 	export default {
-		props: [ 'zoneMatches', 'type', 'id', 'info', 'zoneId', 'itemId' ],
+		props: [ 'sectionZoneId', 'type', 'id', 'info', 'zoneId', 'itemId' ],
 		computed: {
+			...getters,
+			zoneMatches() {
+				return this.sectionZoneId == this.zoneId;
+			},
 			src() {
 				if (this.type == 'node')
 					return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';
@@ -39,6 +43,9 @@
 					return;
 
 				mutations.setItemZonePreference(this.itemId, this.zoneId);
+
+				// this.$eventBus.$emit('zoneRefresh', this.zoneId);
+				// this.$eventBus.$emit('zoneRefresh', this.sectionZoneId);
 				this.$eventBus.$emit('craftRefresh');
 			}
 		}

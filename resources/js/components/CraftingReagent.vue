@@ -11,7 +11,7 @@
 			<div class='sources'>
 				<template v-for='(sourceTypes, sourceZoneId) in sources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
-						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :zone-matches='zoneId == sourceZoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-source>
+						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-source>
 					</template>
 				</template>
 				<!--
@@ -46,15 +46,25 @@
 		props: [ 'itemId', 'zoneId' ],
 		data() {
 			return {
-				shown: true,
+				// shown: true,
 				checked: false
 			}
 		},
-		created() {
+		mounted() {
 			// Calculate if its shown
-			this.shown = actions.fcfsItemZonePreference(this.itemId, this.zoneId);
+			// this.$eventBus.$on('reagentRefresh', this.refresh);
 		},
+		// beforeDestroy:function() {
+		// 	this.$eventBus.$off('reagentRefresh');
+		// },
 		computed: {
+			shown: {
+				cache: false,
+				get() {
+					console.log('shown calculating');
+					return actions.fcfsItemZonePreference(this.itemId, this.zoneId);
+				}
+			},
 			item() {
 				return {
 					...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
@@ -88,6 +98,9 @@
 		},
 		methods: {
 			// ...mutations,
+			// refresh() {
+			// 	this.$forceUpdate();
+			// }
 			// amountUpdate:function(need, have, required) {
 			// 	this.need = need;
 			// 	this.have = have;

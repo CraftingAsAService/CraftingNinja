@@ -14,21 +14,32 @@
 
 	export default {
 		props: [ 'zoneId' ],
-		data() {
-			return {
-				shown: false,
-				itemCount: []
-			}
-		},
+		// data() {
+		// 	return {
+		// 		// shown: false,
+		// 		itemCount: []
+		// 	}
+		// },
+		// created() {
+		// 	this.$eventBus.$on('zoneRefresh', this.zoneRefresh);
+		// },
+		// beforeDestroy:function() {
+		// 	this.$eventBus.$off('zoneRefresh');
+		// },
 		mounted() {
-			// Determine if its shown
-			for (let c of this.$children)
-				if (c.shown) {
-					this.shown = true;
-					break;
-				}
+			this.$forceUpdate();
 		},
 		computed: {
+			shown: {
+				cache: false,
+				get() {
+					console.log('to show?');
+					for (let c of this.$children)
+						if (c.shown)
+							return true;
+					return false;
+				}
+			},
 			zone() {
 				return this.zoneData[this.zoneId];
 			},
@@ -36,5 +47,11 @@
 				return Object.keys(this.breakdown[this.zoneId]);
 			},
 		},
+		// methods: {
+		// 	zoneRefresh(zoneId) {
+		// 		if (zoneId == this.zoneId)
+		// 			this.$forceUpdate();
+		// 	}
+		// }
 	}
 </script>

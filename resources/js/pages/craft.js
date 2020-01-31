@@ -9,7 +9,7 @@ import { clonedeep } from 'lodash';
 
 // "Global" variables, applied to every vue instance
 Vue.mixin({
-	data:function() {
+	data() {
 		return {
 			game: game,
 			itemData: items,
@@ -21,6 +21,18 @@ Vue.mixin({
 			nodeData: nodes,
 			nodeTypes: nodeTypes,
 			breakdown: breakdown,
+		}
+	},
+	created() {
+		this.$eventBus.$on('craftRefresh', this.refresh);
+	},
+	beforeDestroy() {
+		this.$eventBus.$off('craftRefresh');
+	},
+	methods: {
+		refresh() {
+			console.log('Refreshing component', this);
+			this.$forceUpdate();
 		}
 	}
 });
@@ -43,11 +55,11 @@ const craft = new Vue({
 	created() {
 		this.registerItems();
 		this.calculateAll();
-		this.$eventBus.$on('craftRefresh', this.craftRefresh);
+		// this.$eventBus.$on('craftRefresh', this.craftRefresh);
 	},
-	beforeDestroy:function() {
-		this.$eventBus.$off('craftRefresh');
-	},
+	// beforeDestroy() {
+	// 	this.$eventBus.$off('craftRefresh');
+	// },
 	computed: {
 		...getters,
 		sortedZones() {
@@ -107,9 +119,10 @@ const craft = new Vue({
 	methods: {
 		...mutations,
 		...actions,
-		craftRefresh() {
-			this.$forceUpdate();
-		},
+		// craftRefresh() {
+		// 	console.log('refreshing!');
+		// 	this.$forceUpdate();
+		// },
 		registerItems:function() {
 			this.computeAmounts(givenItemIds, quantities);
 		},
