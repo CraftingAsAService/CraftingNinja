@@ -81,14 +81,14 @@ class CraftController extends Controller
 			})->keyBy('id');
 
 		// We want to sort recipes by their depth, but they might appear at multiple depths
-		//  The higher the depth, we want it to show up first, but also make sure they only show up once per list.
-		$recipeDepths = [];
+		$recipeOrder = [];
 		foreach ($results->groupBy('depth') as $depth => $recipesAtThisDepth)
 			foreach ($recipesAtThisDepth->pluck('recipe_id')->unique() as $recipeId)
-				$recipeDepths[$recipeId] = $depth;
-		arsort($recipeDepths);
-		// Put the recipes in their depth-order
-		$recipes = collect(array_replace($recipeDepths, $recipes->toArray()));
+				$recipeOrder[$depth][$recipeId] = null;
+		foreach ($recipeOrder as $depth => $recipesInDepth)
+			$recipeOrder[$depth] = collect(array_replace($recipesInDepth, array_intersect_key($recipes->toArray(), $recipesInDepth)))->groupBy('job_id')->map(function($group) {
+					return $group->pluck('id');
+				})->toArray();
 
 		$items = Item::with(
 				'nodes', // Gathering drops
@@ -237,13 +237,9 @@ class CraftController extends Controller
 			];
 		});
 
-		// The Dravanian Hinterlands - 2001
-		// The Dravanian Forelands - 2000
-		// dd($zones);
-
 		// Convert maps to the Ninja Maps data structure
 		$maps = $this->buildNinjaMapsArray($breakdown, $maps, $zones, $nodes);
-		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs'));
+		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs', 'recipeOrder'));
 	}
 
 	private function buildNinjaMapsArray($breakdown, $maps, $zones, $nodes)

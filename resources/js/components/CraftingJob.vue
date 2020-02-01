@@ -1,19 +1,19 @@
 <template>
-	<div class='zone' v-show='shown'>
+	<div class='job' v-show='shown'>
 		<h5 class='name'>
 			<i class='fas fa-map-marked -desize float-right' hidden></i>
-			<span v-html='zone.name'></span>
+			<span v-html='job.name'></span>
 		</h5>
-		<crafting-reagent v-for='itemId in itemIds' :key='itemId' :item-id='itemId' :zone-id='zoneId'></crafting-reagent>
+		<crafting-recipe v-for='itemId in itemIds' :key='itemId' :item-id='itemId' :job-id='jobId'></crafting-recipe>
 		<hr>
 	</div>
 </template>
 
 <script>
-	Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
+	Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 	export default {
-		props: [ 'zoneId' ],
+		props: [ 'jobId' ],
 		// data() {
 		// 	return {
 		// 		// shown: false,

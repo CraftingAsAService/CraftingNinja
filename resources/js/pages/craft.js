@@ -15,6 +15,7 @@ Vue.mixin({
 			itemData: items,
 			recipeData: recipes,
 			recipeJobs: recipeJobs,
+			recipeOrder: recipeOrder,
 			zoneData: zones,
 			maps: maps,
 			mobData: mobs,
@@ -39,13 +40,14 @@ Vue.mixin({
 
 Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
-// Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
+Vue.component('crafting-job', require('../components/CraftingJob.vue').default);
 
 const craft = new Vue({
 	name: 'Crafting',
 	el: '#craft',
 	data() {
 		return {
+			activeMap: 0,
 			topTierCrafts: {},
 			itemsToGather: {},
 			sortedBreakdown: {},
@@ -62,6 +64,29 @@ const craft = new Vue({
 	// },
 	computed: {
 		...getters,
+		sortedJobs() {
+			let sortedJobs = [],
+				blankZones = [];//,
+				// sortableBreakdown = _..cloneDeep();
+
+			console.log(this.recipeOrder);
+
+			// We want to organize by Crafting "Depth", a true "craft in this order" based on previous dependencies
+
+
+			// {{--
+			// 	TODO, this is a little flawed. By job is good, but the depth matters a lot too. I think it needs to be:
+			// 	Depth 1
+			// 		Blacksmith
+			// 		...
+			// 	Depth 2
+			// 		...
+			// 		Blacksmith
+			// 		...
+			// 	Depth 3
+			// 		...
+			// --}}
+		},
 		sortedZones() {
 			// Because this needs to be reactive, it's a `method`, and not a `computed`
 			// Get a new copy of breakdown

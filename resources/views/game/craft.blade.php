@@ -11,7 +11,7 @@
 @section('scripts')
 <script>
 	var nodeTypes = {!! json_encode(config('game.nodeTypes')) !!};
-	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'recipeJobs', 'maps'] as $var)
+	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'recipeJobs', 'maps', 'recipeOrder'] as $var)
 	var {{ $var }} = {!! json_encode($$var) !!};
 	@endforeach
 </script>
@@ -86,7 +86,7 @@
 					</h3>
 					<div class='scroll-container'>
 						<div id='mapContainer' class='todo-map-that-scrolls-with-you' style='height: 379px;'>
-							{{-- <crafting-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap'></crafting-map> --}}
+							<crafting-map v-for='(map, index) in maps' :key='map.id' :map-name='map.name' :map-src='map.src' :map-bounds='map.bounds' :markers='map.markers' :active='index === activeMap'></crafting-map>
 						</div>
 					</div>
 				</div>
@@ -97,26 +97,7 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							{{--
-								TODO, this is a little flawed. By job is good, but the depth matters a lot too. I think it needs to be:
-								Depth 1
-									Blacksmith
-									...
-								Depth 2
-									...
-									Blacksmith
-									...
-								Depth 3
-									...
-							--}}
-							<div v-for='(job, jobId) in recipeJobs' class='job'>
-								<h5 class='name'>
-									<i class='fas fa-map-marked -desize float-right' hidden></i>
-									<span v-html='job.name'></span>
-								</h5>
-								{{-- <crafting-recipe v-for='(recipe, id) in recipes' v-if='recipe.job_id == jobId' :recipe='recipe' :item='items[recipe.item_id]' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe> --}}
-								<hr>
-							</div>
+							<crafting-job v-for='jobId in sortedJobs' :key='jobId' :job-id='jobId'></crafting-job>
 							{{-- @foreach ($recipeJobs as $job)
 							<div>
 								@if ( ! $loop->first)
