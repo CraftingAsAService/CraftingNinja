@@ -22,7 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['jobId'],
+  props: ['jobId', 'recipeIds'],
   // data() {
   // 	return {
   // 		// shown: false,
@@ -70,10 +70,7 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
       }
     },
     zone: function zone() {
-      return this.zoneData[this.zoneId];
-    },
-    itemIds: function itemIds() {
-      return Object.keys(this.breakdown[this.zoneId]);
+      return this.jobData[this.jobId];
     }
   } // methods: {
   // 	zoneRefresh(zoneId) {
@@ -307,7 +304,6 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
     shown: {
       cache: false,
       get: function get() {
-        console.log('shown calculating');
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
       }
     },
@@ -32916,10 +32912,10 @@ var render = function() {
         _c("span", { domProps: { innerHTML: _vm._s(_vm.job.name) } })
       ]),
       _vm._v(" "),
-      _vm._l(_vm.itemIds, function(itemId) {
+      _vm._l(_vm.recipeIds, function(recipeId) {
         return _c("crafting-recipe", {
-          key: itemId,
-          attrs: { "item-id": itemId, "job-id": _vm.jobId }
+          key: recipeId,
+          attrs: { "recipe-id": recipeId, "job-id": _vm.jobId }
         })
       }),
       _vm._v(" "),
@@ -45186,25 +45182,6 @@ var craft = new Vue({
   // 	this.$eventBus.$off('craftRefresh');
   // },
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
-    sortedJobs: function sortedJobs() {
-      var sortedJobs = [],
-          blankZones = []; //,
-      // sortableBreakdown = _..cloneDeep();
-
-      console.log(this.recipeOrder); // We want to organize by Crafting "Depth", a true "craft in this order" based on previous dependencies
-      // {{--
-      // 	TODO, this is a little flawed. By job is good, but the depth matters a lot too. I think it needs to be:
-      // 	Depth 1
-      // 		Blacksmith
-      // 		...
-      // 	Depth 2
-      // 		...
-      // 		Blacksmith
-      // 		...
-      // 	Depth 3
-      // 		...
-      // --}}
-    },
     sortedZones: function sortedZones() {
       var _this = this;
 

@@ -61,7 +61,6 @@
 			shown: {
 				cache: false,
 				get() {
-					console.log('shown calculating');
 					return actions.fcfsItemZonePreference(this.itemId, this.zoneId);
 				}
 			},

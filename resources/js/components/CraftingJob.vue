@@ -4,7 +4,7 @@
 			<i class='fas fa-map-marked -desize float-right' hidden></i>
 			<span v-html='job.name'></span>
 		</h5>
-		<crafting-recipe v-for='itemId in itemIds' :key='itemId' :item-id='itemId' :job-id='jobId'></crafting-recipe>
+		<crafting-recipe v-for='recipeId in recipeIds' :key='recipeId' :recipe-id='recipeId' :job-id='jobId'></crafting-recipe>
 		<hr>
 	</div>
 </template>
@@ -13,7 +13,7 @@
 	Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 	export default {
-		props: [ 'jobId' ],
+		props: [ 'jobId', 'recipeIds' ],
 		// data() {
 		// 	return {
 		// 		// shown: false,
@@ -40,10 +40,7 @@
 				}
 			},
 			zone() {
-				return this.zoneData[this.zoneId];
-			},
-			itemIds() {
-				return Object.keys(this.breakdown[this.zoneId]);
+				return this.jobData[this.jobId];
 			},
 		},
 		// methods: {

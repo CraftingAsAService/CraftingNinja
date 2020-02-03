@@ -64,29 +64,6 @@ const craft = new Vue({
 	// },
 	computed: {
 		...getters,
-		sortedJobs() {
-			let sortedJobs = [],
-				blankZones = [];//,
-				// sortableBreakdown = _..cloneDeep();
-
-			console.log(this.recipeOrder);
-
-			// We want to organize by Crafting "Depth", a true "craft in this order" based on previous dependencies
-
-
-			// {{--
-			// 	TODO, this is a little flawed. By job is good, but the depth matters a lot too. I think it needs to be:
-			// 	Depth 1
-			// 		Blacksmith
-			// 		...
-			// 	Depth 2
-			// 		...
-			// 		Blacksmith
-			// 		...
-			// 	Depth 3
-			// 		...
-			// --}}
-		},
 		sortedZones() {
 			// Because this needs to be reactive, it's a `method`, and not a `computed`
 			// Get a new copy of breakdown

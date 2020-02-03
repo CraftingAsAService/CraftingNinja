@@ -97,7 +97,12 @@
 
 					<div class='card'>
 						<div class='card__content'>
-							<crafting-job v-for='jobId in sortedJobs' :key='jobId' :job-id='jobId'></crafting-job>
+							<div v-for='(sortedJobs, tier) in recipeOrder' :key='tier' class='tier'>
+								<h4>
+									Tier <span v-html='tier'></span>
+								</h4>
+								<crafting-job v-for='(recipeIds, jobId) in sortedJobs' :key='jobId' :job-id='jobId' :recipe-ids='recipeIds'></crafting-job>
+							</div>
 							{{-- @foreach ($recipeJobs as $job)
 							<div>
 								@if ( ! $loop->first)
