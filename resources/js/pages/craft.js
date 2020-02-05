@@ -14,7 +14,7 @@ Vue.mixin({
 			game: game,
 			itemData: items,
 			recipeData: recipes,
-			recipeJobs: recipeJobs,
+			jobData: recipeJobs,
 			recipeOrder: recipeOrder,
 			zoneData: zones,
 			maps: maps,

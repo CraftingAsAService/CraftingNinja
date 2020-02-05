@@ -42,6 +42,8 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
     shown: {
       cache: false,
       get: function get() {
+        // TEMP:
+        return true;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -69,8 +71,11 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
         return false;
       }
     },
-    zone: function zone() {
+    job: function job() {
       return this.jobData[this.jobId];
+    },
+    src: function src() {
+      return '/assets/' + game.slug + '/jobs/' + this.job.icon + '.png';
     }
   } // methods: {
   // 	zoneRefresh(zoneId) {
@@ -32904,9 +32909,9 @@ var render = function() {
     },
     [
       _c("h5", { staticClass: "name" }, [
-        _c("i", {
-          staticClass: "fas fa-map-marked -desize float-right",
-          attrs: { hidden: "" }
+        _c("img", {
+          staticClass: "icon mr-1",
+          attrs: { src: _vm.src, alt: "", width: "20", height: "20" }
         }),
         _vm._v(" "),
         _c("span", { domProps: { innerHTML: _vm._s(_vm.job.name) } })
@@ -45135,7 +45140,7 @@ Vue.mixin({
       game: game,
       itemData: items,
       recipeData: recipes,
-      recipeJobs: recipeJobs,
+      jobData: recipeJobs,
       recipeOrder: recipeOrder,
       zoneData: zones,
       maps: maps,
