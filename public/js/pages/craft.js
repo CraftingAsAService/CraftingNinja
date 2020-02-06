@@ -22,7 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['jobId', 'recipeIds'],
+  props: ['tierId', 'jobId', 'recipeIds'],
   // data() {
   // 	return {
   // 		// shown: false,
@@ -299,9 +299,10 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
       checked: false
     };
   },
-  mounted: function mounted() {// Calculate if its shown
-    // this.$eventBus.$on('reagentRefresh', this.refresh);
-  },
+  // mounted() {
+  // Calculate if its shown
+  // this.$eventBus.$on('reagentRefresh', this.refresh);
+  // },
   // beforeDestroy:function() {
   // 	this.$eventBus.$off('reagentRefresh');
   // },
@@ -362,6 +363,13 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -383,40 +391,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['recipe', 'item'],
+  props: ['recipeId', 'jobId'],
   data: function data() {
     return {
-      gameSlug: game.slug,
-      nodeTypes: nodeTypes,
-      nodes: nodes,
-      sources: {},
-      progress: 0,
-      checked: false,
-      need: 0,
-      have: 0,
-      required: 0
+      // progress: 0,
+      checked: false
     };
   },
-  created: function created() {
-    this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
-  },
+  // created:function() {
+  // 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
+  // },
   // mounted:function() {
   // },
-  beforeDestroy: function beforeDestroy() {
-    this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+  // beforeDestroy:function() {
+  // 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+  // },
+  computed: {
+    shown: {
+      cache: false,
+      get: function get() {
+        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsRecipeJobTierPreference(this.recipeId, this.jobId, this.tierId);
+      }
+    },
+    recipe: function recipe() {
+      return _objectSpread({}, this.recipeData[this.recipeId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].recipes()[this.recipeId]);
+    },
+    item: function item() {
+      return this.itemData[this.recipe.item_id];
+    }
   },
   watch: {
     checked: function checked(truthy) {
-      this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
+      console.log('checked!'); // this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
     }
   },
-  methods: {
-    amountUpdate: function amountUpdate(need, have, required) {
-      this.need = need;
-      this.have = have;
-      this.required = required;
-    }
+  methods: {// amountUpdate:function(need, have, required) {
+    // 	this.need = need;
+    // 	this.have = have;
+    // 	this.required = required;
+    // }
   }
 });
 
@@ -32920,7 +32935,11 @@ var render = function() {
       _vm._l(_vm.recipeIds, function(recipeId) {
         return _c("crafting-recipe", {
           key: recipeId,
-          attrs: { "recipe-id": recipeId, "job-id": _vm.jobId }
+          attrs: {
+            "recipe-id": recipeId,
+            "job-id": _vm.jobId,
+            "tier-id": _vm.tierId
+          }
         })
       }),
       _vm._v(" "),
@@ -33186,95 +33205,112 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row item" }, [
-    _c("div", { staticClass: "col-auto" }, [
-      _c("img", {
-        staticClass: "icon",
-        attrs: {
-          src: "/assets/" + _vm.gameSlug + "/i/" + _vm.item.icon + ".png",
-          alt: "",
-          width: "48",
-          height: "48"
+  return _c(
+    "div",
+    {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.shown,
+          expression: "shown"
         }
-      })
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
-      [
-        _vm.need > 0
-          ? _c("span", {
-              staticClass: "required text-warning",
-              domProps: { innerHTML: _vm._s(_vm.need) }
-            })
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.need > 0
-          ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-          : _vm._e(),
-        _vm._v(" "),
-        _c("big", {
-          class: "rarity-" + _vm.item.rarity,
-          domProps: { innerHTML: _vm._s(_vm.item.name) }
-        })
       ],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-auto" }, [
-      _c("div", { staticClass: "form-group tally" }, [
-        _c(
-          "label",
-          { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
-          [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.checked,
-                  expression: "checked"
-                }
-              ],
-              attrs: { type: "checkbox" },
-              domProps: {
-                checked: Array.isArray(_vm.checked)
-                  ? _vm._i(_vm.checked, null) > -1
-                  : _vm.checked
-              },
-              on: {
-                change: function($event) {
-                  var $$a = _vm.checked,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = null,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+      staticClass: "row item"
+    },
+    [
+      _c("div", { staticClass: "col-auto" }, [
+        _c("img", {
+          staticClass: "icon",
+          attrs: {
+            src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
+            alt: "",
+            width: "48",
+            height: "48"
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "col info",
+          style: _vm.recipe.need <= 0 ? "opacity: .5;" : ""
+        },
+        [
+          _vm.recipe.need > 0
+            ? _c("span", {
+                staticClass: "required text-warning",
+                domProps: { innerHTML: _vm._s(_vm.recipe.need) }
+              })
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.recipe.need > 0
+            ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
+            : _vm._e(),
+          _vm._v(" "),
+          _c("big", {
+            class: "rarity-" + _vm.item.rarity,
+            domProps: { innerHTML: _vm._s(_vm.item.name) }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-auto" }, [
+        _c("div", { staticClass: "form-group tally" }, [
+          _c(
+            "label",
+            { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.checked,
+                    expression: "checked"
+                  }
+                ],
+                attrs: { type: "checkbox" },
+                domProps: {
+                  checked: Array.isArray(_vm.checked)
+                    ? _vm._i(_vm.checked, null) > -1
+                    : _vm.checked
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.checked,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.checked = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
                     } else {
-                      $$i > -1 &&
-                        (_vm.checked = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
+                      _vm.checked = $$c
                     }
-                  } else {
-                    _vm.checked = $$c
                   }
                 }
-              }
-            }),
-            _vm._v(" "),
-            _c("span", {
-              staticClass: "checkbox-indicator",
-              staticStyle: { width: "24px", height: "24px", top: "-10px" }
-            })
-          ]
-        )
+              }),
+              _vm._v(" "),
+              _c("span", {
+                staticClass: "checkbox-indicator",
+                staticStyle: { width: "24px", height: "24px", top: "-10px" }
+              })
+            ]
+          )
+        ])
       ])
-    ])
-  ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -45163,8 +45199,8 @@ Vue.mixin({
     }
   }
 });
-Vue.component('crafting-map', __webpack_require__(/*! ../components/CraftingMap.vue */ "./resources/js/components/CraftingMap.vue")["default"]);
 Vue.component('crafting-zone', __webpack_require__(/*! ../components/CraftingZone.vue */ "./resources/js/components/CraftingZone.vue")["default"]);
+Vue.component('crafting-map', __webpack_require__(/*! ../components/CraftingMap.vue */ "./resources/js/components/CraftingMap.vue")["default"]);
 Vue.component('crafting-job', __webpack_require__(/*! ../components/CraftingJob.vue */ "./resources/js/components/CraftingJob.vue")["default"]);
 var craft = new Vue({
   name: 'Crafting',
@@ -45461,17 +45497,21 @@ __webpack_require__.r(__webpack_exports__);
 var state = Vue.observable({
   items: {},
   recipes: {},
-  itemZonePreferences: {}
+  itemZonePreferences: {},
+  recipeJobTierPreferences: {}
 });
 var getters = {
   items: function items() {
     return state.items;
   },
+  itemZonePreferences: function itemZonePreferences() {
+    return state.itemZonePreferences;
+  },
   recipes: function recipes() {
     return state.recipes;
   },
-  itemZonePreferences: function itemZonePreferences() {
-    return state.itemZonePreferences;
+  recipeJobTierPreferences: function recipeJobTierPreferences() {
+    return state.recipeJobTierPreferences;
   }
 };
 var mutations = {
@@ -45491,6 +45531,9 @@ var mutations = {
   },
   setItemZonePreference: function setItemZonePreference(itemId, zoneId) {
     return state.itemZonePreferences[itemId] = zoneId;
+  },
+  setRecipeJobTierPreference: function setRecipeJobTierPreference(recipeId, jobId, tierId) {
+    return state.recipeJobTierPreferences[recipeId] = jobId + '-' + tierId;
   }
 };
 var actions = {
@@ -45498,6 +45541,12 @@ var actions = {
     // First Come, First Serve the Item-Zone Preference
     if (typeof state.itemZonePreferences[itemId] !== 'undefined') return state.itemZonePreferences[itemId] == zoneId;
     mutations.setItemZonePreference(itemId, zoneId);
+    return true;
+  },
+  fcfsRecipeJobTierPreference: function fcfsRecipeJobTierPreference(recipeId, jobId, tierId) {
+    // First Come, First Serve the Recipe-Job Preference
+    if (typeof state.recipeJobTierPreferences[recipeId] !== 'undefined') return state.recipeJobTierPreferences[recipeId] == jobId + '-' + tierId;
+    mutations.setRecipeJobTierPreference(recipeId, jobId, tierId);
     return true;
   } // export const mutators = {
   // 	firstComeFirstServeItemToZone:function(itemId, zoneId) {

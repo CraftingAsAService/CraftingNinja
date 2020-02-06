@@ -50,10 +50,10 @@
 				checked: false
 			}
 		},
-		mounted() {
+		// mounted() {
 			// Calculate if its shown
 			// this.$eventBus.$on('reagentRefresh', this.refresh);
-		},
+		// },
 		// beforeDestroy:function() {
 		// 	this.$eventBus.$off('reagentRefresh');
 		// },

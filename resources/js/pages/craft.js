@@ -38,8 +38,8 @@ Vue.mixin({
 	}
 });
 
-Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
+Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
 Vue.component('crafting-job', require('../components/CraftingJob.vue').default);
 
 const craft = new Vue({

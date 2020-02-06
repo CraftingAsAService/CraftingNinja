@@ -89,6 +89,7 @@ class CraftController extends Controller
 			$recipeOrder[$depth] = collect(array_replace($recipesInDepth, array_intersect_key($recipes->toArray(), $recipesInDepth)))->groupBy('job_id')->map(function($group) {
 					return $group->pluck('id');
 				})->toArray();
+		$recipeOrder = array_reverse($recipeOrder);
 
 		$items = Item::with(
 				'nodes', // Gathering drops

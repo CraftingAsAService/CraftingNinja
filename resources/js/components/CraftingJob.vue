@@ -4,7 +4,7 @@
 			<img :src='src' alt='' width='20' height='20' class='icon mr-1'>
 			<span v-html='job.name'></span>
 		</h5>
-		<crafting-recipe v-for='recipeId in recipeIds' :key='recipeId' :recipe-id='recipeId' :job-id='jobId'></crafting-recipe>
+		<crafting-recipe v-for='recipeId in recipeIds' :key='recipeId' :recipe-id='recipeId' :job-id='jobId' :tier-id='tierId'></crafting-recipe>
 		<hr>
 	</div>
 </template>
@@ -13,7 +13,7 @@
 	Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
 
 	export default {
-		props: [ 'jobId', 'recipeIds' ],
+		props: [ 'tierId', 'jobId', 'recipeIds' ],
 		// data() {
 		// 	return {
 		// 		// shown: false,

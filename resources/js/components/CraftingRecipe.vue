@@ -1,11 +1,11 @@
 <template>
-	<div class='row item'>
+	<div class='row item' v-show='shown'>
 		<div class='col-auto'>
-			<img :src='"/assets/" + gameSlug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
+			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
-		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='need > 0' v-html='need'></span>
-			<small class='text-muted' v-if='need > 0'>x</small>
+		<div class='col info' :style='recipe.need <= 0 ? "opacity: .5;" : ""'>
+			<span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.need'></span>
+			<small class='text-muted' v-if='recipe.need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 		</div>
 		<div class='col-auto'>
@@ -20,40 +20,53 @@
 </template>
 
 <script>
+	import { getters, mutations, actions } from '../stores/crafting';
+
 	export default {
-		props: [ 'recipe', 'item' ],
+		props: [ 'recipeId', 'jobId' ],
 		data () {
 			return {
-				gameSlug: game.slug,
-				nodeTypes: nodeTypes,
-				nodes: nodes,
-				sources: {},
-				progress: 0,
-				checked: false,
-				need: 0,
-				have: 0,
-				required: 0
+				// progress: 0,
+				checked: false
 			}
 		},
-		created:function() {
-			this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
-		},
+		// created:function() {
+		// 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
+		// },
 		// mounted:function() {
 		// },
-		beforeDestroy:function() {
-			this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+		// beforeDestroy:function() {
+		// 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+		// },
+		computed: {
+			shown: {
+				cache: false,
+				get() {
+					return actions.fcfsRecipeJobTierPreference(this.recipeId, this.jobId, this.tierId);
+				}
+			},
+			recipe() {
+				return {
+					...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
+					...getters.recipes()[this.recipeId] // "Crafting" recipe data, have/need/required
+				};
+			},
+			item() {
+				return this.itemData[this.recipe.item_id];
+			},
 		},
 		watch: {
 			checked:function(truthy) {
-				this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
+				console.log('checked!');
+				// this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
 			}
 		},
 		methods: {
-			amountUpdate:function(need, have, required) {
-				this.need = need;
-				this.have = have;
-				this.required = required;
-			}
+			// amountUpdate:function(need, have, required) {
+			// 	this.need = need;
+			// 	this.have = have;
+			// 	this.required = required;
+			// }
 		}
 	}
 </script>

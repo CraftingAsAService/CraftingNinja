@@ -3,12 +3,14 @@ const state = Vue.observable({
 	items: {},
 	recipes: {},
 	itemZonePreferences: {},
+	recipeJobTierPreferences: {},
 });
 
 export const getters = {
 	items: () => state.items,
-	recipes: () => state.recipes,
 	itemZonePreferences: () => state.itemZonePreferences,
+	recipes: () => state.recipes,
+	recipeJobTierPreferences: () => state.recipeJobTierPreferences,
 };
 
 export const mutations = {
@@ -23,6 +25,7 @@ export const mutations = {
 			required: required
 		},
 	setItemZonePreference: (itemId, zoneId) => state.itemZonePreferences[itemId] = zoneId,
+	setRecipeJobTierPreference: (recipeId, jobId, tierId) => state.recipeJobTierPreferences[recipeId] = jobId + '-' + tierId,
 }
 
 export const actions = {
@@ -32,6 +35,14 @@ export const actions = {
 			return state.itemZonePreferences[itemId] == zoneId;
 
 		mutations.setItemZonePreference(itemId, zoneId);
+		return true;
+	},
+	fcfsRecipeJobTierPreference: (recipeId, jobId, tierId) => {
+		// First Come, First Serve the Recipe-Job Preference
+		if (typeof state.recipeJobTierPreferences[recipeId] !== 'undefined')
+			return state.recipeJobTierPreferences[recipeId] == jobId + '-' + tierId;
+
+		mutations.setRecipeJobTierPreference(recipeId, jobId, tierId);
 		return true;
 	},
 }
