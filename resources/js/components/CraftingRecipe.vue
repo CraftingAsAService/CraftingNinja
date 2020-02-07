@@ -1,5 +1,5 @@
 <template>
-	<div class='row item' v-show='shown'>
+	<div class='row recipe' v-show='shown'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
@@ -23,7 +23,7 @@
 	import { getters, mutations, actions } from '../stores/crafting';
 
 	export default {
-		props: [ 'recipeId', 'jobId' ],
+		props: [ 'recipeId', 'jobId', 'tierId' ],
 		data () {
 			return {
 				// progress: 0,
@@ -42,7 +42,7 @@
 			shown: {
 				cache: false,
 				get() {
-					return actions.fcfsRecipeJobTierPreference(this.recipeId, this.jobId, this.tierId);
+					return actions.fcfsItemJobTierPreference(this.item.id, this.jobId, this.tierId);
 				}
 			},
 			recipe() {

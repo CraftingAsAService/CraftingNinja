@@ -33,9 +33,6 @@
 			shown: {
 				cache: false,
 				get() {
-					// TEMP:
-					return true;
-
 					for (let c of this.$children)
 						if (c.shown)
 							return true;

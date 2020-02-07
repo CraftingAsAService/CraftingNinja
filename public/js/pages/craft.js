@@ -42,8 +42,6 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
     shown: {
       cache: false,
       get: function get() {
-        // TEMP:
-        return true;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -393,7 +391,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['recipeId', 'jobId'],
+  props: ['recipeId', 'jobId', 'tierId'],
   data: function data() {
     return {
       // progress: 0,
@@ -412,7 +410,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     shown: {
       cache: false,
       get: function get() {
-        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsRecipeJobTierPreference(this.recipeId, this.jobId, this.tierId);
+        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.jobId, this.tierId);
       }
     },
     recipe: function recipe() {
@@ -33216,7 +33214,7 @@ var render = function() {
           expression: "shown"
         }
       ],
-      staticClass: "row item"
+      staticClass: "row recipe"
     },
     [
       _c("div", { staticClass: "col-auto" }, [
@@ -45498,7 +45496,7 @@ var state = Vue.observable({
   items: {},
   recipes: {},
   itemZonePreferences: {},
-  recipeJobTierPreferences: {}
+  itemJobTierPreferences: {}
 });
 var getters = {
   items: function items() {
@@ -45510,8 +45508,8 @@ var getters = {
   recipes: function recipes() {
     return state.recipes;
   },
-  recipeJobTierPreferences: function recipeJobTierPreferences() {
-    return state.recipeJobTierPreferences;
+  itemJobTierPreferences: function itemJobTierPreferences() {
+    return state.itemJobTierPreferences;
   }
 };
 var mutations = {
@@ -45532,8 +45530,8 @@ var mutations = {
   setItemZonePreference: function setItemZonePreference(itemId, zoneId) {
     return state.itemZonePreferences[itemId] = zoneId;
   },
-  setRecipeJobTierPreference: function setRecipeJobTierPreference(recipeId, jobId, tierId) {
-    return state.recipeJobTierPreferences[recipeId] = jobId + '-' + tierId;
+  setItemJobTierPreference: function setItemJobTierPreference(itemId, jobId, tierId) {
+    return state.itemJobTierPreferences[itemId] = jobId + '-' + tierId;
   }
 };
 var actions = {
@@ -45543,10 +45541,10 @@ var actions = {
     mutations.setItemZonePreference(itemId, zoneId);
     return true;
   },
-  fcfsRecipeJobTierPreference: function fcfsRecipeJobTierPreference(recipeId, jobId, tierId) {
+  fcfsItemJobTierPreference: function fcfsItemJobTierPreference(itemId, jobId, tierId) {
     // First Come, First Serve the Recipe-Job Preference
-    if (typeof state.recipeJobTierPreferences[recipeId] !== 'undefined') return state.recipeJobTierPreferences[recipeId] == jobId + '-' + tierId;
-    mutations.setRecipeJobTierPreference(recipeId, jobId, tierId);
+    if (typeof state.itemJobTierPreferences[itemId] !== 'undefined') return state.itemJobTierPreferences[itemId] == jobId + '-' + tierId;
+    mutations.setItemJobTierPreference(itemId, jobId, tierId);
     return true;
   } // export const mutators = {
   // 	firstComeFirstServeItemToZone:function(itemId, zoneId) {
