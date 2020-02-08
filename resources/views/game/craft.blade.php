@@ -101,6 +101,7 @@
 								<h4>
 									Tier <span v-html='recipeOrder.length - key'></span>
 								</h4>
+
 								<crafting-job v-for='(recipeIds, jobId) in sortedJobs' :key='key + "" + jobId' :tier-id='key' :job-id='jobId' :recipe-ids='recipeIds'></crafting-job>
 							</div>
 							{{-- @foreach ($recipeJobs as $job)

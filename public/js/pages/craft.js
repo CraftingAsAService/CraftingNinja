@@ -288,7 +288,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 
-Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingSource.vue */ "./resources/js/components/CraftingSource.vue")["default"]);
+Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/CraftingReagentSource.vue */ "./resources/js/components/CraftingReagentSource.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['itemId', 'zoneId'],
   data: function data() {
@@ -352,93 +352,10 @@ Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingS
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['recipeId', 'jobId', 'tierId'],
-  data: function data() {
-    return {
-      // progress: 0,
-      checked: false
-    };
-  },
-  // created:function() {
-  // 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
-  // },
-  // mounted:function() {
-  // },
-  // beforeDestroy:function() {
-  // 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
-  // },
-  computed: {
-    shown: {
-      cache: false,
-      get: function get() {
-        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.jobId, this.tierId);
-      }
-    },
-    recipe: function recipe() {
-      return _objectSpread({}, this.recipeData[this.recipeId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].recipes()[this.recipeId]);
-    },
-    item: function item() {
-      return this.itemData[this.recipe.item_id];
-    }
-  },
-  watch: {
-    checked: function checked(truthy) {
-      console.log('checked!'); // this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
-    }
-  },
-  methods: {// amountUpdate:function(need, have, required) {
-    // 	this.need = need;
-    // 	this.have = have;
-    // 	this.required = required;
-    // }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -478,6 +395,180 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (this.zoneMatches) return;
       _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.itemId, this.zoneId); // this.$eventBus.$emit('zoneRefresh', this.zoneId);
       // this.$eventBus.$emit('zoneRefresh', this.sectionZoneId);
+
+      this.$eventBus.$emit('craftRefresh');
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+Vue.component('crafting-recipe-source', __webpack_require__(/*! ../components/CraftingRecipeSource.vue */ "./resources/js/components/CraftingRecipeSource.vue")["default"]);
+Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/CraftingReagentSource.vue */ "./resources/js/components/CraftingReagentSource.vue")["default"]);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['recipeId', 'tierId'],
+  data: function data() {
+    return {
+      // progress: 0,
+      checked: false
+    };
+  },
+  // created:function() {
+  // 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
+  // },
+  // mounted:function() {
+  // },
+  // beforeDestroy:function() {
+  // 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+  // },
+  computed: {
+    shown: {
+      cache: false,
+      get: function get() {
+        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
+      }
+    },
+    sources: function sources() {
+      var _this = this;
+
+      var sources = [];
+      Object.entries(this.recipeData).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            recipeId = _ref2[0],
+            recipe = _ref2[1];
+
+        if (recipe.item_id != _this.item.id) return;
+        if (recipe.job_id == _this.recipe.job_id) sources.unshift(recipe.job_id);else sources.push(recipe.job_id);
+      });
+      return sources;
+    },
+    itemSources: function itemSources() {
+      var _this2 = this;
+
+      var itemSources = {};
+      Object.keys(this.breakdown).forEach(function (loopedZoneId) {
+        Object.keys(_this2.breakdown[loopedZoneId]).forEach(function (loopedItemId) {
+          if (loopedItemId == _this2.item.id) itemSources[loopedZoneId] = _this2.breakdown[loopedZoneId][_this2.item.id];
+        });
+      });
+      return itemSources;
+    },
+    recipe: function recipe() {
+      return _objectSpread({}, this.recipeData[this.recipeId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].recipes()[this.recipeId]);
+    },
+    item: function item() {
+      return this.itemData[this.recipe.item_id];
+    }
+  },
+  watch: {
+    checked: function checked(truthy) {
+      console.log('checked!'); // this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
+    }
+  },
+  methods: {// amountUpdate:function(need, have, required) {
+    // 	this.need = need;
+    // 	this.have = have;
+    // 	this.required = required;
+    // }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['sectionJobId', 'jobId', 'recipeId', 'tierId'],
+  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
+    jobMatches: function jobMatches() {
+      return this.sectionJobId == this.jobId;
+    },
+    job: function job() {
+      return this.jobData[this.jobId];
+    },
+    src: function src() {
+      return '/assets/' + game.slug + '/jobs/' + this.job.icon + '.png';
+    }
+  }),
+  methods: {
+    switchJob: function switchJob() {
+      if (this.jobMatches) return; // mutations.setItemZonePreference(this.itemId, this.jobId);
+      // this.$eventBus.$emit('zoneRefresh', this.jobId);
+      // this.$eventBus.$emit('zoneRefresh', this.sectionJobId);
 
       this.$eventBus.$emit('craftRefresh');
     }
@@ -32933,11 +33024,7 @@ var render = function() {
       _vm._l(_vm.recipeIds, function(recipeId) {
         return _c("crafting-recipe", {
           key: recipeId,
-          attrs: {
-            "recipe-id": recipeId,
-            "job-id": _vm.jobId,
-            "tier-id": _vm.tierId
-          }
+          attrs: { "recipe-id": recipeId, "tier-id": _vm.tierId }
         })
       }),
       _vm._v(" "),
@@ -33104,7 +33191,7 @@ var render = function() {
                 return [
                   _vm._l(sourceTypes, function(sourceData, type) {
                     return _vm._l(sourceData, function(info, id) {
-                      return _c("crafting-source", {
+                      return _c("crafting-reagent-source", {
                         key: sourceZoneId + type + id,
                         attrs: {
                           "section-zone-id": _vm.zoneId,
@@ -33188,6 +33275,44 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("img", {
+    style: _vm.zoneMatches ? "" : "opacity: .5; cursor: pointer;",
+    attrs: {
+      src: _vm.src,
+      alt: "",
+      "data-toggle": "tooltip",
+      "data-html": "true",
+      "data-title": _vm.title
+    },
+    on: {
+      click: function($event) {
+        return _vm.switchZone()
+      }
+    }
+  })
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b&":
 /*!*****************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b& ***!
@@ -33250,7 +33375,46 @@ var render = function() {
           _c("big", {
             class: "rarity-" + _vm.item.rarity,
             domProps: { innerHTML: _vm._s(_vm.item.name) }
-          })
+          }),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "sources" },
+            [
+              _vm._l(_vm.sources, function(sourceJobId) {
+                return _c("crafting-recipe-source", {
+                  key: _vm.recipe.id + sourceJobId + _vm.tierId,
+                  attrs: {
+                    "section-job-id": _vm.recipe.job_id,
+                    "job-id": sourceJobId,
+                    "tier-id": _vm.tierId,
+                    "recipe-id": _vm.recipe.id
+                  }
+                })
+              }),
+              _vm._v(" "),
+              _vm._l(_vm.itemSources, function(sourceTypes, sourceZoneId) {
+                return [
+                  _vm._l(sourceTypes, function(sourceData, type) {
+                    return _vm._l(sourceData, function(info, id) {
+                      return _c("crafting-reagent-source", {
+                        key: sourceZoneId + type + id,
+                        attrs: {
+                          "section-zone-id": _vm.zoneId,
+                          "zone-id": sourceZoneId,
+                          "item-id": _vm.item.id,
+                          type: type,
+                          id: id,
+                          info: info
+                        }
+                      })
+                    })
+                  })
+                ]
+              })
+            ],
+            2
+          )
         ],
         1
       ),
@@ -33317,10 +33481,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&":
-/*!*****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0& ***!
-  \*****************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96& ***!
+  \***********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33333,17 +33497,19 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("img", {
-    style: _vm.zoneMatches ? "" : "opacity: .5; cursor: pointer;",
+    style: _vm.jobMatches ? "" : "opacity: .5; cursor: pointer;",
     attrs: {
       src: _vm.src,
       alt: "",
       "data-toggle": "tooltip",
       "data-html": "true",
-      "data-title": _vm.title
+      "data-title": _vm.job.abbreviation,
+      height: "24",
+      width: "24"
     },
     on: {
       click: function($event) {
-        return _vm.switchZone()
+        return _vm.switchJob()
       }
     }
   })
@@ -44927,6 +45093,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/CraftingReagentSource.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/CraftingReagentSource.vue ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingReagentSource.vue?vue&type=template&id=a375c420& */ "./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420&");
+/* harmony import */ var _CraftingReagentSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingReagentSource.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CraftingReagentSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/CraftingReagentSource.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingReagentSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingReagentSource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagentSource.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingReagentSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingReagentSource.vue?vue&type=template&id=a375c420& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingReagentSource.vue?vue&type=template&id=a375c420&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingReagentSource_vue_vue_type_template_id_a375c420___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/CraftingRecipe.vue":
 /*!****************************************************!*\
   !*** ./resources/js/components/CraftingRecipe.vue ***!
@@ -44996,17 +45231,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingSource.vue":
-/*!****************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue ***!
-  \****************************************************/
+/***/ "./resources/js/components/CraftingRecipeSource.vue":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/CraftingRecipeSource.vue ***!
+  \**********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingSource.vue?vue&type=template&id=18ec3db0& */ "./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&");
-/* harmony import */ var _CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingSource.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&");
+/* harmony import */ var _CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingRecipeSource.vue?vue&type=template&id=61896d96& */ "./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96&");
+/* harmony import */ var _CraftingRecipeSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingRecipeSource.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -45016,9 +45251,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _CraftingRecipeSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -45028,38 +45263,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingSource.vue"
+component.options.__file = "resources/js/components/CraftingRecipeSource.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************/
+/***/ "./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingSource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipeSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingRecipeSource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipeSource.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipeSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0& ***!
-  \***********************************************************************************/
+/***/ "./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96& ***!
+  \*****************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingSource.vue?vue&type=template&id=18ec3db0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingRecipeSource.vue?vue&type=template&id=61896d96& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipeSource.vue?vue&type=template&id=61896d96&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipeSource_vue_vue_type_template_id_61896d96___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

@@ -11,7 +11,7 @@
 			<div class='sources'>
 				<template v-for='(sourceTypes, sourceZoneId) in sources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
-						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-source>
+						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-reagent-source>
 					</template>
 				</template>
 				<!--
@@ -40,7 +40,7 @@
 <script>
 	import { getters, mutations, actions } from '../stores/crafting';
 
-	Vue.component('crafting-source', require('../components/CraftingSource.vue').default);
+	Vue.component('crafting-reagent-source', require('../components/CraftingReagentSource.vue').default);
 
 	export default {
 		props: [ 'itemId', 'zoneId' ],
@@ -87,7 +87,7 @@
 					});
 				});
 				return alternateSources;
-			},
+			}
 		},
 		watch: {
 			checked:function(truthy) {
