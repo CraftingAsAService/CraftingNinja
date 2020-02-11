@@ -9,7 +9,7 @@
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources'>
-				<crafting-recipe-source v-for='sourceJobId in sources' :key='recipe.id + sourceJobId + tierId' :section-job-id='recipe.job_id' :job-id='sourceJobId' :tier-id='tierId' :recipe-id='recipe.id'></crafting-recipe-source>
+				<crafting-recipe-source v-for='sourceJobId in sources' :key='recipe.id + sourceJobId + tierId' :section-job-id='recipe.job_id' :job-id='sourceJobId' :tier-id='tierId' :item-id='item.id'></crafting-recipe-source>
 				<template v-for='(sourceTypes, sourceZoneId) in itemSources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
 						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-reagent-source>
@@ -54,6 +54,7 @@
 			shown: {
 				cache: false,
 				get() {
+					console.log(this.item.name, actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId));
 					return actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
 				}
 			},

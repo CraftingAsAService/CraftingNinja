@@ -6,7 +6,7 @@
 	import { getters, mutations } from '../stores/crafting';
 
 	export default {
-		props: [ 'sectionJobId', 'jobId', 'recipeId', 'tierId' ],
+		props: [ 'sectionJobId', 'jobId', 'itemId', 'tierId' ],
 		computed: {
 			...getters,
 			jobMatches() {
@@ -24,7 +24,9 @@
 				if (this.jobMatches)
 					return;
 
-				// mutations.setItemZonePreference(this.itemId, this.jobId);
+					console.log(this.itemData[this.itemId].name, this.itemId, this.jobId, this.tierId);
+
+				mutations.setItemJobTierPreference(this.itemId, this.jobId, this.tierId);
 
 				// this.$eventBus.$emit('zoneRefresh', this.jobId);
 				// this.$eventBus.$emit('zoneRefresh', this.sectionJobId);

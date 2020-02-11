@@ -480,6 +480,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     shown: {
       cache: false,
       get: function get() {
+        console.log(this.item.name, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId));
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
       }
     },
@@ -552,7 +553,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['sectionJobId', 'jobId', 'recipeId', 'tierId'],
+  props: ['sectionJobId', 'jobId', 'itemId', 'tierId'],
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     jobMatches: function jobMatches() {
       return this.sectionJobId == this.jobId;
@@ -566,8 +567,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }),
   methods: {
     switchJob: function switchJob() {
-      if (this.jobMatches) return; // mutations.setItemZonePreference(this.itemId, this.jobId);
-      // this.$eventBus.$emit('zoneRefresh', this.jobId);
+      if (this.jobMatches) return;
+      console.log(this.itemData[this.itemId].name, this.itemId, this.jobId, this.tierId);
+      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemJobTierPreference(this.itemId, this.jobId, this.tierId); // this.$eventBus.$emit('zoneRefresh', this.jobId);
       // this.$eventBus.$emit('zoneRefresh', this.sectionJobId);
 
       this.$eventBus.$emit('craftRefresh');
@@ -33196,7 +33198,7 @@ var render = function() {
                         attrs: {
                           "section-zone-id": _vm.zoneId,
                           "zone-id": sourceZoneId,
-                          "item-id": _vm.item.id,
+                          "item-id": _vm.itemId,
                           type: type,
                           id: id,
                           info: info
@@ -33388,7 +33390,7 @@ var render = function() {
                     "section-job-id": _vm.recipe.job_id,
                     "job-id": sourceJobId,
                     "tier-id": _vm.tierId,
-                    "recipe-id": _vm.recipe.id
+                    "item-id": _vm.item.id
                   }
                 })
               }),

@@ -11,7 +11,7 @@
 			<div class='sources'>
 				<template v-for='(sourceTypes, sourceZoneId) in sources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
-						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-reagent-source>
+						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='itemId' :type='type' :id='id' :info='info'></crafting-reagent-source>
 					</template>
 				</template>
 				<!--
