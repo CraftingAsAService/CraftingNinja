@@ -1,5 +1,5 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='zoneMatches ? "" : "opacity: .5; cursor: pointer;"' @click='switchZone()'>
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='"vertical-align: top;" + (zoneMatches ? "" : "opacity: .5; cursor: pointer;")' @click='switchZone()'>
 </template>
 
 <script>

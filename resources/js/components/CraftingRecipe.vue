@@ -1,24 +1,24 @@
 <template>
-	<div class='row recipe' v-show='shown'>
+	<div class='row recipe mb-1' v-show='shown'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
 		</div>
 		<div class='col info' :style='recipe.need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.need'></span>
+			<span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.have' :style='"opacity: " + (recipe.have/recipe.need/2+.5)'></span><span class='text-muted'>/</span><span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.need'></span>
 			<small class='text-muted' v-if='recipe.need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
-			<div class='sources'>
+			<div class='sources' style='height: 20px; overflow: hidden;'>
 				<crafting-recipe-source v-for='sourceJobId in sources' :key='recipe.id + sourceJobId + tierId' :section-job-id='recipe.job_id' :job-id='sourceJobId' :tier-id='tierId' :item-id='item.id'></crafting-recipe-source>
-				<template v-for='(sourceTypes, sourceZoneId) in itemSources'>
+				<!-- <template v-for='(sourceTypes, sourceZoneId) in itemSources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
 						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-reagent-source>
 					</template>
-				</template>
+				</template> -->
 			</div>
 		</div>
-		<div class='col-auto'>
-			<div class='form-group tally'>
+		<div class='col-auto' style='display: flex; align-items: center;'>
+			<div class='form-group tally' style='margin-bottom: 0;'>
 				<label class='checkbox ml-2' style='width: 24px;'>
 					<input type='checkbox' v-model='checked'>
 					<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>

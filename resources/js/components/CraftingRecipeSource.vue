@@ -1,5 +1,5 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='job.abbreviation' :style='jobMatches ? "" : "opacity: .5; cursor: pointer;"' @click='switchJob()' height='24' width='24' >
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='job.abbreviation' :style='"vertical-align: top;" + (jobMatches ? "" : "opacity: .5; cursor: pointer;")' @click='switchJob()' height='20' width='20' >
 </template>
 
 <script>

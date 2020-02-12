@@ -287,6 +287,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/CraftingReagentSource.vue */ "./resources/js/components/CraftingReagentSource.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -33147,7 +33149,7 @@ var render = function() {
           expression: "shown"
         }
       ],
-      staticClass: "row item"
+      staticClass: "row item mb-1"
     },
     [
       _c("div", { staticClass: "col-auto" }, [
@@ -33172,6 +33174,14 @@ var render = function() {
           _vm.item.need > 0
             ? _c("span", {
                 staticClass: "required text-warning",
+                style: "opacity: " + (_vm.item.have / _vm.item.need / 2 + 0.5),
+                domProps: { innerHTML: _vm._s(_vm.item.have) }
+              })
+            : _vm._e(),
+          _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
+          _vm.item.need > 0
+            ? _c("span", {
+                staticClass: "required text-warning",
                 domProps: { innerHTML: _vm._s(_vm.item.need) }
               })
             : _vm._e(),
@@ -33187,7 +33197,10 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "sources" },
+            {
+              staticClass: "sources",
+              staticStyle: { height: "20px", overflow: "hidden" }
+            },
             [
               _vm._l(_vm.sources, function(sourceTypes, sourceZoneId) {
                 return [
@@ -33215,58 +33228,77 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "col-auto" }, [
-        _c("div", { staticClass: "form-group tally" }, [
+      _c(
+        "div",
+        {
+          staticClass: "col-auto",
+          staticStyle: { display: "flex", "align-items": "center" }
+        },
+        [
           _c(
-            "label",
-            { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+            "div",
+            {
+              staticClass: "form-group tally",
+              staticStyle: { "margin-bottom": "0" }
+            },
             [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.checked,
-                    expression: "checked"
-                  }
-                ],
-                attrs: { type: "checkbox" },
-                domProps: {
-                  checked: Array.isArray(_vm.checked)
-                    ? _vm._i(_vm.checked, null) > -1
-                    : _vm.checked
+              _vm._v("\n\t\t\t-\n\t\t\t"),
+              _c(
+                "label",
+                {
+                  staticClass: "checkbox ml-2",
+                  staticStyle: { width: "24px" }
                 },
-                on: {
-                  change: function($event) {
-                    var $$a = _vm.checked,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = null,
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                      } else {
-                        $$i > -1 &&
-                          (_vm.checked = $$a
-                            .slice(0, $$i)
-                            .concat($$a.slice($$i + 1)))
+                [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.checked,
+                        expression: "checked"
                       }
-                    } else {
-                      _vm.checked = $$c
+                    ],
+                    attrs: { type: "checkbox" },
+                    domProps: {
+                      checked: Array.isArray(_vm.checked)
+                        ? _vm._i(_vm.checked, null) > -1
+                        : _vm.checked
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$a = _vm.checked,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                          } else {
+                            $$i > -1 &&
+                              (_vm.checked = $$a
+                                .slice(0, $$i)
+                                .concat($$a.slice($$i + 1)))
+                          }
+                        } else {
+                          _vm.checked = $$c
+                        }
+                      }
                     }
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("span", {
-                staticClass: "checkbox-indicator",
-                staticStyle: { width: "24px", height: "24px", top: "-10px" }
-              })
+                  }),
+                  _vm._v(" "),
+                  _c("span", {
+                    staticClass: "checkbox-indicator",
+                    staticStyle: { width: "24px", height: "24px", top: "-10px" }
+                  })
+                ]
+              ),
+              _vm._v("\n\t\t\t+\n\t\t")
             ]
           )
-        ])
-      ])
+        ]
+      )
     ]
   )
 }
@@ -33293,7 +33325,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("img", {
-    style: _vm.zoneMatches ? "" : "opacity: .5; cursor: pointer;",
+    style:
+      "vertical-align: top;" +
+      (_vm.zoneMatches ? "" : "opacity: .5; cursor: pointer;"),
     attrs: {
       src: _vm.src,
       alt: "",
@@ -33341,7 +33375,7 @@ var render = function() {
           expression: "shown"
         }
       ],
-      staticClass: "row recipe"
+      staticClass: "row recipe mb-1"
     },
     [
       _c("div", { staticClass: "col-auto" }, [
@@ -33366,6 +33400,15 @@ var render = function() {
           _vm.recipe.need > 0
             ? _c("span", {
                 staticClass: "required text-warning",
+                style:
+                  "opacity: " + (_vm.recipe.have / _vm.recipe.need / 2 + 0.5),
+                domProps: { innerHTML: _vm._s(_vm.recipe.have) }
+              })
+            : _vm._e(),
+          _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
+          _vm.recipe.need > 0
+            ? _c("span", {
+                staticClass: "required text-warning",
                 domProps: { innerHTML: _vm._s(_vm.recipe.need) }
               })
             : _vm._e(),
@@ -33381,98 +33424,96 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "sources" },
-            [
-              _vm._l(_vm.sources, function(sourceJobId) {
-                return _c("crafting-recipe-source", {
-                  key: _vm.recipe.id + sourceJobId + _vm.tierId,
-                  attrs: {
-                    "section-job-id": _vm.recipe.job_id,
-                    "job-id": sourceJobId,
-                    "tier-id": _vm.tierId,
-                    "item-id": _vm.item.id
-                  }
-                })
-              }),
-              _vm._v(" "),
-              _vm._l(_vm.itemSources, function(sourceTypes, sourceZoneId) {
-                return [
-                  _vm._l(sourceTypes, function(sourceData, type) {
-                    return _vm._l(sourceData, function(info, id) {
-                      return _c("crafting-reagent-source", {
-                        key: sourceZoneId + type + id,
-                        attrs: {
-                          "section-zone-id": _vm.zoneId,
-                          "zone-id": sourceZoneId,
-                          "item-id": _vm.item.id,
-                          type: type,
-                          id: id,
-                          info: info
-                        }
-                      })
-                    })
-                  })
-                ]
+            {
+              staticClass: "sources",
+              staticStyle: { height: "20px", overflow: "hidden" }
+            },
+            _vm._l(_vm.sources, function(sourceJobId) {
+              return _c("crafting-recipe-source", {
+                key: _vm.recipe.id + sourceJobId + _vm.tierId,
+                attrs: {
+                  "section-job-id": _vm.recipe.job_id,
+                  "job-id": sourceJobId,
+                  "tier-id": _vm.tierId,
+                  "item-id": _vm.item.id
+                }
               })
-            ],
-            2
+            }),
+            1
           )
         ],
         1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "col-auto" }, [
-        _c("div", { staticClass: "form-group tally" }, [
+      _c(
+        "div",
+        {
+          staticClass: "col-auto",
+          staticStyle: { display: "flex", "align-items": "center" }
+        },
+        [
           _c(
-            "label",
-            { staticClass: "checkbox ml-2", staticStyle: { width: "24px" } },
+            "div",
+            {
+              staticClass: "form-group tally",
+              staticStyle: { "margin-bottom": "0" }
+            },
             [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.checked,
-                    expression: "checked"
-                  }
-                ],
-                attrs: { type: "checkbox" },
-                domProps: {
-                  checked: Array.isArray(_vm.checked)
-                    ? _vm._i(_vm.checked, null) > -1
-                    : _vm.checked
+              _c(
+                "label",
+                {
+                  staticClass: "checkbox ml-2",
+                  staticStyle: { width: "24px" }
                 },
-                on: {
-                  change: function($event) {
-                    var $$a = _vm.checked,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = null,
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                      } else {
-                        $$i > -1 &&
-                          (_vm.checked = $$a
-                            .slice(0, $$i)
-                            .concat($$a.slice($$i + 1)))
+                [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.checked,
+                        expression: "checked"
                       }
-                    } else {
-                      _vm.checked = $$c
+                    ],
+                    attrs: { type: "checkbox" },
+                    domProps: {
+                      checked: Array.isArray(_vm.checked)
+                        ? _vm._i(_vm.checked, null) > -1
+                        : _vm.checked
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$a = _vm.checked,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 && (_vm.checked = $$a.concat([$$v]))
+                          } else {
+                            $$i > -1 &&
+                              (_vm.checked = $$a
+                                .slice(0, $$i)
+                                .concat($$a.slice($$i + 1)))
+                          }
+                        } else {
+                          _vm.checked = $$c
+                        }
+                      }
                     }
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("span", {
-                staticClass: "checkbox-indicator",
-                staticStyle: { width: "24px", height: "24px", top: "-10px" }
-              })
+                  }),
+                  _vm._v(" "),
+                  _c("span", {
+                    staticClass: "checkbox-indicator",
+                    staticStyle: { width: "24px", height: "24px", top: "-10px" }
+                  })
+                ]
+              )
             ]
           )
-        ])
-      ])
+        ]
+      )
     ]
   )
 }
@@ -33499,15 +33540,17 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("img", {
-    style: _vm.jobMatches ? "" : "opacity: .5; cursor: pointer;",
+    style:
+      "vertical-align: top;" +
+      (_vm.jobMatches ? "" : "opacity: .5; cursor: pointer;"),
     attrs: {
       src: _vm.src,
       alt: "",
       "data-toggle": "tooltip",
       "data-html": "true",
       "data-title": _vm.job.abbreviation,
-      height: "24",
-      width: "24"
+      height: "20",
+      width: "20"
     },
     on: {
       click: function($event) {
