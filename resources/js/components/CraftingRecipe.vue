@@ -1,14 +1,16 @@
 <template>
-	<div class='row recipe mb-1' v-show='shown'>
+	<div class='row recipe mb-1' v-show='shown' :style='"opacity: " + (checked ? ".5" : "1")'>
 		<div class='col-auto'>
-			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
+			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' :width='checked ? 24 : 48' :height='checked ? 24 : 48' class='icon'>
 		</div>
 		<div class='col info' :style='recipe.need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.have' :style='"opacity: " + (recipe.have/recipe.need/2+.5)'></span><span class='text-muted'>/</span><span class='required text-warning' v-if='recipe.need > 0' v-html='recipe.need'></span>
+			<span v-if='recipe.need > 0'>
+				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (recipe.have/recipe.need/2+.5)' contenteditable v-text='recipe.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='recipe.need'></span>
+			</span>
 			<small class='text-muted' v-if='recipe.need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
-			<div class='sources' style='height: 20px; overflow: hidden;'>
+			<div class='sources' v-if=' ! checked' style='height: 20px; overflow: hidden;'>
 				<crafting-recipe-source v-for='sourceJobId in sources' :key='recipe.id + sourceJobId + tierId' :section-job-id='recipe.job_id' :job-id='sourceJobId' :tier-id='tierId' :item-id='item.id'></crafting-recipe-source>
 				<!-- <template v-for='(sourceTypes, sourceZoneId) in itemSources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
@@ -54,7 +56,6 @@
 			shown: {
 				cache: false,
 				get() {
-					console.log(this.item.name, actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId));
 					return actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
 				}
 			},
@@ -93,12 +94,58 @@
 		},
 		watch: {
 			checked:function(truthy) {
-				console.log('checked!');
-				// this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
+				if (this.stopCheckedWatcher)
+					return;
+				this.recipe.have = truthy ? this.recipe.need : 0;
+				this.updateHaveAmount();
 			}
 		},
 		methods: {
+			haveFocus(event) {
+				var range, selection;
+				if (document.body.createTextRange) {
+					range = document.body.createTextRange();
+					range.moveToElementText(event.target);
+					range.select();
+				} else if (window.getSelection) {
+					selection = window.getSelection();
+					range = document.createRange();
+					range.selectNodeContents(event.target);
+					selection.removeAllRanges();
+					selection.addRange(range);
+				}
+			},
+			haveEnter(event) {
+				event.target.blur();
+			},
+			haveBlur(event) {
+				// Make sure it's a number between 0 and `this.recipe.need`
+				var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.recipe.need), 0);
+				// Value might be bad, reset to 0
+				if (isNaN(inputValue))
+					inputValue = 0;
+				// Repopulate content with fixed value
+				event.target.innerText = inputValue;
 
+				// Check/Uncheck the box if applicable
+				if (inputValue < this.recipe.need && this.checked == true)
+					this.gentlyUpdateChecked(false);
+				else if (inputValue == this.recipe.need && this.checked == false)
+					this.gentlyUpdateChecked(true);
+
+				this.recipe.have = inputValue;
+				this.updateHaveAmount();
+			},
+			updateHaveAmount(have) {
+				console.log('have', this.recipe.have);
+			},
+			gentlyUpdateChecked(truthy) {
+				this.stopCheckedWatcher = true;
+				this.checked = truthy;
+				this.nextTick(()=>{
+					this.stopCheckedWatcher = false;
+				});
+			}
 			// amountUpdate:function(need, have, required) {
 			// 	this.need = need;
 			// 	this.have = have;

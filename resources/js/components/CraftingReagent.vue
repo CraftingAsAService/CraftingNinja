@@ -1,14 +1,16 @@
 <template>
-	<div class='row item mb-1' v-show='shown'>
+	<div class='row item mb-1' v-show='shown' :style='"opacity: " + (checked ? ".5" : "1")'>
 		<div class='col-auto'>
-			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' width='48' height='48' class='icon'>
+			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' :width='checked ? 24 : 48' :height='checked ? 24 : 48' class='icon'>
 		</div>
 		<div class='col info' :style='item.need <= 0 ? "opacity: .5;" : ""'>
-			<span class='required text-warning' v-if='item.need > 0' v-html='item.have' :style='"opacity: " + (item.have/item.need/2+.5)'></span><span class='text-muted'>/</span><span class='required text-warning' v-if='item.need > 0' v-html='item.need'></span>
+			<span v-if='item.need > 0'>
+				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (item.have/item.need/2+.5)' contenteditable v-text='item.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='item.need'></span>
+			</span>
 			<small class='text-muted' v-if='item.need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
-			<div class='sources' style='height: 20px; overflow: hidden;'>
+			<div class='sources' v-if=' ! checked' style='height: 20px; overflow: hidden;'>
 				<template v-for='(sourceTypes, sourceZoneId) in sources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
 						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='itemId' :type='type' :id='id' :info='info'></crafting-reagent-source>
@@ -28,12 +30,10 @@
 		</div>
 		<div class='col-auto' style='display: flex; align-items: center;'>
 			<div class='form-group tally' style='margin-bottom: 0;'>
-				-
 				<label class='checkbox ml-2' style='width: 24px;'>
 					<input type='checkbox' v-model='checked'>
 					<span class='checkbox-indicator' style='width: 24px; height: 24px; top: -10px;'></span>
 				</label>
-				+
 			</div>
 		</div>
 	</div>
@@ -93,11 +93,58 @@
 		},
 		watch: {
 			checked:function(truthy) {
-				console.log('checked!');
-				// this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+				if (this.stopCheckedWatcher)
+					return;
+				this.item.have = truthy ? this.item.need : 0;
+				this.updateHaveAmount();
 			}
 		},
 		methods: {
+			haveFocus(event) {
+				var range, selection;
+				if (document.body.createTextRange) {
+					range = document.body.createTextRange();
+					range.moveToElementText(event.target);
+					range.select();
+				} else if (window.getSelection) {
+					selection = window.getSelection();
+					range = document.createRange();
+					range.selectNodeContents(event.target);
+					selection.removeAllRanges();
+					selection.addRange(range);
+				}
+			},
+			haveEnter(event) {
+				event.target.blur();
+			},
+			haveBlur(event) {
+				// Make sure it's a number between 0 and `this.item.need`
+				var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.item.need), 0);
+				// Value might be bad, reset to 0
+				if (isNaN(inputValue))
+					inputValue = 0;
+				// Repopulate content with fixed value
+				event.target.innerText = inputValue;
+
+				// Check/Uncheck the box if applicable
+				if (inputValue < this.item.need && this.checked == true)
+					this.gentlyUpdateChecked(false);
+				else if (inputValue == this.item.need && this.checked == false)
+					this.gentlyUpdateChecked(true);
+
+				this.item.have = inputValue;
+				this.updateHaveAmount();
+			},
+			updateHaveAmount(have) {
+				console.log('have', this.item.have);
+			},
+			gentlyUpdateChecked(truthy) {
+				this.stopCheckedWatcher = true;
+				this.checked = truthy;
+				Vue.nextTick(() => {
+					this.stopCheckedWatcher = false;
+				});
+			}
 			// ...mutations,
 			// refresh() {
 			// 	this.$forceUpdate();

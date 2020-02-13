@@ -337,10 +337,54 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   },
   watch: {
     checked: function checked(truthy) {
-      console.log('checked!'); // this.$emit('pass-have-item-to-parent', this.itemId, truthy);
+      if (this.stopCheckedWatcher) return;
+      this.item.have = truthy ? this.item.need : 0;
+      this.updateHaveAmount();
     }
   },
-  methods: {// ...mutations,
+  methods: {
+    haveFocus: function haveFocus(event) {
+      var range, selection;
+
+      if (document.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(event.target);
+        range.select();
+      } else if (window.getSelection) {
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(event.target);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    },
+    haveEnter: function haveEnter(event) {
+      event.target.blur();
+    },
+    haveBlur: function haveBlur(event) {
+      // Make sure it's a number between 0 and `this.item.need`
+      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.item.need), 0); // Value might be bad, reset to 0
+
+      if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
+
+      event.target.innerText = inputValue; // Check/Uncheck the box if applicable
+
+      if (inputValue < this.item.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.item.need && this.checked == false) this.gentlyUpdateChecked(true);
+      this.item.have = inputValue;
+      this.updateHaveAmount();
+    },
+    updateHaveAmount: function updateHaveAmount(have) {
+      console.log('have', this.item.have);
+    },
+    gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
+      var _this2 = this;
+
+      this.stopCheckedWatcher = true;
+      this.checked = truthy;
+      Vue.nextTick(function () {
+        _this2.stopCheckedWatcher = false;
+      });
+    } // ...mutations,
     // refresh() {
     // 	this.$forceUpdate();
     // }
@@ -349,6 +393,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     // 	this.have = have;
     // 	this.required = required;
     // }
+
   }
 });
 
@@ -459,6 +504,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
 
 Vue.component('crafting-recipe-source', __webpack_require__(/*! ../components/CraftingRecipeSource.vue */ "./resources/js/components/CraftingRecipeSource.vue")["default"]);
 Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/CraftingReagentSource.vue */ "./resources/js/components/CraftingReagentSource.vue")["default"]);
@@ -482,7 +529,6 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     shown: {
       cache: false,
       get: function get() {
-        console.log(this.item.name, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId));
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
       }
     },
@@ -520,14 +566,59 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   },
   watch: {
     checked: function checked(truthy) {
-      console.log('checked!'); // this.$emit('pass-have-recipe-to-parent', this.recipe.id, truthy);
+      if (this.stopCheckedWatcher) return;
+      this.recipe.have = truthy ? this.recipe.need : 0;
+      this.updateHaveAmount();
     }
   },
-  methods: {// amountUpdate:function(need, have, required) {
+  methods: {
+    haveFocus: function haveFocus(event) {
+      var range, selection;
+
+      if (document.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(event.target);
+        range.select();
+      } else if (window.getSelection) {
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(event.target);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    },
+    haveEnter: function haveEnter(event) {
+      event.target.blur();
+    },
+    haveBlur: function haveBlur(event) {
+      // Make sure it's a number between 0 and `this.recipe.need`
+      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.recipe.need), 0); // Value might be bad, reset to 0
+
+      if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
+
+      event.target.innerText = inputValue; // Check/Uncheck the box if applicable
+
+      if (inputValue < this.recipe.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.recipe.need && this.checked == false) this.gentlyUpdateChecked(true);
+      this.recipe.have = inputValue;
+      this.updateHaveAmount();
+    },
+    updateHaveAmount: function updateHaveAmount(have) {
+      console.log('have', this.recipe.have);
+    },
+    gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
+      var _this3 = this;
+
+      this.stopCheckedWatcher = true;
+      this.checked = truthy;
+      this.nextTick(function () {
+        _this3.stopCheckedWatcher = false;
+      });
+    } // amountUpdate:function(need, have, required) {
     // 	this.need = need;
     // 	this.have = have;
     // 	this.required = required;
     // }
+
   }
 });
 
@@ -33149,7 +33240,8 @@ var render = function() {
           expression: "shown"
         }
       ],
-      staticClass: "row item mb-1"
+      staticClass: "row item mb-1",
+      style: "opacity: " + (_vm.checked ? ".5" : "1")
     },
     [
       _c("div", { staticClass: "col-auto" }, [
@@ -33158,8 +33250,8 @@ var render = function() {
           attrs: {
             src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
             alt: "",
-            width: "48",
-            height: "48"
+            width: _vm.checked ? 24 : 48,
+            height: _vm.checked ? 24 : 48
           }
         })
       ]),
@@ -33172,18 +33264,34 @@ var render = function() {
         },
         [
           _vm.item.need > 0
-            ? _c("span", {
-                staticClass: "required text-warning",
-                style: "opacity: " + (_vm.item.have / _vm.item.need / 2 + 0.5),
-                domProps: { innerHTML: _vm._s(_vm.item.have) }
-              })
-            : _vm._e(),
-          _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
-          _vm.item.need > 0
-            ? _c("span", {
-                staticClass: "required text-warning",
-                domProps: { innerHTML: _vm._s(_vm.item.need) }
-              })
+            ? _c("span", [
+                _c("span", {
+                  staticClass: "required text-warning",
+                  style:
+                    "cursor: pointer; opacity: " +
+                    (_vm.item.have / _vm.item.need / 2 + 0.5),
+                  attrs: { contenteditable: "" },
+                  domProps: { textContent: _vm._s(_vm.item.have) },
+                  on: {
+                    focus: _vm.haveFocus,
+                    blur: _vm.haveBlur,
+                    keydown: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.haveEnter($event)
+                    }
+                  }
+                }),
+                _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
+                _c("span", {
+                  staticClass: "required text-warning",
+                  domProps: { innerHTML: _vm._s(_vm.item.need) }
+                })
+              ])
             : _vm._e(),
           _vm._v(" "),
           _vm.item.need > 0
@@ -33195,35 +33303,37 @@ var render = function() {
             domProps: { innerHTML: _vm._s(_vm.item.name) }
           }),
           _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "sources",
-              staticStyle: { height: "20px", overflow: "hidden" }
-            },
-            [
-              _vm._l(_vm.sources, function(sourceTypes, sourceZoneId) {
-                return [
-                  _vm._l(sourceTypes, function(sourceData, type) {
-                    return _vm._l(sourceData, function(info, id) {
-                      return _c("crafting-reagent-source", {
-                        key: sourceZoneId + type + id,
-                        attrs: {
-                          "section-zone-id": _vm.zoneId,
-                          "zone-id": sourceZoneId,
-                          "item-id": _vm.itemId,
-                          type: type,
-                          id: id,
-                          info: info
-                        }
+          !_vm.checked
+            ? _c(
+                "div",
+                {
+                  staticClass: "sources",
+                  staticStyle: { height: "20px", overflow: "hidden" }
+                },
+                [
+                  _vm._l(_vm.sources, function(sourceTypes, sourceZoneId) {
+                    return [
+                      _vm._l(sourceTypes, function(sourceData, type) {
+                        return _vm._l(sourceData, function(info, id) {
+                          return _c("crafting-reagent-source", {
+                            key: sourceZoneId + type + id,
+                            attrs: {
+                              "section-zone-id": _vm.zoneId,
+                              "zone-id": sourceZoneId,
+                              "item-id": _vm.itemId,
+                              type: type,
+                              id: id,
+                              info: info
+                            }
+                          })
+                        })
                       })
-                    })
+                    ]
                   })
-                ]
-              })
-            ],
-            2
-          )
+                ],
+                2
+              )
+            : _vm._e()
         ],
         1
       ),
@@ -33242,7 +33352,6 @@ var render = function() {
               staticStyle: { "margin-bottom": "0" }
             },
             [
-              _vm._v("\n\t\t\t-\n\t\t\t"),
               _c(
                 "label",
                 {
@@ -33293,8 +33402,7 @@ var render = function() {
                     staticStyle: { width: "24px", height: "24px", top: "-10px" }
                   })
                 ]
-              ),
-              _vm._v("\n\t\t\t+\n\t\t")
+              )
             ]
           )
         ]
@@ -33375,7 +33483,8 @@ var render = function() {
           expression: "shown"
         }
       ],
-      staticClass: "row recipe mb-1"
+      staticClass: "row recipe mb-1",
+      style: "opacity: " + (_vm.checked ? ".5" : "1")
     },
     [
       _c("div", { staticClass: "col-auto" }, [
@@ -33384,8 +33493,8 @@ var render = function() {
           attrs: {
             src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
             alt: "",
-            width: "48",
-            height: "48"
+            width: _vm.checked ? 24 : 48,
+            height: _vm.checked ? 24 : 48
           }
         })
       ]),
@@ -33398,19 +33507,34 @@ var render = function() {
         },
         [
           _vm.recipe.need > 0
-            ? _c("span", {
-                staticClass: "required text-warning",
-                style:
-                  "opacity: " + (_vm.recipe.have / _vm.recipe.need / 2 + 0.5),
-                domProps: { innerHTML: _vm._s(_vm.recipe.have) }
-              })
-            : _vm._e(),
-          _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
-          _vm.recipe.need > 0
-            ? _c("span", {
-                staticClass: "required text-warning",
-                domProps: { innerHTML: _vm._s(_vm.recipe.need) }
-              })
+            ? _c("span", [
+                _c("span", {
+                  staticClass: "required text-warning",
+                  style:
+                    "cursor: pointer; opacity: " +
+                    (_vm.recipe.have / _vm.recipe.need / 2 + 0.5),
+                  attrs: { contenteditable: "" },
+                  domProps: { textContent: _vm._s(_vm.recipe.have) },
+                  on: {
+                    focus: _vm.haveFocus,
+                    blur: _vm.haveBlur,
+                    keydown: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.haveEnter($event)
+                    }
+                  }
+                }),
+                _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
+                _c("span", {
+                  staticClass: "required text-warning",
+                  domProps: { innerHTML: _vm._s(_vm.recipe.need) }
+                })
+              ])
             : _vm._e(),
           _vm._v(" "),
           _vm.recipe.need > 0
@@ -33422,25 +33546,27 @@ var render = function() {
             domProps: { innerHTML: _vm._s(_vm.item.name) }
           }),
           _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "sources",
-              staticStyle: { height: "20px", overflow: "hidden" }
-            },
-            _vm._l(_vm.sources, function(sourceJobId) {
-              return _c("crafting-recipe-source", {
-                key: _vm.recipe.id + sourceJobId + _vm.tierId,
-                attrs: {
-                  "section-job-id": _vm.recipe.job_id,
-                  "job-id": sourceJobId,
-                  "tier-id": _vm.tierId,
-                  "item-id": _vm.item.id
-                }
-              })
-            }),
-            1
-          )
+          !_vm.checked
+            ? _c(
+                "div",
+                {
+                  staticClass: "sources",
+                  staticStyle: { height: "20px", overflow: "hidden" }
+                },
+                _vm._l(_vm.sources, function(sourceJobId) {
+                  return _c("crafting-recipe-source", {
+                    key: _vm.recipe.id + sourceJobId + _vm.tierId,
+                    attrs: {
+                      "section-job-id": _vm.recipe.job_id,
+                      "job-id": sourceJobId,
+                      "tier-id": _vm.tierId,
+                      "item-id": _vm.item.id
+                    }
+                  })
+                }),
+                1
+              )
+            : _vm._e()
         ],
         1
       ),
