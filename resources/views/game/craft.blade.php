@@ -104,22 +104,6 @@
 
 								<crafting-job v-for='(recipeIds, jobId) in sortedJobs' :key='key + "" + jobId' :tier-id='key' :job-id='jobId' :recipe-ids='recipeIds'></crafting-job>
 							</div>
-							{{-- @foreach ($recipeJobs as $job)
-							<div>
-								@if ( ! $loop->first)
-									<hr>
-								@endif
-								<h5>
-									<img src='/assets/{{ config('game.slug') }}/jobs/{{ $job->icon }}.png' alt='' width='20' height='20' class='icon mr-1'>
-									{{ ucwords($job->name) }}
-								</h5>
-								@foreach ($recipes as $recipe)
-									@if ($recipe->job_id == $job->id)
-										<crafting-recipe :recipe='recipes[recipeId]' :item='items[recipes[recipeId].itemId]' @pass-have-recipe-to-parent='haveRecipe'></crafting-recipe>
-									@endif
-								@endforeach
-							</div>
-							@endforeach --}}
 						</div>
 					</div>
 

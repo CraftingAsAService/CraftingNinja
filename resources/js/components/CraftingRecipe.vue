@@ -53,6 +53,7 @@
 		// 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
 		// },
 		computed: {
+			...getters,
 			shown: {
 				cache: false,
 				get() {
@@ -101,6 +102,7 @@
 			}
 		},
 		methods: {
+			...mutations,
 			haveFocus(event) {
 				var range, selection;
 				if (document.body.createTextRange) {
@@ -137,7 +139,8 @@
 				this.updateHaveAmount();
 			},
 			updateHaveAmount(have) {
-				console.log('have', this.recipe.have);
+				this.setRecipeHaveAmount(this.recipeId, this.recipe.have);
+				this.triggerRefresh();
 			},
 			gentlyUpdateChecked(truthy) {
 				this.stopCheckedWatcher = true;
@@ -146,11 +149,6 @@
 					this.stopCheckedWatcher = false;
 				});
 			}
-			// amountUpdate:function(need, have, required) {
-			// 	this.need = need;
-			// 	this.have = have;
-			// 	this.required = required;
-			// }
 		}
 	}
 </script>

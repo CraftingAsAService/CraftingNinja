@@ -16,16 +16,6 @@
 						<crafting-reagent-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='itemId' :type='type' :id='id' :info='info'></crafting-reagent-source>
 					</template>
 				</template>
-				<!--
-				<div class='card p-2 mt-2' hidden>
-					@foreach ($itemData['nodes'] ?? [] as $nodeId => $data)
-					<i class='fas fa-caret-square-up text-primary'></i>
-					<div>
-						<img src='/assets/{{ config('game.slug') }}/map/icons/{{ config('game.nodeTypes')[$nodeData[$nodeId]['type']]['icon'] }}.png' alt=''> <code>{{ $data['x'] }},{{ $data['y'] }}</code> {{ config('game.nodeTypes')[$nodeData[$nodeId]['type']]['name'] }}{{--  - <code>55%</code> --}}
-					</div>
-					@endforeach
-				</div>
-				-->
 			</div>
 		</div>
 		<div class='col-auto' style='display: flex; align-items: center;'>
@@ -60,6 +50,7 @@
 		// 	this.$eventBus.$off('reagentRefresh');
 		// },
 		computed: {
+			...getters,
 			shown: {
 				cache: false,
 				get() {
@@ -100,6 +91,7 @@
 			}
 		},
 		methods: {
+			...mutations,
 			haveFocus(event) {
 				var range, selection;
 				if (document.body.createTextRange) {
@@ -136,7 +128,8 @@
 				this.updateHaveAmount();
 			},
 			updateHaveAmount(have) {
-				console.log('have', this.item.have);
+				this.setItemHaveAmount(this.itemId, this.item.have);
+				this.triggerRefresh();
 			},
 			gentlyUpdateChecked(truthy) {
 				this.stopCheckedWatcher = true;

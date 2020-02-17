@@ -279,16 +279,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/CraftingReagentSource.vue */ "./resources/js/components/CraftingReagentSource.vue")["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -306,7 +296,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   // beforeDestroy:function() {
   // 	this.$eventBus.$off('reagentRefresh');
   // },
-  computed: {
+  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     shown: {
       cache: false,
       get: function get() {
@@ -334,7 +324,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       });
       return alternateSources;
     }
-  },
+  }),
   watch: {
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
@@ -342,7 +332,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       this.updateHaveAmount();
     }
   },
-  methods: {
+  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {
     haveFocus: function haveFocus(event) {
       var range, selection;
 
@@ -374,7 +364,8 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       this.updateHaveAmount();
     },
     updateHaveAmount: function updateHaveAmount(have) {
-      console.log('have', this.item.have);
+      this.setItemHaveAmount(this.itemId, this.item.have);
+      this.triggerRefresh();
     },
     gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
       var _this2 = this;
@@ -394,7 +385,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     // 	this.required = required;
     // }
 
-  }
+  })
 });
 
 /***/ }),
@@ -460,12 +451,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -473,6 +458,12 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
 //
@@ -525,7 +516,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   // beforeDestroy:function() {
   // 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
   // },
-  computed: {
+  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     shown: {
       cache: false,
       get: function get() {
@@ -563,7 +554,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     item: function item() {
       return this.itemData[this.recipe.item_id];
     }
-  },
+  }),
   watch: {
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
@@ -571,7 +562,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       this.updateHaveAmount();
     }
   },
-  methods: {
+  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {
     haveFocus: function haveFocus(event) {
       var range, selection;
 
@@ -603,7 +594,8 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       this.updateHaveAmount();
     },
     updateHaveAmount: function updateHaveAmount(have) {
-      console.log('have', this.recipe.have);
+      this.setRecipeHaveAmount(this.recipeId, this.recipe.have);
+      this.triggerRefresh();
     },
     gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
       var _this3 = this;
@@ -613,13 +605,8 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       this.nextTick(function () {
         _this3.stopCheckedWatcher = false;
       });
-    } // amountUpdate:function(need, have, required) {
-    // 	this.need = need;
-    // 	this.have = have;
-    // 	this.required = required;
-    // }
-
-  }
+    }
+  })
 });
 
 /***/ }),
@@ -45597,6 +45584,9 @@ Vue.mixin({
     this.$eventBus.$off('craftRefresh');
   },
   methods: {
+    triggerRefresh: function triggerRefresh() {
+      this.$eventBus.$emit('craftRefresh');
+    },
     refresh: function refresh() {
       console.log('Refreshing component', this);
       this.$forceUpdate();
@@ -45620,12 +45610,9 @@ var craft = new Vue({
     };
   },
   created: function created() {
-    this.registerItems();
-    this.calculateAll(); // this.$eventBus.$on('craftRefresh', this.craftRefresh);
+    this.registerItemsAndRecipes();
+    this.calculateAll();
   },
-  // beforeDestroy() {
-  // 	this.$eventBus.$off('craftRefresh');
-  // },
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     sortedZones: function sortedZones() {
       var _this = this;
@@ -45676,34 +45663,29 @@ var craft = new Vue({
     }
   }),
   methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
-    // craftRefresh() {
-    // 	console.log('refreshing!');
-    // 	this.$forceUpdate();
-    // },
-    registerItems: function registerItems() {
-      this.computeAmounts(givenItemIds, quantities);
+    registerItemsAndRecipes: function registerItemsAndRecipes() {
+      var _this2 = this;
+
+      Object.keys(this.recipeData).forEach(function (recipeId) {
+        _this2.setRecipeData(recipeId);
+      });
+      Object.keys(this.itemData).forEach(function (itemId) {
+        _this2.setItemData(itemId);
+      });
     },
-    haveItem: function haveItem(itemId, truthy) {
-      if (truthy) this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;else this.itemsToGather[itemId].have = 0;
-      this.calculateAll();
-    },
-    haveRecipe: function haveRecipe(recipeId, truthy) {
-      if (truthy) this.topTierCrafts[recipeId].have = this.topTierCrafts[recipeId].required;else this.topTierCrafts[recipeId].have = 0;
-      this.calculateAll();
-    },
-    calculateAll: function calculateAll() {
-      this.resetAmountsRequired();
-      this.computeAmounts(givenItemIds, quantities);
-      this.recalculateAmountsNeeded();
+    calculateAll: function calculateAll() {// TODO pick up here, converting calculations to use vue store
+      // this.resetAmountsRequired();
+      // this.computeAmounts(givenItemIds, quantities);
+      // this.recalculateAmountsNeeded();
     },
     itemsAvailableRecipes: function itemsAvailableRecipes() {
-      var _this2 = this;
+      var _this3 = this;
 
       var itemsAvailableRecipes = {};
       Object.keys(this.recipeData).forEach(function (key) {
-        if (typeof itemsAvailableRecipes[_this2.recipeData[key]['item_id']] === 'undefined') itemsAvailableRecipes[_this2.recipeData[key]['item_id']] = [];
+        if (typeof itemsAvailableRecipes[_this3.recipeData[key]['item_id']] === 'undefined') itemsAvailableRecipes[_this3.recipeData[key]['item_id']] = [];
 
-        itemsAvailableRecipes[_this2.recipeData[key]['item_id']].push(key);
+        itemsAvailableRecipes[_this3.recipeData[key]['item_id']].push(key);
       });
       return itemsAvailableRecipes;
     },
@@ -45859,7 +45841,7 @@ var craft = new Vue({
       });
     },
     recalculateAmountsNeeded: function recalculateAmountsNeeded() {
-      var _this3 = this;
+      var _this4 = this;
 
       Object.entries(this.topTierCrafts).forEach(function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2),
@@ -45868,7 +45850,7 @@ var craft = new Vue({
 
         entry.need = Math.max(0, entry.required - entry.have);
 
-        _this3.setRecipeData(entry.id, entry.need, entry.have, entry.required);
+        _this4.setRecipeData(entry.id, entry.need, entry.have, entry.required);
       });
       Object.entries(this.itemsToGather).forEach(function (_ref7) {
         var _ref8 = _slicedToArray(_ref7, 2),
@@ -45877,7 +45859,7 @@ var craft = new Vue({
 
         entry.need = Math.max(0, entry.required - entry.have);
 
-        _this3.setItemData(entry.id, entry.need, entry.have, entry.required);
+        _this4.setItemData(entry.id, entry.need, entry.have, entry.required);
       });
     }
   })
@@ -45921,17 +45903,35 @@ var getters = {
 var mutations = {
   setItemData: function setItemData(itemId, need, have, required) {
     return state.items[itemId] = {
-      need: need,
-      have: have,
-      required: required
+      need: need || 0,
+      have: have || 0,
+      required: required || 0
     };
+  },
+  setItemNeedAmount: function setItemNeedAmount(itemId, needAmount) {
+    return state.items[itemId].need = needAmount;
+  },
+  setItemHaveAmount: function setItemHaveAmount(itemId, haveAmount) {
+    return state.items[itemId].have = haveAmount;
+  },
+  setItemRequiredAmount: function setItemRequiredAmount(itemId, requiredAmount) {
+    return state.items[itemId].required = requiredAmount;
   },
   setRecipeData: function setRecipeData(recipeId, need, have, required) {
     return state.recipes[recipeId] = {
-      need: need,
-      have: have,
-      required: required
+      need: need || 0,
+      have: have || 0,
+      required: required || 0
     };
+  },
+  setRecipeNeedAmount: function setRecipeNeedAmount(recipeId, needAmount) {
+    return state.recipes[recipeId].need = needAmount;
+  },
+  setRecipeHaveAmount: function setRecipeHaveAmount(recipeId, haveAmount) {
+    return state.recipes[recipeId].have = haveAmount;
+  },
+  setRecipeRequiredAmount: function setRecipeRequiredAmount(recipeId, requiredAmount) {
+    return state.recipes[recipeId].required = requiredAmount;
   },
   setItemZonePreference: function setItemZonePreference(itemId, zoneId) {
     return state.itemZonePreferences[itemId] = zoneId;

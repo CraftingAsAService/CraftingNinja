@@ -31,6 +31,9 @@ Vue.mixin({
 		this.$eventBus.$off('craftRefresh');
 	},
 	methods: {
+		triggerRefresh() {
+			this.$eventBus.$emit('craftRefresh');
+		},
 		refresh() {
 			console.log('Refreshing component', this);
 			this.$forceUpdate();
@@ -55,13 +58,9 @@ const craft = new Vue({
 		}
 	},
 	created() {
-		this.registerItems();
+		this.registerItemsAndRecipes();
 		this.calculateAll();
-		// this.$eventBus.$on('craftRefresh', this.craftRefresh);
 	},
-	// beforeDestroy() {
-	// 	this.$eventBus.$off('craftRefresh');
-	// },
 	computed: {
 		...getters,
 		sortedZones() {
@@ -121,33 +120,19 @@ const craft = new Vue({
 	methods: {
 		...mutations,
 		...actions,
-		// craftRefresh() {
-		// 	console.log('refreshing!');
-		// 	this.$forceUpdate();
-		// },
-		registerItems:function() {
-			this.computeAmounts(givenItemIds, quantities);
-		},
-		haveItem:function(itemId, truthy) {
-			if (truthy)
-				this.itemsToGather[itemId].have = this.itemsToGather[itemId].required;
-			else
-				this.itemsToGather[itemId].have = 0;
-
-			this.calculateAll();
-		},
-		haveRecipe:function(recipeId, truthy) {
-			if (truthy)
-				this.topTierCrafts[recipeId].have = this.topTierCrafts[recipeId].required;
-			else
-				this.topTierCrafts[recipeId].have = 0;
-
-			this.calculateAll();
+		registerItemsAndRecipes:function() {
+			Object.keys(this.recipeData).forEach(recipeId => {
+				this.setRecipeData(recipeId);
+			});
+			Object.keys(this.itemData).forEach(itemId => {
+				this.setItemData(itemId);
+			});
 		},
 		calculateAll:function() {
-			this.resetAmountsRequired();
-			this.computeAmounts(givenItemIds, quantities);
-			this.recalculateAmountsNeeded();
+			// TODO pick up here, converting calculations to use vue store
+			// this.resetAmountsRequired();
+			// this.computeAmounts(givenItemIds, quantities);
+			// this.recalculateAmountsNeeded();
 		},
 		itemsAvailableRecipes:function() {
 			var itemsAvailableRecipes = {};
