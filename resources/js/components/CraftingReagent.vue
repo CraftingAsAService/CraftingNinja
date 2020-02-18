@@ -3,11 +3,11 @@
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' :width='checked ? 24 : 48' :height='checked ? 24 : 48' class='icon'>
 		</div>
-		<div class='col info' :style='item.need <= 0 ? "opacity: .5;" : ""'>
-			<span v-if='item.need > 0'>
-				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (item.have/item.need/2+.5)' contenteditable v-text='item.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='item.need'></span>
+		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
+			<span v-if='need > 0'>
+				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (item.have/need/2+.5)' contenteditable v-text='item.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='need'></span>
 			</span>
-			<small class='text-muted' v-if='item.need > 0'>x</small>
+			<small class='text-muted' v-if='need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources' v-if=' ! checked' style='height: 20px; overflow: hidden;'>
@@ -63,6 +63,9 @@
 					...getters.items()[this.itemId] // "Crafting" item data, have/need/required
 				};
 			},
+			need() {
+				return Math.max(0, this.item.required - this.item.have);
+			},
 			sources() {
 				// Ensure that the current zones sources are first
 				let sources = {};
@@ -86,7 +89,7 @@
 			checked:function(truthy) {
 				if (this.stopCheckedWatcher)
 					return;
-				this.item.have = truthy ? this.item.need : 0;
+				this.item.have = truthy ? this.need : 0;
 				this.updateHaveAmount();
 			}
 		},
@@ -110,8 +113,8 @@
 				event.target.blur();
 			},
 			haveBlur(event) {
-				// Make sure it's a number between 0 and `this.item.need`
-				var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.item.need), 0);
+				// Make sure it's a number between 0 and `this.need`
+				var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.need), 0);
 				// Value might be bad, reset to 0
 				if (isNaN(inputValue))
 					inputValue = 0;
@@ -119,9 +122,9 @@
 				event.target.innerText = inputValue;
 
 				// Check/Uncheck the box if applicable
-				if (inputValue < this.item.need && this.checked == true)
+				if (inputValue < this.need && this.checked == true)
 					this.gentlyUpdateChecked(false);
-				else if (inputValue == this.item.need && this.checked == false)
+				else if (inputValue == this.need && this.checked == false)
 					this.gentlyUpdateChecked(true);
 
 				this.item.have = inputValue;

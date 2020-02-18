@@ -37,18 +37,18 @@ class CraftController extends Controller
 			return [ '' => null ];
 		})->diff([null]);
 
-		$givenItemIds = $quantities->keys();
+		$originItemIds = $quantities->keys();
 
 		// If it's not a digit, or a comma, take it out.
 		//  A form of XSS prevention
-		$givenItemIdsSearch = preg_replace('/[^\d,]/', '', $givenItemIds->implode(','));
+		$originItemIdsSearch = preg_replace('/[^\d,]/', '', $originItemIds->implode(','));
 
 		$results = collect(\DB::select(
 			'WITH RECURSIVE cte AS (' .
 				'SELECT rr.recipe_id, rr.item_id, 1 AS depth ' .
 				'FROM recipes r ' .
 				'JOIN item_recipe rr ON rr.recipe_id = r.id ' .
-				'WHERE r.item_id IN (' . $givenItemIdsSearch . ') ' .
+				'WHERE r.item_id IN (' . $originItemIdsSearch . ') ' .
 				'UNION ALL ' .
 				'SELECT rr.recipe_id, rr.item_id, cte.depth + 1 ' .
 				'FROM recipes r ' .
@@ -62,7 +62,7 @@ class CraftController extends Controller
 			->unique()
 			// Doing things in this order allows the user to manually add and look for Crystals/etc
 			->diff(config('game.reagentsToIgnore')) // Take out Crystals/etc, anything not worth accounting for
-			->merge($givenItemIds); // Add in what was originally searched upon
+			->merge($originItemIds); // Add in what was originally searched upon
 
 		$recipes = Recipe::with(['ingredients' => function($query) {
 				$query->whereNotIn('item_id', config('game.reagentsToIgnore'));
@@ -240,7 +240,7 @@ class CraftController extends Controller
 
 		// Convert maps to the Ninja Maps data structure
 		$maps = $this->buildNinjaMapsArray($breakdown, $maps, $zones, $nodes);
-		return view('game.craft', compact('preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs', 'recipeOrder'));
+		return view('game.craft', compact('preferredRecipeIds', 'originItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'maps', 'recipeJobs', 'recipeOrder'));
 	}
 
 	private function buildNinjaMapsArray($breakdown, $maps, $zones, $nodes)

@@ -35,7 +35,7 @@ Vue.mixin({
 			this.$eventBus.$emit('craftRefresh');
 		},
 		refresh() {
-			console.log('Refreshing component', this);
+			// console.log('Refreshing component', this);
 			this.$forceUpdate();
 		}
 	}
@@ -51,9 +51,6 @@ const craft = new Vue({
 	data() {
 		return {
 			activeMap: 0,
-			topTierCrafts: {},
-			itemsToGather: {},
-			sortedBreakdown: {},
 			sortZonesBy: 'efficiency', // 'alphabetical',
 		}
 	},
@@ -120,19 +117,9 @@ const craft = new Vue({
 	methods: {
 		...mutations,
 		...actions,
-		registerItemsAndRecipes:function() {
-			Object.keys(this.recipeData).forEach(recipeId => {
-				this.setRecipeData(recipeId);
-			});
-			Object.keys(this.itemData).forEach(itemId => {
-				this.setItemData(itemId);
-			});
-		},
 		calculateAll:function() {
-			// TODO pick up here, converting calculations to use vue store
-			// this.resetAmountsRequired();
-			// this.computeAmounts(givenItemIds, quantities);
-			// this.recalculateAmountsNeeded();
+			this.resetAmountsRequired();
+			this.computeAmounts(originItemIds, quantities); // Global vars
 		},
 		itemsAvailableRecipes:function() {
 			var itemsAvailableRecipes = {};
@@ -148,18 +135,18 @@ const craft = new Vue({
 			var preferredHandleOrder   = ['recipes', 'everythingElse'],//nodes', 'shops'],
 				itemsAvailableRecipes  = this.itemsAvailableRecipes();
 
-			for (var id of itemIds)
+			for (var itemId of itemIds)
 			{
 				// TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
 				// This loop is broken out of when the answer is hit
 				for (var method of preferredHandleOrder)
 				{
-					if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined')
+					if (method == 'recipes' && typeof itemsAvailableRecipes[itemId] !== 'undefined')
 					{
-						var recipeId = itemsAvailableRecipes[id][0];
-						if (itemsAvailableRecipes[id].length > 1)
+						var recipeId = itemsAvailableRecipes[itemId][0];
+						if (itemsAvailableRecipes[itemId].length > 1)
 						{
-							for (var recipeIdCheck of itemsAvailableRecipes[id])
+							for (var recipeIdCheck of itemsAvailableRecipes[itemId])
 							{
 								if (preferredRecipeIds.includes(recipeIdCheck))
 								{
@@ -168,11 +155,8 @@ const craft = new Vue({
 								}
 							}
 						}
-						if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-							this.topTierCrafts[recipeId].required += parseInt(loopQtys[id]);
-						} else {
-							this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
-						}
+
+						this.increaseRecipeRequiredAmount(recipeId, parseInt(loopQtys[itemId]));
 
 						this.craftRecipe(recipeId);
 
@@ -180,32 +164,26 @@ const craft = new Vue({
 					}
 					else
 					{
-						if (typeof this.itemsToGather[id] !== 'undefined') {
-							this.itemsToGather[id].required += parseInt(loopQtys[id]);
-						} else {
-							this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
-						}
+						this.increaseItemRequiredAmount(itemId, parseInt(loopQtys[itemId]));
 
 						break;
 					}
 				}
 			}
 		},
-		dataTemplate:function(id, quantity) {
-			return {
-				'id': id,
-				'have': 0, // How many you physically have
-				'need': 0, // How many you currently need (minus completed recipes)
-				'required': parseInt(quantity), // How many you need in absolute total (including completed recipes)
-			};
-		},
-		craftRecipe:function(id) {
-			var required = this.topTierCrafts[id].required,
-				alreadyHave = this.topTierCrafts[id].have,
-				yields   = parseInt(recipes[id].yield),
+		craftRecipe:function(recipeId) {
+			var required = this.recipes[recipeId].required,
+				alreadyHave = this.recipes[recipeId].have,
+				yields   = parseInt(this.recipeData[recipeId].yield),
 				itemIds  = [],
 				loopQtys = {},
 				qtyMultiplier = 1;
+
+			// TODO pick up here -- Have isn't working?
+			//
+			//
+			//
+			//
 
 			// Quantity Multiplier
 			// If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
@@ -214,29 +192,27 @@ const craft = new Vue({
 
 			// console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
 
-			for (var item of recipes[id].ingredients) {
+			for (var item of this.recipeData[recipeId].ingredients) {
 				itemIds.push(item.id);
 				loopQtys[item.id] = item.pivot.quantity * qtyMultiplier;
 			}
 
 			this.computeAmounts(itemIds, loopQtys);
 		},
-		resetAmountsRequired:function() {
-			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
-				entry.required = 0;
+		registerItemsAndRecipes:function() {
+			Object.keys(this.recipeData).forEach(recipeId => {
+				this.setRecipeData(recipeId);
 			});
-			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
-				entry.required = 0;
+			Object.keys(this.itemData).forEach(itemId => {
+				this.setItemData(itemId);
 			});
 		},
-		recalculateAmountsNeeded:function() {
-			Object.entries(this.topTierCrafts).forEach(([key, entry]) => {
-				entry.need = Math.max(0, entry.required - entry.have);
-				this.setRecipeData(entry.id, entry.need, entry.have, entry.required);
+		resetAmountsRequired:function() {
+			Object.keys(this.recipeData).forEach(recipeId => {
+				this.setRecipeRequiredAmount(recipeId, 0);
 			});
-			Object.entries(this.itemsToGather).forEach(([key, entry]) => {
-				entry.need = Math.max(0, entry.required - entry.have);
-				this.setItemData(entry.id, entry.need, entry.have, entry.required);
+			Object.keys(this.itemData).forEach(itemId => {
+				this.setItemRequiredAmount(itemId, 0);
 			});
 		}
 	}

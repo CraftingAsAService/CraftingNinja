@@ -11,7 +11,7 @@
 @section('scripts')
 <script>
 	var nodeTypes = {!! json_encode(config('game.nodeTypes')) !!};
-	@foreach (['preferredRecipeIds', 'givenItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'recipeJobs', 'maps', 'recipeOrder'] as $var)
+	@foreach (['preferredRecipeIds', 'originItemIds', 'quantities', 'breakdown', 'items', 'recipes', 'nodes', 'zones', 'rewards', 'mobs', 'shops', 'recipeJobs', 'maps', 'recipeOrder'] as $var)
 	var {{ $var }} = {!! json_encode($$var) !!};
 	@endforeach
 </script>

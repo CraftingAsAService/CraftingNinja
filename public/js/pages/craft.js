@@ -306,6 +306,9 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     item: function item() {
       return _objectSpread({}, this.itemData[this.itemId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].items()[this.itemId]);
     },
+    need: function need() {
+      return Math.max(0, this.item.required - this.item.have);
+    },
     sources: function sources() {
       // Ensure that the current zones sources are first
       var sources = {};
@@ -328,7 +331,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   watch: {
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
-      this.item.have = truthy ? this.item.need : 0;
+      this.item.have = truthy ? this.need : 0;
       this.updateHaveAmount();
     }
   },
@@ -352,14 +355,14 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       event.target.blur();
     },
     haveBlur: function haveBlur(event) {
-      // Make sure it's a number between 0 and `this.item.need`
-      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.item.need), 0); // Value might be bad, reset to 0
+      // Make sure it's a number between 0 and `this.need`
+      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.need), 0); // Value might be bad, reset to 0
 
       if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
 
       event.target.innerText = inputValue; // Check/Uncheck the box if applicable
 
-      if (inputValue < this.item.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.item.need && this.checked == false) this.gentlyUpdateChecked(true);
+      if (inputValue < this.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.need && this.checked == false) this.gentlyUpdateChecked(true);
       this.item.have = inputValue;
       this.updateHaveAmount();
     },
@@ -553,12 +556,15 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     },
     item: function item() {
       return this.itemData[this.recipe.item_id];
+    },
+    need: function need() {
+      return Math.max(0, this.recipe.required - this.recipe.have);
     }
   }),
   watch: {
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
-      this.recipe.have = truthy ? this.recipe.need : 0;
+      this.recipe.have = truthy ? this.need : 0;
       this.updateHaveAmount();
     }
   },
@@ -582,14 +588,14 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       event.target.blur();
     },
     haveBlur: function haveBlur(event) {
-      // Make sure it's a number between 0 and `this.recipe.need`
-      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.recipe.need), 0); // Value might be bad, reset to 0
+      // Make sure it's a number between 0 and `this.need`
+      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.need), 0); // Value might be bad, reset to 0
 
       if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
 
       event.target.innerText = inputValue; // Check/Uncheck the box if applicable
 
-      if (inputValue < this.recipe.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.recipe.need && this.checked == false) this.gentlyUpdateChecked(true);
+      if (inputValue < this.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.need && this.checked == false) this.gentlyUpdateChecked(true);
       this.recipe.have = inputValue;
       this.updateHaveAmount();
     },
@@ -33245,18 +33251,15 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        {
-          staticClass: "col info",
-          style: _vm.item.need <= 0 ? "opacity: .5;" : ""
-        },
+        { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
         [
-          _vm.item.need > 0
+          _vm.need > 0
             ? _c("span", [
                 _c("span", {
                   staticClass: "required text-warning",
                   style:
                     "cursor: pointer; opacity: " +
-                    (_vm.item.have / _vm.item.need / 2 + 0.5),
+                    (_vm.item.have / _vm.need / 2 + 0.5),
                   attrs: { contenteditable: "" },
                   domProps: { textContent: _vm._s(_vm.item.have) },
                   on: {
@@ -33276,12 +33279,12 @@ var render = function() {
                 _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
                 _c("span", {
                   staticClass: "required text-warning",
-                  domProps: { innerHTML: _vm._s(_vm.item.need) }
+                  domProps: { innerHTML: _vm._s(_vm.need) }
                 })
               ])
             : _vm._e(),
           _vm._v(" "),
-          _vm.item.need > 0
+          _vm.need > 0
             ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
             : _vm._e(),
           _vm._v(" "),
@@ -33488,18 +33491,15 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        {
-          staticClass: "col info",
-          style: _vm.recipe.need <= 0 ? "opacity: .5;" : ""
-        },
+        { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
         [
-          _vm.recipe.need > 0
+          _vm.need > 0
             ? _c("span", [
                 _c("span", {
                   staticClass: "required text-warning",
                   style:
                     "cursor: pointer; opacity: " +
-                    (_vm.recipe.have / _vm.recipe.need / 2 + 0.5),
+                    (_vm.recipe.have / _vm.need / 2 + 0.5),
                   attrs: { contenteditable: "" },
                   domProps: { textContent: _vm._s(_vm.recipe.have) },
                   on: {
@@ -33519,12 +33519,12 @@ var render = function() {
                 _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
                 _c("span", {
                   staticClass: "required text-warning",
-                  domProps: { innerHTML: _vm._s(_vm.recipe.need) }
+                  domProps: { innerHTML: _vm._s(_vm.need) }
                 })
               ])
             : _vm._e(),
           _vm._v(" "),
-          _vm.recipe.need > 0
+          _vm.need > 0
             ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
             : _vm._e(),
           _vm._v(" "),
@@ -45544,14 +45544,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -45588,7 +45580,7 @@ Vue.mixin({
       this.$eventBus.$emit('craftRefresh');
     },
     refresh: function refresh() {
-      console.log('Refreshing component', this);
+      // console.log('Refreshing component', this);
       this.$forceUpdate();
     }
   }
@@ -45602,9 +45594,6 @@ var craft = new Vue({
   data: function data() {
     return {
       activeMap: 0,
-      topTierCrafts: {},
-      itemsToGather: {},
-      sortedBreakdown: {},
       sortZonesBy: 'efficiency' // 'alphabetical',
 
     };
@@ -45663,29 +45652,18 @@ var craft = new Vue({
     }
   }),
   methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"], {
-    registerItemsAndRecipes: function registerItemsAndRecipes() {
-      var _this2 = this;
-
-      Object.keys(this.recipeData).forEach(function (recipeId) {
-        _this2.setRecipeData(recipeId);
-      });
-      Object.keys(this.itemData).forEach(function (itemId) {
-        _this2.setItemData(itemId);
-      });
-    },
-    calculateAll: function calculateAll() {// TODO pick up here, converting calculations to use vue store
-      // this.resetAmountsRequired();
-      // this.computeAmounts(givenItemIds, quantities);
-      // this.recalculateAmountsNeeded();
+    calculateAll: function calculateAll() {
+      this.resetAmountsRequired();
+      this.computeAmounts(originItemIds, quantities); // Global vars
     },
     itemsAvailableRecipes: function itemsAvailableRecipes() {
-      var _this3 = this;
+      var _this2 = this;
 
       var itemsAvailableRecipes = {};
       Object.keys(this.recipeData).forEach(function (key) {
-        if (typeof itemsAvailableRecipes[_this3.recipeData[key]['item_id']] === 'undefined') itemsAvailableRecipes[_this3.recipeData[key]['item_id']] = [];
+        if (typeof itemsAvailableRecipes[_this2.recipeData[key]['item_id']] === 'undefined') itemsAvailableRecipes[_this2.recipeData[key]['item_id']] = [];
 
-        itemsAvailableRecipes[_this3.recipeData[key]['item_id']].push(key);
+        itemsAvailableRecipes[_this2.recipeData[key]['item_id']].push(key);
       });
       return itemsAvailableRecipes;
     },
@@ -45700,23 +45678,23 @@ var craft = new Vue({
 
       try {
         for (var _iterator = itemIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var id = _step.value;
+          var itemId = _step.value;
 
           // TODO TICKETME - there's an opportunity to have a preferredHandleOrder on a per item ID basis
           // This loop is broken out of when the answer is hit
           for (var _i3 = 0, _preferredHandleOrder = preferredHandleOrder; _i3 < _preferredHandleOrder.length; _i3++) {
             var method = _preferredHandleOrder[_i3];
 
-            if (method == 'recipes' && typeof itemsAvailableRecipes[id] !== 'undefined') {
-              var recipeId = itemsAvailableRecipes[id][0];
+            if (method == 'recipes' && typeof itemsAvailableRecipes[itemId] !== 'undefined') {
+              var recipeId = itemsAvailableRecipes[itemId][0];
 
-              if (itemsAvailableRecipes[id].length > 1) {
+              if (itemsAvailableRecipes[itemId].length > 1) {
                 var _iteratorNormalCompletion2 = true;
                 var _didIteratorError2 = false;
                 var _iteratorError2 = undefined;
 
                 try {
-                  for (var _iterator2 = itemsAvailableRecipes[id][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  for (var _iterator2 = itemsAvailableRecipes[itemId][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var recipeIdCheck = _step2.value;
 
                     if (preferredRecipeIds.includes(recipeIdCheck)) {
@@ -45740,21 +45718,11 @@ var craft = new Vue({
                 }
               }
 
-              if (typeof this.topTierCrafts[recipeId] !== 'undefined') {
-                this.topTierCrafts[recipeId].required += parseInt(loopQtys[id]);
-              } else {
-                this.topTierCrafts[recipeId] = this.dataTemplate(recipeId, loopQtys[id]);
-              }
-
+              this.increaseRecipeRequiredAmount(recipeId, parseInt(loopQtys[itemId]));
               this.craftRecipe(recipeId);
               break;
             } else {
-              if (typeof this.itemsToGather[id] !== 'undefined') {
-                this.itemsToGather[id].required += parseInt(loopQtys[id]);
-              } else {
-                this.itemsToGather[id] = this.dataTemplate(id, loopQtys[id]);
-              }
-
+              this.increaseItemRequiredAmount(itemId, parseInt(loopQtys[itemId]));
               break;
             }
           }
@@ -45774,24 +45742,18 @@ var craft = new Vue({
         }
       }
     },
-    dataTemplate: function dataTemplate(id, quantity) {
-      return {
-        'id': id,
-        'have': 0,
-        // How many you physically have
-        'need': 0,
-        // How many you currently need (minus completed recipes)
-        'required': parseInt(quantity) // How many you need in absolute total (including completed recipes)
-
-      };
-    },
-    craftRecipe: function craftRecipe(id) {
-      var required = this.topTierCrafts[id].required,
-          alreadyHave = this.topTierCrafts[id].have,
-          yields = parseInt(recipes[id]["yield"]),
+    craftRecipe: function craftRecipe(recipeId) {
+      var required = this.recipes[recipeId].required,
+          alreadyHave = this.recipes[recipeId].have,
+          yields = parseInt(this.recipeData[recipeId]["yield"]),
           itemIds = [],
           loopQtys = {},
-          qtyMultiplier = 1; // Quantity Multiplier
+          qtyMultiplier = 1; // TODO pick up here -- Have isn't working?
+      //
+      //
+      //
+      //
+      // Quantity Multiplier
       // If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
       // But if you already have one of them, don't count it
 
@@ -45802,7 +45764,7 @@ var craft = new Vue({
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = recipes[id].ingredients[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (var _iterator3 = this.recipeData[recipeId].ingredients[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var item = _step3.value;
           itemIds.push(item.id);
           loopQtys[item.id] = item.pivot.quantity * qtyMultiplier;
@@ -45824,42 +45786,24 @@ var craft = new Vue({
 
       this.computeAmounts(itemIds, loopQtys);
     },
-    resetAmountsRequired: function resetAmountsRequired() {
-      Object.entries(this.topTierCrafts).forEach(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            key = _ref2[0],
-            entry = _ref2[1];
+    registerItemsAndRecipes: function registerItemsAndRecipes() {
+      var _this3 = this;
 
-        entry.required = 0;
+      Object.keys(this.recipeData).forEach(function (recipeId) {
+        _this3.setRecipeData(recipeId);
       });
-      Object.entries(this.itemsToGather).forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            key = _ref4[0],
-            entry = _ref4[1];
-
-        entry.required = 0;
+      Object.keys(this.itemData).forEach(function (itemId) {
+        _this3.setItemData(itemId);
       });
     },
-    recalculateAmountsNeeded: function recalculateAmountsNeeded() {
+    resetAmountsRequired: function resetAmountsRequired() {
       var _this4 = this;
 
-      Object.entries(this.topTierCrafts).forEach(function (_ref5) {
-        var _ref6 = _slicedToArray(_ref5, 2),
-            key = _ref6[0],
-            entry = _ref6[1];
-
-        entry.need = Math.max(0, entry.required - entry.have);
-
-        _this4.setRecipeData(entry.id, entry.need, entry.have, entry.required);
+      Object.keys(this.recipeData).forEach(function (recipeId) {
+        _this4.setRecipeRequiredAmount(recipeId, 0);
       });
-      Object.entries(this.itemsToGather).forEach(function (_ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2),
-            key = _ref8[0],
-            entry = _ref8[1];
-
-        entry.need = Math.max(0, entry.required - entry.have);
-
-        _this4.setItemData(entry.id, entry.need, entry.have, entry.required);
+      Object.keys(this.itemData).forEach(function (itemId) {
+        _this4.setItemRequiredAmount(itemId, 0);
       });
     }
   })
@@ -45917,6 +45861,9 @@ var mutations = {
   setItemRequiredAmount: function setItemRequiredAmount(itemId, requiredAmount) {
     return state.items[itemId].required = requiredAmount;
   },
+  increaseItemRequiredAmount: function increaseItemRequiredAmount(itemId, requiredAmount) {
+    return state.items[itemId].required += requiredAmount;
+  },
   setRecipeData: function setRecipeData(recipeId, need, have, required) {
     return state.recipes[recipeId] = {
       need: need || 0,
@@ -45932,6 +45879,9 @@ var mutations = {
   },
   setRecipeRequiredAmount: function setRecipeRequiredAmount(recipeId, requiredAmount) {
     return state.recipes[recipeId].required = requiredAmount;
+  },
+  increaseRecipeRequiredAmount: function increaseRecipeRequiredAmount(recipeId, requiredAmount) {
+    return state.recipes[recipeId].required += requiredAmount;
   },
   setItemZonePreference: function setItemZonePreference(itemId, zoneId) {
     return state.itemZonePreferences[itemId] = zoneId;
