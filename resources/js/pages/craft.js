@@ -57,6 +57,8 @@ const craft = new Vue({
 	created() {
 		this.registerItemsAndRecipes();
 		this.calculateAll();
+
+		this.$eventBus.$on('craftRefresh', this.calculateAll);
 	},
 	computed: {
 		...getters,
@@ -179,22 +181,18 @@ const craft = new Vue({
 				loopQtys = {},
 				qtyMultiplier = 1;
 
-			// TODO pick up here -- Have isn't working?
-			//
-			//
-			//
-			//
-
 			// Quantity Multiplier
 			// If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
 			// But if you already have one of them, don't count it
 			qtyMultiplier = Math.ceil((required - alreadyHave) / yields);
+			// console.log(this.itemData[this.recipeData[recipeId].item_id].name, required, alreadyHave, qtyMultiplier);
 
 			// console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
 
 			for (var item of this.recipeData[recipeId].ingredients) {
 				itemIds.push(item.id);
 				loopQtys[item.id] = item.pivot.quantity * qtyMultiplier;
+				// console.log('ITEM', item.name, loopQtys[item.id]);
 			}
 
 			this.computeAmounts(itemIds, loopQtys);

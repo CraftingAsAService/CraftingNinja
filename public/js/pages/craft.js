@@ -285,17 +285,9 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
   props: ['itemId', 'zoneId'],
   data: function data() {
     return {
-      // shown: true,
       checked: false
     };
   },
-  // mounted() {
-  // Calculate if its shown
-  // this.$eventBus.$on('reagentRefresh', this.refresh);
-  // },
-  // beforeDestroy:function() {
-  // 	this.$eventBus.$off('reagentRefresh');
-  // },
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     shown: {
       cache: false,
@@ -303,8 +295,11 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
       }
     },
-    item: function item() {
-      return _objectSpread({}, this.itemData[this.itemId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].items()[this.itemId]);
+    item: {
+      cache: false,
+      get: function get() {
+        return _objectSpread({}, this.itemData[this.itemId], {}, this.items[this.itemId]);
+      }
     },
     need: function need() {
       return Math.max(0, this.item.required - this.item.have);
@@ -378,16 +373,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
       Vue.nextTick(function () {
         _this2.stopCheckedWatcher = false;
       });
-    } // ...mutations,
-    // refresh() {
-    // 	this.$forceUpdate();
-    // }
-    // amountUpdate:function(need, have, required) {
-    // 	this.need = need;
-    // 	this.have = have;
-    // 	this.required = required;
-    // }
-
+    }
   })
 });
 
@@ -526,6 +512,25 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
       }
     },
+    recipe: {
+      cache: false,
+      get: function get() {
+        return _objectSpread({}, this.recipeData[this.recipeId], {}, this.recipes[this.recipeId]);
+      }
+    },
+    item: {
+      cache: false,
+      get: function get() {
+        return this.itemData[this.recipe.item_id];
+      }
+    },
+    need: {
+      cache: false,
+      get: function get() {
+        console.log(this.recipe.required, this.recipe.have, this.recipe.required - this.recipe.have);
+        return Math.max(0, this.recipe.required - this.recipe.have);
+      }
+    },
     sources: function sources() {
       var _this = this;
 
@@ -550,21 +555,13 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
         });
       });
       return itemSources;
-    },
-    recipe: function recipe() {
-      return _objectSpread({}, this.recipeData[this.recipeId], {}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"].recipes()[this.recipeId]);
-    },
-    item: function item() {
-      return this.itemData[this.recipe.item_id];
-    },
-    need: function need() {
-      return Math.max(0, this.recipe.required - this.recipe.have);
     }
   }),
   watch: {
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
       this.recipe.have = truthy ? this.need : 0;
+      console.log(truthy, this.recipe.have);
       this.updateHaveAmount();
     }
   },
@@ -608,7 +605,7 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
 
       this.stopCheckedWatcher = true;
       this.checked = truthy;
-      this.nextTick(function () {
+      Vue.nextTick(function () {
         _this3.stopCheckedWatcher = false;
       });
     }
@@ -45601,6 +45598,7 @@ var craft = new Vue({
   created: function created() {
     this.registerItemsAndRecipes();
     this.calculateAll();
+    this.$eventBus.$on('craftRefresh', this.calculateAll);
   },
   computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
     sortedZones: function sortedZones() {
@@ -45748,16 +45746,12 @@ var craft = new Vue({
           yields = parseInt(this.recipeData[recipeId]["yield"]),
           itemIds = [],
           loopQtys = {},
-          qtyMultiplier = 1; // TODO pick up here -- Have isn't working?
-      //
-      //
-      //
-      //
-      // Quantity Multiplier
+          qtyMultiplier = 1; // Quantity Multiplier
       // If we need 4, but the recipe yields 3, then we need to craft twice (for 6), which requires 2x the ingredient quantity
       // But if you already have one of them, don't count it
 
-      qtyMultiplier = Math.ceil((required - alreadyHave) / yields); // console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
+      qtyMultiplier = Math.ceil((required - alreadyHave) / yields); // console.log(this.itemData[this.recipeData[recipeId].item_id].name, required, alreadyHave, qtyMultiplier);
+      // console.log('We are crafting recipe', id, 'it yields', yields, 'per craft, and we need', required, 'of them, meaning our multiplier is', qtyMultiplier);
 
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
@@ -45767,7 +45761,7 @@ var craft = new Vue({
         for (var _iterator3 = this.recipeData[recipeId].ingredients[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var item = _step3.value;
           itemIds.push(item.id);
-          loopQtys[item.id] = item.pivot.quantity * qtyMultiplier;
+          loopQtys[item.id] = item.pivot.quantity * qtyMultiplier; // console.log('ITEM', item.name, loopQtys[item.id]);
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -45847,13 +45841,9 @@ var getters = {
 var mutations = {
   setItemData: function setItemData(itemId, need, have, required) {
     return state.items[itemId] = {
-      need: need || 0,
       have: have || 0,
       required: required || 0
     };
-  },
-  setItemNeedAmount: function setItemNeedAmount(itemId, needAmount) {
-    return state.items[itemId].need = needAmount;
   },
   setItemHaveAmount: function setItemHaveAmount(itemId, haveAmount) {
     return state.items[itemId].have = haveAmount;
@@ -45866,13 +45856,9 @@ var mutations = {
   },
   setRecipeData: function setRecipeData(recipeId, need, have, required) {
     return state.recipes[recipeId] = {
-      need: need || 0,
       have: have || 0,
       required: required || 0
     };
-  },
-  setRecipeNeedAmount: function setRecipeNeedAmount(recipeId, needAmount) {
-    return state.recipes[recipeId].need = needAmount;
   },
   setRecipeHaveAmount: function setRecipeHaveAmount(recipeId, haveAmount) {
     return state.recipes[recipeId].have = haveAmount;

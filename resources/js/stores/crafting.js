@@ -15,21 +15,17 @@ export const getters = {
 
 export const mutations = {
 	setItemData: (itemId, need, have, required) => state.items[itemId] = {
-			need:     need || 0,
 			have:     have || 0,
 			required: required || 0
 		},
-	setItemNeedAmount: (itemId, needAmount) => state.items[itemId].need = needAmount,
 	setItemHaveAmount: (itemId, haveAmount) => state.items[itemId].have = haveAmount,
 	setItemRequiredAmount: (itemId, requiredAmount) => state.items[itemId].required = requiredAmount,
 	increaseItemRequiredAmount: (itemId, requiredAmount) => state.items[itemId].required += requiredAmount,
 
 	setRecipeData: (recipeId, need, have, required) => state.recipes[recipeId] = {
-			need:     need || 0,
 			have:     have || 0,
 			required: required || 0
 		},
-	setRecipeNeedAmount: (recipeId, needAmount) => state.recipes[recipeId].need = needAmount,
 	setRecipeHaveAmount: (recipeId, haveAmount) => state.recipes[recipeId].have = haveAmount,
 	setRecipeRequiredAmount: (recipeId, requiredAmount) => state.recipes[recipeId].required = requiredAmount,
 	increaseRecipeRequiredAmount: (recipeId, requiredAmount) => state.recipes[recipeId].required += requiredAmount,

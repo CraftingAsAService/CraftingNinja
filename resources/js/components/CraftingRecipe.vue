@@ -60,6 +60,28 @@
 					return actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
 				}
 			},
+			recipe: {
+				cache: false,
+				get() {
+					return {
+						...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
+						...this.recipes[this.recipeId] // "Crafting" recipe data, have/required
+					};
+				}
+			},
+			item: {
+				cache: false,
+				get() {
+					return this.itemData[this.recipe.item_id];
+				}
+			},
+			need: {
+				cache:false,
+				get() {
+					console.log(this.recipe.required, this.recipe.have, this.recipe.required - this.recipe.have);
+					return Math.max(0, this.recipe.required - this.recipe.have);
+				}
+			},
 			sources() {
 				var sources = [];
 				Object.entries(this.recipeData).forEach(([recipeId, recipe]) => {
@@ -82,18 +104,6 @@
 					});
 				});
 				return itemSources;
-			},
-			recipe() {
-				return {
-					...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
-					...getters.recipes()[this.recipeId] // "Crafting" recipe data, have/need/required
-				};
-			},
-			item() {
-				return this.itemData[this.recipe.item_id];
-			},
-			need() {
-				return Math.max(0, this.recipe.required - this.recipe.have);
 			}
 		},
 		watch: {
@@ -101,6 +111,7 @@
 				if (this.stopCheckedWatcher)
 					return;
 				this.recipe.have = truthy ? this.need : 0;
+				console.log(truthy, this.recipe.have);
 				this.updateHaveAmount();
 			}
 		},
@@ -148,7 +159,7 @@
 			gentlyUpdateChecked(truthy) {
 				this.stopCheckedWatcher = true;
 				this.checked = truthy;
-				this.nextTick(()=>{
+				Vue.nextTick(() => {
 					this.stopCheckedWatcher = false;
 				});
 			}

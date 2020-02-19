@@ -38,17 +38,9 @@
 		props: [ 'itemId', 'zoneId' ],
 		data() {
 			return {
-				// shown: true,
 				checked: false
 			}
 		},
-		// mounted() {
-			// Calculate if its shown
-			// this.$eventBus.$on('reagentRefresh', this.refresh);
-		// },
-		// beforeDestroy:function() {
-		// 	this.$eventBus.$off('reagentRefresh');
-		// },
 		computed: {
 			...getters,
 			shown: {
@@ -57,11 +49,14 @@
 					return actions.fcfsItemZonePreference(this.itemId, this.zoneId);
 				}
 			},
-			item() {
-				return {
-					...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
-					...getters.items()[this.itemId] // "Crafting" item data, have/need/required
-				};
+			item: {
+				cache: false,
+				get() {
+					return {
+						...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
+						...this.items[this.itemId] // "Crafting" item data, have/required
+					};
+				}
 			},
 			need() {
 				return Math.max(0, this.item.required - this.item.have);
@@ -141,15 +136,6 @@
 					this.stopCheckedWatcher = false;
 				});
 			}
-			// ...mutations,
-			// refresh() {
-			// 	this.$forceUpdate();
-			// }
-			// amountUpdate:function(need, have, required) {
-			// 	this.need = need;
-			// 	this.have = have;
-			// 	this.required = required;
-			// }
 		}
 	}
 </script>
