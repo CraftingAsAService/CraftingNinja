@@ -295,11 +295,8 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
       }
     },
-    item: {
-      cache: false,
-      get: function get() {
-        return _objectSpread({}, this.itemData[this.itemId], {}, this.items[this.itemId]);
-      }
+    item: function item() {
+      return _objectSpread({}, this.itemData[this.itemId], {}, this.items[this.itemId]);
     },
     need: function need() {
       return Math.max(0, this.item.required - this.item.have);
@@ -512,24 +509,14 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
         return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
       }
     },
-    recipe: {
-      cache: false,
-      get: function get() {
-        return _objectSpread({}, this.recipeData[this.recipeId], {}, this.recipes[this.recipeId]);
-      }
+    recipe: function recipe() {
+      return _objectSpread({}, this.recipeData[this.recipeId], {}, this.recipes[this.recipeId]);
     },
-    item: {
-      cache: false,
-      get: function get() {
-        return this.itemData[this.recipe.item_id];
-      }
+    item: function item() {
+      return this.itemData[this.recipe.item_id];
     },
-    need: {
-      cache: false,
-      get: function get() {
-        console.log(this.recipe.required, this.recipe.have, this.recipe.required - this.recipe.have);
-        return Math.max(0, this.recipe.required - this.recipe.have);
-      }
+    need: function need() {
+      return Math.max(0, this.recipe.required - this.recipe.have);
     },
     sources: function sources() {
       var _this = this;
@@ -561,7 +548,6 @@ Vue.component('crafting-reagent-source', __webpack_require__(/*! ../components/C
     checked: function checked(truthy) {
       if (this.stopCheckedWatcher) return;
       this.recipe.have = truthy ? this.need : 0;
-      console.log(truthy, this.recipe.have);
       this.updateHaveAmount();
     }
   },

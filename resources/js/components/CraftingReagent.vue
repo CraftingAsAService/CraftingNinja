@@ -49,14 +49,11 @@
 					return actions.fcfsItemZonePreference(this.itemId, this.zoneId);
 				}
 			},
-			item: {
-				cache: false,
-				get() {
-					return {
-						...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
-						...this.items[this.itemId] // "Crafting" item data, have/required
-					};
-				}
+			item() {
+				return {
+					...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
+					...this.items[this.itemId] // "Crafting" item data, have/required
+				};
 			},
 			need() {
 				return Math.max(0, this.item.required - this.item.have);

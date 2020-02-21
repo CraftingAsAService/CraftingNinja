@@ -60,27 +60,17 @@
 					return actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
 				}
 			},
-			recipe: {
-				cache: false,
-				get() {
-					return {
-						...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
-						...this.recipes[this.recipeId] // "Crafting" recipe data, have/required
-					};
-				}
+			recipe() {
+				return {
+					...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
+					...this.recipes[this.recipeId] // "Crafting" recipe data, have/required
+				};
 			},
-			item: {
-				cache: false,
-				get() {
-					return this.itemData[this.recipe.item_id];
-				}
+			item() {
+				return this.itemData[this.recipe.item_id];
 			},
-			need: {
-				cache:false,
-				get() {
-					console.log(this.recipe.required, this.recipe.have, this.recipe.required - this.recipe.have);
-					return Math.max(0, this.recipe.required - this.recipe.have);
-				}
+			need() {
+				return Math.max(0, this.recipe.required - this.recipe.have);
 			},
 			sources() {
 				var sources = [];
@@ -111,7 +101,6 @@
 				if (this.stopCheckedWatcher)
 					return;
 				this.recipe.have = truthy ? this.need : 0;
-				console.log(truthy, this.recipe.have);
 				this.updateHaveAmount();
 			}
 		},
