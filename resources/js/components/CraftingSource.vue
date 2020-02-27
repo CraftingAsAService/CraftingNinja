@@ -1,16 +1,17 @@
 <template>
-	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='"vertical-align: top;" + (zoneMatches ? "" : "opacity: .5; cursor: pointer;")' @click='switchZone()'>
+	<img :src='src' alt='' data-toggle='tooltip' data-html='true' :data-title='title' :style='"vertical-align: top;" + (parentMatches ? "" : "opacity: .5; cursor: pointer;")' @click='switchZone()'>
 </template>
 
 <script>
 	import { getters, mutations } from '../stores/crafting';
 
 	export default {
-		props: [ 'sectionZoneId', 'type', 'id', 'info', 'zoneId', 'itemId' ],
+		// Parent ID is either the Job or Zone ID
+		props: [ 'sectionParentId', 'type', 'id', 'parentId', 'itemId', 'info' ],
 		computed: {
 			...getters,
-			zoneMatches() {
-				return this.sectionZoneId == this.zoneId;
+			parentMatches() {
+				return this.sectionParentId == this.parentId;
 			},
 			src() {
 				if (this.type == 'node')
@@ -26,8 +27,8 @@
 				let title = '',
 					prefix = '';
 
-				if ( ! this.zoneMatches)
-					prefix = this.zoneData[this.zoneId].name + ':<br>';
+				if ( ! this.parentMatches)
+					prefix = this.zoneData[this.parentId].name + ':<br>';
 
 				if (this.type == 'node')
 					title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;
@@ -39,13 +40,13 @@
 		},
 		methods: {
 			switchZone() {
-				if (this.zoneMatches)
+				if (this.parentMatches)
 					return;
 
-				mutations.setItemZonePreference(this.itemId, this.zoneId);
+				mutations.setItemZonePreference(this.itemId, this.parentId);
 
-				// this.$eventBus.$emit('zoneRefresh', this.zoneId);
-				// this.$eventBus.$emit('zoneRefresh', this.sectionZoneId);
+				// this.$eventBus.$emit('zoneRefresh', this.parentId);
+				// this.$eventBus.$emit('zoneRefresh', this.sectionParentId);
 				this.$eventBus.$emit('craftRefresh');
 			}
 		}

@@ -4,13 +4,13 @@
 			<i class='fas fa-map-marked -desize float-right' hidden></i>
 			<span v-html='zone.name'></span>
 		</h5>
-		<crafting-reagent v-for='itemId in itemIds' :key='itemId' :item-id='itemId' :zone-id='zoneId'></crafting-reagent>
+		<crafting-item v-for='itemId in itemIds' :key='itemId' :item-id='itemId' :zone-id='zoneId'></crafting-item>
 		<hr>
 	</div>
 </template>
 
 <script>
-	Vue.component('crafting-reagent', require('../components/CraftingReagent.vue').default);
+	Vue.component('crafting-item', require('../components/CraftingItem.vue').default);
 
 	export default {
 		props: [ 'zoneId' ],
