@@ -14,7 +14,9 @@
 				return this.sectionParentId == this.parentId;
 			},
 			src() {
-				if (this.type == 'node')
+				if (this.type == 'recipe')
+					return '/assets/' + game.slug + '/jobs/' + this.job.icon + '.png';
+				else if (this.type == 'node')
 					return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';
 				else if (this.type == 'mob')
 					return '/assets/' + game.slug + '/map/icons/battle.png';
@@ -36,6 +38,12 @@
 					title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
 
 				return prefix + title;
+			},
+			job() {
+				return this.jobData[this.parentId];
+			},
+			zone() {
+				return this.zoneData[this.parentId];
 			}
 		},
 		methods: {

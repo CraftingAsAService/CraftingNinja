@@ -577,7 +577,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.sectionParentId == this.parentId;
     },
     src: function src() {
-      if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
+      if (this.type == 'recipe') return '/assets/' + game.slug + '/jobs/' + this.job.icon + '.png';else if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
     },
     title: function title() {
       var title = '',
@@ -585,6 +585,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (!this.parentMatches) prefix = this.zoneData[this.parentId].name + ':<br>';
       if (this.type == 'node') title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;else if (this.type == 'mob') title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
       return prefix + title;
+    },
+    job: function job() {
+      return this.jobData[this.parentId];
+    },
+    zone: function zone() {
+      return this.zoneData[this.parentId];
     }
   }),
   methods: {

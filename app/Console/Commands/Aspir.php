@@ -29,10 +29,9 @@ class Aspir extends Command
 	 */
 	public function handle()
 	{
-		$className = ucwords($this->argument('game'));
+		$className = $this->argument('game');
 
-		// Assume the job is in this repository
-		$class = '\\App\\Models\\Aspir\\' . $className . '\\' . $className;
+		$class = '\\CraftingNinja\\Dojo\\' . $className . '\\Aspir\\Aspir';
 
 		if ( ! class_exists($class))
 			return $this->error('Aspir spell for ' . $className . ' does not exist');

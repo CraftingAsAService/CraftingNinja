@@ -33,11 +33,11 @@ class DetectGame
 							$game = Game::withTranslation()->whereSlug($gameSlug)->get()->first();
 
 							return [
-								'name' => $game->name,
-								'slug' => $game->slug,
+								'name'         => $game->name,
+								'slug'         => $game->slug,
 								'abbreviation' => $game->abbreviation,
-								'version' => $game->version,
-								'description' => $game->description,
+								'version'      => $game->version,
+								'description'  => $game->description,
 							];
 						})
 				],
