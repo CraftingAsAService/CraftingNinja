@@ -17,13 +17,13 @@
 		"hashids/hashids": "^4.0",
 		"itsgoingd/clockwork": "4.*",
 		"laracasts/flash": "^3.0",
-		"laravel/framework": "^6.10",
+		"laravel/framework": "7.*",
 		"laravel/socialite": "^4.3",
-		"laravel/telescope": "^2.1",
+		"laravel/telescope": "^3.1",
 		"nesbot/carbon": "^2.28",
 		"predis/predis": "^1.1",
 		"socialiteproviders/patreon": "^2.0",
-		"watson/rememberable": "^3.0",
+		"watson/rememberable": "^4.0",
 		"craftingasaservice/ffxiv-dojo": "@dev"
 	},
 	"require-dev": {
@@ -31,9 +31,8 @@
 		"fzaninotto/faker": "^1.4",
 		"laravel/tinker": "^2.0",
 		"mockery/mockery": "^1.0",
-		"nunomaduro/collision": "^3.0",
-		"nunomaduro/phpinsights": "^1.9",
-		"phpunit/phpunit": "^8.0"
+		"nunomaduro/collision": "^4.0",
+		"phpunit/phpunit": "^9.0"
 	},
 	"autoload": {
 		"classmap": [
