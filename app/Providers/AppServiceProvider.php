@@ -15,7 +15,7 @@ use App\Models\Game\Concepts\Niche;
 use App\Models\Game\Concepts\Scroll;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		Resource::withoutWrapping();
+		JsonResource::withoutWrapping();
 
 		$this->registerMacros();
 		$this->registerMorphMap();
