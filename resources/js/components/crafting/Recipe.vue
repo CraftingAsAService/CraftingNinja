@@ -1,21 +1,22 @@
 <template>
-	<div class='row item mb-1' v-show='shown' :style='"opacity: " + (checked ? ".5" : "1")'>
+	<div class='row recipe mb-1' v-show='shown' :style='"opacity: " + (checked ? ".5" : "1")'>
 		<div class='col-auto'>
 			<img :src='"/assets/" + game.slug + "/i/" + item.icon + ".png"' alt='' :width='checked ? 24 : 48' :height='checked ? 24 : 48' class='icon'>
 		</div>
 		<div class='col info' :style='need <= 0 ? "opacity: .5;" : ""'>
 			<span v-if='need > 0'>
-				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (item.have/need/2+.5)' contenteditable v-text='item.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='need'></span>
+				<span class='required text-warning' :style='"cursor: pointer; opacity: " + (recipe.have/need/2+.5)' contenteditable v-text='recipe.have' @focus='haveFocus' @blur='haveBlur' @keydown.enter='haveEnter'></span><span class='text-muted'>/</span><span class='required text-warning' v-html='need'></span>
 			</span>
 			<small class='text-muted' v-if='need > 0'>x</small>
 			<big :class='"rarity-" + item.rarity' v-html='item.name'></big>
 
 			<div class='sources' v-if=' ! checked' style='height: 20px; overflow: hidden;'>
-				<template v-for='(sourceTypes, sourceZoneId) in sources'>
+				<crafting-source v-for='sourceJobId in sources' :key='recipe.id + sourceJobId + tierId' type='recipe' :section-parent-id='recipe.job_id' :parent-id='sourceJobId' :info='{ tierId: tierId }' :item-id='item.id'></crafting-source>
+				<!-- <template v-for='(sourceTypes, sourceZoneId) in itemSources'>
 					<template v-for='(sourceData, type) in sourceTypes'>
-						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='itemId' :type='type' :id='id' :info='info'></crafting-source>
+						<crafting-source v-for='(info, id) in sourceData' :key='sourceZoneId + type + id' :section-zone-id='zoneId' :zone-id='sourceZoneId' :item-id='item.id' :type='type' :id='id' :info='info'></crafting-source>
 					</template>
-				</template>
+				</template> -->
 			</div>
 		</div>
 		<div class='col-auto' style='display: flex; align-items: center;'>
@@ -32,56 +33,73 @@
 <script>
 	import { getters, mutations, actions } from '../stores/crafting';
 
-	Vue.component('crafting-source', require('../components/CraftingSource.vue').default);
+	Vue.component('crafting-source', require('../components/crafting/Source.vue').default);
 
 	export default {
-		props: [ 'itemId', 'zoneId' ],
-		data() {
+		props: [ 'recipeId', 'tierId' ],
+		data () {
 			return {
+				// progress: 0,
 				checked: false
 			}
 		},
+		// created:function() {
+		// 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
+		// },
+		// mounted:function() {
+		// },
+		// beforeDestroy:function() {
+		// 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
+		// },
 		computed: {
 			...getters,
 			shown: {
 				cache: false,
 				get() {
-					return actions.fcfsItemZonePreference(this.itemId, this.zoneId);
+					return actions.fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
 				}
 			},
-			item() {
+			recipe() {
 				return {
-					...this.itemData[this.itemId],  // "Official" item data, name/icon/etc
-					...this.items[this.itemId] // "Crafting" item data, have/required
+					...this.recipeData[this.recipeId],  // "Official" recipe data, level/yield/etc
+					...this.recipes[this.recipeId] // "Crafting" recipe data, have/required
 				};
 			},
+			item() {
+				return this.itemData[this.recipe.item_id];
+			},
 			need() {
-				return Math.max(0, this.item.required - this.item.have);
+				return Math.max(0, this.recipe.required - this.recipe.have);
 			},
 			sources() {
-				// Ensure that the current zones sources are first
-				let sources = {};
-				sources[this.zoneId] = this.breakdown[this.zoneId][this.itemId];
-				return { ...sources, ...this.otherSources };
-			},
-			otherSources() {
-				var alternateSources = {};
-				Object.keys(this.breakdown).forEach(loopedZoneId => {
-					if (loopedZoneId == this.zoneId)
+				var sources = [];
+				Object.entries(this.recipeData).forEach(([recipeId, recipe]) => {
+					if (recipe.item_id != this.item.id)
 						return;
+
+					if (recipe.job_id == this.recipe.job_id)
+						sources.unshift(recipe.job_id);
+					else
+						sources.push(recipe.job_id);
+				});
+				return sources;
+			},
+			itemSources() {
+				var itemSources = {};
+				Object.keys(this.breakdown).forEach(loopedZoneId => {
 					Object.keys(this.breakdown[loopedZoneId]).forEach(loopedItemId => {
-						if (loopedItemId == this.itemId)
-							alternateSources[loopedZoneId] = this.breakdown[loopedZoneId][this.itemId];
+						if (loopedItemId == this.item.id)
+							itemSources[loopedZoneId] = this.breakdown[loopedZoneId][this.item.id];
 					});
 				});
-				return alternateSources;
+				return itemSources;
 			}
 		},
 		watch: {
 			checked:function(truthy) {
 				if (this.stopCheckedWatcher)
 					return;
-				this.item.have = truthy ? this.need : 0;
+				this.recipe.have = truthy ? this.need : 0;
 				this.updateHaveAmount();
 			}
 		},
@@ -119,11 +137,11 @@
 				else if (inputValue == this.need && this.checked == false)
 					this.gentlyUpdateChecked(true);
 
-				this.item.have = inputValue;
+				this.recipe.have = inputValue;
 				this.updateHaveAmount();
 			},
 			updateHaveAmount(have) {
-				this.setItemHaveAmount(this.itemId, this.item.have);
+				this.setRecipeHaveAmount(this.recipeId, this.recipe.have);
 				this.triggerRefresh();
 			},
 			gentlyUpdateChecked(truthy) {

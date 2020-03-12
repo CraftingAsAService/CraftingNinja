@@ -10,7 +10,7 @@
 </template>
 
 <script>
-	Vue.component('crafting-recipe', require('../components/CraftingRecipe.vue').default);
+	Vue.component('crafting-recipe', require('../components/crafting/Recipe.vue').default);
 
 	export default {
 		props: [ 'tierId', 'jobId', 'recipeIds' ],

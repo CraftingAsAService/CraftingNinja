@@ -1,21 +1,14 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/js/pages/craft"],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingItem.vue?vue&type=script&lang=js&":
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Job.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingItem.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Job.vue?vue&type=script&lang=js& ***!
   \***********************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -27,144 +20,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingSource.vue */ "./resources/js/components/CraftingSource.vue")["default"]);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['itemId', 'zoneId'],
-  data: function data() {
-    return {
-      checked: false
-    };
-  },
-  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
-    shown: {
-      cache: false,
-      get: function get() {
-        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemZonePreference(this.itemId, this.zoneId);
-      }
-    },
-    item: function item() {
-      return _objectSpread({}, this.itemData[this.itemId], {}, this.items[this.itemId]);
-    },
-    need: function need() {
-      return Math.max(0, this.item.required - this.item.have);
-    },
-    sources: function sources() {
-      // Ensure that the current zones sources are first
-      var sources = {};
-      sources[this.zoneId] = this.breakdown[this.zoneId][this.itemId];
-      return _objectSpread({}, sources, {}, this.otherSources);
-    },
-    otherSources: function otherSources() {
-      var _this = this;
-
-      var alternateSources = {};
-      Object.keys(this.breakdown).forEach(function (loopedZoneId) {
-        if (loopedZoneId == _this.zoneId) return;
-        Object.keys(_this.breakdown[loopedZoneId]).forEach(function (loopedItemId) {
-          if (loopedItemId == _this.itemId) alternateSources[loopedZoneId] = _this.breakdown[loopedZoneId][_this.itemId];
-        });
-      });
-      return alternateSources;
-    }
-  }),
-  watch: {
-    checked: function checked(truthy) {
-      if (this.stopCheckedWatcher) return;
-      this.item.have = truthy ? this.need : 0;
-      this.updateHaveAmount();
-    }
-  },
-  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {
-    haveFocus: function haveFocus(event) {
-      var range, selection;
-
-      if (document.body.createTextRange) {
-        range = document.body.createTextRange();
-        range.moveToElementText(event.target);
-        range.select();
-      } else if (window.getSelection) {
-        selection = window.getSelection();
-        range = document.createRange();
-        range.selectNodeContents(event.target);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-    },
-    haveEnter: function haveEnter(event) {
-      event.target.blur();
-    },
-    haveBlur: function haveBlur(event) {
-      // Make sure it's a number between 0 and `this.need`
-      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.need), 0); // Value might be bad, reset to 0
-
-      if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
-
-      event.target.innerText = inputValue; // Check/Uncheck the box if applicable
-
-      if (inputValue < this.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.need && this.checked == false) this.gentlyUpdateChecked(true);
-      this.item.have = inputValue;
-      this.updateHaveAmount();
-    },
-    updateHaveAmount: function updateHaveAmount(have) {
-      this.setItemHaveAmount(this.itemId, this.item.have);
-      this.triggerRefresh();
-    },
-    gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
-      var _this2 = this;
-
-      this.stopCheckedWatcher = true;
-      this.checked = truthy;
-      Vue.nextTick(function () {
-        _this2.stopCheckedWatcher = false;
-      });
-    }
-  })
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingJob.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingJob.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingRecipe.vue */ "./resources/js/components/CraftingRecipe.vue")["default"]);
+Vue.component('crafting-recipe', __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../components/crafting/Recipe.vue'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()))["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['tierId', 'jobId', 'recipeIds'],
   // data() {
@@ -230,10 +86,10 @@ Vue.component('crafting-recipe', __webpack_require__(/*! ../components/CraftingR
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Map.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Map.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -376,240 +232,10 @@ var size = 379; // TODO calculate magic number based on column width
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-Vue.component('crafting-source', __webpack_require__(/*! ../components/CraftingSource.vue */ "./resources/js/components/CraftingSource.vue")["default"]);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['recipeId', 'tierId'],
-  data: function data() {
-    return {
-      // progress: 0,
-      checked: false
-    };
-  },
-  // created:function() {
-  // 	this.$eventBus.$on('recipe' + this.recipe.id + 'data', this.amountUpdate);
-  // },
-  // mounted:function() {
-  // },
-  // beforeDestroy:function() {
-  // 	this.$eventBus.$off('recipe' + this.recipe.id + 'data');
-  // },
-  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
-    shown: {
-      cache: false,
-      get: function get() {
-        return _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["actions"].fcfsItemJobTierPreference(this.item.id, this.recipe.job_id, this.tierId);
-      }
-    },
-    recipe: function recipe() {
-      return _objectSpread({}, this.recipeData[this.recipeId], {}, this.recipes[this.recipeId]);
-    },
-    item: function item() {
-      return this.itemData[this.recipe.item_id];
-    },
-    need: function need() {
-      return Math.max(0, this.recipe.required - this.recipe.have);
-    },
-    sources: function sources() {
-      var _this = this;
-
-      var sources = [];
-      Object.entries(this.recipeData).forEach(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            recipeId = _ref2[0],
-            recipe = _ref2[1];
-
-        if (recipe.item_id != _this.item.id) return;
-        if (recipe.job_id == _this.recipe.job_id) sources.unshift(recipe.job_id);else sources.push(recipe.job_id);
-      });
-      return sources;
-    },
-    itemSources: function itemSources() {
-      var _this2 = this;
-
-      var itemSources = {};
-      Object.keys(this.breakdown).forEach(function (loopedZoneId) {
-        Object.keys(_this2.breakdown[loopedZoneId]).forEach(function (loopedItemId) {
-          if (loopedItemId == _this2.item.id) itemSources[loopedZoneId] = _this2.breakdown[loopedZoneId][_this2.item.id];
-        });
-      });
-      return itemSources;
-    }
-  }),
-  watch: {
-    checked: function checked(truthy) {
-      if (this.stopCheckedWatcher) return;
-      this.recipe.have = truthy ? this.need : 0;
-      this.updateHaveAmount();
-    }
-  },
-  methods: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"], {
-    haveFocus: function haveFocus(event) {
-      var range, selection;
-
-      if (document.body.createTextRange) {
-        range = document.body.createTextRange();
-        range.moveToElementText(event.target);
-        range.select();
-      } else if (window.getSelection) {
-        selection = window.getSelection();
-        range = document.createRange();
-        range.selectNodeContents(event.target);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-    },
-    haveEnter: function haveEnter(event) {
-      event.target.blur();
-    },
-    haveBlur: function haveBlur(event) {
-      // Make sure it's a number between 0 and `this.need`
-      var inputValue = Math.max(Math.min(parseInt(event.target.innerText.replace(/\D/, '')), this.need), 0); // Value might be bad, reset to 0
-
-      if (isNaN(inputValue)) inputValue = 0; // Repopulate content with fixed value
-
-      event.target.innerText = inputValue; // Check/Uncheck the box if applicable
-
-      if (inputValue < this.need && this.checked == true) this.gentlyUpdateChecked(false);else if (inputValue == this.need && this.checked == false) this.gentlyUpdateChecked(true);
-      this.recipe.have = inputValue;
-      this.updateHaveAmount();
-    },
-    updateHaveAmount: function updateHaveAmount(have) {
-      this.setRecipeHaveAmount(this.recipeId, this.recipe.have);
-      this.triggerRefresh();
-    },
-    gentlyUpdateChecked: function gentlyUpdateChecked(truthy) {
-      var _this3 = this;
-
-      this.stopCheckedWatcher = true;
-      this.checked = truthy;
-      Vue.nextTick(function () {
-        _this3.stopCheckedWatcher = false;
-      });
-    }
-  })
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _stores_crafting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/crafting */ "./resources/js/stores/crafting.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  // Parent ID is either the Job or Zone ID
-  props: ['sectionParentId', 'type', 'id', 'parentId', 'itemId', 'info'],
-  computed: _objectSpread({}, _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["getters"], {
-    parentMatches: function parentMatches() {
-      return this.sectionParentId == this.parentId;
-    },
-    src: function src() {
-      if (this.type == 'recipe') return '/assets/' + game.slug + '/jobs/' + this.job.icon + '.png';else if (this.type == 'node') return '/assets/' + game.slug + '/map/icons/' + this.nodeTypes[this.nodeData[this.id].type].icon + '.png';else if (this.type == 'mob') return '/assets/' + game.slug + '/map/icons/battle.png';else if (this.type == 'shop') return '/assets/' + game.slug + '/map/icons/vendor.png';else if (this.type == 'reward') return '/assets/' + game.slug + '/map/icons/landmark.png';
-    },
-    title: function title() {
-      var title = '',
-          prefix = '';
-      if (!this.parentMatches) prefix = this.zoneData[this.parentId].name + ':<br>';
-      if (this.type == 'node') title = 'Level ' + this.nodeData[this.id].level + ', ' + this.nodeTypes[this.nodeData[this.id].type].name;else if (this.type == 'mob') title = 'Level ' + this.mobData[this.id].level + ', ' + this.mobData[this.id].name;
-      return prefix + title;
-    },
-    job: function job() {
-      return this.jobData[this.parentId];
-    },
-    zone: function zone() {
-      return this.zoneData[this.parentId];
-    }
-  }),
-  methods: {
-    switchZone: function switchZone() {
-      if (this.parentMatches) return;
-      _stores_crafting__WEBPACK_IMPORTED_MODULE_0__["mutations"].setItemZonePreference(this.itemId, this.parentId); // this.$eventBus.$emit('zoneRefresh', this.parentId);
-      // this.$eventBus.$emit('zoneRefresh', this.sectionParentId);
-
-      this.$eventBus.$emit('craftRefresh');
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -626,7 +252,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-Vue.component('crafting-item', __webpack_require__(/*! ../components/CraftingItem.vue */ "./resources/js/components/CraftingItem.vue")["default"]);
+Vue.component('crafting-item', __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../components/crafting/Item.vue'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()))["default"]);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['zoneId'],
   // data() {
@@ -33012,210 +32638,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40&":
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca&":
 /*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca& ***!
   \***************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      directives: [
-        {
-          name: "show",
-          rawName: "v-show",
-          value: _vm.shown,
-          expression: "shown"
-        }
-      ],
-      staticClass: "row item mb-1",
-      style: "opacity: " + (_vm.checked ? ".5" : "1")
-    },
-    [
-      _c("div", { staticClass: "col-auto" }, [
-        _c("img", {
-          staticClass: "icon",
-          attrs: {
-            src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
-            alt: "",
-            width: _vm.checked ? 24 : 48,
-            height: _vm.checked ? 24 : 48
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
-        [
-          _vm.need > 0
-            ? _c("span", [
-                _c("span", {
-                  staticClass: "required text-warning",
-                  style:
-                    "cursor: pointer; opacity: " +
-                    (_vm.item.have / _vm.need / 2 + 0.5),
-                  attrs: { contenteditable: "" },
-                  domProps: { textContent: _vm._s(_vm.item.have) },
-                  on: {
-                    focus: _vm.haveFocus,
-                    blur: _vm.haveBlur,
-                    keydown: function($event) {
-                      if (
-                        !$event.type.indexOf("key") &&
-                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                      ) {
-                        return null
-                      }
-                      return _vm.haveEnter($event)
-                    }
-                  }
-                }),
-                _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
-                _c("span", {
-                  staticClass: "required text-warning",
-                  domProps: { innerHTML: _vm._s(_vm.need) }
-                })
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.need > 0
-            ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-            : _vm._e(),
-          _vm._v(" "),
-          _c("big", {
-            class: "rarity-" + _vm.item.rarity,
-            domProps: { innerHTML: _vm._s(_vm.item.name) }
-          }),
-          _vm._v(" "),
-          !_vm.checked
-            ? _c(
-                "div",
-                {
-                  staticClass: "sources",
-                  staticStyle: { height: "20px", overflow: "hidden" }
-                },
-                [
-                  _vm._l(_vm.sources, function(sourceTypes, sourceZoneId) {
-                    return [
-                      _vm._l(sourceTypes, function(sourceData, type) {
-                        return _vm._l(sourceData, function(info, id) {
-                          return _c("crafting-source", {
-                            key: sourceZoneId + type + id,
-                            attrs: {
-                              "section-zone-id": _vm.zoneId,
-                              "zone-id": sourceZoneId,
-                              "item-id": _vm.itemId,
-                              type: type,
-                              id: id,
-                              info: info
-                            }
-                          })
-                        })
-                      })
-                    ]
-                  })
-                ],
-                2
-              )
-            : _vm._e()
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "col-auto",
-          staticStyle: { display: "flex", "align-items": "center" }
-        },
-        [
-          _c(
-            "div",
-            {
-              staticClass: "form-group tally",
-              staticStyle: { "margin-bottom": "0" }
-            },
-            [
-              _c(
-                "label",
-                {
-                  staticClass: "checkbox ml-2",
-                  staticStyle: { width: "24px" }
-                },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.checked,
-                        expression: "checked"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(_vm.checked)
-                        ? _vm._i(_vm.checked, null) > -1
-                        : _vm.checked
-                    },
-                    on: {
-                      change: function($event) {
-                        var $$a = _vm.checked,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              (_vm.checked = $$a
-                                .slice(0, $$i)
-                                .concat($$a.slice($$i + 1)))
-                          }
-                        } else {
-                          _vm.checked = $$c
-                        }
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("span", {
-                    staticClass: "checkbox-indicator",
-                    staticStyle: { width: "24px", height: "24px", top: "-10px" }
-                  })
-                ]
-              )
-            ]
-          )
-        ]
-      )
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000&":
-/*!**************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000& ***!
-  \**************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33269,10 +32695,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&":
-/*!**************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f& ***!
-  \**************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba& ***!
+  \***************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33348,241 +32774,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b&":
-/*!*****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b& ***!
-  \*****************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      directives: [
-        {
-          name: "show",
-          rawName: "v-show",
-          value: _vm.shown,
-          expression: "shown"
-        }
-      ],
-      staticClass: "row recipe mb-1",
-      style: "opacity: " + (_vm.checked ? ".5" : "1")
-    },
-    [
-      _c("div", { staticClass: "col-auto" }, [
-        _c("img", {
-          staticClass: "icon",
-          attrs: {
-            src: "/assets/" + _vm.game.slug + "/i/" + _vm.item.icon + ".png",
-            alt: "",
-            width: _vm.checked ? 24 : 48,
-            height: _vm.checked ? 24 : 48
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col info", style: _vm.need <= 0 ? "opacity: .5;" : "" },
-        [
-          _vm.need > 0
-            ? _c("span", [
-                _c("span", {
-                  staticClass: "required text-warning",
-                  style:
-                    "cursor: pointer; opacity: " +
-                    (_vm.recipe.have / _vm.need / 2 + 0.5),
-                  attrs: { contenteditable: "" },
-                  domProps: { textContent: _vm._s(_vm.recipe.have) },
-                  on: {
-                    focus: _vm.haveFocus,
-                    blur: _vm.haveBlur,
-                    keydown: function($event) {
-                      if (
-                        !$event.type.indexOf("key") &&
-                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                      ) {
-                        return null
-                      }
-                      return _vm.haveEnter($event)
-                    }
-                  }
-                }),
-                _c("span", { staticClass: "text-muted" }, [_vm._v("/")]),
-                _c("span", {
-                  staticClass: "required text-warning",
-                  domProps: { innerHTML: _vm._s(_vm.need) }
-                })
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.need > 0
-            ? _c("small", { staticClass: "text-muted" }, [_vm._v("x")])
-            : _vm._e(),
-          _vm._v(" "),
-          _c("big", {
-            class: "rarity-" + _vm.item.rarity,
-            domProps: { innerHTML: _vm._s(_vm.item.name) }
-          }),
-          _vm._v(" "),
-          !_vm.checked
-            ? _c(
-                "div",
-                {
-                  staticClass: "sources",
-                  staticStyle: { height: "20px", overflow: "hidden" }
-                },
-                _vm._l(_vm.sources, function(sourceJobId) {
-                  return _c("crafting-source", {
-                    key: _vm.recipe.id + sourceJobId + _vm.tierId,
-                    attrs: {
-                      type: "recipe",
-                      "section-parent-id": _vm.recipe.job_id,
-                      "parent-id": sourceJobId,
-                      info: { tierId: _vm.tierId },
-                      "item-id": _vm.item.id
-                    }
-                  })
-                }),
-                1
-              )
-            : _vm._e()
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "col-auto",
-          staticStyle: { display: "flex", "align-items": "center" }
-        },
-        [
-          _c(
-            "div",
-            {
-              staticClass: "form-group tally",
-              staticStyle: { "margin-bottom": "0" }
-            },
-            [
-              _c(
-                "label",
-                {
-                  staticClass: "checkbox ml-2",
-                  staticStyle: { width: "24px" }
-                },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.checked,
-                        expression: "checked"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(_vm.checked)
-                        ? _vm._i(_vm.checked, null) > -1
-                        : _vm.checked
-                    },
-                    on: {
-                      change: function($event) {
-                        var $$a = _vm.checked,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 && (_vm.checked = $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              (_vm.checked = $$a
-                                .slice(0, $$i)
-                                .concat($$a.slice($$i + 1)))
-                          }
-                        } else {
-                          _vm.checked = $$c
-                        }
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("span", {
-                    staticClass: "checkbox-indicator",
-                    staticStyle: { width: "24px", height: "24px", top: "-10px" }
-                  })
-                ]
-              )
-            ]
-          )
-        ]
-      )
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&":
-/*!*****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0& ***!
-  \*****************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("img", {
-    style:
-      "vertical-align: top;" +
-      (_vm.parentMatches ? "" : "opacity: .5; cursor: pointer;"),
-    attrs: {
-      src: _vm.src,
-      alt: "",
-      "data-toggle": "tooltip",
-      "data-html": "true",
-      "data-title": _vm.title
-    },
-    on: {
-      click: function($event) {
-        return _vm.switchZone()
-      }
-    }
-  })
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&":
-/*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e& ***!
-  \***************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184& ***!
+  \****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -44944,18 +44139,18 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingItem.vue":
+/***/ "./resources/js/components/crafting/Job.vue":
 /*!**************************************************!*\
-  !*** ./resources/js/components/CraftingItem.vue ***!
+  !*** ./resources/js/components/crafting/Job.vue ***!
   \**************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingItem.vue?vue&type=template&id=82d59d40& */ "./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40&");
-/* harmony import */ var _CraftingItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingItem.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingItem.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Job.vue?vue&type=template&id=72bbccca& */ "./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca&");
+/* harmony import */ var _Job_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Job.vue?vue&type=script&lang=js& */ "./resources/js/components/crafting/Job.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -44964,9 +44159,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Job_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -44976,331 +44171,55 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingItem.vue"
+component.options.__file = "resources/js/components/crafting/Job.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingItem.vue?vue&type=script&lang=js&":
+/***/ "./resources/js/components/crafting/Job.vue?vue&type=script&lang=js&":
 /*!***************************************************************************!*\
-  !*** ./resources/js/components/CraftingItem.vue?vue&type=script&lang=js& ***!
+  !*** ./resources/js/components/crafting/Job.vue?vue&type=script&lang=js& ***!
   \***************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingItem.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingItem.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Job_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Job.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Job.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Job_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40&":
+/***/ "./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca&":
 /*!*********************************************************************************!*\
-  !*** ./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40& ***!
+  !*** ./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca& ***!
   \*********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingItem.vue?vue&type=template&id=82d59d40& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingItem.vue?vue&type=template&id=82d59d40&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Job.vue?vue&type=template&id=72bbccca& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Job.vue?vue&type=template&id=72bbccca&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingItem_vue_vue_type_template_id_82d59d40___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingJob.vue":
-/*!*************************************************!*\
-  !*** ./resources/js/components/CraftingJob.vue ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingJob.vue?vue&type=template&id=30293000& */ "./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000&");
-/* harmony import */ var _CraftingJob_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingJob.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingJob.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingJob_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingJob.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingJob.vue?vue&type=script&lang=js&":
-/*!**************************************************************************!*\
-  !*** ./resources/js/components/CraftingJob.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingJob_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingJob.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingJob.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingJob_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000&":
-/*!********************************************************************************!*\
-  !*** ./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000& ***!
-  \********************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingJob.vue?vue&type=template&id=30293000& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingJob.vue?vue&type=template&id=30293000&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingJob_vue_vue_type_template_id_30293000___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Job_vue_vue_type_template_id_72bbccca___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingMap.vue":
-/*!*************************************************!*\
-  !*** ./resources/js/components/CraftingMap.vue ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingMap.vue?vue&type=template&id=6f7f8a1f& */ "./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&");
-/* harmony import */ var _CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingMap.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingMap.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&":
-/*!**************************************************************************!*\
-  !*** ./resources/js/components/CraftingMap.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingMap.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&":
-/*!********************************************************************************!*\
-  !*** ./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f& ***!
-  \********************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingMap.vue?vue&type=template&id=6f7f8a1f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingMap.vue?vue&type=template&id=6f7f8a1f&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingMap_vue_vue_type_template_id_6f7f8a1f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingRecipe.vue":
-/*!****************************************************!*\
-  !*** ./resources/js/components/CraftingRecipe.vue ***!
-  \****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingRecipe.vue?vue&type=template&id=20d5dd1b& */ "./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b&");
-/* harmony import */ var _CraftingRecipe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingRecipe.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingRecipe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingRecipe.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingRecipe.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipe_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b& ***!
-  \***********************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingRecipe.vue?vue&type=template&id=20d5dd1b& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingRecipe.vue?vue&type=template&id=20d5dd1b&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingRecipe_vue_vue_type_template_id_20d5dd1b___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingSource.vue":
-/*!****************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue ***!
-  \****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingSource.vue?vue&type=template&id=18ec3db0& */ "./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&");
-/* harmony import */ var _CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingSource.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingSource.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingSource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0& ***!
-  \***********************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingSource.vue?vue&type=template&id=18ec3db0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingSource.vue?vue&type=template&id=18ec3db0&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingSource_vue_vue_type_template_id_18ec3db0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/CraftingZone.vue":
+/***/ "./resources/js/components/crafting/Map.vue":
 /*!**************************************************!*\
-  !*** ./resources/js/components/CraftingZone.vue ***!
+  !*** ./resources/js/components/crafting/Map.vue ***!
   \**************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CraftingZone.vue?vue&type=template&id=aa16350e& */ "./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&");
-/* harmony import */ var _CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CraftingZone.vue?vue&type=script&lang=js& */ "./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Map.vue?vue&type=template&id=4e363bba& */ "./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba&");
+/* harmony import */ var _Map_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Map.vue?vue&type=script&lang=js& */ "./resources/js/components/crafting/Map.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -45309,9 +44228,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Map_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -45321,38 +44240,107 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CraftingZone.vue"
+component.options.__file = "resources/js/components/crafting/Map.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&":
+/***/ "./resources/js/components/crafting/Map.vue?vue&type=script&lang=js&":
 /*!***************************************************************************!*\
-  !*** ./resources/js/components/CraftingZone.vue?vue&type=script&lang=js& ***!
+  !*** ./resources/js/components/crafting/Map.vue?vue&type=script&lang=js& ***!
   \***************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingZone.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Map_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Map.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Map.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Map_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&":
+/***/ "./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba&":
 /*!*********************************************************************************!*\
-  !*** ./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e& ***!
+  !*** ./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba& ***!
   \*********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CraftingZone.vue?vue&type=template&id=aa16350e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CraftingZone.vue?vue&type=template&id=aa16350e&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Map.vue?vue&type=template&id=4e363bba& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Map.vue?vue&type=template&id=4e363bba&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CraftingZone_vue_vue_type_template_id_aa16350e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Map_vue_vue_type_template_id_4e363bba___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/crafting/Zone.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/crafting/Zone.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Zone.vue?vue&type=template&id=b9d73184& */ "./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184&");
+/* harmony import */ var _Zone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Zone.vue?vue&type=script&lang=js& */ "./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Zone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/crafting/Zone.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Zone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Zone.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Zone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Zone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Zone.vue?vue&type=template&id=b9d73184& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crafting/Zone.vue?vue&type=template&id=b9d73184&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Zone_vue_vue_type_template_id_b9d73184___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -45416,9 +44404,9 @@ Vue.mixin({
     }
   }
 });
-Vue.component('crafting-zone', __webpack_require__(/*! ../components/CraftingZone.vue */ "./resources/js/components/CraftingZone.vue")["default"]);
-Vue.component('crafting-map', __webpack_require__(/*! ../components/CraftingMap.vue */ "./resources/js/components/CraftingMap.vue")["default"]);
-Vue.component('crafting-job', __webpack_require__(/*! ../components/CraftingJob.vue */ "./resources/js/components/CraftingJob.vue")["default"]);
+Vue.component('crafting-zone', __webpack_require__(/*! ../components/crafting/Zone.vue */ "./resources/js/components/crafting/Zone.vue")["default"]);
+Vue.component('crafting-map', __webpack_require__(/*! ../components/crafting/Map.vue */ "./resources/js/components/crafting/Map.vue")["default"]);
+Vue.component('crafting-job', __webpack_require__(/*! ../components/crafting/Job.vue */ "./resources/js/components/crafting/Job.vue")["default"]);
 var craft = new Vue({
   name: 'Crafting',
   el: '#craft',

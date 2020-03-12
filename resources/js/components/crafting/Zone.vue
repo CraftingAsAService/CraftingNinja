@@ -10,7 +10,7 @@
 </template>
 
 <script>
-	Vue.component('crafting-item', require('../components/CraftingItem.vue').default);
+	Vue.component('crafting-item', require('../components/crafting/Item.vue').default);
 
 	export default {
 		props: [ 'zoneId' ],

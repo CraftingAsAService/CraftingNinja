@@ -41,9 +41,9 @@ Vue.mixin({
 	}
 });
 
-Vue.component('crafting-zone', require('../components/CraftingZone.vue').default);
-Vue.component('crafting-map', require('../components/CraftingMap.vue').default);
-Vue.component('crafting-job', require('../components/CraftingJob.vue').default);
+Vue.component('crafting-zone', require('../components/crafting/Zone.vue').default);
+Vue.component('crafting-map', require('../components/crafting/Map.vue').default);
+Vue.component('crafting-job', require('../components/crafting/Job.vue').default);
 
 const craft = new Vue({
 	name: 'Crafting',

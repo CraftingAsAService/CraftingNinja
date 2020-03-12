@@ -10,7 +10,7 @@
 		}
 	},
 	"require": {
-		"php": "^7.2",
+		"php": "^7.2.5",
 		"appstract/laravel-opcache": "^3.0",
 		"astrotomic/laravel-translatable": "^11.6",
 		"fideloper/proxy": "^4.2",
